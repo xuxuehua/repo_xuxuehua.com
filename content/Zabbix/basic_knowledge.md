@@ -110,6 +110,16 @@ GUI，用于实现zabbix设定和展示
 
 
 
+# Installation 安装
+
+
+
+
+
+
+
+
+
 # 术语
 
 ## template
