@@ -15,7 +15,7 @@ theme: simple2
 
 category:
   - name: Linux  # 目录名
-    label: Linux 运维  # 目录的别名, 生成首页时可以使用
+    #label: Linux 运维  # 目录的别名, 生成首页时可以使用
 
 default_ext: md
 pygments: true
