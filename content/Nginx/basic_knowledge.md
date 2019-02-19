@@ -206,6 +206,49 @@ g/G -> gigabytes
 
 ### server 域名
 
+#### listen 指令
+
+仅在server context中使用
+
+```
+listen unix:/var/run/nginx.sock;
+listen 127.0.0.1:8000;
+listen 8000;
+listen *:8000;
+listen [::]:8000 ipv6only=on
+listen [::];
+```
+
+
+
+#### server_name 指令
+
+Context: http, server, location
+
+
+
+指令后可以跟多个域名
+
+```
+server_name www.xurick.com
+```
+
+
+
+泛域名，仅支持最前或者最后
+
+```
+server_name *.xurick.com
+```
+
+
+
+正则表达式， 加～前缀
+
+```
+server_name www.xurick.com ~^www\d+\.xurick\.com$;
+```
+
 
 
 ### upstream 上游模块

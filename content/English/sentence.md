@@ -485,6 +485,22 @@ Now something similar **could be happening** in the oceans.
 
 ## 语态
 
+### 主动语态
+
+主语和谓语动词之间主动发出的动作
+
+没有明确的主动关系，重点是被动语态
+
+
+
+## 被动语态
+
+主语和谓语动词之间是被做的关系
+
+Be +done
+
+Done 
+
 
 
 

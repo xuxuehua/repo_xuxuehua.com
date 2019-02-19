@@ -131,3 +131,51 @@ ngx_conf_module
 
 
 
+## 动态模块 
+
+可以减少编译环节
+
+
+
+### 案例
+
+```
+curl -O 'http://nginx.org/download/nginx-1.14.1.tar.gz'
+yum -y install gd-devel
+mkdir -p /home/geek/nginx
+./configure --prefix=/home/geek/nginx/ --with-http_image_filter_module=dynamic
+make && make install
+```
+
+
+
+```
+mkdir test # 与html 同级
+cd test
+curl 'https://avatars1.githubusercontent.com/u/20882653?s=460&v=4' > xu.png 
+```
+
+
+
+```
+vim conf/nginx.conf
+
+load_module modules/ngx_http_image_filter_module.so;
+#user  nobody;
+ server {
+        listen       8080;
+        server_name  localhost;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {
+            root   test;
+            image_filter resize 15 10;   #这里会修改图片大小
+            index  index.html index.htm;
+        }
+        
+```
+
+> 访问http://us2.xurick.com:8080/xu.png 的图片会变小
