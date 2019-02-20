@@ -77,21 +77,25 @@ Docker Engine：Docker 引擎，负责本机的容器创建和管理工作
 
 
 
+
+
+
+
 ## Kubernetes 功能
 
 ### Pod 容器集
 
 Pod 是Kubernetes中可以创建的最小部署单元， Pod是一组容器的集合
 
-为分组的容器增加了一个抽象层，帮助用户调度工作负载，并为这些容器提供所需的联网和存储服务。
+同一Pod中的容器共享网络名称空间和存储资源，这些容器可以通过loopback直接通信，同时又在Mount，User， PID等名称空间保持了隔离
 
-每个Pod里面都会有一个pause，大概20k大小。这个pause管理网络，以及容器的状态
+
 
 
 
 #### Pod template
 
-* (Resource)[https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/]
+(Resource)[https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/]
 
 ```
 apiVersion: v1
@@ -109,15 +113,19 @@ spec:
 
 
 
+
+
 ### Label 
 
-> label是一个key=value的键值对，可以附加到各种资源对象上， 列入Node，Pod， Service， Replication Controller等
+将资源进行分类的标识符。
+
+label是一个key=value的键值对，可以附加到各种资源对象上， 列入Node，Pod， Service， Replication Controller等
 
 
 
 #### Label Selector 
 
-> 很多object可能有相同的label通过label selector， 客户端可以指定object集合，通过label selector 对object的集合进行操作
+很多object可能有相同的label通过label selector， 客户端可以指定object集合，通过label selector 对object的集合进行操作
 
 * Equality-based: 可以使用=， ==， !=操作， 逗号分隔多个表达式
 
@@ -127,23 +135,87 @@ spec:
 
 
 
-### Replication Controller
+### Pod 控制器
 
-> 定义了一个期望的场景，声明某种pod的副本数量在任意时刻都符合某个预期值
+借助Controller 对Pod进行管理
+
+包括以下多种调度器
+
+
+
+#### Replication Controller
+
+定义了一个期望的场景，声明某种pod的副本数量在任意时刻都符合某个预期值
 
 e.g. `apiVersion: extensions/v1beat1 kind: Replication metadata: name: frontend `
 
 
 
-### Deployment
+#### ReplicaSet
 
-> Deployment 为Pod和ReplicaSet提供一个声明方法，用来替代Replication Controller 来方便管理
+
+
+#### Deployment
+
+Deployment 为Pod和ReplicaSet提供一个声明方法，用来替代Replication Controller 来方便管理
+
+
+
+#### StatefulSet
+
+
+
+#### Job
+
+
+
+
+
+### Volume 存储卷
+
+独立于容器文件系统之外的存储空间，常用于扩展容器的存储空间并为其提供存储能力。
+
+临时卷和本地卷位于Node本地，一旦Pod被调度到其他Node，这类存储卷将无法访问
+
+
+
+
+
+### name 和 namespace
+
+name 是kubernetes集群中资源对象的标识符，作用域为namespace
+
+namespace用于实现项目资源隔离，形成逻辑分组
+
+
+
+
+
+### Annotation 注解
+
+附加在对象之上的键值类型的数据，用于将各种非标识型元数据附加到对象之上，但不能用于标识和选择对象
+
+方便用户和工具阅读查找
+
+
+
+### Ingress 网络入口
+
+Pod和Service对象间的通信使用其内部专用地址进行通信
+
+Ingress可以开放某些Pod对象给外部用户访问
+
+
+
+
+
+
 
 
 
 ### Horizontal Pod Autoscaler
 
-> 对资源实现削峰填谷， 提高集群的整体资源利用率
+对资源实现削峰填谷， 提高集群的整体资源利用率
 
 ![alt](https://cdn.pbrd.co/images/HocsZti.png)
 
@@ -167,11 +239,13 @@ e.g. `apiVersion: extensions/v1beat1 kind: Replication metadata: name: frontend 
 
 
 
-### Service
+### Service 服务资源
 
-> 一个pod的逻辑分组，一种可以访问它们的策略成为微服务
->
-> 一组pod能够被Service 访问到，通常通过Label Selector 实现
+建立在一组pod之上，并为这组Pod对象定义一个统一的固定访问入口（通常是一个IP地址）
+
+到达Service IP的请求将被负载均衡至其后的端点，各个Pod对象之上，因此Service 本质上来讲是一个四层代理服务
+
+一组pod能够被Service 访问到，通常通过Label Selector 实现
 
 
 
@@ -205,7 +279,144 @@ e.g. `apiVersion: extensions/v1beat1 kind: Replication metadata: name: frontend 
 
 #### Endpoint
 
-> Endpoint: Pod IP + Container Port 
+Endpoint: Pod IP + Container Port 
+
+
+
+
+
+## Kubernetes 集群组件
+
+
+
+### Master 
+
+集群管理，集群接口管理，监控，编排
+
+
+
+#### API server 
+
+负责输出RESTful API输出
+
+接受响应所有REST请求，结果状态被持久存储于etcd中
+
+即集群的网关
+
+
+
+#### controller-manager
+
+
+
+
+
+#### scheduler
+
+
+
+### etcd 集群状态存储系统
+
+独立的服务组件，不隶属于Kubernetes集群自身
+
+
+
+
+
+### Node 
+
+负责提供容器的各种依赖环境，并接受master管理
+
+
+
+#### kubelet
+
+代理程序
+
+在API Server上注册当前工作节点，定期向Master汇报节点资源使用情况
+
+通过cAdvistor 监控容器和节点的资源占用情况
+
+
+
+#### Container Runtime
+
+负责下载镜像并运行容器
+
+支持Docker，RKT，cri-o和Fraki
+
+
+
+#### kube-proxy
+
+每个工作节点都需要运行该守护进程，能够按需为Service资源对象生成iptables 和ipvs规则
+
+
+
+
+
+### Add-ons 附件
+
+#### KubeDNS
+
+集群中调度运行提供DNS服务的Pod
+
+同一集群中的其他Pod可以使用此DNS服务解决主机名解析问题
+
+
+
+#### Kubernetes Dashboard 
+
+管理集群应用
+
+
+
+#### Heapster 
+
+容器和节点的性能监控与分析系统
+
+逐渐有Prometheus结合其他组件替代
+
+
+
+#### Ingress Controller
+
+实现应用层HTTP(s)的负载均衡
+
+
+
+
+
+## Kubernetes 网络模型
+
+主要的通信
+
+```
+同一Pod内
+Pod之间
+Pod 与Service之间
+集群外与 Service
+```
+
+
+
+### 实现策略
+
+所有Pod间均可不经过NAT而直接通信
+
+所有节点均可不经过NAT而直接与所有容器通信
+
+容器自己使用的IP也是其他容器或节点直接看到的地址，即Pod自身的地址直接通信
+
+
+
+Pod IP可以存在于某个网卡，或者虚拟设备
+
+Service IP是一个虚拟IP地址，没有任何设备配置此地址，由iptables或ipvs重新定向到本地端口，再调度到后端Pod 对象，即Cluster IP
+
+
+
+
 
 ​    
 
