@@ -89,6 +89,26 @@ Pod 是Kubernetes中可以创建的最小部署单元， Pod是一组容器的�
 
 同一Pod中的容器共享网络名称空间和存储资源，这些容器可以通过loopback直接通信，同时又在Mount，User， PID等名称空间保持了隔离
 
+Pod 代表着Kubernetes的部署单元以及原子运行单元，即一个应用程序的单一运行实例，通常由共享资源且关系紧密的一个或者多个应用容器组成
+
+集群中Pod 对象的IP地址需在同一平面（网段）内进行通信
+
+
+
+#### Pod IP
+
+Pod 对象被分配的一个集群内专用的IP，Pod内部所有容器共享Pod对象的Network和UTS名称空间，容器间通过回环地址通信
+
+Pod外的其他组件通信需要使用Service资源对象的Cluster IP
+
+
+
+#### 存储卷 
+
+Pod对象可以配置一组存储卷，给其内部所有容器使用，完成容器间数据共享
+
+同时也保证容器重启后，数据不丢失
+
 
 
 
@@ -135,9 +155,11 @@ label是一个key=value的键值对，可以附加到各种资源对象上， �
 
 
 
-### Pod 控制器
+### Pod 控制器 Controller
 
-借助Controller 对Pod进行管理
+借助Controller 对Pod进行管理，实现一次性的Pod对象管理
+
+
 
 包括以下多种调度器
 
@@ -155,7 +177,7 @@ e.g. `apiVersion: extensions/v1beat1 kind: Replication metadata: name: frontend 
 
 
 
-#### Deployment
+#### Deployment （常用）
 
 Deployment 为Pod和ReplicaSet提供一个声明方法，用来替代Replication Controller 来方便管理
 
@@ -166,6 +188,10 @@ Deployment 为Pod和ReplicaSet提供一个声明方法，用来替代Replication
 
 
 #### Job
+
+
+
+#### DaemonSet
 
 
 
@@ -273,7 +299,24 @@ Ingress可以开放某些Pod对象给外部用户访问
          targetPort: 9376
    ```
 
-   
+
+
+
+#### Service IP (Cluster IP)
+
+一种虚拟IP，也称Cluster IP， 专用于集群内通信
+
+
+
+#### Service 类型
+
+```
+1. 仅用于集群内部通信的ClusterIP类型
+2. 接入集群外部请求的NodePort类型， 工作于每个节点的主机IP之上
+3. LoadBalance类型，可以把外部请求负载均衡至多个Node主机IP的NodePort之上
+```
+
+> 每一种都以前一种为基础才能实现
 
 
 
@@ -295,7 +338,7 @@ Endpoint: Pod IP + Container Port
 
 
 
-#### API server 
+#### API server  集群的网关
 
 负责输出RESTful API输出
 
@@ -315,7 +358,7 @@ Endpoint: Pod IP + Container Port
 
 
 
-### etcd 集群状态存储系统
+#### etcd 集群状态存储系统
 
 独立的服务组件，不隶属于Kubernetes集群自身
 
@@ -329,7 +372,7 @@ Endpoint: Pod IP + Container Port
 
 
 
-#### kubelet
+#### kubelet 代理组件
 
 代理程序
 
@@ -422,17 +465,17 @@ Service IP是一个虚拟IP地址，没有任何设备配置此地址，由iptab
 
 ## Kubernetes 服务发现机制
 
-> 支持两种服务发现模式 - 环境变量和DNS
+支持两种服务发现模式 - 环境变量和DNS
 
 
 
 ### 环境变量
 
-> 当Pod运行在Node上，Kubelet会为每个活跃的Service添加一组环境变量
+当Pod运行在Node上，Kubelet会为每个活跃的Service添加一组环境变量
 
 ### DNS
 
-> Kubernetes 通过Add on 方式引入DNS，把服务名称作为DNS域名，这样，程序就可以直接使用服务名来建立通信连接，目前大部分应用都采用DNS这种机制
+Kubernetes 通过Add on 方式引入DNS，把服务名称作为DNS域名，这样，程序就可以直接使用服务名来建立通信连接，目前大部分应用都采用DNS这种机制
 
 
 
@@ -444,11 +487,6 @@ Service IP是一个虚拟IP地址，没有任何设备配置此地址，由iptab
 
 
 
-### 服务类型
-
-* Cluster IP:  通过集群内部IP暴露服务，服务之能够在集群内部访问，默认是ServiceType
-* Node Pord：每个
-* 
 
 
 
@@ -456,9 +494,12 @@ Service IP是一个虚拟IP地址，没有任何设备配置此地址，由iptab
 
 
 
-​    
 
-​    
+# 术语
+
+## HPA
+
+Horizontal Pod Autoscaler    
 
 ​    
 
