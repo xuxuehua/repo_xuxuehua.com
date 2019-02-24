@@ -149,3 +149,6 @@ Cluster 级别的
 ### 元数据 Metadata
 
 用于为集群内部的其他资源配置其行为或特征，如HorizontalPodAutoscaler用于自动伸缩工作负载类型的资源对象的规模
+
+
+
