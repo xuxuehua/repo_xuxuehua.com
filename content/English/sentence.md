@@ -1,5 +1,5 @@
 ---
-title: "sentence 句子"
+title: "sentence 简单句"
 date: 2019-01-18 16:02
 ---
 
@@ -547,3 +547,56 @@ weaker races and societies **must** eventually **be replaced** by stronger, more
 
 
 ## 否定
+
+
+
+### 实义动词否定
+
+助动词do/does/did +not +动词原形
+
+
+
+American professors **did not possess** one.
+
+They **do not fund** peer-reviewed research.
+
+
+
+
+
+### 助动词和情态动词
+
+助动词和情态动词(be动词，情态动词，完成时态中的have等) +not
+
+
+
+To be sure, the future **is not** all rosy.
+
+With other audiences you **mustn't attempt** to cut in with humor...
+
+average height... **hasn't** really **changed** since 1960.
+
+
+
+## 强调
+
+助动词do/does/did +动词原形
+
+强调过去，现在比较多
+
+
+
+Although the figure may vary, analysts **do agree** on another matter.
+
+But science **does provide** us with the best available guide to the future.
+
+It **did know ** he had a problem.
+
+
+
+
+
+
+
+
+

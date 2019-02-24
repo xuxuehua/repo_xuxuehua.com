@@ -10,6 +10,8 @@ date: 2019-02-22 22:32
 
 # kubectl
 
+Kubernetes API Server最常用的客户端程序之一，功能强大，能够几乎完成除了安装部署之外的所有管理操作
+
 
 
 ## run
@@ -27,8 +29,10 @@ kubectl expose deployment/nginx --name=nginx-svc --port=80
 ```
 
 ```
-kubectl expose deployments/myapp --type="NodePort" --port=80
+kubectl expose deployments/myapp --type="NodePort" --port=80 --name=myapp
 ```
+
+
 
 
 
@@ -100,6 +104,10 @@ kubectl get pods -o wide
 kubectl describe pods -l component=kube-apiserver -n kube-system
 ```
 
+```
+kubectl describe services myapp-svc
+```
+
 
 
 ## log 日志
@@ -150,6 +158,14 @@ kubectl delete services nginx-svc
 
 
 
+删除默认名称空间中所有的Deployment控制器
+
+```
+kubectl delete deployment --all
+```
+
+
+
 ### --all
 
 删除kube-public 名称空间中的所有pod对象
@@ -159,4 +175,20 @@ kubectl delete pods --all -n kube-public
 ```
 
 
+
+
+
+## scale 扩容/缩容
+
+```
+kubectl scale deployments/myapp --replicas=3 
+```
+
+> replicas 指明对象创建或管理Pod对象的副本数量
+
+
+
+```
+kubectl scale deployments/myapp --replicas=2
+```
 

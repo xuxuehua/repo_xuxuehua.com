@@ -56,5 +56,5 @@ axel [OPTIONS] url1 [url2][url...]
 如下载lnmp安装包指定10个线程，存到/tmp/：
 
 ```
-axel -n 10 -o /tmp/ http://www.linuxde.net/lnmp.tar.gz
+axel -n 10 -o /tmp/ http://www.xuxuehua.com/lnmp.tar.gz
 ```

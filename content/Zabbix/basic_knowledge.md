@@ -114,9 +114,45 @@ GUI，用于实现zabbix设定和展示
 
 
 
+```
+rpm -Uvh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.el7.noarch.rpm
+yum clean all
+yum -y install zabbix-server-mysql zabbix-web-mysql zabbix-agent
+zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzbxuser -p zabbix
+```
 
 
 
+```
+MariaDB [(none)]> CREATE database zabbix character set utf8 collate utf8_bin;
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [(none)]> grant all on zabbix.* TO 'zbxuser'@'localhost' identified by 'zbxpass';
+Query OK, 0 rows affected (0.01 sec)
+```
+
+
+
+```
+Edit file /etc/zabbix/zabbix_server.conf
+
+DBPassword=password
+```
+
+```
+Edit file /etc/httpd/conf.d/zabbix.conf, uncomment and set the right timezone for you.
+# php_value date.timezone Europe/Riga
+```
+
+
+
+```
+Start Zabbix server and agent processes
+Start Zabbix server and agent processes and make it start at system boot:
+
+# systemctl restart zabbix-server zabbix-agent httpd
+# systemctl enable zabbix-server zabbix-agent httpd
+```
 
 
 
