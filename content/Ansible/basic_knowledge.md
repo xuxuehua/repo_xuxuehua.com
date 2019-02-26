@@ -58,6 +58,38 @@ yum -y install ansible
 
 
 
+### 跳过SSH 认证
+
+What you can do at the inventory level is add
+
+```
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+```
+
+or
+
+```
+ansible_ssh_extra_args='-o StrictHostKeyChecking=no'
+```
+
+to your host definition (see [Ansible Behavioral Inventory Parameters](https://docs.ansible.com/ansible/intro_inventory.html#list-of-behavioral-inventory-parameters)).
+
+This will work provided you use the `ssh` connection type, not `paramiko` or something else).
+
+For example, a Vagrant host definition would look like…
+
+```
+vagrant ansible_port=2222 ansible_host=127.0.0.1 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+```
+
+or
+
+```
+vagrant ansible_port=2222 ansible_host=127.0.0.1 ansible_ssh_extra_args='-o StrictHostKeyChecking=no'
+```
+
+
+
 ## 使用秘钥方式连接
 
 

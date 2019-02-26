@@ -97,23 +97,13 @@ Mac OS X users can install pyenv-virtualenv with the [Homebrew](http://brew.sh/)
 
 
 
-
-
 ```
 $ brew install pyenv-virtualenv
 ```
 
-
-
-
-
 ```
 $ brew install --HEAD pyenv-virtualenv
 ```
-
-
-
-
 
 ```
 Cat ~/.bash_profile 
@@ -253,5 +243,33 @@ source ~/.bash_profile
 
 ```
 pyenv uninstall my-virtual-env
+```
+
+
+
+
+
+## Jenkins 配置
+
+选择`Execute shell`，添加构建代码
+
+```
+PROJECT_NAME=testproject
+PYENV_HOME=$HOME/.pyenv
+PROJECT_ENV=$PYENV_HOME/versions/$PROJECT_NAME
+PYTHON_VER_FILE=$WORKSPACE/.python-version
+export PATH=$PYENV_HOME/bin/:$PYENV_HOME/shims:$PATH
+
+#Delete previously built virtualenv
+if [ -d $PROJECT_ENV ]; then
+    pyenv uninstall -f $PROJECT_NAME
+    if [ -f $PYTHON_VER_FILE ]; then
+        rm -f $PYTHON_VER_FILE
+    fi
+fi
+
+pyenv virtualenv 3.6.0 $PROJECT_NAME
+pyenv local $PROJECT_NAME
+pip install --quiet nosexcover
 ```
 

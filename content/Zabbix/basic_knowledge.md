@@ -156,6 +156,18 @@ Start Zabbix server and agent processes and make it start at system boot:
 
 
 
+配置时区
+
+```
+vim /etc/php.ini
+
+date.timezone = Asia/Shanghai
+```
+
+
+
+
+
 # 术语
 
 ## template

@@ -63,11 +63,11 @@ playbook中的每一个play的目的都是为了让某个或某些主机以某�
 
 ```
 - hosts: webserver
- remote_user: magedu
+ remote_user: xurick
  tasks:
   - name: test connection
     ping:
-    remote_user: magedu
+    remote_user: xurick
     sudo: yes
 ```
 

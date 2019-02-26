@@ -156,6 +156,26 @@ host *
 
 
 
+#### connect
+
+```
+git clone https://github.com/ghostlyman/connect-proxy.git
+cd connect 
+make 
+gcc connect.c -o connect 
+cp connect /usr/local/bin
+```
+
+
+
+```
+ssh -o 'ProxyCommand connect -S 127.0.0.1:1080 %h %p' user@host
+```
+
+
+
+
+
 
 ## -p 
 指定远程服务器上的端口
