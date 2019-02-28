@@ -15,7 +15,8 @@ official website -> https://www.imagemagick.org
 ## 安装
 
 ```
-yum install imagemagick
+yum -y install gcc php-devel php-pear
+yum -y install ImageMagick ImageMagick-devel
 ```
 
 

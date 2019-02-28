@@ -80,9 +80,9 @@ Response
 
 UDP
 
-NMS： 161
+NMS： 162 (trap)
 
-Agent： 162
+Agent： 161
 
 
 

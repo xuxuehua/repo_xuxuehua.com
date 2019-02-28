@@ -14,6 +14,62 @@ Kubernetes API Server最常用的客户端程序之一，功能强大，能够�
 
 
 
+## syntax
+
+```
+kubectl [command] [TYPE] [NAME] [flags]
+```
+
+
+
+## installation
+
+
+
+### mac osx
+
+#### binary
+
+Download the latest release:
+
+```
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/darwin/amd64/kubectl
+```
+
+Make the kubectl binary executable.
+
+```
+chmod +x ./kubectl
+```
+
+Move the binary in to your PATH.
+
+```
+sudo mv ./kubectl /usr/local/bin/kubectl
+```
+
+
+
+
+
+#### brew
+
+```
+brew install kubernetes-cli
+```
+
+
+
+## minikube
+
+### mac osx
+
+```
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.34.1/minikube-darwin-amd64 && chmod +x minikube && sudo cp minikube /usr/local/bin/ && rm minikube
+```
+
+
+
 ## run
 
 ```
@@ -190,5 +246,35 @@ kubectl scale deployments/myapp --replicas=3
 
 ```
 kubectl scale deployments/myapp --replicas=2
+```
+
+
+
+
+
+## api-versions
+
+获取api server 上的相关信息
+
+
+
+## explain 
+
+获取相关帮助
+
+
+
+解释Pod资源的一级字段
+
+```
+kubectl explain pods
+```
+
+
+
+某对象下的二级字段, 三四级依此类推
+
+```
+kubectl explain pods.spec
 ```
 

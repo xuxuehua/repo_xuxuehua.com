@@ -152,3 +152,24 @@ Cluster 级别的
 
 
 
+
+
+## API 群组
+
+
+
+### 核心群组 core group
+
+REST 路径为`/api/v1`，在资源配置信息apiVersion 字段中引用时可以不指定路径，而仅给出版本
+
+如 `apiVersion:v1`
+
+
+
+### 命名群组 named group
+
+REST 路径为`/apis/$GROUP_NAME/$VERSION` 
+
+如 `/apis/apps/v1`  在apiVersion字段中引用的格式为`apiVersion:$GROUP_NAME/$VERSION` 
+
+如`apiVersion:apps/v1`

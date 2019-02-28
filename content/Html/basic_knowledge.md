@@ -44,6 +44,12 @@ Hyper Text Markup Language 超文本标记语言
 
 成对出现，有开有闭合，尖括号包住了标签名，结束标签增加斜线
 
+用于绘画的canvas标签
+
+用于媒介回放的video和audio 元素
+
+
+
 
 
 ## URL协议

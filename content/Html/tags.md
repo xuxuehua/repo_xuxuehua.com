@@ -8,15 +8,15 @@ date: 2018-11-06 20:08
 
 # 标签
 
-## `<!DOCTYPE> `
+## `<!DOCTYPE html> ` html5版本
 
 标签位于文档的最前面，用于向浏览器说明当前文档使用哪种HTML或XHTML标准规范
 
 主要用于浏览器解析文档标签的依据
 
-
-
 其与浏览器兼容性有关，若删除，将由浏览器决定展示权利
+
+
 
 
 
@@ -46,7 +46,9 @@ Lang 设定语言，帮助搜素引擎解析页面
 
 ### `<meta>`
 
-`<meta charset="UTF-8">`
+```
+<meta charset="UTF-8">
+```
 
 字符集设定，当前文档的编码格式是UTF-8
 
@@ -70,7 +72,9 @@ Lang 设定语言，帮助搜素引擎解析页面
 
 
 
-### `<p>`段落
+### `<p> `段落
+
+用来定义一段文字
 
 
 
@@ -226,7 +230,7 @@ boder="1" 添加表格外框
 
 ### target 属性
 
-_blank 在新页面
+`_blank` 在新页面
 
 ```
 <a target="_blank" href="http://xuxuehua.com">xuxuehua</a>
@@ -234,7 +238,7 @@ _blank 在新页面
 
 
 
-_self 在当前页面打开
+`_self` 在当前页面打开
 
 ```
 <a target="_self" href="http://xuxuehua.com">xuxuehua</a>

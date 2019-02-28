@@ -11,7 +11,19 @@ date: 2018-06-02 19:03
 ![alt](https://cdn.pbrd.co/images/HocvM1f.png)
 
 
+
+
 ## Kubernetes 特性
+
+How do you manage all these containers running on a single host, and across your whol infrastructure?
+
+Kubernetes is an open source project that enables software teams of all sizes, from a small startup to a Fortune 100 company, to automate deploying, scaling, and manging applications on a group of cluster of server machines. 
+
+
+
+Google 每周约部署2billion containers.
+
+
 
 
 
@@ -19,9 +31,13 @@ date: 2018-06-02 19:03
 
 对资源默认的调度
 
+Pods can be horizontally scaled via API
+
 
 
 ### 服务的自动发现 Service Discovery
+
+
 
 
 
@@ -35,11 +51,17 @@ date: 2018-06-02 19:03
 
 
 
+
+
 ## Kubernetes 架构
 
 
 
 ![alt](https://cdn.pbrd.co/images/HocwGKR.png)
+
+![alt](https://snag.gy/xikmph.jpg)
+
+
 
 
 
@@ -51,15 +73,21 @@ date: 2018-06-02 19:03
 
 包含3个进程
 
-API Server：提供资源统一的入口
+#### API Server
 
-Controller manager：资源的管理和调度（pod调度）
-
-Scheduler：调度的队列，node的列表
+提供资源统一的入口
 
 
 
-使用etcd进行存储
+#### Controller manager
+
+资源的管理和调度（pod调度）
+
+
+
+#### Scheduler
+
+调度的队列，观察node的列表
 
 
 
@@ -67,15 +95,39 @@ Scheduler：调度的队列，node的列表
 
 ### Worker node
 
-包含3个进程
+#### Kubelet
 
-Kubelet：负责pod对应的容器创建，启动停止等任务， 与master 节点协作，实现集群管理， 与Master node协同同坐
+与Master node通信的代理
 
-Kube proxy：实现kubernetes service 的通信和负载均衡机制的重要组件，缓存代理，通过iptables的nat表实现
-
-Docker Engine：Docker 引擎，负责本机的容器创建和管理工作
+负责pod对应的容器创建，启动停止等任务， 与master 节点协作，实现集群管理， 与Master node协同工作
 
 
+
+#### Kube proxy
+
+实现kubernetes service 的通信和负载均衡机制的重要组件，缓存代理，通过iptables的nat表实现
+
+
+
+#### Docker Engine
+
+Docker 引擎，负责本机的容器创建和管理工作
+
+
+
+### etcd
+
+使用etcd进行存储, 简单的key-value 存储
+
+
+
+### kubectl
+
+与master node交互
+
+#### kubeconfig
+
+包含服务器信息，接入API Server的认证信息
 
 
 
@@ -92,6 +144,10 @@ Pod 是Kubernetes中可以创建的最小部署单元， Pod是一组容器的�
 Pod 代表着Kubernetes的部署单元以及原子运行单元，即一个应用程序的单一运行实例，通常由共享资源且关系紧密的一个或者多个应用容器组成
 
 集群中Pod 对象的IP地址需在同一平面（网段）内进行通信
+
+Supports 5k node clusters
+
+150k total pods, 
 
 
 
@@ -147,51 +203,23 @@ label是一个key=value的键值对，可以附加到各种资源对象上， �
 
 很多object可能有相同的label通过label selector， 客户端可以指定object集合，通过label selector 对object的集合进行操作
 
-* Equality-based: 可以使用=， ==， !=操作， 逗号分隔多个表达式
-
-* Et-based:  可以使用in， notin， ! 操作符
-
-  e.g.`kubectl get pods -l 'environment=production,tier=frontend' $ kubectl get pods -l 'environment in (production), tier in (frontend)'`
 
 
+##### Equality-based
 
-### Pod 控制器 Controller
-
-借助Controller 对Pod进行管理，实现一次性的Pod对象管理
+可以使用`=`, `!=`操作， 逗号分隔多个表达式
 
 
 
-包括以下多种调度器
+##### Set-based
+
+可以使用`in`， `notin`， `exists`操作符
+
+```
+`kubectl get pods -l 'environment=production,tier=frontend' $ kubectl get pods -l 'environment in (production), tier in (frontend)'`
+```
 
 
-
-#### Replication Controller
-
-定义了一个期望的场景，声明某种pod的副本数量在任意时刻都符合某个预期值
-
-e.g. `apiVersion: extensions/v1beat1 kind: Replication metadata: name: frontend `
-
-
-
-#### ReplicaSet
-
-
-
-#### Deployment （常用）
-
-Deployment 为Pod和ReplicaSet提供一个声明方法，用来替代Replication Controller 来方便管理
-
-
-
-#### StatefulSet
-
-
-
-#### Job
-
-
-
-#### DaemonSet
 
 
 
@@ -207,11 +235,19 @@ Deployment 为Pod和ReplicaSet提供一个声明方法，用来替代Replication
 
 
 
-### name 和 namespace
+### name 
 
 name 是kubernetes集群中资源对象的标识符，作用域为namespace
 
+
+
+
+
+### namespace
+
 namespace用于实现项目资源隔离，形成逻辑分组
+
+启动kubernetes，默认为default namespace， 开始时objects都在default namespace中
 
 
 
@@ -283,21 +319,7 @@ Ingress可以开放某些Pod对象给外部用户访问
 
 
 
- * service 事例
 
-   ```
-   kind: Service
-   opiVersion: v1
-   metadata:
-     name: my-service
-   spec:
-     selector:
-       app: MyApp
-     ports:
-       - protocol: TCP
-         port: 80
-         targetPort: 9376
-   ```
 
 
 
@@ -311,9 +333,7 @@ Ingress可以开放某些Pod对象给外部用户访问
 #### Service 类型
 
 ```
-1. 仅用于集群内部通信的ClusterIP类型
-2. 接入集群外部请求的NodePort类型， 工作于每个节点的主机IP之上
-3. LoadBalance类型，可以把外部请求负载均衡至多个Node主机IP的NodePort之上
+
 ```
 
 > 每一种都以前一种为基础才能实现

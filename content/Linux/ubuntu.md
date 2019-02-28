@@ -12,9 +12,10 @@ date: 2018-08-27 18:18
 ## Basic development tools
 
 ```
-sudo apt-get install build-essential && \
-sudo apt install libpcre* && \ 
-sudo apt install libz*
+sudo apt-get install -y build-essential && \
+sudo apt install -y libpcre3* && \ 
+sudo apt install -y libzip4* && \ 
+sudo apt install -y git vim curl wget screen proxychains
 ```
 
 
@@ -75,19 +76,31 @@ deb http://security.ubuntu.com/ubuntu bionic-security multiverse
 
 
 
+## Guest additions (copy&paste)
+
+ install the package **virtualbox-guest-additions-iso** in the **host** Ubuntu.
+
+```
+sudo apt-get install virtualbox-guest-additions-iso
+```
+
+The .iso file with an image of the OSE edition of the guest additions CD will install in the host directory `/usr/share/virtualbox/VBoxGuestAdditions.iso`. Mount this .iso file as a CD in your virtual machine's settings. In the guest you will then have access to a CD-ROM with the installer.
+
+
+
+In case the Guest Additions fail to build we may have to install the Linux kernel headers (see [How do I install kernel header files?](https://askubuntu.com/q/75709/88802)) or [**build-essential** ![Install build-essential](https://i.imgur.com/uRtxs.png)](https://apps.ubuntu.com/cat/applications/build-essential) tools in addition. It is also recommended to have [**dkms** ![Install dkms](https://i.imgur.com/uRtxs.png)](https://apps.ubuntu.com/cat/applications/dkms) installed (see below - Note 4). You can run this command in a terminal to install both:
+
+```
+sudo apt install build-essential dkms
+```
+
+Selecting *Devices -> Install Guest Additions* (or press Host+D from the Virtual Box Manager) the Guest Additions CD .iso will be loaded but **not installed** in your guest OS. To install we need to run the installer script `VBoxLinuxAdditions.run` as root or from the Autorun Prompt (see below).
+
+
+
+
+
 ## Ubuntu Chinese Setup
-
-*A Quick Start Guide toChinese Setup, Input Methods, Fonts, and Other Features inUbuntu 18.04 (Bionic Beaver) and the new GNOME*
-
-[Looking for other versions of Ubuntu? Please see the menu above.]
-
-
-
- 
-
- 
-
- 
 
 This page describes how to install Chinese features in non-Chinese versions of Ubuntu 18.04. The preview version of this new GNOME-based interface,[ Ubuntu 17.10,](https://www.pinyinjoe.com/faq/ubuntu-1710-ibus-fcitx.htm) required its own FAQ page. If you need an earlier version, see the setup pages for [Ubuntu 12.04-17.04](https://www.pinyinjoe.com/linux/ubuntu-12-chinese-setup.htm), [Ubuntu 11](https://www.pinyinjoe.com/linux/ubuntu-11-chinese-setup.htm), and [Ubuntu 10](https://www.pinyinjoe.com/linux/ubuntu-10-chinese-setup.htm)(they share the same [input methods](https://www.pinyinjoe.com/linux/ubuntu-10-chinese-input-pinyin-chewing.htm) and [fonts](https://www.pinyinjoe.com/linux/ubuntu-10-chinese-fonts-openoffice-language-features.htm)) or [Ubuntu 9](https://www.pinyinjoe.com/linux/ubuntu-chinese-setup.htm).
 
@@ -170,7 +183,9 @@ The gear button in the Region and Language panel will allow you to select Simpli
 
 Other input methods are available via manual install, including the (Simplified character only) SunPinyin which in some ways offers a superior candidate list algorithm. I have not yet played with this, but as an example to install SunPinyin you would drop into Terminal and enter this:
 
-**sudo apt-get install ibus-sunpinyin**
+```
+sudo apt-get install ibus-sunpinyin
+```
 
 
 
@@ -199,18 +214,6 @@ Maybe IBus just doesn't take you where you need to go. Fcitx has been the standa
 For either framework, to learn more about input methods, fonts, or OpenOffice/LibreOffice features see the next steps below.
 
  
-
-**Next steps:**
-
-> [![Ubuntu Chinese IMEs](https://www.pinyinjoe.com/images/ubuntu/1010/IME-icons-7.jpg)](https://www.pinyinjoe.com/linux/ubuntu-10-chinese-input-pinyin-chewing.htm)
-
-- [A summary of available Ubuntu Chinese Input Methods](https://www.pinyinjoe.com/linux/ubuntu-10-chinese-input-pinyin-chewing.htm)
-
-- [Chinese Fonts in Ubuntu, and LibreOffice Asian Language Features](https://www.pinyinjoe.com/linux/ubuntu-10-chinese-fonts-openoffice-language-features.htm)
-
-As always, feel free to [contact me](https://www.pinyinjoe.com/contact.htm) with any questions, comments and suggestions.
-
-
 
 
 

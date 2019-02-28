@@ -204,6 +204,18 @@ ssh -R 0.0.0.0:8080:host2:80 user@host1
 
 
 
+## -t tty
+
+Force pseudo-tty allocation
+
+This can be used to execute arbitrary screen-based programs on a remote machine, which can be very useful
+
+Multiple -t options force tty allocation, even if ssh has no local tty
+
+
+
+
+
 
 
 

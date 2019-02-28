@@ -230,6 +230,8 @@ ubuntu               14.04               1e0c3dd64ccd        4 weeks ago        
 
 ## 仓库 Repository
 
+即Docker Store，存储和分享docker images
+
 集中存放镜像文件的场所，可以是公有的，也可以是私有的
 
 最大的公开仓库是 Docker Hub
@@ -239,6 +241,8 @@ ubuntu               14.04               1e0c3dd64ccd        4 weeks ago        
 当用户创建了自己的镜像之后就可以使用 push 命令将它上传到公有或者私有仓库，这样下次在另外一台机器上使用这个镜像时候，只需要从仓库上 pull 下来就可以了
 
 Docker 仓库的概念跟 Git 类似，注册服务器可以理解为 GitHub 这样的托管服务
+
+
 
 
 
