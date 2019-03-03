@@ -210,15 +210,17 @@ systemctl status zabbix-agent
 
 
 
-
-
-# trigger
-
-## syntax
+# 配置流程
 
 ```
-{}
+Host group -> Hosts -> Applications -> Items -> Triggers -> Events -> Actions -> User groups -> Users -> Medias
 ```
+
+
+
+
+
+
 
 
 
