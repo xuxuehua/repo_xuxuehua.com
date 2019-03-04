@@ -245,7 +245,7 @@ name 是kubernetes集群中资源对象的标识符，作用域为namespace
 
 ### namespace
 
-namespace用于实现项目资源隔离，形成逻辑分组
+namespace用于实现项目资源隔离，形成逻辑分组(如多个客户服务之间的区分)
 
 启动kubernetes，默认为default namespace， 开始时objects都在default namespace中
 
@@ -343,6 +343,8 @@ Ingress可以开放某些Pod对象给外部用户访问
 #### Endpoint
 
 Endpoint: Pod IP + Container Port 
+
+
 
 
 
@@ -509,7 +511,55 @@ Kubernetes 通过Add on 方式引入DNS，把服务名称作为DNS域名，这�
 
 
 
+## Kubernetes 日志
 
+### Logs 日志
+
+#### 典型架构
+
+![img](https://snag.gy/fTuwEB.jpg)
+
+
+
+## Kubernetes 监控
+
+
+
+### 监控指标
+
+Node health
+
+Health of Kubernetes
+
+Application health (and metrics)
+
+
+
+### 常用工具
+
+#### cAdvisor
+
+专用于containers的开源资源收集器，自动发现node并收集信息，以及主机全局的使用及分析
+
+
+
+#### Heapster
+
+以pod形式运行在cluster
+
+![img](https://snag.gy/nvUobY.jpg)
+
+
+
+#### Prometheus
+
+时间序列数据库，通过query 语句发送应用以及metrics data
+
+
+
+#### Grafana
+
+将上述三种系统数据组合成显示图表
 
 
 

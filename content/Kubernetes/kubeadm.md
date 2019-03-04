@@ -28,11 +28,15 @@ Kubernetes 项目自带的集群构建工具
 
 集群快速初始化，部署master 节点组件
 
+提供join token
+
+
+
 
 
 ### kubeadm join
 
-将节点快速加入到指定集群中
+使用join token将节点快速加入到指定集群中，即work node中，随后就会加入到集群中
 
 
 

@@ -89,3 +89,12 @@ System configs are available for all the users/projects and stored in /etc/gitco
 $ git config --system user.name "John Doe" 
 ```
 
+
+
+## proxy
+
+```
+git config --local http.proxy 'socks5://127.0.0.1:1080'
+git config --local https.proxy 'socks5://127.0.0.1:1080'
+```
+
