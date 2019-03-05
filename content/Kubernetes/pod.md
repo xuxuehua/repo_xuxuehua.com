@@ -10,6 +10,62 @@ date: 2019-02-27 21:42
 
 # Pod
 
+标准的Kubernetes API资源，在yaml中使用kind，apiVersion，metadata和spec字段定义
+
+status字段在对象创建后由系统自行维护
+
+
+
+通过在spec字段中嵌套containers，将容器对象启动
+
+
+
+## 设计
+
+通常应该一个容器中仅运行一个进程，而日志信息通过输出至容器的标准输出，用户通过kubectl log 进行获取
+
+省去了用户手动分摙日志信息
+
+
+
+## 分布式模型
+
+### sidercar pattern 
+
+边车模型或跨斗模型
+
+即pod的主应用容器提供协同的辅助应用容器，每个应用独立运行
+
+如主应用容器中的日志使用agent收集到日志服务器中，可以将agent运行为辅助应用容器，即sidecar
+
+还如主应用容器中启动database 缓存，sidecar启动Redis Cache
+
+
+
+### Ambassador pattern 
+
+大使模型
+
+即远程服务器创建本地代理，主容器应用通过代理容器访问远程服务
+
+
+
+
+
+### Adapter pattern
+
+适配器模式
+
+将主应用容器中的内容进行标准化输出
+
+如日志数据或者指标数据的输出，
+
+
+
+
+
+
+
 ## 状态信息
 
 ### Pending
@@ -115,3 +171,101 @@ Pods管理程序，包含一系列job
 ### DaemonSet
 
 确保所有nodes 运行同一个指定类型的pod
+
+
+
+
+
+
+
+# yaml 定义
+
+
+
+## command
+
+指定不同于镜像默认运行的应用程序，可以同时使用args字段进行参数传递，将覆盖镜像中的默认定义
+
+自定义args 是向容器中的应用程序传递配置信息的常用方式
+
+
+
+### example
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-custom-command
+spec:
+  containers:
+    - name: myapp
+      image: alpine:latest
+      command: ["/bin/sh"]
+      args: ["-c", "while true; do sleep 30; done"]
+```
+
+
+
+
+
+## ports
+
+显示指定容器端口，为其赋予一个名称方便调用
+
+其值为一个列表，有一个到多个端口对象组成，且嵌套以下字段
+
+```
+containerPort <integer> 必选字段，指定Pod的IP地址暴露的容器端口 0-65536
+name <string> 当前容器端口名称，在当前pod内需要唯一，此端口名可以被Service资源调用
+protocol 可以为TCP或UDP，默认为TCP
+```
+
+### example
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-example
+spec:
+  containers:
+    - name: myapp
+      image: ikubernetes/myapp:v1
+      ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+```
+
+
+
+
+
+
+
+## imagePullPolicy
+
+```
+Always 镜像标签为latest，或镜像不存在时总是从指定的仓库中获取镜像
+IfNotPresent  仅当本地镜像缺失时方才从目标仓库中下载镜像
+Never 禁止从仓库中下载镜像，仅仅使用本地镜像
+```
+
+
+
+### example
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+        imagePullPolicy: Always
+```
+
+> 总是从镜像仓库中获取最新的nginx 镜像

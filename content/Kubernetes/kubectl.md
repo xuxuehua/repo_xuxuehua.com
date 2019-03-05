@@ -126,6 +126,12 @@ kubectl delete all --all
 
 
 
+#### -f 指定配置
+
+```
+kubectl delete -f pod-example.yaml
+```
+
 
 
 ### edit 编辑资源
@@ -412,6 +418,10 @@ kubectl exec -it $POD_NAME /bin/sh
 
 ### describe 详细信息
 
+```
+kubectl describe (-f FILENAME | TYPE [NAME_PREFIX | -l label] | TYPE/NAME)
+```
+
 显示指定的资源或者资源组的详细信息
 
 ```
@@ -421,6 +431,8 @@ kubectl describe pods -l component=kube-apiserver -n kube-system
 ```
 kubectl describe services myapp-svc
 ```
+
+
 
 
 
@@ -483,6 +495,8 @@ kubectl apply -f nginx-deploy.yaml -f nginx-svc.yaml
 ### patch 补丁更新
 
 使用策略合并补丁更新资源字段
+
+
 
 
 

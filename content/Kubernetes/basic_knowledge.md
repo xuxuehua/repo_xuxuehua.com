@@ -63,6 +63,18 @@ Pods can be horizontally scaled via API
 
 
 
+![img](https://snag.gy/XTBSJr.jpg)
+
+
+
+![img](https://snag.gy/FPMuN5.jpg)
+
+
+
+
+
+
+
 
 
 ### Master node
