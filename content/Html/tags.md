@@ -75,6 +75,16 @@ Lang 设定语言，帮助搜素引擎解析页面
 
 
 
+### background
+
+设置背景图片
+
+```
+<body background="cat.jpg">
+```
+
+
+
 ## 呈现标签
 
 ### `<h1>~<h6>`标题
@@ -428,7 +438,7 @@ action:  路径， #表示当前页面
 
 
 
-## `<textarea>` 文本控件
+## `<textarea>` 文本域
 
 需要输入大量的信息是来处理
 
@@ -439,6 +449,10 @@ action:  路径， #表示当前页面
 rows -> rows="4"
 
 cols -> cols="20"
+
+```
+<textarea cols="30" rows="30">填写大量信息</textarea>
+```
 
 
 
@@ -683,11 +697,17 @@ margin-left
 
 
 
-## 特殊标记
+## HTML 实体名称 特殊标记
 
 html为特殊符号准备了专门的替代码
 
-如空格 `&nbsp`; 小于 `&lt` ； 大于 `&gt`;
+### 空格 `&nbsp`
+
+### 小于 `&lt` 
+
+### 大于 `&gt`;
+
+
 
 
 

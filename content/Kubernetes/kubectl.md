@@ -184,6 +184,8 @@ kubectl expose deployments/myapp --type="NodePort" --port=80 --name=myapp
 
 ### get 显示资源
 
+
+
 列出所有资源
 
 ```
@@ -200,6 +202,8 @@ kubectl get pods,services -o wide
 
 
 
+#### -l 标签选择器
+
 列出名称空间中拥有k8s-app标签名称的所有Pod 对象
 
 ```
@@ -207,6 +211,12 @@ kubectl get pods -l k8s-app -n kube-system
 ```
 
 
+
+#### -L 标签列表
+
+```
+kubectl get pods -l 'env in (production,dev),!tier' -L env,tier
+```
 
 
 
@@ -249,6 +259,16 @@ kubectl get pods -o wide
 ##### custom-columns 自定义输出
 
 自定义要输出的字段
+
+
+
+##### nodes
+
+查看键名为SSD标签的node资源
+
+```
+kubectl get nodes -l 'disktype' -L disktype
+```
 
 
 
@@ -514,7 +534,21 @@ kubectl apply -f nginx-deploy.yaml -f nginx-svc.yaml
 
 ### annotate 更新注释
 
-更新资源注释
+添加资源注释
+
+```
+kubectl annotate pods pod-example ilinux.io/created-by="cluster admin"
+```
+
+
+
+查看注解
+
+```
+kubectl describe pods pod-example | grep "Annotations"
+```
+
+
 
 
 
@@ -527,6 +561,42 @@ kubectl apply -f nginx-deploy.yaml -f nginx-svc.yaml
 ### label 资源标签
 
 更新指定资源标签
+
+
+
+#### 添加标签
+
+为pod-example 添加env=production 标签
+
+```
+kubectl label pods/pod-example env=production
+```
+
+
+
+#### 覆盖标签 --overwrite
+
+```
+kubectl label pods/pod-with-labels env=testing --overwrite
+```
+
+
+
+#### nodes
+
+设置标签以及标识
+
+```
+kubectl label nodes node01.xurick.com disktype=ssd
+```
+
+
+
+查看键名为SSD标签的node资源
+
+```
+kubectl get nodes -l 'disktype' -L disktype
+```
 
 
 

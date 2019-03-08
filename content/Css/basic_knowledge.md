@@ -33,6 +33,22 @@ p {color:red;}
 
 
 
+属性大于1个，使用分号隔开
+
+```
+h1 {color:red; font-size: 14px}
+```
+
+
+
+大于一个单词，加上引号
+
+```
+p {font-family: "sans serif"}
+```
+
+
+
 ## 注释
 
 ```

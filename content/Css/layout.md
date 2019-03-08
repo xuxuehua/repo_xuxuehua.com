@@ -15,11 +15,15 @@ date: 2018-11-20 18:06
 
 即把HTML页面中的元素看作是一个矩形的盒子容器，没有矩形都是有元素的内容（content），内边距（padding），边框（border）和外边距（margin） 组成
 
-![img](https://cdn.pbrd.co/images/HO0Dwzx.png)
+![img](https://snag.gy/sfBe6c.jpg)
 
 
 
-- 网站一般会将内边距盒外边距设置为0
+
+
+
+
+网站一般会将内边距盒外边距设置为0
 
 ```
 body,button,code,dd,details,dl,dt,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,hr,input,legend,li,menu,nav,ol,p,pre,section,td,textarea,th,ul{margin:0;padding:0}
@@ -27,13 +31,13 @@ body,button,code,dd,details,dl,dt,fieldset,figcaption,figure,footer,form,h1,h2,h
 
 
 
-- 行内元素不要给上下的margin和padding，默认是不起作用的
+行内元素不要给上下的margin和padding，默认是不起作用的
 
 
 
-### border样式
+### border 边框
 
-- 推荐方式
+推荐方式
 
 ```
 border: 20px solid purple;
@@ -41,7 +45,7 @@ border: 20px solid purple;
 
 
 
-- border-style
+border-style
 
 ```
 none，没有边框，即忽略所有边框的宽度
@@ -53,7 +57,7 @@ double，边框为双实线
 
 
 
-- border-color
+border-color
 
 ```
 border-color: red; 
@@ -64,7 +68,27 @@ border-color: yellow black green red;
 
 
 
-### Padding 样式
+border-radius
+
+圆角边框
+
+
+
+box-shadow
+
+边框阴影
+
+
+
+border-image
+
+边框图片
+
+
+
+
+
+### padding 内边距
 
 ```
 padding: 10px 20px 30px 40px
@@ -75,7 +99,11 @@ padding: 0;
 
 
 
-### margin 样式
+### margin 外边距
+
+默认为透明区域
+
+接受任何长度单位，百分比数值
 
 ```
 margin: 0 auto;
@@ -83,17 +111,31 @@ margin: 0 auto;
 
 
 
-- 使用margin定义块元素的垂直外边距时，可能会出现外边距合并的现象
+使用margin定义块元素的垂直外边距时，可能会出现外边距合并的现象
+
+```
+.container1 {
+    margin: 100px;
+}
+
+.container2 {
+    margin: 100px;
+}
+```
+
+> 两个container之间的间距是100，不是200
+>
+> 若不一样，以边距大的数值为最终结果
 
 
 
 
 
-## 流式布局
+## 流式布局  
 
 ### 标准流
 
-把浏览器当成一个盒子容器，容器中排放盒子的时候，从上往下，从左向右排放
+  把浏览器当成一个盒子容器，容器中排放盒子的时候，从上往下，从左向右排放
 
 若放不下盒子，换行存放
 
@@ -119,7 +161,7 @@ div {
 
 ### overflow 属性
 
-* 父容器高度塌陷
+父容器高度塌陷
 
 如果一个标准流中的盒子中所有的子元素都进行了浮动，而且盒子没有设置高度，那么父容器整个高度会塌陷，使用hidden 解决
 

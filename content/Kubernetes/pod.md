@@ -24,7 +24,41 @@ status字段在对象创建后由系统自行维护
 
 通常应该一个容器中仅运行一个进程，而日志信息通过输出至容器的标准输出，用户通过kubectl log 进行获取
 
-省去了用户手动分摙日志信息
+省去了用户手动分拣日志信息
+
+
+
+## pod 生命周期
+
+### Pending
+
+API Server 创建了Pod资源对象并已存储etcd中，但未被调度完成，或着仍然处于从仓库下载镜像的过程中
+
+
+
+### Running
+
+Pod已经被调度至某节点，并且所有容器都已经被kubelet创建完成
+
+
+
+### Succeeded
+
+Pod 中的所有容器都已经成功终止并且不会被重启
+
+
+
+### Failed
+
+所有容器都已经终止，但至少有一个容器终止失败，即容器返回了非0值的退出状态或已经被系统终止
+
+
+
+### Unknown
+
+API Server 无法正常获取到Pod对象的状态信息，通常是由于无法与所在工作节点的kubelet通信
+
+
 
 
 
@@ -178,7 +212,52 @@ Pods管理程序，包含一系列job
 
 
 
+## 环境变量
+
+通过环境变量在容器启动时传递配置信息
+
+
+
+### env
+
+在容器配置段中嵌套env字段，值是环境变量构成的列表
+
+```
+name <string>  环境变量名称，必须字段
+value <string>  传递值，通过$(VAR_NAME) 引用
+```
+
+
+
+#### example
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-env
+spec: 
+  containers:
+  - name: filebeat
+    image: ikubernetes/filebeat:5.6.5-alpine
+    env: 
+    - name: REDIS_HOST
+      value: db.xurick.com:6379
+    - name: LOG_LEVEL
+      value: info
+```
+
+
+
+### envFrom
+
+
+
 # yaml 定义
+
+## apiVersion
+
+
 
 
 
@@ -269,3 +348,99 @@ spec:
 ```
 
 > 总是从镜像仓库中获取最新的nginx 镜像
+
+
+
+
+
+
+
+## labels
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-labels
+  labels:
+    env: qa
+    tier: frontend
+spec: 
+  containers:
+  - name: myapp
+    image: ikubernetes/myapp:v1
+```
+
+
+
+## selector
+
+### matchLabels
+
+通过直接给定键值来指定标签选择器
+
+```
+selector:
+  matchLabels:
+    component: redis
+```
+
+
+
+
+
+### matchExpressions
+
+基于表达式指定的标签选择器列表，每个选择器都形如
+
+```
+{key: KEY_NAME, operator: OPERATOR, values: [VALUE1, VALUE2, ...]}
+```
+
+
+
+```
+selector:
+  matchExpressions:
+    - {key: tier, operator: In, values: [cache]}
+    - {key: environment, operator: Exists, values:}
+```
+
+
+
+## nodeSelector
+
+调度某些资源至指定设备节点，使用nodeSelector选择器
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-nodeselector
+  labels:
+    env: testing
+spec: 
+  containers:
+  - name: myapp
+    image: ikubernetes/myapp:v1
+  nodeSelector:
+    disktype: ssd
+```
+
+
+
+## annotations
+
+生成资源注解
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-nodeselector
+  annotations:
+    ilinux.io/created-by: cluster admin
+spec: 
+....
+```
+

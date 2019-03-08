@@ -211,28 +211,6 @@ label是一个key=value的键值对，可以附加到各种资源对象上， �
 
 
 
-#### Label Selector 
-
-很多object可能有相同的label通过label selector， 客户端可以指定object集合，通过label selector 对object的集合进行操作
-
-
-
-##### Equality-based
-
-可以使用`=`, `!=`操作， 逗号分隔多个表达式
-
-
-
-##### Set-based
-
-可以使用`in`， `notin`， `exists`操作符
-
-```
-`kubectl get pods -l 'environment=production,tier=frontend' $ kubectl get pods -l 'environment in (production), tier in (frontend)'`
-```
-
-
-
 
 
 

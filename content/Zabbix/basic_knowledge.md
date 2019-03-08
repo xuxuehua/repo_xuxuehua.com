@@ -218,6 +218,30 @@ Host group -> Hosts -> Applications -> Items -> Triggers -> Events -> Actions ->
 
 
 
+## 依赖关系
+
+```
+Host -> Item -> Trigger -> Action -> Notice, Command
+```
+
+
+
+## 添加主机到server
+
+### discovery
+
+
+
+### auto_registration
+
+
+
+
+
+
+
+
+
 
 
 

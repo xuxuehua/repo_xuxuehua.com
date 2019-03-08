@@ -145,7 +145,7 @@ p#one {
 
 
 
-常用的初始化设置
+#### 常用的初始化设置
 
 ```
 html, body, div, dt, dl, dd, ul, p {
@@ -185,7 +185,11 @@ p > strong {
 
 ## 属性选择器
 
-![img](https://cdn.pbrd.co/images/HMXiV93.png)
+![img](https://snag.gy/PCwbiW.jpg)
+
+
+
+
 
 
 
