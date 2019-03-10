@@ -10,6 +10,14 @@ date: 2019-02-27 21:42
 
 # Pod
 
+
+
+![img](https://snag.gy/fPQNgz.jpg)
+
+
+
+
+
 标准的Kubernetes API资源，在yaml中使用kind，apiVersion，metadata和spec字段定义
 
 status字段在对象创建后由系统自行维护
@@ -17,6 +25,10 @@ status字段在对象创建后由系统自行维护
 
 
 通过在spec字段中嵌套containers，将容器对象启动
+
+
+
+Pod 里面的容器共享同一个Network Namespace，同一组数据卷，而达到高效率的交换信息，即保证了容器间的紧密协作关系
 
 
 
@@ -28,7 +40,7 @@ status字段在对象创建后由系统自行维护
 
 
 
-## pod 生命周期
+## pod 相位（phase）
 
 ### Pending
 
@@ -57,6 +69,104 @@ Pod 中的所有容器都已经成功终止并且不会被重启
 ### Unknown
 
 API Server 无法正常获取到Pod对象的状态信息，通常是由于无法与所在工作节点的kubelet通信
+
+
+
+
+
+## 容器重启策略
+
+### Always
+
+pod对象终止就将其重启，默认设定
+
+
+
+### OnFailure
+
+只在pod对象出现错误时方将其重启
+
+
+
+### Never
+
+从不重启
+
+
+
+## pod 资源需求
+
+自主式Pod 要求stress 容器确保128Mi的内存及五分之一的CPU核心(200m) 资源可用
+
+运行stress-ng 镜像启动一个进程(-m 1) 进行内存性能压力测试，满载测试时也会尽可能多地占用CPU资源
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: stress-pod
+spec:
+  containers:
+    - name: stress
+      image: ikubernetes/stress-ng
+      command: ["/usr/bin/stress-ng", "-m 1", "-c 1", "-metrics-brief"]
+      resources:
+        requests:
+          memory: "128Mi"
+          cpu: "200m"
+
+```
+
+
+
+
+
+```
+kubectl create -f pod-resources-test.yaml
+```
+
+
+
+top命令观察其CPU及内存资源占用状态
+
+```
+kubectl exec stress-pod -- top
+```
+
+
+
+
+
+### limits 资源限制
+
+limits 属性为容器定义资源的最大可用量。
+
+资源分配时，可压缩形资源的CPU的控制阀可以自由调节，容器进程无法获得超出其CPU配额的可用时间
+
+如果超出，会被OOM kill 掉
+
+
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: memleak-pod
+  labels:
+    app: memleak
+spec:
+  containers:
+    - name: simmemleak
+      image: saadali/simmemleak
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "1"
+        limits:
+          memory: "64Mi"
+          cpu: "1"
+
+```
 
 
 
@@ -252,195 +362,4 @@ spec:
 ### envFrom
 
 
-
-# yaml 定义
-
-## apiVersion
-
-
-
-
-
-## command
-
-指定不同于镜像默认运行的应用程序，可以同时使用args字段进行参数传递，将覆盖镜像中的默认定义
-
-自定义args 是向容器中的应用程序传递配置信息的常用方式
-
-
-
-### example
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod-with-custom-command
-spec:
-  containers:
-    - name: myapp
-      image: alpine:latest
-      command: ["/bin/sh"]
-      args: ["-c", "while true; do sleep 30; done"]
-```
-
-
-
-
-
-## ports
-
-显示指定容器端口，为其赋予一个名称方便调用
-
-其值为一个列表，有一个到多个端口对象组成，且嵌套以下字段
-
-```
-containerPort <integer> 必选字段，指定Pod的IP地址暴露的容器端口 0-65536
-name <string> 当前容器端口名称，在当前pod内需要唯一，此端口名可以被Service资源调用
-protocol 可以为TCP或UDP，默认为TCP
-```
-
-### example
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod-example
-spec:
-  containers:
-    - name: myapp
-      image: ikubernetes/myapp:v1
-      ports:
-        - name: http
-          containerPort: 80
-          protocol: TCP
-```
-
-
-
-
-
-
-
-## imagePullPolicy
-
-```
-Always 镜像标签为latest，或镜像不存在时总是从指定的仓库中获取镜像
-IfNotPresent  仅当本地镜像缺失时方才从目标仓库中下载镜像
-Never 禁止从仓库中下载镜像，仅仅使用本地镜像
-```
-
-
-
-### example
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx-pod
-spec:
-  containers:
-    - name: nginx
-      image: nginx:latest
-        imagePullPolicy: Always
-```
-
-> 总是从镜像仓库中获取最新的nginx 镜像
-
-
-
-
-
-
-
-## labels
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod-with-labels
-  labels:
-    env: qa
-    tier: frontend
-spec: 
-  containers:
-  - name: myapp
-    image: ikubernetes/myapp:v1
-```
-
-
-
-## selector
-
-### matchLabels
-
-通过直接给定键值来指定标签选择器
-
-```
-selector:
-  matchLabels:
-    component: redis
-```
-
-
-
-
-
-### matchExpressions
-
-基于表达式指定的标签选择器列表，每个选择器都形如
-
-```
-{key: KEY_NAME, operator: OPERATOR, values: [VALUE1, VALUE2, ...]}
-```
-
-
-
-```
-selector:
-  matchExpressions:
-    - {key: tier, operator: In, values: [cache]}
-    - {key: environment, operator: Exists, values:}
-```
-
-
-
-## nodeSelector
-
-调度某些资源至指定设备节点，使用nodeSelector选择器
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod-with-nodeselector
-  labels:
-    env: testing
-spec: 
-  containers:
-  - name: myapp
-    image: ikubernetes/myapp:v1
-  nodeSelector:
-    disktype: ssd
-```
-
-
-
-## annotations
-
-生成资源注解
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod-with-nodeselector
-  annotations:
-    ilinux.io/created-by: cluster admin
-spec: 
-....
-```
 

@@ -134,6 +134,14 @@ kubectl delete -f pod-example.yaml
 
 
 
+#### --grace-period
+
+默认删除操作为30s，使用此参数自定义其时常
+
+若使用0表示直接强制删除指定的资源，需同时使用`--force` 选项
+
+
+
 ### edit 编辑资源
 
 

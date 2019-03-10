@@ -185,11 +185,27 @@ p > strong {
 
 ## 属性选择器
 
+属性和属性值必须完全匹配
+
+
+
 ![img](https://snag.gy/PCwbiW.jpg)
 
 
 
+```
+[title] {
+    color: aqua;
+}
+```
 
+
+
+```
+[href] {
+    font-size: 30px;
+}
+```
 
 
 
@@ -198,6 +214,22 @@ p > strong {
 
 
 ## 相邻兄弟选择器
+
+可选择紧接在另一个元素后的元素，且二者有相同的父元素
+
+```
+<ul>
+	<li>item1</li>
+	<li>item2</li>
+	<li>item3</li>
+</ul>
+
+li+li {
+    font-size: 30px;
+}
+```
+
+> item2和item3会变大，后的概念
 
 
 

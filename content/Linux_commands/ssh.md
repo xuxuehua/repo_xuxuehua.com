@@ -169,7 +169,7 @@ cp connect /usr/local/bin
 
 
 ```
-ssh -o 'ProxyCommand connect -S 127.0.0.1:1080 %h %p' user@host
+ssh -o "ProxyCommand connect -S 127.0.0.1:1080 %h %p" user@host
 ```
 
 

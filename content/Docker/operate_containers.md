@@ -11,7 +11,7 @@ date: 2018-10-24 16:23
 
 在 Docker 1.13+ 推荐使用 docker container 子命令来管理 Docker 容器。
 
-## docker run 运行容器
+## run 运行容器
 
 docker run 就是运行容器的命令
 
@@ -54,7 +54,11 @@ $ docker run -d ubuntu:14.04 /bin/sh -c "while true; do echo hello world; sleep 
 
 ### -v volumn 
 
-指定本地卷信息
+进程在容器对被挂载目录（如test）进行的所有操作，都实际发生在宿主机的对应目录，（如home，或者/var/lib/docker/volumes/[VOLUME_ID]/_data，里面不会影响容器容器镜像
+
+其本质，是将/test目录的入口，重定向到/home目录的inode上，实际修改的是/home目录的inode
+
+
 
 默认容器对这个目录有可读写权限，可以通过指定ro，将权限改为只读（readonly）
 
@@ -64,9 +68,82 @@ docker run --name some-nginx -p 80:80 -v /some/content:/usr/share/nginx/html:ro 
 
 
 
+
+
+```
+docker run -v /test 
+```
+
+> 由于没有显式指定宿主机目录，默认在宿主机上创建临时目录
+>
+> /var/lib/docker/volumes/[VOLUME_ID]/_data 
+
+
+
+```
+docker run -v /home:/test
+```
+
+> 将宿主机目录/home 挂载进容器的/test 目录当中
+
+
+
+
+
+
+
+
+
 ### --rm 容器退出后删除
 
 这个参数是说容器退出后随之将其删除。默认情况下，为了排障需求，退出的容器并不会立即删除，除非手动 docker rm。我们这里只是随便执行个命令，看看结果，不需要排障和保留结果，因此使用 --rm 可以避免浪费空间。
+
+
+
+## volume 查看卷
+
+
+
+### ls 查看卷ID
+
+```
+# docker run -d -v /test helloworld
+40a9cbd61d78451c74be1034ddaa1079e3e687ba4f7b557aff96f15bea5303cb
+
+# docker volume ls
+DRIVER              VOLUME NAME
+local               c0dbc7dc970abb3ab332cf956b823e60286e4be5ecaa38faa2e7bf04a3d53677
+```
+
+
+
+可以查看到该目录
+
+```
+# ls -lah /var/lib/docker/volumes/c0dbc7dc970abb3ab332cf956b823e60286e4be5ecaa38faa2e7bf04a3d53677/_data/
+total 8.0K
+drwxr-xr-x 2 root root 4.0K Mar  9 16:54 .
+drwxr-xr-x 3 root root 4.0K Mar  9 16:54 ..
+```
+
+
+
+进入容器创建文件，可以看到文本被创建了
+
+```
+# docker exec -it loving_davinci /bin/bash
+root@40a9cbd61d78:/test# touch text.txt
+root@40a9cbd61d78:/test# exit
+root@119:~# ls
+1  1.sh  Dockerfile  app.py  cc  requirements.txt
+root@119:~# ls -lah /var/lib/docker/volumes/c0dbc7dc970abb3ab332cf956b823e60286e4be5ecaa38faa2e7bf04a3d53677/_data/
+total 8.0K
+drwxr-xr-x 2 root root 4.0K Mar  9 16:59 .
+drwxr-xr-x 3 root root 4.0K Mar  9 16:54 ..
+-rw-r--r-- 1 root root    0 Mar  9 16:59 text.txt
+```
+
+
 
 
 
@@ -85,6 +162,14 @@ docker stop $(docker ps -aq)
 ## restart 重启容器
 
 docker restart container_id 命令会将一个运行态的容器终止，然后再重新启动它
+
+
+
+## inspect 查看容器
+
+```
+docker inspect --format '{{ .State.Pid }}' af3f3c9d2428
+```
 
 
 
@@ -164,6 +249,8 @@ root@243c32535da7:/#
 
 
 ### exec 命令
+
+一个进程，可以选择加入到某个进程已有的Namespace当中，从而达到进入这个进程所在的容器，这就是docker exec的实现原理
 
 ```
 $ sudo docker ps  

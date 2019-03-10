@@ -17,6 +17,99 @@ Docker 最初是 dotCloud 公司创始人 Solomon Hykes 在法国期间发起的
 
 
 
+## 核心
+
+容器技术的核心功能，就是通过约束和修改进程的动态表现，为进程创造出一个界限的效果
+
+
+
+最核心的原理实际上是为待创建的用户进程
+
+1. 启动Linux Namespace
+2. 设置指定的Cgroups参数
+3. 切换进程的根目录(Change root)
+
+
+
+
+
+### Cgroups 
+
+Linux Control Group
+
+主要是限制一个进程组能够使用的资源上线，包括CPU，内存，磁盘，网络，带宽等
+
+即Linux 内核中用来为进程设置资源限制的一个重要功能
+
+
+
+Cgroups 还能够对进程进行优先级设置，审计，以及将进程挂起和恢复等操作
+
+
+
+
+
+### Namespace 
+
+用来修改进程视图的主要方法，即对被隔离应用的进程空间做了手脚，使其自认为是pid=1的进程，而在宿主机上，是原来的其他进程
+
+即创建容器进程时，指定来这个进程所需要启动的一组Namespace 参数
+
+```
+docker run -it busybox /bin/sh
+
+Status: Downloaded newer image for busybox:latest
+/ # ps
+PID   USER     TIME  COMMAND
+    1 root      0:00 /bin/sh
+    6 root      0:00 ps
+/ #
+```
+
+> 这里/bin/sh PID为1， 但在宿主机，就不是1
+
+
+
+## 本质
+
+容器的本质就是一个进程，用户的应用进程实际上就是容器里 PID=1 的进程，也是其他后续创建的所有进程的父进程。这就意味着，在一个容器中，你没办法同时运行两个不同的应用，除非你能事先找到一个公共的 PID=1 的程序来充当两个不同应用的父进程，这也是为什么很多人都会用 systemd 或者 supervisord 这样的软件来代替应用本身作为容器的启动进程。
+
+
+
+
+
+
+
+## 缺点
+
+在Linux内核中，很多资源时不可以被Namespace化的，比如时间
+
+如果容器中的程序使用settimeofday(2) 系统调用修改了时间，整个宿主机的时间就会被更改
+
+
+
+### 解决方法
+
+Linux下的/proc 目录存储的是记录当前内核运行状态的一组特殊文件
+
+用户可以访问文件获取系统当前进程的信息
+
+但运行top指令发现显示信息为宿主机的相关信息
+
+因为/proc 文件系统并不知道用户通过Cgroups 给容器做了哪些资源限制，
+
+所以可以通过lxcfs来实现此功能
+
+如把宿主机的/var/lib/lxcfs/proc/memoinfo 的文件挂载到Docker 容器的/proc/meminfo 位置后，容器中进程读取相应文件内容时，lxcfs的fuse实现会从容器对应的Cgroup中读取正确的内存限制，获得正确的资源约束
+
+
+
+
+
+
+
+
+
 ## 虚拟化方式比较
 
 ![img](https://cdn.pbrd.co/images/HJA0XhB.png)
@@ -156,24 +249,92 @@ export  DOCKER_HOST="tcp://0.0.0.0:2375"
 
 一个只读的模板，镜像可以用来创建 Docker 容器
 
+```
+docker run -d ubuntu:latest sleep 3600
+```
+
+这里的Ubuntu 镜像，实际上就是一个Ubuntu操作系统的rootfs，内容是Ubuntu操作系统的所有文件和目录
+
+
+
+任何镜像里面的内容都属于只读层，commit之后的东西也属于只读层
+
+
+
+### rootfs
+
+用于为容器进程提供隔离后执行环境的文件系统，即所谓的容器镜像rootfs
+
+
+
 就相当于一个root文件系统。官方镜像Ubuntu:14.04 就包含了完整的一套 Ubuntu 14.04 最小系统的 root 文件系统
 
 镜像不包含任何动态数据，其内容在构建之后也不会被改变。
 
 
 
-### 分层存储
+rootfs只是一个操作系统包含的文件，配置和目录，并不包括系统内核，在Linux系统中，两部分是分开存放的，操作系统只有在开机启动的时候才会夹在指定版本的内核镜像
 
-Docker 设计时，就充分利用 Union FS 的技术，将其设计为分层存储的架构
+
+
+
+
+### 分层存储 Union FS
+
+Docker 设计时，就充分利用 Union FS 的技术，将其设计为分层存储的架构，即将多个不同位置的目录联合挂载到同一个目录下
 
 镜像构建时，会一层层构建，前一层是后一层的基础。每一层构建完就不会再发生改变，后一层上的任何改变只发生在自己这一层。
 
 > 比如，删除前一层文件的操作，实际不是真的删除前一层的文件，而是仅在当前层标记为该文件已删除。在最终容器运行的时候，虽然不会看到这个文件，但是实际上该文件会一直跟随镜像。因此，在构建镜像的时候，需要额外小心，每一层尽量只包含该层需要添加的东西，任何额外的东西应该在该层构建结束前清理掉。
 
+
+
+所有的层都保存在diff目录下
+
+
+
+Docker 镜像使用的rootfs，往往由多个层组成
+
+```
+# docker image inspect ubuntu:latest | grep -i rootfs -C 12
+
+"RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:bebe7ce6215aee349bee5d67222abeb5c5a834bbeaa2f2f5d05363d9fd68db41",
+                "sha256:283fb404ea9415ab48456fd8a82b153b1a719491cdf7b806d1853b047d00f27f",
+                "sha256:663e8522d78b5b767f15b2e43885da5975068e3195bbbfa8fc3a082297a361c1",
+                "sha256:4b7d93055d8781d27259ba5780938e6a78d8ef691c94ee9abc3616c1b009ec4a"
+            ]
+```
+
+> 这里的每一层即是一个增量的rootfs
+
+然后将所有增量联合一起挂在在一个统一的挂在点上
+
+```
+root@localhost:~# find / -name '663e8522d78b5b767f15b2e43885da5975068e3195bbbfa8fc3a082297a361c1'
+/var/lib/docker/image/overlay2/distribution/v2metadata-by-diffid/sha256/663e8522d78b5b767f15b2e43885da5975068e3195bbbfa8fc3a082297a361c1
+```
+
+
+
 #### 镜像的实现原理
 
 Docker 镜像是怎么实现增量的修改和维护的？ 每个镜像都由很多层次构成，Docker 使用 Union FS 将这些不同的层结合到一个镜像中去。
 通常 Union FS 有两个用途, 一方面可以实现不借助 LVM、RAID 将多个 disk 挂到同一个目录下,另一个更常用的就是将一个只读的分支和一个可写的分支联合在一起，Live CD 正是基于此方法可以允许在镜像不变的基础上允许用户在其上进行一些写操作。 Docker 在 AUFS 上构建的容器也是利用了类似的原理。
+
+
+
+![img](https://snag.gy/96p30S.jpg)
+
+init 层，用来存放临时修改过的/etc/hosts等文件
+
+Copy on Write 存放任何对只读层的修改，容器声明的Volume挂载点，也出现在这一层
+
+
+
+
 
 
 
@@ -202,6 +363,28 @@ ubuntu               16.04               f753707788c5        4 weeks ago        
 ubuntu               latest              f753707788c5        4 weeks ago         127 MB
 ubuntu               14.04               1e0c3dd64ccd        4 weeks ago         188 MB
 ```
+
+
+
+### scratch 镜像
+
+本身即是空镜像，万能的base镜像
+
+如centos等镜像的FROM处
+
+
+
+### Volume 
+
+允许将宿主机指定的目录或者文件，挂载到容器里面进行读取和修改操作
+
+
+
+容器volume里面的信息，并不会被docker commit 提交掉
+
+
+
+Volume 的本质是宿主机上的一个独立目录，不属于rootfs的一部分
 
 
 
@@ -491,17 +674,23 @@ test      -        virtualbox   Running   tcp://192.168.99.187:2376           v1
 
 ## etcd
 
-* etcd 是 CoreOS 团队发起的一个管理配置信息和服务发现（service discovery）的项目
+etcd 是 CoreOS 团队发起的一个管理配置信息和服务发现（service discovery）的项目
 
-> etcd 是 CoreOS 团队于 2013 年 6 月发起的开源项目，它的目标是构建一个高可用的分布式键值（key-value）数据库，基于 Go 语言实现。
 
-> 受到 Apache ZooKeeper 项目和 doozer 项目的启发，etcd 在设计的时候重点考虑了下面四个要素：
-> 简单：支持 REST 风格的 HTTP+JSON API
-> 安全：支持 HTTPS 方式的访问
-> 快速：支持并发 1k/s 的写操作
-> 可靠：支持分布式结构，基于 Raft 的一致性算法
 
-> 一般情况下，用户使用 etcd 可以在多个节点上启动多个实例，并添加它们为一个集群。同一个集群中的 etcd 实例将会保持彼此信息的一致性。
+etcd 是 CoreOS 团队于 2013 年 6 月发起的开源项目，它的目标是构建一个高可用的分布式键值（key-value）数据库，基于 Go 语言实现。
+
+
+
+受到 Apache ZooKeeper 项目和 doozer 项目的启发，etcd 在设计的时候重点考虑了下面四个要素：
+简单：支持 REST 风格的 HTTP+JSON API
+安全：支持 HTTPS 方式的访问
+快速：支持并发 1k/s 的写操作
+可靠：支持分布式结构，基于 Raft 的一致性算法
+
+
+
+一般情况下，用户使用 etcd 可以在多个节点上启动多个实例，并添加它们为一个集群。同一个集群中的 etcd 实例将会保持彼此信息的一致性。
 
 ### etcd 安装
 

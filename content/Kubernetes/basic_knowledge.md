@@ -73,6 +73,8 @@ Pods can be horizontally scaled via API
 
 
 
+![img](https://snag.gy/Ht860F.jpg)
+
 
 
 
@@ -89,11 +91,13 @@ Pods can be horizontally scaled via API
 
 提供资源统一的入口
 
+负责API服务
+
 
 
 #### Controller manager
 
-资源的管理和调度（pod调度）
+资源的管理和调度（pod调度），即容器编排
 
 
 
@@ -111,7 +115,19 @@ Pods can be horizontally scaled via API
 
 与Master node通信的代理
 
-负责pod对应的容器创建，启动停止等任务， 与master 节点协作，实现集群管理， 与Master node协同工作
+负责pod对应的容器创建，启动停止等任务，  与Master node协同工作, 实现集群管理，实现容器运行时的交互，称CRI (Container  Runtime Interface)
+
+
+
+还通过gRPC协议，同Device Plugin的插件进行交互，这个插件时kubernetes用来管理GPU等宿主机物理设备的主要组件
+
+也是基于Kubernetes项目进行机器学习训练，高性能作业支持等工作必须关注的功能
+
+
+
+另是调用网络插件和存储插件为容器配置网络和数据持久化，即CNI (Container Networking Interface), CSI (Container Storage Interface)
+
+
 
 
 
@@ -129,7 +145,7 @@ Docker 引擎，负责本机的容器创建和管理工作
 
 ### etcd
 
-使用etcd进行存储, 简单的key-value 存储
+使用etcd进行存储, 简单的key-value 存储，即整个集群的持久化数据
 
 
 
@@ -564,4 +580,8 @@ Horizontal Pod Autoscaler
 ​    
 
 
+
+## CNCF
+
+Cloud Native Computing Foundation
 
