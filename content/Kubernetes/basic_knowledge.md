@@ -354,6 +354,20 @@ Endpoint: Pod IP + Container Port
 
 
 
+### Kubernetes 证书
+
+除非开启不安全模式，否则默认都是通过https访问kube-apiserver
+
+
+
+kubeadm 为Kubernetes 项目生成的证书文件都放在master节点的`/etc/kubernetes/pki` 下面，最主要的是`ca.crt` 和私钥`ca.key`
+
+
+
+kubectl获取容器日志等streaming操作时，需要通过kube-apiserver向kubelet发起请求，这个连接也必须是安全的，kubeadm为这一步生成的是`apiserver-kubelet-client.crt`文件，对应私钥为`apiserver-kubelet-client.key`
+
+
+
 
 
 ## Kubernetes 集群组件

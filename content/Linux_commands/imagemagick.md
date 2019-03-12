@@ -23,11 +23,53 @@ yum -y install ImageMagick ImageMagick-devel
 
 ## convert
 
+### -thumnail
+
 So to create a thumbnail of the abc.png image with 200px width, you need to type:
 `$ convert -thumbnail 200 abc.png thumb.abc.png`
 
 To create a thumbnail of the abc.png image with 200px height, you need to type:
 `$ convert -thumbnail x200 abc.png thumb.abc.png`
+
+
+
+### -resize
+
+将图像的像素改为1024*768，注意1024与768之间是小写字母x
+
+```
+convert -resize 1024x768  xxx.jpg   xxx1.jpg    
+```
+
+
+
+### -sample
+
+将图像的缩减为原来的50%*50%
+
+```
+convert -sample 50%x50%  xxx.jpg  xxx1.jpg   
+```
+
+
+
+### -rotate
+
+将图像顺时针旋转270度
+
+```
+convert -rotate 270 sky.jpg sky-final.jpg      
+```
+
+
+
+### -draw
+
+使用-draw选项还可以在图像里面添加文字：
+
+```
+convert -fill black -pointsize 60 -font helvetica -draw 'text 10,80 "Hello, World!" ‘  hello.jpg  helloworld.jpg
+```
 
 
 

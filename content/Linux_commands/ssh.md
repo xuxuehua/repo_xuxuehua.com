@@ -106,6 +106,16 @@ Can be used to give options in the format used in the configuration file.  This 
 
 
 
+## ServerAliveInterval
+
+指定ssh 超时时间
+
+```
+ssh -o ServerAliveInterval=30 user@host
+```
+
+
+
 ### StrictHostKeyChecking
 
 Automatically accept keys
@@ -231,3 +241,14 @@ Multiple -t options force tty allocation, even if ssh has no local tty
 开启信任X11转发功能
 
 
+
+## config 文件
+
+```
+Host *
+    ServerAliveInterval 60
+```
+
+`Host *` #表示需要启用该规则的服务端（域名或ip）
+`ServerAliveInterval 60` #表示没60秒去给服务端发起一次请求消息（这个设置好就行了）
+`ServerAliveCountMax 3` #表示最大连续尝试连接次数（这个基本不用设置）
