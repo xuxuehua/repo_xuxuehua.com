@@ -13,6 +13,16 @@ date: 2018-06-02 19:03
 
 
 
+
+## 容器本质
+
+对与容器而已，一个容器永远只能管理一个进程，
+
+而一个容器就是一个进程
+
+
+
+
 ## Kubernetes 特性
 
 How do you manage all these containers running on a single host, and across your whol infrastructure?

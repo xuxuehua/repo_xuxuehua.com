@@ -192,6 +192,8 @@ kubectl expose deployments/myapp --type="NodePort" --port=80 --name=myapp
 
 ### get 显示资源
 
+即从Kubernetes里面获取指定的API对象
+
 
 
 列出所有资源
@@ -449,6 +451,14 @@ kubectl exec -it $POD_NAME /bin/sh
 ```
 kubectl describe (-f FILENAME | TYPE [NAME_PREFIX | -l label] | TYPE/NAME)
 ```
+
+
+
+#### pod
+
+指定pod查看一个API对象的细节
+
+
 
 显示指定的资源或者资源组的详细信息
 

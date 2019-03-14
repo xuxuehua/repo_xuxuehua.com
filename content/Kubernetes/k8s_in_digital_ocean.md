@@ -14,18 +14,28 @@ date: 2019-03-10 21:15
 
 16.04, 2 CPU, 7.5G mem, 30G HDD
 
+
+
+先部署docker
+
 ```
+export VERSION=17.03 && curl -sSL get.docker.com | sh
+```
+
+
+
+```
+apt-get update && apt-get install -y apt-transport-https curl
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-
-cat <<EOF > /etc/apt/sources.list.d/kubernetes.list
-deb http://apt.kubernetes.io/ kubernetes-xenial main
+cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
 EOF
-
-apt-get -y update
+apt-get update
 
 apt -y install kubelet=1.11.3-00
 apt -y install kubectl=1.11.3-00
 apt -y install kubeadm=1.11.3-00
+
 
 ```
 
@@ -34,6 +44,8 @@ apt -y install kubeadm=1.11.3-00
 ## kubeadm
 
 ### 编写 yaml
+
+kubeadm.yaml
 
 ```
 apiVersion: kubeadm.k8s.io/v1alpha1
@@ -99,6 +111,18 @@ as root:
 
   kubeadm join x.x.x.x:6443 --token h7t5zp.0atym3rlxb7oa9vu --discovery-token-ca-cert-hash sha256:3f9b2fac0cdf760f6b03ccb0934743e97c182e127eca99a516716010275cc046
 ```
+
+
+
+执行部署信息
+
+```
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+
 
 
 
@@ -373,9 +397,11 @@ rook-discover-66m7x                   1/1       Running   0          1m
 
 
 
-# 部署应用
 
-## nginx
+
+## nginx 部署
+
+nginx-deployment.yaml
 
 ```
 apiVersion: apps/v1
@@ -398,6 +424,306 @@ spec:
         ports:
         - containerPort: 80
 ```
+
+
+
+```
+kubectl create -f nginx-deployment.yaml
+```
+
+
+
+```
+root@111:~# kubectl get pods -l app=nginx
+NAME                                READY     STATUS    RESTARTS   AGE
+nginx-deployment-67594d6bf6-hjgf2   1/1       Running   0          18s
+nginx-deployment-67594d6bf6-xjtlr   1/1       Running   0          18s
+```
+
+
+
+```
+root@111:~# kubectl describe pod nginx-deployment-67594d6bf6-hjgf2
+Name:               nginx-deployment-67594d6bf6-hjgf2
+Namespace:          default
+Priority:           0
+PriorityClassName:  <none>
+Node:               111/178.128.110.131
+Start Time:         Wed, 13 Mar 2019 06:29:14 +0000
+Labels:             app=nginx
+                    pod-template-hash=2315082692
+Annotations:        <none>
+Status:             Running
+IP:                 10.32.0.13
+Controlled By:      ReplicaSet/nginx-deployment-67594d6bf6
+Containers:
+  nginx:
+    Container ID:   docker://fab3aadd7695c7505d463decce821d5e40e7cc15a1760375e63b16ef13d5ae77
+    Image:          nginx:1.7.9
+    Image ID:       docker-pullable://nginx@sha256:e3456c851a152494c3e4ff5fcc26f240206abac0c9d794affb40e0714846c451
+    Port:           80/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Wed, 13 Mar 2019 06:29:23 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-bzv7k (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  default-token-bzv7k:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-bzv7k
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  38s   default-scheduler  Successfully assigned default/nginx-deployment-67594d6bf6-hjgf2 to 111
+  Normal  Pulling    37s   kubelet, 111       pulling image "nginx:1.7.9"
+  Normal  Pulled     29s   kubelet, 111       Successfully pulled image "nginx:1.7.9"
+  Normal  Created    29s   kubelet, 111       Created container
+  Normal  Started    29s   kubelet, 111       Started container
+```
+
+> 这里的Events信息表示对API对象所有重要操作，都会被记录在这个对象的Events里面
+
+
+
+### 升级 nginx 1.8
+
+```
+...    
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.8 # 这里被从 1.7.9 修改为 1.8
+        ports:
+      - containerPort: 80
+
+```
+
+
+
+更新
+
+```
+$ kubectl apply -f nginx-deployment.yaml
+
+# 修改 nginx-deployment.yaml 的内容
+
+$ kubectl apply -f nginx-deployment.yaml
+
+```
+
+
+
+## 声明Volume
+
+仅需要修改yaml文件即可
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.8
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: nginx-vol
+      volumes:
+      - name: nginx-vol
+        emptyDir: {}
+```
+
+> emptyDir 就是Docker的隐式Volume 参数，即不显式声明宿主机目录的Volume
+
+
+
+Kubernetes会为此在宿主就创建一个临时目录，这个目录将来会被绑定挂载到容器所声明的Volume目录上
+
+
+
+
+
+若是显式的Volume定义，叫做hostPath
+
+```
+volumes:
+     - name: nginx-vol
+       hostPath:
+         path: "/home/vagrant/mykube/firstapp/html"
+```
+
+
+
+
+
+更新yaml
+
+```
+root@111:~# kubectl apply -f nginx-deployment.yaml
+deployment.apps/nginx-deployment configured
+```
+
+
+
+可以看到Volumes 的信息
+
+```
+root@111:~# kubectl get pods
+NAME                                READY     STATUS    RESTARTS   AGE
+nginx-deployment-5c678cfb6d-jzknn   1/1       Running   0          5m
+nginx-deployment-5c678cfb6d-t785g   1/1       Running   0          5m
+
+
+root@111:~# kubectl describe pod nginx-deployment-5c678cfb6d-jzknn
+....
+    Mounts:
+      /usr/share/nginx/html from nginx-vol (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-bzv7k (ro)
+
+Volumes:
+  nginx-vol:
+    Type:    EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:
+
+```
+
+
+
+
+
+可以切进去查看目录信息
+
+```
+root@111:~# kubectl exec -it nginx-deployment-5c678cfb6d-jzknn -- /bin/bash
+
+root@nginx-deployment-5c678cfb6d-jzknn:/# ls /usr/share/nginx/html/
+```
+
+
+
+
+
+
+
+### 共享Volume
+
+nginx-container 读取 debian-container中的index.html
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: two-containers
+spec:
+  restartPolicy: Never
+  volumes:
+  - name: shared-data
+    hostPath:      
+      path: /data
+  containers:
+  - name: nginx-container
+    image: nginx
+    volumeMounts:
+    - name: shared-data
+      mountPath: /usr/share/nginx/html
+  - name: debian-container
+    image: debian
+    volumeMounts:
+    - name: shared-data
+      mountPath: /pod-data
+    command: ["/bin/sh"]
+    args: ["-c", "echo Hello from the debian container > /pod-data/index.html"]
+```
+
+> shared-data 是hostPath类型，而对应在宿主机上的目录就是/data ，而这个目录，其实同时绑定挂载进上述两个容器中
+
+
+
+
+
+#### Sidecar 组合
+
+指在一个Pod中，启动一个辅助容器，完成一些独立与主进程(主容器)之外的工作
+
+
+
+这里，Tomcat就是主容器，而initContainer优先运行WAR包容器，扮演了sidecar 角色
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: javaweb-2
+spec:
+  initContainers:
+  - image: geektime/sample:v2
+    name: war
+    command: ["cp", "/sample.war", "/app"]
+    volumeMounts:
+    - mountPath: /app
+      name: app-volume
+  containers:
+  - image: geektime/tomcat:7.0
+    name: tomcat
+    command: ["sh","-c","/root/apache-tomcat-7.0.42-v2/bin/start.sh"]
+    volumeMounts:
+    - mountPath: /root/apache-tomcat-7.0.42-v2/webapps
+      name: app-volume
+    ports:
+    - containerPort: 8080
+      hostPort: 8001 
+  volumes:
+  - name: app-volume
+    emptyDir: {}
+```
+
+> WAR 包容器是一个initContainers，会比所有spec.containers 优先启动，initContainer 容器也会按照顺序启动
+>
+> 通过命令将WAR包复制到/app目录下然后退出
+>
+> /app 目录挂载了名叫app-volume 的Volume
+>
+> Tomcat也同样声明挂载了app-volume到自己的/webapps下面
+
+
+
+
+
+#### 容器的日志收集
+
+将实现不断把日志文件输出到容器的/var/log目录中
+
+
+
+可以将一个Pod里面的Volume挂载到应用容器的/var/log目录上，然后pod里面运行sidecar容器声明挂载同一个Volume到自己的/var/log目录上
+
+sidecar不断的从自己的/var/log目录中读取日志文件，转发到mongoDB或者ElasticSearch中
 
 
 

@@ -32,6 +32,46 @@ Pod 里面的容器共享同一个Network Namespace，同一组数据卷，而�
 
 
 
+Pod类似于传统基础设置里面的虚拟机角色，而容器，就是虚拟机里面运行的用户程序
+
+
+
+## 实现
+
+Pod其实是一组共享了某些资源的容器
+
+
+
+Pod里面所有容器，共享的是同一个Network Namespace，并且可以声明共享同一个Volume
+
+
+
+### infra 容器
+
+在Kubernetes 中，Pod的实现需要使用一个中间容器称为Infra容器，在Pod中，与Infra容器关联在一起
+
+而Pod的生命周期和Infra容器是一致的，与容器A和B无关
+
+
+
+![img](https://snag.gy/m59fG6.jpg)
+
+
+
+Infra 容器使用一个特殊的镜像 (k8s.gcr.io/pause)，占用资源极少， Infra 容器Hold住Network Namespace后，用户容器就可以加入到Infra 容器的Network Namespace中，所以在查看容器在宿主机的Namespace文件的时候，指向的值是完全一样的
+
+
+
+这样，容器A和容器B可以直接通过localhost 进行通信，由于一个Pod值可以有一个IP地址，而这个地址就是Network Namespace 对应的IP地址
+
+
+
+
+
+
+
+
+
 ## 设计
 
 通常应该一个容器中仅运行一个进程，而日志信息通过输出至容器的标准输出，用户通过kubectl log 进行获取
