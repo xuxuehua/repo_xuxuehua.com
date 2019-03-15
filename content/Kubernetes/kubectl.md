@@ -406,6 +406,30 @@ kubectl scale deployments/myapp --replicas=2
 
 附加终端至一个运行中的容器
 
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  shareProcessNamespace: true
+  containers:
+  - name: nginx
+    image: nginx
+  - name: shell
+    image: busybox
+    stdin: true
+    tty: true
+```
+
+
+
+```
+kubectl attach -it nginx -c shell
+```
+
+
+
 
 
 ### auth 授权信息

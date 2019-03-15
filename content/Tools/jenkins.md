@@ -34,13 +34,39 @@ Docker Hardware
 
 ## 安装
 
-### docker
+### docker (not recommended)
+
+
 
 ```
-docker pull jenkins/jenkins:lts
-docker run --detach --publish 8080:8080: --volumn jenkins_home:/var/jenkins_home --name jenkins jenkins/jenkins:lts
+docker run \
+  -u root \
+  --restart=always \
+  -d \
+  --name jenkins \
+  -p 8080:8080 \
+  -p 50000:50000 \
+  -v jenkins-data:/var/jenkins_home \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  jenkinsci/blueocean
+```
 
-docker exec jenkins cat /var/jenkins_home/secrets?initialAdminPassword
+```
+# vim /etc/default/docker
+ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2375
+
+# vim /lib/systemd/system/docker.service
+ExecStart=/usr/bin/dockerd -H fd://                <--- before
+ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2375    <--- After
+
+# systemctl daemon-reload
+# systemctl restart docker
+```
+
+
+
+```
+docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 ```
 
 

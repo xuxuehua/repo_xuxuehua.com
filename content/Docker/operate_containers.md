@@ -100,6 +100,14 @@ docker run -v /home:/test
 
 
 
+### --restart
+
+自动重启
+
+always 总是自动重启
+
+
+
 ## volume 查看卷
 
 
