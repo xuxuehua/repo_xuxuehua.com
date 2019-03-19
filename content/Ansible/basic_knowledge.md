@@ -144,3 +144,7 @@ ansible all -m command -a 'date'
 
 
 
+## Jenkins 配置
+
+Global Configuration 设置ansible，ansible-playbook路径`/usr/bin/`
+

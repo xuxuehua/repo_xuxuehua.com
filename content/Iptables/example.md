@@ -204,6 +204,60 @@ iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW -m recent --upd
 iptables -A INPUT -p tcp -m state --state NEW --dport 22 -j ACCEPT
 ```
 
+### 允许所有SSH连接请求
+
+
+
+本规则允许所有来自外部的SSH连接请求，也就是说，只允许**进入eth0接口，并且目的端口为22的数据包**
+
+```
+iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+```
+
+
+
+### 允许从本地发起的SSH连接
+
+
+
+本规则和上述规则有所不同，本规则意在允许本机发起SSH连接，上面的规则与此正好相反。
+
+```
+iptables -A OUTPUT -o eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -i eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+```
+
+
+
+### 仅允许来自指定网络的SSH连接请求
+
+
+
+以下规则仅允许来自192.168.100.0/24的网络：
+
+```
+iptables -A INPUT -i eth0 -p tcp -s 192.168.100.0/24 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+```
+
+上例中，你也可以使用**-s 192.168.100.0/255.255.255.0**作为网络地址。当然使用上面的CIDR地址更容易让人明白。
+
+### 仅允许从本地发起到指定网络的SSH连接请求
+
+
+
+以下规则仅允许从本地主机连接到**192.168.100.0/24**的网络：
+
+```
+iptables -A OUTPUT -o eth0 -p tcp -d 192.168.100.0/24 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -i eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+```
+
+
+
+### 
+
 
 
 ## HTTP
@@ -238,6 +292,39 @@ iptables -A OUTPUT -s 172.16.37.10 -d 172.16.37.1 -p tcp --sport 80 -j ACCEPT
 iptables -P INPUT DROP
 iptables -P OUTPUT DROP
 ```
+
+
+
+
+
+### 允许HTTP/HTTPS连接请求
+
+
+
+```
+# 1.允许HTTP连接：80端口
+iptables -A INPUT -i eth0 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -o eth0 -p tcp --sport 80 -m state --state ESTABLISHED -j ACCEPT
+
+# 2.允许HTTPS连接：443端口
+iptables -A INPUT -i eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -o eth0 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
+```
+
+### 允许从本地发起HTTPS连接
+
+
+
+本规则可以允许用户从本地主机发起HTTPS连接，从而访问Internet。
+
+```
+iptables -A OUTPUT -o eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -i eth0 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
+```
+
+类似的，你可以设置允许HTTP协议（80端口）。
+
+
 
 
 
@@ -358,100 +445,24 @@ iptables -I INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --se
 
 
 
-### 允许所有SSH连接请求
-
-
-
-本规则允许所有来自外部的SSH连接请求，也就是说，只允许**进入eth0接口，并且目的端口为22的数据包**
-
 ```
-iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp --dport 80 -m limit --limit 25/minute --limit-burst 100 -j ACCEPT
 ```
 
-### 允许从本地发起的SSH连接
 
 
 
-本规则和上述规则有所不同，本规则意在允许本机发起SSH连接，上面的规则与此正好相反。
 
-```
-iptables -A OUTPUT -o eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A INPUT -i eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
-```
-
-### 仅允许来自指定网络的SSH连接请求
-
-
-
-以下规则仅允许来自192.168.100.0/24的网络：
-
-```
-iptables -A INPUT -i eth0 -p tcp -s 192.168.100.0/24 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
-```
-
-上例中，你也可以使用**-s 192.168.100.0/255.255.255.0**作为网络地址。当然使用上面的CIDR地址更容易让人明白。
-
-### 仅允许从本地发起到指定网络的SSH连接请求
-
-
-
-以下规则仅允许从本地主机连接到**192.168.100.0/24**的网络：
-
-```
-iptables -A OUTPUT -o eth0 -p tcp -d 192.168.100.0/24 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A INPUT -i eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
-```
-
-### 允许HTTP/HTTPS连接请求
-
-
-
-```
-# 1.允许HTTP连接：80端口
-iptables -A INPUT -i eth0 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A OUTPUT -o eth0 -p tcp --sport 80 -m state --state ESTABLISHED -j ACCEPT
-
-# 2.允许HTTPS连接：443端口
-iptables -A INPUT -i eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A OUTPUT -o eth0 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
-```
-
-### 允许从本地发起HTTPS连接
-
-
-
-本规则可以允许用户从本地主机发起HTTPS连接，从而访问Internet。
-
-```
-iptables -A OUTPUT -o eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A INPUT -i eth0 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
-```
-
-类似的，你可以设置允许HTTP协议（80端口）。
-
-### -m multiport：指定多个端口
-
-
-
-通过指定**-m multiport**选项，可以在一条规则中同时允许SSH、HTTP、HTTPS连接：
-
-```
-iptables -A INPUT -i eth0 -p tcp -m multiport --dports 22,80,443 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A OUTPUT -o eth0 -p tcp -m multiport --sports 22,80,443 -m state --state ESTABLISHED -j ACCEPT
-```
-
-### 允许出站DNS连接
-
-
+## 允许出站DNS连接
 
 ```
 iptables -A OUTPUT -p udp -o eth0 --dport 53 -j ACCEPT
 iptables -A INPUT -p udp -i eth0 --sport 53 -j ACCEPT
 ```
 
-### 允许NIS连接
+
+
+## 允许NIS连接
 
 
 
@@ -476,7 +487,9 @@ iptables -A INPUT -p udp --dport 850 -j ACCEPT
 1.为NIS使用静态IP地址
 2.每次系统启动时调用脚本获得NIS相关端口，并根据上述iptables规则添加到filter表中去。
 
-### 允许来自指定网络的rsync连接请求
+
+
+## 允许来自指定网络的rsync连接请求
 
 
 
@@ -487,7 +500,9 @@ iptables -A INPUT -i eth0 -p tcp -s 192.168.101.0/24 --dport 873 -m state --stat
 iptables -A OUTPUT -o eth0 -p tcp --sport 873 -m state --state ESTABLISHED -j ACCEPT
 ```
 
-### 允许来自指定网络的MySQL连接请求
+
+
+## 允许来自指定网络的MySQL连接请求
 
 
 
@@ -498,7 +513,9 @@ iptables -A INPUT -i eth0 -p tcp -s 192.168.100.0/24 --dport 3306 -m state --sta
 iptables -A OUTPUT -o eth0 -p tcp --sport 3306 -m state --state ESTABLISHED -j ACCEPT
 ```
 
-### 允许Sendmail, Postfix邮件服务
+
+
+## 允许Sendmail, Postfix邮件服务
 
 
 
@@ -509,7 +526,9 @@ iptables -A INPUT -i eth0 -p tcp --dport 25 -m state --state NEW,ESTABLISHED -j 
 iptables -A OUTPUT -o eth0 -p tcp --sport 25 -m state --state ESTABLISHED -j ACCEPT
 ```
 
-### 允许IMAP与IMAPS
+
+
+## 允许IMAP与IMAPS
 
 
 
@@ -523,7 +542,9 @@ iptables -A INPUT -i eth0 -p tcp --dport 993 -m state --state NEW,ESTABLISHED -j
 iptables -A OUTPUT -o eth0 -p tcp --sport 993 -m state --state ESTABLISHED -j ACCEPT
 ```
 
-### 允许POP3与POP3S
+
+
+## 允许POP3与POP3S
 
 
 
@@ -537,19 +558,13 @@ iptables -A INPUT -i eth0 -p tcp --dport 995 -m state --state NEW,ESTABLISHED -j
 iptables -A OUTPUT -o eth0 -p tcp --sport 995 -m state --state ESTABLISHED -j ACCEPT
 ```
 
-### 防止DoS攻击
-
-
-
-```
-iptables -A INPUT -p tcp --dport 80 -m limit --limit 25/minute --limit-burst 100 -j ACCEPT
-```
 
 
 
 
 
-### 负载平衡
+
+## 负载平衡
 
 
 
@@ -563,7 +578,7 @@ iptables -A PREROUTING -i eth0 -p tcp --dport 443 -m state --state NEW -m nth --
 
 
 
-### 记录丢弃的数据包
+## 记录丢弃的数据包
 
 
 

@@ -129,6 +129,8 @@ Browse to `http://localhost:8080` and wait until the **Unlock Jenkins** page app
 
 ### CentOS
 
+
+
 ```
 sudo yum -y install java-1.8.0-openjdk-devel
 
@@ -138,7 +140,6 @@ sudo yum -y install jenkins
 
 systemctl start jenkins
 systemctl enable jenkins
-
 ```
 
 

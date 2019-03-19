@@ -192,7 +192,7 @@ clear:left/right/both/b
 
 #### 常用布局案例
 
-![img](https://cdn.pbrd.co/images/HPHVFKP.png)
+![img](https://snag.gy/od7icm.jpg)
 
 
 
@@ -269,7 +269,7 @@ clear:left/right/both/b
 
 
 
-![img](https://cdn.pbrd.co/images/HPHYkrm.png)
+![img](https://snag.gy/kRrgib.jpg)
 
 ```
 <!DOCTYPE html>
@@ -336,7 +336,7 @@ clear:left/right/both/b
 
 
 
-![img](https://cdn.pbrd.co/images/HPItfrE.png)
+![img](https://snag.gy/K9QTVd.jpg)
 
 ```
 <!DOCTYPE html>
@@ -394,7 +394,7 @@ clear:left/right/both/b
 
 
 
-![img](https://cdn.pbrd.co/images/HPIywhh.png)
+![img](https://snag.gy/nagURi.jpg)
 
 ```
 <!DOCTYPE html>
@@ -448,5 +448,46 @@ clear:left/right/both/b
 	<div class="footer">footer area</div>	
 </body>
 </html>
+```
+
+
+
+
+
+### 瀑布流
+
+```
+<body>
+	<div class="container">
+		<div>
+			<img src="1.jpg">
+		</div>
+				<div>
+			<img src="2.jpg">
+		</div>
+				<div>
+			<img src="3.jpg">
+		</div>
+				<div>
+			<img src="4.jpg">
+		</div>
+	</div>
+</body>
+```
+
+
+
+```
+.container{
+    column-width: 250px;
+    -webkit-column-width: 250px;
+    -webkit-column-gap: 5px;
+    column-gap: 5px;
+}
+
+.container div{
+    width: 250px;
+    margin: 5px 0;
+}
 ```
 
