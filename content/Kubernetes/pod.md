@@ -434,3 +434,72 @@ spec:
 
 
 
+
+
+## Pod Probe 探针
+
+健康检查探针，kubelet会根据Probe返回值来决定这个容器的状态
+
+
+
+test-liveness-exec.yaml
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: liveness
+  name: test-liveness-exec
+spec:
+  containers:
+  - name: liveness
+    image: busybox
+    args:
+    - /bin/sh
+    - -c
+    - touch /tmp/healthy; sleep 30; rm -rf /tmp/healthy; sleep 600
+    livenessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+      initialDelaySeconds: 5
+      periodSeconds: 5
+```
+
+> 与此同时，我们定义了一个这样的 livenessProbe（健康检查）。它的类型是 exec，这意味着，它会在容器启动后，在容器里面执行一句我们指定的命令，比如：“cat /tmp/healthy”。这时，如果这个文件存在，这条命令的返回值就是 0，Pod 就会认为这个容器不仅已经启动，而且是健康的。这个健康检查，在容器启动 5 s 后开始执行（initialDelaySeconds: 5），每 5 s 执行一次（periodSeconds: 5）。
+
+
+
+```
+$ kubectl create -f test-liveness-exec.yaml
+```
+
+```
+$ kubectl get pod
+NAME                READY     STATUS    RESTARTS   AGE
+test-liveness-exec   1/1       Running   0          10s
+```
+
+
+
+30s 之后查看
+
+```
+$ kubectl describe pod test-liveness-exec
+```
+
+```
+FirstSeen LastSeen    Count   From            SubobjectPath           Type        Reason      Message
+--------- --------    -----   ----            -------------           --------    ------      -------
+2s        2s      1   {kubelet worker0}   spec.containers{liveness}   Warning     Unhealthy   Liveness probe failed: cat: can't open '/tmp/healthy': No such file or directory
+```
+
+> 这里报错，表示文件已经不存在了
+
+
+
+然而pod并没有Fail，而是进入了running 状态，是因为Pod的恢复机制，即restartPolicy
+
+Pod的恢复过程永远发生在当前节点(Node), 除非pod.spec.node字段被更改

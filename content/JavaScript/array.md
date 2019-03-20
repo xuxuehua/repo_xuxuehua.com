@@ -12,7 +12,7 @@ collection: 基本变量类型
 
 ## 数组定义
 
-* 数组是一组按顺序排列的集合，集合的每个值称为元素。JavaScript的数组可以包括任意数据类型。
+数组是一组按顺序排列的集合，集合的每个值称为元素。JavaScript的数组可以包括任意数据类型。
 
 ```
 [1, 2, 3.14, 'Hello', null, true];
@@ -22,7 +22,7 @@ collection: 基本变量类型
 
 ## 创建数组
 
-* 通过 [ ] 实现
+通过 [ ] 实现
 
 ```
 var x = [1, 2]
@@ -33,7 +33,7 @@ x
 
 
 
-* 通过`Array()`函数实现
+通过`Array()`函数实现
 
 ```
 new Array(1, 2, 3); // 创建了数组[1, 2, 3]
@@ -155,7 +155,7 @@ arr1.concat(arr2)
 
 ### indexOf
 
-* 与String类似，`Array`也可以通过`indexOf()`来搜索一个指定的元素的位置：
+与String类似，`Array`也可以通过`indexOf()`来搜索一个指定的元素的位置：
 
 ```
 var arr = [10, 20, '30', 'xyz'];
@@ -165,13 +165,13 @@ arr.indexOf(30); // 元素30没有找到，返回-1
 arr.indexOf('30'); // 元素'30'的索引为2
 ```
 
-> * 注意了，数字`30`和字符串`'30'`是不同的元素。
+> 注意了，数字`30`和字符串`'30'`是不同的元素。
 
 
 
 ### slice
 
-* `slice()`就是对应String的`substring()`版本，它截取`Array`的部分元素，然后返回一个新的`Array`：
+`slice()`就是对应String的`substring()`版本，它截取`Array`的部分元素，然后返回一个新的`Array`：
 
 ```
 var arr = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
@@ -179,13 +179,13 @@ arr.slice(0, 3); // 从索引0开始，到索引3结束，但不包括索引3: [
 arr.slice(3); // 从索引3开始到结束: ['D', 'E', 'F', 'G']
 ```
 
-> * 注意到`slice()`的起止参数包括开始索引，不包括结束索引。
+> 注意到`slice()`的起止参数包括开始索引，不包括结束索引。
 
 
 
 ####复制数组
 
-* 如果不给`slice()`传递任何参数，它就会从头到尾截取所有元素。利用这一点，我们可以很容易地复制一个`Array`：
+如果不给`slice()`传递任何参数，它就会从头到尾截取所有元素。利用这一点，我们可以很容易地复制一个`Array`：
 
 ```
 var arr = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
@@ -198,7 +198,7 @@ aCopy === arr; // false
 
 ### push和pop
 
-* `push()`向`Array`的末尾添加若干元素，`pop()`则把`Array`的最后一个元素删除掉：
+`push()`向`Array`的末尾添加若干元素，`pop()`则把`Array`的最后一个元素删除掉：
 
 ```
 var arr = [1, 2];
@@ -216,7 +216,7 @@ arr; // []
 
 ### unshift和shift
 
-* 如果要往`Array`的头部添加若干元素，使用`unshift()`方法，`shift()`方法则把`Array`的第一个元素删掉：
+如果要往`Array`的头部添加若干元素，使用`unshift()`方法，`shift()`方法则把`Array`的第一个元素删掉：
 
 ```
 var arr = [1, 2];
@@ -276,7 +276,7 @@ arr.sort(sortNumber);
 
 ### reverse
 
-* `reverse()`把整个`Array`的元素给掉个个，也就是反转：
+`reverse()`把整个`Array`的元素给掉个个，也就是反转：
 
 ```
 var arr = ['one', 'two', 'three'];
@@ -288,7 +288,7 @@ arr; // ['three', 'two', 'one']
 
 ### splice
 
-* `splice()`方法是修改`Array`的“万能方法”，它可以从指定的索引开始删除若干元素，然后再从该位置添加若干元素：
+`splice()`方法是修改`Array`的“万能方法”，它可以从指定的索引开始删除若干元素，然后再从该位置添加若干元素：
 
 ```
 var arr = ['Microsoft', 'Apple', 'Yahoo', 'AOL', 'Excite', 'Oracle'];
@@ -307,7 +307,7 @@ arr; // ['Microsoft', 'Apple', 'Google', 'Facebook', 'Oracle']
 
 ### concat
 
-* `concat()`方法把当前的`Array`和另一个`Array`连接起来，并返回一个新的`Array`：
+`concat()`方法把当前的`Array`和另一个`Array`连接起来，并返回一个新的`Array`：
 
 ```
 var arr = ['A', 'B', 'C'];
@@ -316,22 +316,22 @@ added; // ['A', 'B', 'C', 1, 2, 3]
 arr; // ['A', 'B', 'C']
 ```
 
-> * *请注意*，`concat()`方法并没有修改当前`Array`，而是返回了一个新的`Array`
+> `concat()`方法并没有修改当前`Array`，而是返回了一个新的`Array`
 
 
 
-* `concat()`方法可以接收任意个元素和`Array`，并且自动把`Array`拆开，然后全部添加到新的`Array`里：
+`concat()`方法可以接收任意个元素和`Array`，并且自动把`Array`拆开，然后全部添加到新的`Array`里：
 
-  ```
-  var arr = ['A', 'B', 'C'];
-  arr.concat(1, 2, [3, 4]); // ['A', 'B', 'C', 1, 2, 3, 4]
-  ```
+```
+var arr = ['A', 'B', 'C'];
+arr.concat(1, 2, [3, 4]); // ['A', 'B', 'C', 1, 2, 3, 4]
+```
 
 
 
 ### join
 
-* `join()`方法是一个非常实用的方法，它把当前`Array`的每个元素都用指定的字符串连接起来，然后返回连接后的字符串：
+`join()`方法是一个非常实用的方法，它把当前`Array`的每个元素都用指定的字符串连接起来，然后返回连接后的字符串：
 
 ```
 var arr = ['A', 'B', 'C', 1, 2, 3];

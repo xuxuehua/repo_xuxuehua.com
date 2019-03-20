@@ -24,11 +24,120 @@ date: 2019-03-08 11:59
 
 
 
+### PodPreset
+
+Pod预先设置
+
+
+
+pod.yaml
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: website
+  labels:
+    app: website
+    role: frontend
+spec:
+  containers:
+    - name: website
+      image: nginx
+      ports:
+        - containerPort: 80
+```
+
+
+
+preset.yaml
+
+```
+apiVersion: settings.k8s.io/v1alpha1
+kind: PodPreset
+metadata:
+  name: allow-database
+spec:
+  selector:
+    matchLabels:
+      role: frontend
+  env:
+    - name: DB_PORT
+      value: "6379"
+  volumeMounts:
+    - mountPath: /cache
+      name: cache-volume
+  volumes:
+    - name: cache-volume
+      emptyDir: {}
+```
+
+> 在这个 PodPreset 的定义中，首先是一个 selector。这就意味着后面这些追加的定义，只会作用于 selector 所定义的、带有“role: frontend”标签的 Pod 对象，这就可以防止“误伤”。
+>
+> 然后，我们定义了一组 Pod 的 Spec 里的标准字段，以及对应的值。比如，env 里定义了 DB_PORT 这个环境变量，volumeMounts 定义了容器 Volume 的挂载目录，volumes 定义了一个 emptyDir 的 Volume。
+
+
+
+现运行preset，然后在运行pod
+
+```
+$ kubectl create -f preset.yaml
+$ kubectl create -f pod.yaml
+```
+
+
+
+```
+$ kubectl get pod website -o yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: website
+  labels:
+    app: website
+    role: frontend
+  annotations:
+    podpreset.admission.kubernetes.io/podpreset-allow-database: "resource version"
+spec:
+  containers:
+    - name: website
+      image: nginx
+      volumeMounts:
+        - mountPath: /cache
+          name: cache-volume
+      ports:
+        - containerPort: 80
+      env:
+        - name: DB_PORT
+          value: "6379"
+  volumes:
+    - name: cache-volume
+      emptyDir: {}
+```
+
+> 这个时候，我们就可以清楚地看到，这个 Pod 里多了新添加的 labels、env、volumes 和 volumeMount 的定义，它们的配置跟 PodPreset 的内容一样。此外，这个 Pod 还被自动加上了一个 annotation 表示这个 Pod 对象被 PodPreset 改动过。
+
+
+
+
+
+
+
+
+
 ## Metadata
 
 API对象的“标识”，即元数据，也是从Kubernetes里找到这个对象的主要依据，对所有API对象来说，这一部分的格式和字段基本是一致的
 
 其中最主要使用到的字段是Labels
+
+
+
+### ownerReference
+
+用于保存当前这个API对象的拥有者(Owner) 的信息
+
+
 
 
 
@@ -46,7 +155,11 @@ API对象的“标识”，即元数据，也是从Kubernetes里找到这个对�
 
 
 
-## command
+### containers
+
+
+
+#### command
 
 指定不同于镜像默认运行的应用程序，可以同时使用args字段进行参数传递，将覆盖镜像中的默认定义
 
@@ -68,6 +181,210 @@ spec:
       command: ["/bin/sh"]
       args: ["-c", "while true; do sleep 30; done"]
 ```
+
+
+
+
+
+
+
+#### Lifecycle
+
+定义了Container Lifecycle Hooks，即容器状态发生变化时触发的一系列钩子
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lifecycle-demo
+spec:
+  containers:
+  - name: lifecycle-demo-container
+    image: nginx
+    lifecycle:
+      postStart:
+        exec:
+          command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+      preStop:
+        exec:
+          command: ["/usr/sbin/nginx","-s","quit"]
+```
+
+> postStart 指在容器启动后，立刻执行一个指定的操作
+>
+> 若postStart执行超时或者错误，Kubernetes会在该Pod的Events中报出该容器启动失败的错误信息，导致Pod也处于失败的状态
+>
+> postStop 指容器被杀死之前，执行的操作
+>
+> 由于是同步的，会阻塞之前的容器杀死流程，直到这个Hook定义的操作完成之后，才允许容器被杀死
+
+
+
+
+
+
+
+#### livenessProbe
+
+
+
+##### exec
+
+exec类型探针通过在目标容器中执行由用户自定义的命令来判断容器的健康状态
+
+返回0表示成功，其他均为失败
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: liveness-exec
+  name: liveness-exec
+spec: 
+  containers:
+  - name: liveness-exec-demo
+    image: busybox
+    args: ["/bin/sh", "-c", "touch /tmp/healthy; sleep 60; rm -rf /tmp/healthy; sleep 600;"]
+    livenessProbe:
+      exec:
+        command: ["test", "-e", "/tmp/healthy"]
+```
+
+
+
+##### httpGet
+
+向目标容器发起一个http请求，根据响应状态码进行结果盘点
+
+2xx 或3xx表示通过
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: liveness
+  name: liveness-http
+spec:
+  containers:
+    - name: liveness-http-demo
+      image: nginx:1.12-alpine
+      ports:
+      - name: http
+        containersPort: 80
+      lifecycle:
+        portStart:
+          exec:
+            command: ["/bin/sh", "-c", "echo Healthy > /usr/share/nginx/html/healthz"]
+      livenessProbe:
+        httpGet:
+          path: /healthz
+          port: http
+          scheme: HTTP
+```
+
+
+
+
+
+##### tcpSocket
+
+基于TCP的存活性探测(TCPSocketAction) 向容器的特定端口发起TCP请求并尝试建立连接进行判定
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: liveness
+  name: liveness-tcp
+spec:
+  containers:
+    - name: liveness-tcp-demo
+      image: nginx:1.12-alpine
+      ports:
+      - name: http
+        containersPort: 80
+      livenessProbe:
+        tcpSocket:
+          port: http
+```
+
+
+
+
+
+
+
+#### node
+
+指明Pod与节点Node 的绑定字段
+
+
+
+#### readinessProbe
+
+检查结果的成功与否，决定这个Pod是不是能被通过Service的方式访问到，而不影响Pod的声明周期
+
+
+
+
+
+#### restartPolicy 
+
+pod的恢复机制，默认为Always，即任何时候容器发生已成，会被重建
+
+```
+Always:	在任何情况下，只要容器不在运行状态，就需要重启容器
+OnFailure: 只在容器，异常时才自动重启容器
+Never: 从来不重启容器
+```
+
+
+
+
+
+#### selector
+
+##### matchLabels
+
+通过直接给定键值来指定标签选择器
+
+```
+selector:
+  matchLabels:
+    component: redis
+```
+
+
+
+
+
+##### matchExpressions
+
+基于表达式指定的标签选择器列表，每个选择器都形如
+
+```
+{key: KEY_NAME, operator: OPERATOR, values: [VALUE1, VALUE2, ...]}
+```
+
+
+
+```
+selector:
+  matchExpressions:
+    - {key: tier, operator: In, values: [cache]}
+    - {key: environment, operator: Exists, values:}
+```
+
+
+
+
+
+
+
+
 
 
 
@@ -99,6 +416,42 @@ spec:
 ```
 
 > 总是从镜像仓库中获取最新的nginx 镜像
+
+
+
+
+
+## RollingUpdateStrategy
+
+Deployment 对象的一个字段
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+...
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+```
+
+> maxSurge 指除了DESIRED数量之外，在一次滚动中，Deployment控制器还可以创建多少个新的Pod
+>
+> maxUnavailable 指在一次滚动更细腻中，Deployment 控制器可以删除多少个旧Pod
+
+
+
+## revisionHistoryLimit
+
+为Deployment保留的历史版本个数
+
+设置为0，表示再也不能做滚动更新操作了
 
 
 
@@ -161,78 +514,9 @@ spec:
 
 
 
-## containers
 
 
 
-### Lifecycle
-
-定义了Container Lifecycle Hooks，即容器状态发生变化时触发的一系列钩子
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: lifecycle-demo
-spec:
-  containers:
-  - name: lifecycle-demo-container
-    image: nginx
-    lifecycle:
-      postStart:
-        exec:
-          command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
-      preStop:
-        exec:
-          command: ["/usr/sbin/nginx","-s","quit"]
-```
-
-> postStart 指在容器启动后，立刻执行一个指定的操作
->
-> 若postStart执行超时或者错误，Kubernetes会在该Pod的Events中报出该容器启动失败的错误信息，导致Pod也处于失败的状态
->
-> postStop 指容器被杀死之前，执行的操作
->
-> 由于是同步的，会阻塞之前的容器杀死流程，直到这个Hook定义的操作完成之后，才允许容器被杀死
-
-
-
-
-
-
-
-## selector
-
-### matchLabels
-
-通过直接给定键值来指定标签选择器
-
-```
-selector:
-  matchLabels:
-    component: redis
-```
-
-
-
-
-
-### matchExpressions
-
-基于表达式指定的标签选择器列表，每个选择器都形如
-
-```
-{key: KEY_NAME, operator: OPERATOR, values: [VALUE1, VALUE2, ...]}
-```
-
-
-
-```
-selector:
-  matchExpressions:
-    - {key: tier, operator: In, values: [cache]}
-    - {key: environment, operator: Exists, values:}
-```
 
 
 
@@ -444,92 +728,4 @@ spec:
 
 
 
-
-
-## livenessProbe
-
-
-
-### exec
-
-exec类型探针通过在目标容器中执行由用户自定义的命令来判断容器的健康状态
-
-返回0表示成功，其他均为失败
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  labels:
-    test: liveness-exec
-  name: liveness-exec
-spec: 
-  containers:
-  - name: liveness-exec-demo
-    image: busybox
-    args: ["/bin/sh", "-c", "touch /tmp/healthy; sleep 60; rm -rf /tmp/healthy; sleep 600;"]
-    livenessProbe:
-      exec:
-        command: ["test", "-e", "/tmp/healthy"]
-```
-
-
-
-### httpGet
-
-向目标容器发起一个http请求，根据响应状态码进行结果盘点
-
-2xx 或3xx表示通过
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  labels:
-    test: liveness
-  name: liveness-http
-spec:
-  containers:
-    - name: liveness-http-demo
-      image: nginx:1.12-alpine
-      ports:
-      - name: http
-        containersPort: 80
-      lifecycle:
-        portStart:
-          exec:
-            command: ["/bin/sh", "-c", "echo Healthy > /usr/share/nginx/html/healthz"]
-      livenessProbe:
-        httpGet:
-          path: /healthz
-          port: http
-          scheme: HTTP
-```
-
-
-
-
-
-### tcpSocket
-
-基于TCP的存活性探测(TCPSocketAction) 向容器的特定端口发起TCP请求并尝试建立连接进行判定
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  labels:
-    test: liveness
-  name: liveness-tcp
-spec:
-  containers:
-    - name: liveness-tcp-demo
-      image: nginx:1.12-alpine
-      ports:
-      - name: http
-        containersPort: 80
-      livenessProbe:
-        tcpSocket:
-          port: http
-```
 

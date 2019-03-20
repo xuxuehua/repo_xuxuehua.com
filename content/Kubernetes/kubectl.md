@@ -300,6 +300,19 @@ kubectl run nginx-deploy --image=nginx:1.12 --replicas=2
 
 
 
+#### image
+
+Deployment对应用进行版本控制
+
+```
+$ kubectl set image deployment/nginx-deployment nginx=nginx:1.91
+deployment.extensions/nginx-deployment image updated
+```
+
+> 这里的nginx:1.91 是错误的版本
+
+
+
 
 
 
@@ -335,6 +348,68 @@ kubectl scale deployments/myapp --replicas=2
 ### rollout 滚动更新
 
 管理资源的滚动更新
+
+
+
+#### history
+
+查看Deployment 变更的对应版本
+
+```
+$ kubectl rollout history deployment/nginx-deployment
+deployments "nginx-deployment"
+REVISION    CHANGE-CAUSE
+1           kubectl create -f nginx-deployment.yaml --record
+2           kubectl edit deployment/nginx-deployment
+3           kubectl set image deployment/nginx-deployment nginx=nginx:1.91
+```
+
+
+
+#### pause
+
+由于Deployment进行的每一次更新操作，都会生成一个新的ReplicaSet对象，为此，可以指定多次更新操作之后，只生成一个ReplicaSet
+
+即在更新Deployment之前，执行下列操作
+
+```
+$ kubectl rollout pause deployment/nginx-deployment
+deployment.extensions/nginx-deployment paused
+```
+
+> Deployment将处于暂停状态，这样对Deployment的所有修改，都不会出发滚动更新
+
+
+
+#### resume
+
+恢复Deployment 滚动更新
+
+```
+$ kubectl rollout resume deploy/nginx-deployment
+deployment.extensions/nginx-deployment resumed
+```
+
+
+
+
+
+#### undo
+
+撤销滚动版本
+
+```
+$ kubectl rollout undo deployment/nginx-deployment --to-revision=2
+deployment.extensions/nginx-deployment
+```
+
+> 这里指定了滚动的版本号
+
+
+
+
+
+
 
 
 

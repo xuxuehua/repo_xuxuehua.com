@@ -1,5 +1,5 @@
 ---
-title: "web_browser 浏览器"
+title: "web_browser 浏览器对象"
 date: 2018-06-23 01:45
 collection: 浏览器操作
 ---
@@ -12,7 +12,7 @@ collection: 浏览器操作
 
 JavaScript可以获取浏览器提供的很多对象，并进行操作。
 
-## window
+## window 对象
 
 `window`对象不但充当全局作用域，而且表示浏览器窗口。
 
@@ -27,15 +27,19 @@ console.log('window inner size: ' + window.innerWidth + ' x ' + window.innerHeig
 
 
 
+因此全局变量是window对象的属性，全局函数是window对象的方法
+
+
+
+
+
 ## 浏览器对象
 
-阅读: 115242
 
-------
 
 JavaScript可以获取浏览器提供的很多对象，并进行操作。所有浏览器都支持 *window* 对象。
 
-### window
+### window 方法
 
 `window`对象不但充当全局作用域，而且表示浏览器窗口。
 
@@ -46,6 +50,20 @@ JavaScript可以获取浏览器提供的很多对象，并进行操作。所有�
 `'use strict'; ` Runwindow inner size: 1281 x 664
 
 对应的，还有一个`outerWidth`和`outerHeight`属性，可以获取浏览器窗口的整个宽高。
+
+
+
+#### window.open()
+
+打开新窗口
+
+
+
+#### window.close()
+
+关闭当前窗口
+
+
 
 ### navigator
 
@@ -75,7 +93,13 @@ var width = window.innerWidth || document.body.clientWidth;
 
 
 
-### screen
+### screen 对象
+
+包含用户屏幕的信息
+
+
+
+#### 属性
 
 `screen`对象表示屏幕的信息，常用的属性有：
 
@@ -87,13 +111,21 @@ var width = window.innerWidth || document.body.clientWidth;
 
 
 
-### location
+### location 对象
+
+用于获取当前页面的地址(URL), 并把浏览器重新定向到新的页面
+
+
 
 `location`对象表示当前页面的URL信息。例如，一个完整的URL：
 
 ```
 http://www.example.com:8080/path/index.html?a=1&b=2#TOP
 ```
+
+
+
+#### 属性
 
 可以用`location.href`获取。要获得URL各个部分的值，可以这么写：
 
@@ -266,9 +298,15 @@ else
 
 
 
-### history
+### history 对象
 
-`history`对象保存了浏览器的历史记录，JavaScript可以调用`history`对象的`back()`或`forward ()`，相当于用户点击了浏览器的“后退”或“前进”按钮。
+`history`对象保存了浏览器的历史记录
+
+
+
+#### history.back()
+
+用户点击了浏览器的“后退”
 
 这个对象属于历史遗留对象，对于现代Web页面来说，由于大量使用AJAX和页面交互，简单粗暴地调用`history.back()`可能会让用户感到非常愤怒。
 
@@ -278,6 +316,20 @@ else
 
 
 
+#### history.forward()
+
+用户点击了浏览器的“前进”
 
 
-## 
+
+#### history.go()
+
+进入历史中某个页面
+
+
+
+
+
+
+
+

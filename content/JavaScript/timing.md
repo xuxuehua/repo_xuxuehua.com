@@ -13,7 +13,7 @@ date: 2018-07-27 23:20
 
 ## setTimeout()
 
-setTimeout()方法用于在指定的毫秒数后调用函数或计算表达式。
+暂停指定的毫秒数后执行指定代码
 
 
 
@@ -97,9 +97,13 @@ t=setTimeout("timedCount()",1000)
 
 
 
-### clearTimeout()
+## clearTimeout()
 
-#### 语法
+用于停止执行setTimeout()方法的函数代码
+
+
+
+### 语法
 
 clearTimeout(timeoutID)
 
@@ -167,8 +171,6 @@ const immediateObj = setImmediate(() => {
 
 ## setInterval()
 
-setInterval() 方法可按照指定的周期（以毫秒计）来调用函数或计算表达式。
-
 setInterval() 方法会不停地调用函数，直到 clearInterval() 被调用或窗口被关闭。由 setInterval() 返回的 ID 值可用作 clearInterval() 方法的参数。
 
 
@@ -191,7 +193,9 @@ const intervalObj = setInterval(() => {
 
 
 
-### clearInterval()
+## clearInterval()
+
+停止setInterval() 方法执行的函数代码
 
 ```
 const intervalObj = setInterval(() => {

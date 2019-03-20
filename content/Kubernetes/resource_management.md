@@ -40,6 +40,143 @@ Pod 为此基础资源，负责运行容器
 
 
 
+##### 结构
+
+Nginx-deployment.yaml
+
+```
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-set
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+```
+
+> replicas 是3，对应关系如下
+
+
+
+![img](https://snag.gy/RwPJvc.jpg)
+
+
+
+##### 水平扩展
+
+```
+$ kubectl scale deployment nginx-deployment --replicas=4
+deployment.apps/nginx-deployment scaled
+```
+
+
+
+##### 滚动扩展
+
+```
+$ kubectl create -f nginx-deployment.yaml --record
+```
+
+> --record  可以记录每次操作所执行的命令
+
+
+
+```
+$ kubectl get deployments
+NAME               DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment   3         0         0            0           1s
+```
+
+> AVAILABLE 字段描述了用户所期望的最终状态
+
+
+
+```
+$ kubectl rollout status deployment/nginx-deployment
+Waiting for rollout to finish: 2 out of 3 new replicas have been updated...
+deployment.apps/nginx-deployment successfully rolled out
+```
+
+> 在这个返回结果中，“2 out of 3 new replicas have been updated”意味着已经有 2 个 Pod 进入了 UP-TO-DATE 状态。
+
+
+
+```
+$ kubectl get rs
+NAME                          DESIRED   CURRENT   READY   AGE
+nginx-deployment-3167673210   3         3         3       20s
+```
+
+> 在用户提交了一个 Deployment 对象后，Deployment Controller 就会立即创建一个 Pod 副本个数为 3 的 ReplicaSet。这个 ReplicaSet 的名字，则是由 Deployment 的名字和一个随机字符串共同组成。
+
+
+
+修改了 Deployment 的 Pod 模板，“滚动更新”就会被自动触发。
+
+```
+$ kubectl edit deployment/nginx-deployment
+... 
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.9.1 # 1.7.9 -> 1.9.1
+        ports:
+        - containerPort: 80
+...
+deployment.extensions/nginx-deployment edited
+```
+
+> 编辑 Etcd 里的 API 对象
+
+
+
+查看滚动更细腻状态变化
+
+```
+$ kubectl rollout status deployment/nginx-deployment
+Waiting for rollout to finish: 2 out of 3 new replicas have been updated...
+deployment.extensions/nginx-deployment successfully rolled out
+
+
+$ kubectl describe deployment nginx-deployment
+...
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+...
+  Normal  ScalingReplicaSet  24s   deployment-controller  Scaled up replica set nginx-deployment-1764197365 to 1
+  Normal  ScalingReplicaSet  22s   deployment-controller  Scaled down replica set nginx-deployment-3167673210 to 2
+  Normal  ScalingReplicaSet  22s   deployment-controller  Scaled up replica set nginx-deployment-1764197365 to 2
+  Normal  ScalingReplicaSet  19s   deployment-controller  Scaled down replica set nginx-deployment-3167673210 to 1
+  Normal  ScalingReplicaSet  19s   deployment-controller  Scaled up replica set nginx-deployment-1764197365 to 3
+  Normal  ScalingReplicaSet  14s   deployment-controller  Scaled down replica set nginx-deployment-3167673210 to 0
+```
+
+
+
+新旧状态对比
+
+```
+$ kubectl get rs
+NAME                          DESIRED   CURRENT   READY   AGE
+nginx-deployment-1764197365   3         3         3       6s
+nginx-deployment-3167673210   0         0         0       30s
+```
+
+
+
 #### Deployment  无状态
 
 负责无状态应用
@@ -49,6 +186,16 @@ Pod 为此基础资源，负责运行容器
 构建在ReplicaSet之上
 
 负责在Pod定义发生变化时，对每个副本进行跟懂更新
+
+实现了Pod的水平扩展和收缩(horizontal scaling out/in)
+
+
+
+Deployment 所管理的Pod，他的ownerReference 时ReplicaSet
+
+相对而言，Deployment 只是在ReplicaSet 的基础上，添加了`UP-TO-DATE` 这个跟版本有关的字段
+
+
 
 
 
