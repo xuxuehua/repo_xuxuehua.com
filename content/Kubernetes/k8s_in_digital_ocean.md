@@ -729,6 +729,188 @@ sidecar不断的从自己的/var/log目录中读取日志文件，转发到mongo
 
 
 
+# MySQL 主从同步
+
+Master 节点和 Slave 节点需要有不同的配置文件
+
+使用ConfigMap保存不同的配置文件信息
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+data:
+  master.cnf: |
+    # 主节点 MySQL 的配置文件
+    [mysqld]
+    log-bin
+  slave.cnf: |
+    # 从节点 MySQL 的配置文件
+    [mysqld]
+    super-read-only
+```
+
+
+
+
+
+创建两个 Service 来供 StatefulSet 以及用户使用
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  ports:
+  - name: mysql
+    port: 3306
+  clusterIP: None
+  selector:
+    app: mysql
+```
+
+> 这里clusterIP 是None， 即为一个Headless Service
+
+
+
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-read
+  labels:
+    app: mysql
+spec:
+  ports:
+  - name: mysql
+    port: 3306
+  selector:
+    app: mysql
+```
+
+> 常规的Service
+
+
+
+
+
+InitContainer
+
+```
+      ...
+      # template.spec
+      initContainers:
+      - name: init-mysql
+        image: mysql:5.7
+        command:
+        - bash
+        - "-c"
+        - |
+          set -ex
+          # 从 Pod 的序号，生成 server-id
+          [[ `hostname` =~ -([0-9]+)$ ]] || exit 1
+          ordinal=${BASH_REMATCH[1]}
+          echo [mysqld] > /mnt/conf.d/server-id.cnf
+          # 由于 server-id=0 有特殊含义，我们给 ID 加一个 100 来避开它
+          echo server-id=$((100 + $ordinal)) >> /mnt/conf.d/server-id.cnf
+          # 如果 Pod 序号是 0，说明它是 Master 节点，从 ConfigMap 里把 Master 的配置文件拷贝到 /mnt/conf.d/ 目录；
+          # 否则，拷贝 Slave 的配置文件
+          if [[ $ordinal -eq 0 ]]; then
+            cp /mnt/config-map/master.cnf /mnt/conf.d/
+          else
+            cp /mnt/config-map/slave.cnf /mnt/conf.d/
+          fi
+        volumeMounts:
+        - name: conf
+          mountPath: /mnt/conf.d
+        - name: config-map
+          mountPath: /mnt/config-map
+```
+
+
+
+第二个InitContainer
+
+```
+      ...
+      # template.spec.initContainers
+      - name: clone-mysql
+        image: gcr.io/google-samples/xtrabackup:1.0
+        command:
+        - bash
+        - "-c"
+        - |
+          set -ex
+          # 拷贝操作只需要在第一次启动时进行，所以如果数据已经存在，跳过
+          [[ -d /var/lib/mysql/mysql ]] && exit 0
+          # Master 节点 (序号为 0) 不需要做这个操作
+          [[ `hostname` =~ -([0-9]+)$ ]] || exit 1
+          ordinal=${BASH_REMATCH[1]}
+          [[ $ordinal -eq 0 ]] && exit 0
+          # 使用 ncat 指令，远程地从前一个节点拷贝数据到本地
+          ncat --recv-only mysql-$(($ordinal-1)).mysql 3307 | xbstream -x -C /var/lib/mysql
+          # 执行 --prepare，这样拷贝来的数据就可以用作恢复了
+          xtrabackup --prepare --target-dir=/var/lib/mysql
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/mysql
+          subPath: mysql
+        - name: conf
+          mountPath: /etc/mysql/conf.d
+```
+
+
+
+MySQL 容器
+
+```
+      ...
+      # template.spec
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        env:
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: "1"
+        ports:
+        - name: mysql
+          containerPort: 3306
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/mysql
+          subPath: mysql
+        - name: conf
+          mountPath: /etc/mysql/conf.d
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+        livenessProbe:
+          exec:
+            command: ["mysqladmin", "ping"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            # 通过 TCP 连接的方式进行健康检查
+            command: ["mysql", "-h", "127.0.0.1", "-e", "SELECT 1"]
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+```
+
+
+
+
+
 # FAQ
 
 ## token 过期

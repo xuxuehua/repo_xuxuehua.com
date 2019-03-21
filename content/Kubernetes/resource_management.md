@@ -197,6 +197,12 @@ Deployment 所管理的Pod，他的ownerReference 时ReplicaSet
 
 
 
+Deployment 实际上并不足以覆盖所有的应用编排问题。即所有的Pod都是一样的，相互之间没有顺序，也无宿主机要求。
+
+但分布式应用的多个实例之间是相互有依赖关系的
+
+
+
 
 
 
@@ -207,7 +213,179 @@ Deployment 所管理的Pod，他的ownerReference 时ReplicaSet
 
 用于管理有状态的持久化应用，如database
 
-比Deployment会为每个Pod创建一个独有的持久性标识符，并确保Pod之间的顺序性
+比Deployment会为每个Pod创建一个独有的持久性标识符，并确保Pod之间的顺序性，即管理的是不同的Pod 实例，而不是ReplicaSet中完全一样的Pod
+
+创建statefulset必须要先创建一个headless的service，分为两个步骤， 而且必须是Headless Service
+
+
+
+##### 设计
+
+```
+拓扑状态
+应用的多个实例之间不是完全对等的关系。
+这些应用实例，必须按照某些顺序启动，比如应用的主节点 A 要先于从节点 B 启动。而如果你把 A 和 B 两个 Pod 删除掉，它们再次被创建出来时也必须严格按照这个顺序才行。并且，新创建出来的 Pod，必须和原来 Pod 的网络标识一样，这样原先的访问者才能使用同样的方法，访问到这个新 Pod。
+```
+
+
+
+```
+存储状态
+应用的多个实例分别绑定了不同的存储数据。
+对于这些应用实例来说，Pod A 第一次读取到的数据，和隔了十分钟之后再次读取到的数据，应该是同一份，哪怕在此期间 Pod A 被重新创建过。这种情况最典型的例子，就是一个数据库应用的多个存储实例。
+```
+
+
+
+##### Headless Service
+
+即一个标准Service YAML文件
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    app: nginx
+```
+
+> 因为clusterIP是None，所以创建之后不会分配VIP地址。所以将采用DNS记录的方式暴露出所在的代理Pod
+
+
+
+当按照上面的方式创建了一个 Headless Service 之后，它所代理的所有 Pod 的 IP 地址，都会被绑定一个这样格式的 DNS 记录
+
+```
+<pod-name>.<svc-name>.<namespace>.svc.cluster.local
+```
+
+
+
+
+
+statefuleSet.yaml
+
+```
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+spec:
+  serviceName: "nginx"
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.9.1
+        ports:
+        - containerPort: 80
+          name: web
+```
+
+>  serviceName=nginx 字段, 就是告诉 StatefulSet 控制器，在执行控制循环（Control Loop）的时候，请使用 nginx 这个 Headless Service 来保证 Pod 的“可解析身份”。
+
+
+
+```
+$ kubectl create -f svc.yaml
+$ kubectl get service nginx
+NAME      TYPE         CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+nginx     ClusterIP    None         <none>        80/TCP    10s
+
+$ kubectl create -f statefulset.yaml
+$ kubectl get statefulset web
+NAME      DESIRED   CURRENT   AGE
+web       2         1         19s
+```
+
+
+
+```
+$ kubectl get pods -w -l app=nginx
+NAME      READY     STATUS    RESTARTS   AGE
+web-0     0/1       Pending   0          0s
+web-0     0/1       Pending   0         0s
+web-0     0/1       ContainerCreating   0         0s
+web-0     1/1       Running   0         19s
+web-1     0/1       Pending   0         0s
+web-1     0/1       Pending   0         0s
+web-1     0/1       ContainerCreating   0         0s
+web-1     1/1       Running   0         20s
+```
+
+> StatefulSet 给所有被管理的Pod编号，通过-分隔
+
+
+
+可以查看到容器内部的hostname是不一样的
+
+```
+$ kubectl exec web-0 -- sh -c 'hostname'
+web-0
+$ kubectl exec web-1 -- sh -c 'hostname'
+web-1
+```
+
+
+
+```
+$ kubectl run -i --tty --image busybox dns-test --restart=Never --rm /bin/sh
+$ nslookup web-0.nginx
+Server:    10.0.0.10
+Address 1: 10.0.0.10 kube-dns.kube-system.svc.cluster.local
+
+Name:      web-0.nginx
+Address 1: 10.244.1.7
+
+$ nslookup web-1.nginx
+Server:    10.0.0.10
+Address 1: 10.0.0.10 kube-dns.kube-system.svc.cluster.local
+
+Name:      web-1.nginx
+Address 1: 10.244.2.7
+```
+
+> 从 nslookup 命令的输出结果中，我们可以看到，在访问 web-0.nginx 的时候，最后解析到的，正是 web-0 这个 Pod 的 IP 地址；而当访问 web-1.nginx 的时候，解析到的则是 web-1 的 IP 地址。
+
+
+
+```
+$ kubectl delete pod -l app=nginx
+pod "web-0" deleted
+pod "web-1" deleted
+
+$ kubectl get pod -w -l app=nginx
+NAME      READY     STATUS              RESTARTS   AGE
+web-0     0/1       ContainerCreating   0          0s
+NAME      READY     STATUS    RESTARTS   AGE
+web-0     1/1       Running   0          2s
+web-1     0/1       Pending   0         0s
+web-1     0/1       ContainerCreating   0         0s
+web-1     1/1       Running   0         32s
+```
+
+> 可以看到，当把这两个 Pod 删除之后，Kubernetes 会按照原先编号的顺序，创建出了两个新的 Pod。并且，Kubernetes 依然为它们分配了与原来相同的“网络身份”：web-0.nginx 和 web-1.nginx。
+
+
+
+尽管 web-0.nginx 这条记录本身不会变，但它解析到的 Pod 的 IP 地址，并不是固定的。这就意味着，对于“有状态应用”实例的访问，必须使用 DNS 记录或者 hostname 的方式，而绝不应该直接访问这些 Pod 的 IP 地址。
+
+
 
 
 
@@ -219,7 +397,90 @@ Deployment 所管理的Pod，他的ownerReference 时ReplicaSet
 
 监控进程，如prometheus的Node Explorter，collected，datadog agent， Ganglia的gmond
 
-确保每个节点都运行Pod的副本
+这个Pod会运行在Kubernetes集群里面的每一个节点(Node)上面
+
+每一个Node上面只有一个这样的Pod实例
+
+当有新的节点加入到Kubernetes集群中，该Pod会自动在新节点上创建完成，旧节点删除后，Pod也会被回收
+
+相对而言，DaemonSet开始运行的时间，会比整个Kubernetes集群要早
+
+DaemonSet没有replicas字段
+
+创建每个Pod的时候，DaemonSet会自动给这个Pod加上一个nodeAffinity，从而保证Pod只会在这个节点上启动，同时还会自动加上一个Toleration，从而忽略节点的unschedulable污点
+
+
+
+
+
+```
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd-elasticsearch
+  namespace: kube-system
+  labels:
+    k8s-app: fluentd-logging
+spec:
+  selector:
+    matchLabels:
+      name: fluentd-elasticsearch
+  template:
+    metadata:
+      labels:
+        name: fluentd-elasticsearch
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+      - name: fluentd-elasticsearch
+        image: k8s.gcr.io/fluentd-elasticsearch:1.20
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        - name: varlibdockercontainers
+          mountPath: /var/lib/docker/containers
+          readOnly: true
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varlibdockercontainers
+        hostPath:
+          path: /var/lib/docker/containers
+```
+
+> 管理的是一个fluentd-elasticsearch镜像的Pod，即通过fluentd将Docker容器里面的日志转发到ElasticSearch中
+>
+> 两个hostPath分别对应/var/log目录和/var/lib/docker/containers目录
+
+
+
+
+
+添加Toleration，在Master节点上部署Pod
+
+默认Kubernetes集群不允许用户在Master节点上部署Pod，因为Master节点携带了一个`node-role.kubernetes.io/master` 污点，所以要容忍这个污点
+
+```
+tolerations:
+- key: node-role.kubernetes.io/master
+  effect: NoSchedule
+```
+
+
+
+
+
+
 
 
 

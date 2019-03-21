@@ -323,3 +323,117 @@ ca.crt namespace  token
 #### InClusterConfig (推荐)
 
 这种把 Kubernetes 客户端以容器的方式运行在集群里，然后使用 default Service Account 自动授权的方式，被称作“InClusterConfig”，也是我最推荐的进行 Kubernetes API 编程的授权方式。
+
+
+
+
+
+## Persistent Volume Claim (PVC)
+
+降低了用户声明和使用持久化 Volume 的门槛。
+
+PVC是一种特殊的Volume，但PVC所指定的volume类型，是和PV绑定之后才知道
+
+
+
+声明PVC
+
+```
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pv-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+```
+
+> storage: 1Gi	Volume大小至少是1GiB
+>
+> accessModes 	Volume 挂载的方式是可读写的，并且只能被挂载在一个节点上，而非被多个节点共享
+
+
+
+声明使用这个PVC
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pv-pod
+spec:
+  containers:
+    - name: pv-container
+      image: nginx
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: pv-storage
+  volumes:
+    - name: pv-storage
+      persistentVolumeClaim:
+        claimName: pv-claim
+```
+
+> 需要声明它的类型是 persistentVolumeClaim, 然后指定PVC名称即可
+
+
+
+
+
+## Persistent Volume (PV)
+
+创建PVC之后，Kubernetes会自动为其绑定一个符合条件的Volume
+
+这个符合条件的Volume是来自于PV对象
+
+
+
+创建PV对象
+
+```
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-volume
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 10Gi
+  rbd:
+    monitors:
+    - '10.16.154.78:6789'
+    - '10.16.154.82:6789'
+    - '10.16.154.83:6789'
+    pool: kube
+    image: foo
+    fsType: ext4
+    readOnly: true
+    user: admin
+    keyring: /etc/ceph/keyring
+    imageformat: "2"
+    imagefeatures: "layering"
+```
+
+> rbd 指 Ceph RBD Volume的详细定义
+>
+> storage 声明PV容量为10GiB
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -116,6 +116,42 @@ git config credential.helper 'cache --timeout 1800'
 
 
 
+
+
+## detached HEAD
+
+分离头指针状态，即没有分支的状态下产生的问题
+
+需要将当前操作挂到一个分支上或一个tag上以确保变更不会被丢弃
+
+```
+$ git checkout 941a378ffcc76dc8fb30d3cc29a
+Note: checking out '941a378ffcc76dc8fb30d3cc29a'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b <new-branch-name>
+
+HEAD is now at 941a378 Updates
+```
+
+
+
+常用于测试的操作，其不在任何分支当中
+
+若需撤销此操作，`git checkout` 到其他分支即可
+
+
+
+
+
+
+
 ## Git fire
 
 ```

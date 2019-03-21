@@ -457,6 +457,50 @@ spec:
 
 
 
+## volumeClaimTemplates
+
+被StatefulSet管理的Pod，都会声明一个对应的PVC
+
+PVC的定义，源自于volumeClaimTemplates的模板字段
+
+```
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+spec:
+  serviceName: "nginx"
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.9.1
+        ports:
+        - containerPort: 80
+          name: web
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+```
+
+
+
 
 
 ## ports
@@ -520,7 +564,7 @@ spec:
 
 
 
-## nodeSelector
+## nodeSelector (Deprecated by nodeAffinity)
 
 供用户将Pod与Node进行绑定的字段
 
@@ -561,6 +605,57 @@ spec:
 ### NodeName
 
 一旦 Pod 的这个字段被赋值，Kubernetes 项目就会被认为这个 Pod 已经经过了调度，调度的结果就是赋值的节点名字。所以，这个字段一般由调度器负责设置，但用户也可以设置它来“骗过”调度器，当然这个做法一般是在测试或者调试的时候才会用到。
+
+
+
+## nodeAffinity
+
+spec.affinity字段，是Pod里跟调度相关的一个字段
+
+
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-node-affinity
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: metadata.name
+            operator: In
+            values:
+            - node-geektime
+```
+
+> requiredDuringSchedulingIgnoredDuringExecution	指这个nodeAffinity必须在每次调度的时候予以考虑，也表示可以在设置某些情况下不考虑这个nodeAffinity
+>
+> 当前Pod只会运行在metadata.name 是 node-geektime上面节点运行
+
+
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-toleration
+spec:
+  tolerations:
+  - key: node.kubernetes.io/unschedulable
+    operator: Exists
+    effect: NoSchedule
+```
+
+> Toleration容忍”所有被标记为 unschedulable“污点”的 Node；“容忍”的效果是允许调度。
+
+
+
+
+
+
 
 
 

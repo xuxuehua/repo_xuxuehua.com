@@ -196,6 +196,20 @@ kubectl expose deployments/myapp --type="NodePort" --port=80 --name=myapp
 
 
 
+#### controllerrevision 记录Controller版本
+
+用于几率某种Controller对象的版本
+
+```
+$ kubectl get controllerrevision -n kube-system -l name=fluentd-elasticsearch
+NAME                               CONTROLLER                             REVISION   AGE
+fluentd-elasticsearch-64dc6799c9   daemonset.apps/fluentd-elasticsearch   2          1h
+```
+
+> 查看fluentd-elasticsearch对应的ControllerRevision
+
+
+
 列出所有资源
 
 ```
@@ -279,6 +293,10 @@ kubectl get pods -o wide
 ```
 kubectl get nodes -l 'disktype' -L disktype
 ```
+
+
+
+
 
 
 
