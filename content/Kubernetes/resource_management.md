@@ -486,17 +486,345 @@ tolerations:
 
 #### Job 完成后终止
 
-用于管理运行完成后可以终止的应用，如批处理任务
+用来描述离线业务的API对象
+
+
+
+restartPolicy 在 Job 对象里只允许被设置为 Never 和 OnFailure
+
+Job对象并不要一定要定一个spec.selector 来描述控制哪些Pod
+
+```
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pi
+spec:
+  template:
+    spec:
+      containers:
+      - name: pi
+        image: resouer/ubuntu-bc 
+        command: ["sh", "-c", "echo 'scale=10000; 4*a(1)' | bc -l "]
+      restartPolicy: Never
+  backoffLimit: 4
+```
+
+> 4*a(1) 结果为pi 
+>
+> restartPolicy: Never  离线计算的Pod不应该被重启
+
+
+
+```
+$ kubectl create -f job.yaml
+
+$ kubectl describe jobs/pi
+Name:             pi
+Namespace:        default
+Selector:         controller-uid=c2db599a-2c9d-11e6-b324-0209dc45a495
+Labels:           controller-uid=c2db599a-2c9d-11e6-b324-0209dc45a495
+                  job-name=pi
+Annotations:      <none>
+Parallelism:      1
+Completions:      1
+..
+Pods Statuses:    0 Running / 1 Succeeded / 0 Failed
+Pod Template:
+  Labels:       controller-uid=c2db599a-2c9d-11e6-b324-0209dc45a495
+                job-name=pi
+  Containers:
+   ...
+  Volumes:              <none>
+Events:
+  FirstSeen    LastSeen    Count    From            SubobjectPath    Type        Reason            Message
+  ---------    --------    -----    ----            -------------    --------    ------            -------
+  1m           1m          1        {job-controller }                Normal      SuccessfulCreate  Created pod: pi-rq5rl
+```
+
+> 创建成功之后，被自动加载了新的label，controller-uid=< 一个随机字符串 >， 这样保证了Job与其他Pod之间的匹配关系
+
+
+
+
+
+查看Pod状态
+
+```
+$ kubectl get pods
+NAME                                READY     STATUS    RESTARTS   AGE
+pi-rq5rl                            1/1       Running   0          10s
+```
+
+
+
+稍后就completed了
+
+```
+$ kubectl get pods
+NAME                                READY     STATUS      RESTARTS   AGE
+pi-rq5rl                            0/1       Completed   0          4m
+```
+
+
+
+可以查看到结果
+
+```
+$ kubectl logs pi-rq5rl
+3.141592653589793238462643383279...
+```
+
+
+
+
+
+##### 并行控制
+
+spec.parallelism，它定义的是一个 Job 在任意时间最多可以启动多少个 Pod 同时运行
+
+spec.completions，它定义的是 Job 至少要完成的 Pod 数目，即 Job 的最小完成数
+
+
+
+
+
+根据 Job 控制器的工作原理，如果你定义的 parallelism 比 completions 还大的话，
+
+```
+ parallelism: 4
+ completions: 2
+```
+
+需要创建的 Pod 数目 = 最终需要的 Pod 数目 - 实际在 Running 状态 Pod 数目 - 已经成功退出的 Pod 数目 = 2 - 0 - 0= 2。而parallelism数量为4，2小于4，所以应该会创建2个。
+
+
+
+
+
+##### 使用方法
+
+
+
+###### 外部管理器 +Job 模板 
+
+```
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: process-item-$ITEM
+  labels:
+    jobgroup: jobexample
+spec:
+  template:
+    metadata:
+      name: jobexample
+      labels:
+        jobgroup: jobexample
+    spec:
+      containers:
+      - name: c
+        image: busybox
+        command: ["sh", "-c", "echo Processing item $ITEM && sleep 5"]
+      restartPolicy: Never
+```
+
+> $ITEM 用于创建Job时，替换此变量的值
+>
+> 所有来自于同一个模板的 Job，都有一个 jobgroup: jobexample 标签，也就是说这一组 Job 使用这样一个相同的标识。
+
+
+
+替换$ITEM操作
+
+```
+$ mkdir ./jobs
+$ for i in apple banana cherry
+do
+  cat job-tmpl.yaml | sed "s/\$ITEM/$i/" > ./jobs/job-$i.yaml
+done
+```
+
+```
+$ kubectl create -f ./jobs
+$ kubectl get pods -l jobgroup=jobexample
+NAME                        READY     STATUS      RESTARTS   AGE
+process-item-apple-kixwv    0/1       Completed   0          4m
+process-item-banana-wrsf7   0/1       Completed   0          4m
+process-item-cherry-dnfu9   0/1       Completed   0          4m
+```
+
+
+
+###### 固定数目并行
+
+```
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-wq-1
+spec:
+  completions: 8
+  parallelism: 2
+  template:
+    metadata:
+      name: job-wq-1
+    spec:
+      containers:
+      - name: c
+        image: myrepo/job-wq-1
+        env:
+        - name: BROKER_URL
+          value: amqp://guest:guest@rabbitmq-service:5672
+        - name: QUEUE
+          value: job1
+      restartPolicy: OnFailure
+```
+
+> completions 的值是：8, 即总共要处理的任务数目是 8 个
+
+
+
+在这个实例中，选择充当工作队列的是一个运行在 Kubernetes 里的 RabbitMQ。所以，需要在 Pod 模板里定义 BROKER_URL，来作为消费者。
+
+所以，一旦用 kubectl create 创建了这个 Job，它就会以并发度为 2 的方式，每两个 Pod 一组，创建出 8 个 Pod。每个 Pod 都会去连接 BROKER_URL，从 RabbitMQ 里读取任务，然后各自进行处理。这个 Pod 里的执行逻辑，可以用这样一段伪代码来表示：
+
+```
+/* job-wq-1 的伪代码 */
+queue := newQueue($BROKER_URL, $QUEUE)
+task := queue.Pop()
+process(task)
+exit
+```
+
+可以看到，每个 Pod 只需要将任务信息读取出来，处理完成，然后退出即可。而作为用户，我只关心最终一共有 8 个计算任务启动并且退出，只要这个目标达到，我就认为整个 Job 处理完成了。所以说，这种用法，对应的就是“任务总数固定”的场景。
+
+
+
+###### 指定并行度（parallelism）
+
+但不设置固定的 completions 的值 
+
+
+
+此时，必须自己想办法，来决定什么时候启动新 Pod，什么时候 Job 才算执行完成。在这种情况下，任务的总数是未知的，所以不仅需要一个工作队列来负责任务分发，还需要能够判断工作队列已经为空（即：所有的工作已经结束了）
+
+```
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-wq-2
+spec:
+  parallelism: 2
+  template:
+    metadata:
+      name: job-wq-2
+    spec:
+      containers:
+      - name: c
+        image: gcr.io/myproject/job-wq-2
+        env:
+        - name: BROKER_URL
+          value: amqp://guest:guest@rabbitmq-service:5672
+        - name: QUEUE
+          value: job2
+      restartPolicy: OnFailure
+```
+
+
+
+类似伪代码体现
+
+```
+/* job-wq-2 的伪代码 */
+for !queue.IsEmpty($BROKER_URL, $QUEUE) {
+  task := queue.Pop()
+  process(task)
+}
+print("Queue empty, exiting")
+exit
+```
+
+由于任务数目的总数不固定，所以每一个 Pod 必须能够知道，自己什么时候可以退出。比如，在这个例子中，简单地以“队列为空”，作为任务全部完成的标志。所以说，这种用法，对应的是“任务总数不固定”的场景。
+
+
+
+
+
+##### CronJob
+
+定时任务
+
+CronJob是一个Job对象的控制器Controller
+
+CronJob 是一个专门用来管理 Job 对象的控制器。它创建和删除 Job 的依据，是 schedule 字段定义的、一个标准的Unix Cron格式的表达式
+
+
+
+```
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: hello
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hello
+            image: busybox
+            args:
+            - /bin/sh
+            - -c
+            - date; echo Hello from the Kubernetes cluster
+          restartPolicy: OnFailure
+```
+
+
+
+这个 CronJob 对象在创建 1 分钟后，就会有一个 Job 产生了
+
+```
+$ kubectl create -f ./cronjob.yaml
+cronjob "hello" created
+
+# 一分钟后
+$ kubectl get jobs
+NAME               DESIRED   SUCCESSFUL   AGE
+hello-4111706356   1         1         2s
+```
+
+
+
+```
+$ kubectl get cronjob hello
+NAME      SCHEDULE      SUSPEND   ACTIVE    LAST-SCHEDULE
+hello     */1 * * * *   False     0         Thu, 6 Sep 2018 14:34:00 -070
+```
+
+
+
+
+
+需要注意的是，由于定时任务的特殊性，很可能某个 Job 还没有执行完，另外一个新 Job 就产生了。这时候，你可以通过 spec.concurrencyPolicy 字段来定义具体的处理策略。
+
+```
+concurrencyPolicy=Allow，这也是默认情况，这意味着这些 Job 可以同时存在；
+concurrencyPolicy=Forbid，这意味着不会创建新的 Pod，该创建周期被跳过；
+concurrencyPolicy=Replace，这意味着新产生的 Job 会替换旧的、没有执行完的 Job。
+```
+
+
+
+而如果某一次 Job 创建失败，这次创建就会被标记为“miss”。当在指定的时间窗口内，miss 的数目达到 100 时，那么 CronJob 会停止再创建这个 Job。
 
 
 
 
 
 
-
-### 发现和负载均衡 Discovery & LB
-
-确保Pod资源被外部及集群内部访问，要为同一种工作负载的访问流量进行负载均衡
 
 
 
@@ -585,3 +913,213 @@ REST 路径为`/apis/$GROUP_NAME/$VERSION`
 如 `/apis/apps/v1`  在apiVersion字段中引用的格式为`apiVersion:$GROUP_NAME/$VERSION` 
 
 如`apiVersion:apps/v1`
+
+
+
+
+
+
+
+## 用户管理
+
+
+
+### ServiceAccount
+
+Kubernetes 负责管理的内置用户
+
+如果一个 Pod 没有声明 serviceAccountName，Kubernetes 会自动在它的 Namespace 下创建一个名叫 default 的默认 ServiceAccount，然后分配给这个 Pod。
+
+
+
+生产环境，建议所有Namespace下默认ServiceAccount 绑定只读权限的Role
+
+
+
+
+
+
+
+```
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: mynamespace
+  name: example-sa
+```
+
+
+
+
+
+然后，我们通过编写 RoleBinding 的 YAML 文件，来为这个 ServiceAccount 分配权限：
+
+```
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: example-rolebinding
+  namespace: mynamespace
+subjects:
+- kind: ServiceAccount
+  name: example-sa
+  namespace: mynamespace
+roleRef:
+  kind: Role
+  name: example-role
+  apiGroup: rbac.authorization.k8s.io
+```
+
+>  RoleBinding 对象里，subjects 字段的类型（kind），不再是一个 User，而是一个名叫 example-sa 的 ServiceAccount。而 roleRef 引用的 Role 对象，依然名叫 example-role，也就是我在这篇文章一开始定义的 Role 对象。
+
+
+
+
+
+```
+$ kubectl create -f svc-account.yaml
+$ kubectl create -f role-binding.yaml
+$ kubectl create -f role.yaml
+
+$ kubectl get sa -n mynamespace -o yaml
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    creationTimestamp: 2018-09-08T12:59:17Z
+    name: example-sa
+    namespace: mynamespace
+    resourceVersion: "409327"
+    ...
+  secrets:
+  - name: example-sa-token-vmfg6
+```
+
+
+
+声明使用ServiceAccount
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: mynamespace
+  name: sa-token-test
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.7.9
+  serviceAccountName: example-sa
+```
+
+
+
+```
+$ kubectl describe pod sa-token-test -n mynamespace
+Name:               sa-token-test
+Namespace:          mynamespace
+...
+Containers:
+  nginx:
+    ...
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from example-sa-token-vmfg6 (ro)
+```
+
+
+
+查看到目录的文件
+
+```
+$ kubectl exec -it sa-token-test -n mynamespace -- /bin/bash
+root@sa-token-test:/# ls /var/run/secrets/kubernetes.io/serviceaccount
+ca.crt namespace  token
+```
+
+> 容器里的应用，就可以使用这个 ca.crt 来访问 APIServer 了。更重要的是，此时它只能够做 GET、WATCH 和 LIST 操作。因为 example-sa 这个 ServiceAccount 的权限，已经被我们绑定了 Role 做了限制。
+
+
+
+
+
+
+
+但在这种情况下，这个默认 ServiceAccount 并没有关联任何 Role。也就是说，此时它有访问 APIServer 的绝大多数权限。当然，这个访问所需要的 Token，还是默认 ServiceAccount 对应的 Secret 对象为它提供的，如下所示。
+
+```
+$kubectl describe sa default
+Name:                default
+Namespace:           default
+Labels:              <none>
+Annotations:         <none>
+Image pull secrets:  <none>
+Mountable secrets:   default-token-s8rbq
+Tokens:              default-token-s8rbq
+Events:              <none>
+
+$ kubectl get secret
+NAME                  TYPE                                  DATA      AGE
+kubernetes.io/service-account-token   3         82d
+
+$ kubectl describe secret default-token-s8rbq
+Name:         default-token-s8rbq
+Namespace:    default
+Labels:       <none>
+Annotations:  kubernetes.io/service-account.name=default
+              kubernetes.io/service-account.uid=ffcb12b2-917f-11e8-abde-42010aa80002
+
+Type:  kubernetes.io/service-account-token
+
+Data
+====
+ca.crt:     1025 bytes
+namespace:  7 bytes
+token:      <TOKEN 数据 >
+```
+
+
+
+### Group
+
+一个ServiceAccount在Kubernetes对应的用户为
+
+```
+system:serviceaccount:<ServiceAccount 名字 >
+```
+
+
+
+对应的用户组名
+
+```
+system:serviceaccounts:<Namespace 名字 >
+```
+
+
+
+比如，现在我们可以在 RoleBinding 里定义如下的 subjects：
+
+```
+subjects:
+- kind: Group
+  name: system:serviceaccounts:mynamespace
+  apiGroup: rbac.authorization.k8s.io
+```
+
+> 这就意味着这个 Role 的权限规则，作用于 mynamespace 里的所有 ServiceAccount。这就用到了“用户组”的概念。
+
+
+
+
+
+
+
+
+
+```
+subjects:
+- kind: Group
+  name: system:serviceaccounts
+  apiGroup: rbac.authorization.k8s.io
+```
+
+> 就意味着这个 Role 的权限规则，作用于整个系统里的所有 ServiceAccount。

@@ -167,6 +167,8 @@ Docker 引擎，负责本机的容器创建和管理工作
 
 使用etcd进行存储, 简单的key-value 存储，即整个集群的持久化数据
 
+Kubernetes 中的所有的API对象，都保存在Etcd中，但反问都是通过kube-apiserver实现，因为需要APIServer进行授权工作
+
 
 
 ### kubectl
@@ -487,6 +489,34 @@ kubectl获取容器日志等streaming操作时，需要通过kube-apiserver向ku
 #### Ingress Controller
 
 实现应用层HTTP(s)的负载均衡
+
+
+
+## Kubernetes API 对象
+
+一个API对象在Etcd里面的完整路径由: GROUP(API组)，Version(API 版本)， Resource(API 资源类型) 三部分组成
+
+
+
+API 对象的组织方式，是层层传递的
+
+![img](https://snag.gy/KV5e6q.jpg)
+
+
+
+```
+apiVersion: batch/v2alpha1
+kind: CronJob
+...
+```
+
+> CronJob 就是API对象的Resource， batch是Group， v2alpha1是Version
+
+
+
+
+
+
 
 
 

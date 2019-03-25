@@ -382,9 +382,31 @@ selector:
 
 
 
+## activeDeadlineSeconds
+
+设置最长运行时间
+
+```
+spec:
+ backoffLimit: 5
+ activeDeadlineSeconds: 100
+```
+
+> 这是Job对象的例子
 
 
 
+
+
+## parallelism
+
+它定义的是一个 Job 在任意时间最多可以启动多少个 Pod 同时运行
+
+
+
+## completions
+
+它定义的是 Job 至少要完成的 Pod 数目，即 Job 的最小完成数
 
 
 

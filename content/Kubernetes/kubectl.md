@@ -198,7 +198,7 @@ kubectl expose deployments/myapp --type="NodePort" --port=80 --name=myapp
 
 #### controllerrevision 记录Controller版本
 
-用于几率某种Controller对象的版本
+用于记录某种Controller对象的版本
 
 ```
 $ kubectl get controllerrevision -n kube-system -l name=fluentd-elasticsearch

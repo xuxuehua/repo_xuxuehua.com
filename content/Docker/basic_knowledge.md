@@ -670,7 +670,23 @@ test      -        virtualbox   Running   tcp://192.168.99.187:2376           v1
 
 ## Docker Swarm
 
-* Docker Swarm 是 Docker 官方三剑客项目之一，提供 Docker 容器集群服务，是 Docker 官方对容器云生态进行支持的核心方案。
+Docker Swarm 是 Docker 官方三剑客项目之一，提供 Docker 容器集群服务，是 Docker 官方对容器云生态进行支持的核心方案。
+
+
+
+
+
+## Docker Machine
+
+将主机配置成可以加入到Swarm集群中里面
+
+
+
+## Docker Compose
+
+仅适合单机的容器编排工具
+
+
 
 ## etcd
 
