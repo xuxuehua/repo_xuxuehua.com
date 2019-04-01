@@ -119,11 +119,17 @@ Pods can be horizontally scaled via API
 
 资源的管理和调度（pod调度），即容器编排
 
+确保创建的容器始终处于健康状态， 确保控制器健康
+
 
 
 #### Scheduler
 
 调度的队列，观察node的列表
+
+调度容器创建的请求
+
+根据用户需要的资源量，进行分配
 
 
 
@@ -133,7 +139,7 @@ Pods can be horizontally scaled via API
 
 #### Kubelet
 
-与Master node通信的代理
+与Master node通信的集群代理
 
 负责pod对应的容器创建，启动停止等任务，  与Master node协同工作, 实现集群管理，实现容器运行时的交互，称CRI (Container  Runtime Interface)
 
@@ -165,9 +171,11 @@ Docker 引擎，负责本机的容器创建和管理工作
 
 ### etcd
 
-使用etcd进行存储, 简单的key-value 存储，即整个集群的持久化数据
+Master节点使用etcd进行存储, 简单的key-value 存储，即整个集群的持久化数据
 
-Kubernetes 中的所有的API对象，都保存在Etcd中，但反问都是通过kube-apiserver实现，因为需要APIServer进行授权工作
+整个集群所有的对象状态信息，都存储与etcd中，需要高可用
+
+但都是通过kube-apiserver实现，因为需要APIServer进行授权工作
 
 
 
@@ -277,6 +285,15 @@ namespace用于实现项目资源隔离，形成逻辑分组(如多个客户服�
 
 启动kubernetes，默认为default namespace， 开始时objects都在default namespace中
 
+```
+[root@localhost ~]# kubectl get namespace
+NAME              STATUS   AGE
+default           Active   16m
+kube-node-lease   Active   16m
+kube-public       Active   16m
+kube-system       Active   16m
+```
+
 
 
 
@@ -333,9 +350,11 @@ Ingress可以开放某些Pod对象给外部用户访问
 
 建立在一组pod之上，并为这组Pod对象定义一个统一的固定访问入口（通常是一个IP地址）
 
+Pod的抽象层，
+
 到达Service IP的请求将被负载均衡至其后的端点，各个Pod对象之上，因此Service 本质上来讲是一个四层代理服务
 
-一组pod能够被Service 访问到，通常通过Label Selector 实现
+一组pod能够被Service 访问到，通常通过Label Selector 做关联的
 
 
 

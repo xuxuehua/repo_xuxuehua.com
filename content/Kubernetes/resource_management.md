@@ -16,9 +16,9 @@ date: 2019-02-23 23:05
 
 
 
-### 工作负载 Workload （也称Pod控制器）
+### Pod控制器 (也称 工作负载 Workload)
 
-Pod 为此基础资源，负责运行容器
+Pod 为此基础资源，负责运行容器，控制器负责Pod监控和管理
 
 当Pod非正常中止，重建工作由此控制器完成
 
@@ -200,6 +200,14 @@ Deployment 所管理的Pod，他的ownerReference 时ReplicaSet
 Deployment 实际上并不足以覆盖所有的应用编排问题。即所有的Pod都是一样的，相互之间没有顺序，也无宿主机要求。
 
 但分布式应用的多个实例之间是相互有依赖关系的
+
+
+
+##### HPA 水平Pod伸缩
+
+Horizontal Pod Autoscaler
+
+
 
 
 
@@ -843,6 +851,8 @@ concurrencyPolicy=Replace，这意味着新产生的 Job 会替换旧的、没�
 #### Namespace 
 
 资源对象名称的作用范围，默认隶属default
+
+即管理空间
 
 
 

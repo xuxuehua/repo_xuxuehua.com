@@ -12,6 +12,10 @@ date: 2019-02-22 22:32
 
 Kubernetes API Server最常用的客户端程序之一，功能强大，能够几乎完成除了安装部署之外的所有管理操作
 
+连接API Server 对K8s相关对象资源的增删改查
+
+
+
 
 
 ## syntax
@@ -175,18 +179,29 @@ kubectl explain pods.spec
 基于rc，service，deployment或pod创建Service资源
 
 ```
-kubectl expose deployment/nginx --name=nginx-svc --port=80
+kubectl expose (-f FILENAME | TYPE NAME) [--port=port] [--protocol=TCP|UDP|SCTP]
+[--target-port=number-or-name] [--name=name] [--external-ip=external-ip-of-service] [--type=type]
+[options]
 ```
 
+> --port指service 端口， 一般使用众所周知的端口
+>
+> --target-port指pod端口
+>
+> 两个端口可以一样
+
+
+
 ```
-kubectl expose deployments/myapp --type="NodePort" --port=80 --name=myapp
+[root@master ~]# kubectl expose deployment nginx-deploy --name=nginx --port=80 --target-port=80 --protocol=TCP
+service/nginx exposed
+[root@master ~]# kubectl get service
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP   3h34m
+nginx        ClusterIP   10.96.216.63   <none>        80/TCP    10s
 ```
 
-
-
-
-
-
+> 10.96.216.63 service对外地址，代理后端pod
 
 
 

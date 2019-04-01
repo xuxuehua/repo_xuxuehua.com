@@ -10,6 +10,8 @@ date: 2019-03-21 18:42
 
 
 
+
+
 ## 特点
 
 最优的存储能力
@@ -218,4 +220,24 @@ git仓库存放的对象，是commit的类型
 
 
 
+
+# .gitignore
+
+忽略加入git仓库中的文件
+
+
+
+## 定义
+
+```
+test/		# 表示忽略test文件夹下面的文件，但不包含test命名的文件
+
+test		# 表示忽略test文件及test文件夹下面的文件
+```
+
+
+
+## example
+
+[https://github.com/github/gitignore](https://github.com/github/gitignore)
 

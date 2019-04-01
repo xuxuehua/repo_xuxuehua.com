@@ -96,6 +96,22 @@ git checkout -- SOME_FILES
 
 
 
+
+
+## clone 备份
+
+
+
+### --  bare 裸仓库
+
+不带工作区的裸仓库
+
+
+
+
+
+
+
 ## commit
 
 
@@ -142,13 +158,19 @@ git diff HEAD HEAD~2
 
 
 
-### --  指定files
+### --  指定files 
 
 ```
 git diff -- SOME_FILES
 ```
 
 
+
+可以添加多个文件
+
+```
+git diff -- FILE1 FILE2
+```
 
 
 
@@ -161,6 +183,54 @@ git diff --cached
 
 
 返回为空，表示暂存区和HEAD是一致的
+
+
+
+### BRANCH1 BRANCH2 分支差异
+
+```
+git diff test master
+```
+
+
+
+#### -- 指定files
+
+查看分支下具体的某个文件差异
+
+```
+git diff test master -- file1
+```
+
+
+
+### COMMIT1 COMMIT2 提交差异
+
+```
+git diff HASH_VALUE1 HASH_VALUE2
+```
+
+
+
+#### --  指定files
+
+```
+git diff HASH_VALUE1 HASH_VALUE2 -- file1
+```
+
+
+
+## fetch 拉取到本地
+
+但不会和本地的分支产生关联
+
+
+
+## merge 合并
+
+
+
+### --allow-unrelated-histories   
 
 
 
@@ -204,6 +274,14 @@ s
 
 
 
+## remote 远程提交
+
+### add
+
+```
+git remote add REPO_NAME LOCATION
+```
+
 
 
 ## reset
@@ -212,9 +290,101 @@ s
 
 ### HEAD 清空暂存区
 
+取消暂存区所有的变更
+
+```
+git reset HEAD
+```
 
 
 
+#### --  filename 取消部分文件修改
+
+```
+git reset HEAD -- FILENAME
+```
+
+> 将不会变更FILENAME的修改
+
+
+
+多个文件
+
+```
+git reset HEAD -- FILE1 FILE2 FILE3
+```
+
+> 取消FILE1 FILE2 FILE3 的变更
+
+
+
+
+
+### --hard 回退修改 (慎用)
+
+回退到指定的变更
+
+```
+git reset --hard HASH_VALUE
+```
+
+
+
+恢复到头指针位置
+
+```
+git reset --hard HEAD
+```
+
+
+
+## rm 删除文件
+
+删除后续commit不需要的文件
+
+```
+git rm FILENAMES
+```
+
+
+
+
+
+## stash 保存临时现场
+
+不影响工作区的环境
+
+```
+git stash
+```
+
+
+
+### --  list 查看保存信息
+
+```
+git stash --list
+```
+
+
+
+### apply 恢复临时现场
+
+比pop会保留stash的堆栈信息
+
+```
+git stash apply
+```
+
+
+
+### pop 恢复临时现场
+
+不会保留stash的堆栈信息
+
+```
+git stash pop
+```
 
 
 
@@ -245,6 +415,14 @@ git log -n4
 ```
 git log --oneline
 ```
+
+
+
+## pull 拉取远端
+
+
+
+## push 推送到远端
 
 
 
