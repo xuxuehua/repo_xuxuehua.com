@@ -10,21 +10,65 @@ date: 2019-03-08 11:59
 
 
 
-# yaml 定义
+# apiVersion
 
-## apiVersion
-
-
-
-
-
-## kind
-
-定义了这个API对象的类型
+```
+group_name/version
+```
 
 
 
-### PodPreset
+指明资源所在群组以及版本
+
+```
+[root@master ~]# kubectl api-versions
+admissionregistration.k8s.io/v1beta1
+apiextensions.k8s.io/v1beta1
+apiregistration.k8s.io/v1
+apiregistration.k8s.io/v1beta1
+apps/v1
+apps/v1beta1
+apps/v1beta2
+authentication.k8s.io/v1
+authentication.k8s.io/v1beta1
+authorization.k8s.io/v1
+authorization.k8s.io/v1beta1
+autoscaling/v1
+autoscaling/v2beta1
+autoscaling/v2beta2
+batch/v1
+batch/v1beta1
+certificates.k8s.io/v1beta1
+coordination.k8s.io/v1
+coordination.k8s.io/v1beta1
+events.k8s.io/v1beta1
+extensions/v1beta1
+networking.k8s.io/v1
+networking.k8s.io/v1beta1
+node.k8s.io/v1beta1
+policy/v1beta1
+rbac.authorization.k8s.io/v1
+rbac.authorization.k8s.io/v1beta1
+scheduling.k8s.io/v1
+scheduling.k8s.io/v1beta1
+storage.k8s.io/v1
+storage.k8s.io/v1beta1
+v1
+```
+
+
+
+# kind
+
+资源类别
+
+如Pod，Replicas
+
+
+
+
+
+## PodPreset
 
 Pod预先设置
 
@@ -125,11 +169,45 @@ spec:
 
 
 
-## Metadata
+# Metadata
 
 API对象的“标识”，即元数据，也是从Kubernetes里找到这个对象的主要依据，对所有API对象来说，这一部分的格式和字段基本是一致的
 
 其中最主要使用到的字段是Labels
+
+
+
+
+
+### name 
+
+在同一类别中，name必须是唯一的
+
+实例化对象的名称
+
+
+
+### namespace
+
+实例化对象资源的名称空间
+
+name是受限于namespace的
+
+
+
+### labels
+
+key-value 数据
+
+key最多63个字符，只能使用字母，数字，下划线，横线
+
+value 可以为空，只能字母或者数字开头及结尾
+
+
+
+### annotation
+
+资源注解
 
 
 
@@ -139,33 +217,160 @@ API对象的“标识”，即元数据，也是从Kubernetes里找到这个对�
 
 
 
+每个资源引用的PATH
+
+```
+/api/GROUP/VERSION/namespaces/NAMESPACE/RESOURCE_TYPE/NAME
+```
 
 
 
 
-## Spec
+
+### annotations
+
+不能用于挑选资源对象，仅用于对象提供元数据
+
+key value不受限制
+
+支持动态编辑
+
+生成资源注解
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-nodeselector
+  annotations:
+    xuxuehua.com/created-by: "cluster admin"
+spec: 
+....
+```
+
+
+
+
+
+
+
+# Spec 期待状态
+
+specification 规格
 
 存放属于这个对象独有的定义，用来描述它要表达的功能
 
+即用户来定义资源所期望的目标状态
 
 
-### 仔细阅读
+
+
+
+## 仔细阅读
 
 仔细阅读 $GOPATH/src/k8s.io/kubernetes/vendor/k8s.io/api/core/v1/types.go 里，type Pod struct ，尤其是 PodSpec 部分的内容。争取做到下次看到一个 Pod 的 YAML 文件时，不再需要查阅文档，就能做到把常用字段及其作用信手拈来。
 
 
 
-### containers
+## Kubectl explain spec.[Object]
+
+返回为对象，可以一直向下嵌套
+
+## containers 容器列表
+
+内容为列表，开头需要添加 `-`
 
 
 
-#### command
+### name `<string>`
+
+pod 内嵌的容器名称
+
+
+
+### image `<string>`
+
+pod 容器使用的镜像
+
+
+
+若为自定义仓库，需要指明仓库路径以及名称
+
+
+
+### imagePullPolicy `<string>`
+
+定义了拉取镜像的策略
+
+默认策略为Always，即每次创建Pod的时候会重新拉取一次镜像
+
+IfNotPresent  仅当本地镜像缺失时方才从目标仓库中下载镜像
+Never 禁止从仓库中下载镜像，仅仅使用本地镜像
+
+
+
+
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+        imagePullPolicy: Always
+```
+
+> 总是从镜像仓库中获取最新的nginx 镜像
+
+
+
+
+
+### ports `<[]Object>`
+
+暴露一个端口，仅仅是提供额外信息
+
+显示指定容器端口，为其赋予一个名称方便调用
+
+其值为一个对象列表，有一个到多个端口对象组成，且嵌套以下字段
+
+```
+containerPort <integer> 必选字段，指定Pod的IP地址暴露的容器端口 0-65536
+name <string> 当前容器端口名称，在当前pod内需要唯一，此端口名可以被Service资源调用
+protocol 可以为TCP或UDP，默认为TCP
+```
+
+
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-example
+spec:
+  containers:
+    - name: myapp
+      image: ikubernetes/myapp:v1
+      ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+```
+
+
+
+### command `<[]string>`
 
 指定不同于镜像默认运行的应用程序，可以同时使用args字段进行参数传递，将覆盖镜像中的默认定义
 
-自定义args 是向容器中的应用程序传递配置信息的常用方式
+自定义args 将传递args内容作为参数，而镜像中的CMD参数将会被忽略
 
 
+
+其内部的变量引用格式为`$(VAR_NAME)`, 逃逸方式为`$$(VAR_NAME)`
 
 
 
@@ -181,6 +386,47 @@ spec:
       command: ["/bin/sh"]
       args: ["-c", "while true; do sleep 30; done"]
 ```
+
+
+
+This table summarizes the field names used by Docker and Kubernetes.
+
+| Description                         | Docker field name | Kubernetes field name |
+| :---------------------------------- | :---------------- | :-------------------- |
+| The command run by the container    | Entrypoint        | command               |
+| The arguments passed to the command | Cmd               | args                  |
+
+When you override the default Entrypoint and Cmd, these rules apply:
+
+- If you do not supply `command` or `args` for a Container, the defaults defined in the Docker image are used.
+- If you supply a `command` but no `args` for a Container, only the supplied `command` is used. The default EntryPoint and the default Cmd defined in the Docker image are ignored.
+- If you supply only `args` for a Container, the default Entrypoint defined in the Docker image is run with the `args` that you supplied.
+- If you supply a `command` and `args`, the default Entrypoint and the default Cmd defined in the Docker image are ignored. Your `command` is run with your `args`.
+
+
+
+Here are some examples:
+
+| Image Entrypoint | Image Cmd   | Container command | Container args | Command run      |
+| :--------------- | :---------- | :---------------- | :------------- | :--------------- |
+| `[/ep-1]`        | `[foo bar]` | <not set>         | <not set>      | `[ep-1 foo bar]` |
+| `[/ep-1]`        | `[foo bar]` | `[/ep-2]`         | <not set>      | `[ep-2]`         |
+| `[/ep-1]`        | `[foo bar]` | <not set>         | `[zoo boo]`    | `[ep-1 zoo boo]` |
+| `[/ep-1]`        | `[foo bar]` | `[/ep-2]`         | `[zoo boo]`    | `[ep-2 zoo boo]` |
+
+
+
+# status 当前状态
+
+目标资源的当前状态
+
+由kubernetes集群维护，用户不能自定义
+
+
+
+
+
+
 
 
 
@@ -412,35 +658,6 @@ spec:
 
 
 
-## imagePullPolicy
-
-定义了拉取镜像的策略
-
-默认策略为Always，即每次创建Pod的时候会重新拉取一次镜像
-
-IfNotPresent  仅当本地镜像缺失时方才从目标仓库中下载镜像
-Never 禁止从仓库中下载镜像，仅仅使用本地镜像
-
-
-
-
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx-pod
-spec:
-  containers:
-    - name: nginx
-      image: nginx:latest
-        imagePullPolicy: Always
-```
-
-> 总是从镜像仓库中获取最新的nginx 镜像
-
-
-
 
 
 ## RollingUpdateStrategy
@@ -522,37 +739,6 @@ spec:
 ```
 
 
-
-
-
-## ports
-
-显示指定容器端口，为其赋予一个名称方便调用
-
-其值为一个列表，有一个到多个端口对象组成，且嵌套以下字段
-
-```
-containerPort <integer> 必选字段，指定Pod的IP地址暴露的容器端口 0-65536
-name <string> 当前容器端口名称，在当前pod内需要唯一，此端口名可以被Service资源调用
-protocol 可以为TCP或UDP，默认为TCP
-```
-
-
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod-example
-spec:
-  containers:
-    - name: myapp
-      image: ikubernetes/myapp:v1
-      ports:
-        - name: http
-          containerPort: 80
-          protocol: TCP
-```
 
 
 
@@ -769,23 +955,6 @@ spec:
 这个 Pod 被创建后，可以使用 shell 容器的 tty 跟这个容器进行交互了。
 
 
-
-
-
-## annotations
-
-生成资源注解
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod-with-nodeselector
-  annotations:
-    ilinux.io/created-by: cluster admin
-spec: 
-....
-```
 
 
 

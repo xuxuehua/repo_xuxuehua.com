@@ -1,5 +1,5 @@
 ---
-title: "label"
+title: "label 标签选择器"
 date: 2019-03-07 13:20
 ---
 
@@ -140,7 +140,60 @@ kubectl get pods -L env,tier
 
 
 
-## nodeSelector
+## nodeSelector 节点标签选择器
 
 Pod节点选择器时标签以及标签选择器的一种应用，能够让Pod对象基于集群中工作节点的标签来挑选倾向运行的目标节点
+
+
+
+
+
+
+
+
+
+```
+piVersion: v1
+kind: Pod
+metadata:
+  name: pod-demo
+  namespace: default
+  labels:
+    app: myapp
+    tier: frontend
+spec:
+  containers:
+  - name: myapp
+    image: ikubernetes/myapp:v1
+    ports:
+    - name: http
+      containerPort: 80
+    - name: https
+      containerPort: 443
+  - name: busybox
+    image: busybox:latest
+    command:
+    - "/bin/sh"
+    - "-c"
+    - "sleep 3600"
+  nodeSelector:
+    disktype: ssd
+```
+
+> 指定该pod运行在disktype为ssd的node工作节点上
+
+
+
+打标指定节点的disktype为ssd
+
+```
+[root@master ~]# kubectl label nodes node01 disktype=ssd
+node/node01 labeled
+```
+
+
+
+### nodeName
+
+运行在指定节点名称上
 

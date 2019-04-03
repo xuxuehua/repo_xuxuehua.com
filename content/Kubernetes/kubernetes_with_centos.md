@@ -329,3 +329,50 @@ node01   Ready    <none>   3m52s   v1.14.0
 node02   Ready    <none>   3m14s   v1.14.0
 ```
 
+
+
+##  kubedns
+
+```
+[root@master ~]# kubectl get svc -n kube-system
+NAME       TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+kube-dns   ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   12h
+```
+
+
+
+解析pod的地址，需要指定所在的default domain
+
+```
+[root@master ~]# kubectl run client --image=busybox --replicas=1 -it --restart=Never
+If you don't see a command prompt, try pressing enter.
+/ # cat /etc/resolv.conf
+nameserver 10.96.0.10
+search default.svc.cluster.local svc.cluster.local cluster.local
+options ndots:5
+```
+
+```
+[root@master ~]# dig -t A nginx.default.svc.cluster.local @10.96.0.10
+
+; <<>> DiG 9.9.4-RedHat-9.9.4-73.el7_6 <<>> -t A nginx.default.svc.cluster.local @10.96.0.10
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 61822
+;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+;; WARNING: recursion requested but not available
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+;; QUESTION SECTION:
+;nginx.default.svc.cluster.local. IN    A
+
+;; ANSWER SECTION:
+nginx.default.svc.cluster.local. 5 IN   A       10.96.216.63
+
+;; Query time: 0 msec
+;; SERVER: 10.96.0.10#53(10.96.0.10)
+;; WHEN: Tue Apr 02 00:44:52 UTC 2019
+;; MSG SIZE  rcvd: 107
+```
+

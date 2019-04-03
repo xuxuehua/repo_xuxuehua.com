@@ -251,7 +251,33 @@ kubectl get pods -l k8s-app -n kube-system
 
 
 
+##### 等值关系
+
+```
+=, !=, ==
+```
+
+
+
+##### 集合关系
+
+```
+KEY in (VALUE1, VALUE2,...)
+```
+
+```
+KEY notin (VALUE1, VALUE2,...)
+```
+
+```
+!KEY
+```
+
+
+
 #### -L 标签列表
+
+显示每一个对象的标签值
 
 ```
 kubectl get pods -l 'env in (production,dev),!tier' -L env,tier
@@ -378,6 +404,17 @@ kubectl scale deployments/myapp --replicas=2
 
 
 
+```
+[root@master ~]# kubectl scale --replicas=5 deployment myapp
+deployment.extensions/myapp scaled
+[root@master ~]# kubectl scale --replicas=1 deployment myapp
+deployment.extensions/myapp scaled
+```
+
+
+
+
+
 ### rollout 滚动更新
 
 管理资源的滚动更新
@@ -429,7 +466,7 @@ deployment.extensions/nginx-deployment resumed
 
 #### undo
 
-撤销滚动版本
+撤销滚动版本, 不指明为上一个版本
 
 ```
 $ kubectl rollout undo deployment/nginx-deployment --to-revision=2
@@ -606,6 +643,39 @@ kubectl describe services myapp-svc
 
 
 
+#### service/svc
+
+查看service 对象
+
+```
+[root@master ~]# kubectl describe svc nginx
+Name:              nginx
+Namespace:         default
+Labels:            run=nginx-deploy
+Annotations:       <none>
+Selector:          run=nginx-deploy
+Type:              ClusterIP
+IP:                10.96.216.63
+Port:              <unset>  80/TCP
+TargetPort:        80/TCP
+Endpoints:         10.244.2.2:80
+Session Affinity:  None
+Events:            <none>
+```
+
+> 这里指定了pod标签，因此才可以查看到对应的信息
+
+```
+[root@master ~]# kubectl get pods --show-labels
+NAME                           READY   STATUS    RESTARTS   AGE   LABELS
+client                         0/1     Error     0          19m   run=client
+nginx-deploy-55d8d67cf-7zkxm   1/1     Running   0          9h    pod-template-hash=55d8d67cf,run=nginx-deploy
+```
+
+
+
+
+
 ### log/logs 日志
 
 pod内某容器的日志
@@ -682,7 +752,7 @@ kubectl apply -f nginx-deploy.yaml -f nginx-svc.yaml
 
 
 
-### annotate 更新注释
+### annotate 资源注释
 
 添加资源注释
 
@@ -712,6 +782,11 @@ kubectl describe pods pod-example | grep "Annotations"
 
 更新指定资源标签
 
+```
+kubectl label [--overwrite] (-f FILENAME | TYPE NAME) KEY_1=VAL_1 ... KEY_N=VAL_N
+[--resource-version=version] [options]
+```
+
 
 
 #### 添加标签
@@ -724,10 +799,29 @@ kubectl label pods/pod-example env=production
 
 
 
+```
+[root@master ~]# kubectl label pods pod-demo release=canary
+pod/pod-demo labeled
+[root@master ~]# kubectl get pods -l app --show-labels
+NAME       READY   STATUS    RESTARTS   AGE     LABELS
+pod-demo   2/2     Running   0          6m17s   app=myapp,release=canary,tier=frontend
+```
+
+
+
 #### 覆盖标签 --overwrite
 
 ```
-kubectl label pods/pod-with-labels env=testing --overwrite
+[root@master ~]# kubectl label pods pod-demo release=canary
+pod/pod-demo labeled
+[root@master ~]# kubectl get pods -l app --show-labels
+NAME       READY   STATUS    RESTARTS   AGE     LABELS
+pod-demo   2/2     Running   0          6m17s   app=myapp,release=canary,tier=frontend
+[root@master ~]# kubectl label pods pod-demo release=stable --overwrite
+pod/pod-demo labeled
+[root@master ~]# kubectl get pods -l app --show-labels
+NAME       READY   STATUS    RESTARTS   AGE     LABELS
+pod-demo   2/2     Running   0          7m13s   app=myapp,release=stable,tier=frontend
 ```
 
 

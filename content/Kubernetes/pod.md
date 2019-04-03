@@ -80,9 +80,94 @@ Infra 容器使用一个特殊的镜像 (k8s.gcr.io/pause)，占用资源极少�
 
 
 
-## Pod 声明周期（phase）
+## Pod 生命周期（phase）
 
 pod.status.phase 表示当前Pod的状态
+
+
+
+### 初始化容器
+
+
+
+### 容器探测
+
+主容器定时探测容器状态
+
+建立在pod.containers 之上
+
+```
+[root@master ~]# kubectl explain pods.spec.containers
+KIND:     Pod
+VERSION:  v1
+
+RESOURCE: containers <[]Object>
+```
+
+
+
+#### liveness 存活探测
+
+探测容器是否处于存活状态
+
+
+
+##### exec `<Object>` 用户指定命令
+
+根据指令返回码判断
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: liveness-exec-pod
+  namespace: default
+spec:
+  containers:
+  - name: liveness-exec-container
+    image: busybox:latest
+    imagePullPolicy: IfNotPresent
+    command: ["/bin/sh", "-c", "touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 3600"]
+    livenessProbe:
+      exec:
+        command: ["test", "-e", "/tmp/healthy"]
+      initialDelaySeconds: 1
+      periodSeconds: 3
+```
+
+> 
+
+
+
+
+
+##### httpGet      `<Object>`
+
+
+
+##### tcpSocket    `<Object>`
+
+
+
+
+
+#### readiness 就绪探测
+
+探测容器中的服务和程序是否提供服务
+
+
+
+
+
+### 
+
+
+
+
+
+## Pod 状态
+
+
 
 
 
@@ -141,11 +226,15 @@ Pod的状态不能持续地被kubelet汇报给kube-apiserver，很可能是主�
 
 
 
+### CrashLoopBackOff
+
+Kubernetes. 尝试一次又一次的重启Pod
 
 
 
 
-## 容器重启策略
+
+## restartPolicy 容器重启策略
 
 ### Always
 
@@ -281,30 +370,6 @@ spec:
 
 
 
-## 状态信息
-
-### Pending
-
-
-
-### Running
-
-
-
-### Succeeded
-
-
-
-### Failed
-
-
-
-### CrashLoopBackOff
-
-Kubernetes. 尝试一次又一次的重启Pod
-
-
-
 
 
 ## Pod 控制器 Controller
@@ -320,6 +385,8 @@ Kubernetes. 尝试一次又一次的重启Pod
 定义了一个期望的场景，声明某种pod的副本数量在任意时刻都符合某个预期值
 
 e.g. `apiVersion: extensions/v1beat1 kind: Replication metadata: name: frontend `
+
+
 
 
 

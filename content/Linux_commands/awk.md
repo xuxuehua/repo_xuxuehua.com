@@ -24,6 +24,16 @@ awk 'NF==1' file_name
 
 
 
+取反
+
+```
+awk 'NR!=1' file_name
+```
+
+
+
+
+
 ## END 最后一行
 
 ```

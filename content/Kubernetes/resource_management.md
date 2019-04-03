@@ -10,13 +10,9 @@ date: 2019-02-23 23:05
 
 # 资源管理
 
-## 功能分类
-
-更好的运行和丰富Pod资源，从而为容器化应用提供更灵活，更完善的操作与管理组件为核心设计
 
 
-
-### Pod控制器 (也称 工作负载 Workload)
+## Pod控制器 (也称 工作负载 Workload)
 
 Pod 为此基础资源，负责运行容器，控制器负责Pod监控和管理
 
@@ -24,7 +20,7 @@ Pod 为此基础资源，负责运行容器，控制器负责Pod监控和管理
 
 
 
-#### ReplicationController 无状态 （废弃）
+### ReplicationController 无状态 （废弃）
 
 负责无状态应用，上一代应用控制器
 
@@ -32,7 +28,7 @@ Pod 为此基础资源，负责运行容器，控制器负责Pod监控和管理
 
 
 
-#### ReplicaSet 无状态
+### ReplicaSet 无状态
 
 负责无状态应用，新一代ReplicationController
 
@@ -40,7 +36,7 @@ Pod 为此基础资源，负责运行容器，控制器负责Pod监控和管理
 
 
 
-##### 结构
+#### 结构
 
 Nginx-deployment.yaml
 
@@ -74,7 +70,7 @@ spec:
 
 
 
-##### 水平扩展
+#### 水平扩展
 
 ```
 $ kubectl scale deployment nginx-deployment --replicas=4
@@ -83,7 +79,7 @@ deployment.apps/nginx-deployment scaled
 
 
 
-##### 滚动扩展
+#### 滚动扩展
 
 ```
 $ kubectl create -f nginx-deployment.yaml --record
@@ -177,7 +173,7 @@ nginx-deployment-3167673210   0         0         0       30s
 
 
 
-#### Deployment  无状态
+### Deployment  无状态
 
 负责无状态应用
 
@@ -203,7 +199,7 @@ Deployment 实际上并不足以覆盖所有的应用编排问题。即所有的
 
 
 
-##### HPA 水平Pod伸缩
+#### HPA 水平Pod伸缩
 
 Horizontal Pod Autoscaler
 
@@ -215,7 +211,7 @@ Horizontal Pod Autoscaler
 
 
 
-#### StatefulSet 有状态
+### StatefulSet 有状态
 
 负责有状态应用
 
@@ -227,7 +223,7 @@ Horizontal Pod Autoscaler
 
 
 
-##### 设计
+#### 设计
 
 ```
 拓扑状态
@@ -397,7 +393,7 @@ web-1     1/1       Running   0         32s
 
 
 
-#### DaemonSet 守护进程
+### DaemonSet 守护进程
 
 常用于运行集群存储的守护进程，如glusterd，ceph，
 
@@ -492,7 +488,7 @@ tolerations:
 
 
 
-#### Job 完成后终止
+### Job 完成后终止
 
 用来描述离线业务的API对象
 
@@ -587,7 +583,7 @@ $ kubectl logs pi-rq5rl
 
 
 
-##### 并行控制
+#### 并行控制
 
 spec.parallelism，它定义的是一个 Job 在任意时间最多可以启动多少个 Pod 同时运行
 
@@ -610,11 +606,11 @@ spec.completions，它定义的是 Job 至少要完成的 Pod 数目，即 Job �
 
 
 
-##### 使用方法
+#### 使用方法
 
 
 
-###### 外部管理器 +Job 模板 
+##### 外部管理器 +Job 模板 
 
 ```
 apiVersion: batch/v1
@@ -643,7 +639,7 @@ spec:
 
 
 
-替换$ITEM操作
+##### 替换$ITEM操作
 
 ```
 $ mkdir ./jobs
@@ -664,7 +660,7 @@ process-item-cherry-dnfu9   0/1       Completed   0          4m
 
 
 
-###### 固定数目并行
+##### 固定数目并行
 
 ```
 apiVersion: batch/v1
@@ -709,7 +705,7 @@ exit
 
 
 
-###### 指定并行度（parallelism）
+##### 指定并行度（parallelism）
 
 但不设置固定的 completions 的值 
 
@@ -759,7 +755,7 @@ exit
 
 
 
-##### CronJob
+### CronJob
 
 定时任务
 
@@ -836,7 +832,7 @@ concurrencyPolicy=Replace，这意味着新产生的 Job 会替换旧的、没�
 
 
 
-### 配置和存储 Config & Storage
+## 配置和存储 Config & Storage
 
 支持多种存储确保存储资源持久化，如GlusterFS，ceph RBD， Flocker
 
@@ -844,11 +840,29 @@ concurrencyPolicy=Replace，这意味着新产生的 Job 会替换旧的、没�
 
 
 
+### Volume
 
 
-### 集群级资源 Cluster
 
-#### Namespace 
+### CSI
+
+
+
+### ConfigMap
+
+
+
+### DownwardAPI
+
+
+
+
+
+
+
+## 集群级资源 Cluster
+
+### Namespace 
 
 资源对象名称的作用范围，默认隶属default
 
@@ -856,13 +870,13 @@ concurrencyPolicy=Replace，这意味着新产生的 Job 会替换旧的、没�
 
 
 
-#### Node
+### Node
 
 Kubernetes集群工作节点，其标识符在当前集群唯一
 
 
 
-#### Role 
+### Role 
 
 名称空间级别有规则组成的权限集合
 
@@ -870,7 +884,7 @@ Kubernetes集群工作节点，其标识符在当前集群唯一
 
 
 
-#### ClusterRole
+### ClusterRole
 
 Cluster 级别的 
 
@@ -880,7 +894,7 @@ Cluster 级别的
 
 
 
-#### RoleBinding
+### RoleBinding
 
 将Role权限绑定在一个或一组用户上，
 
@@ -888,7 +902,7 @@ Cluster 级别的
 
 
 
-#### ClusterRoleBinding
+### ClusterRoleBinding
 
 将ClusterRole中定义的许可权限绑定在一个或一组用户上，引用ClusterRole
 
@@ -896,11 +910,31 @@ Cluster 级别的
 
 
 
-### 元数据 Metadata
+## 元数据资源 Metadata
 
 用于为集群内部的其他资源配置其行为或特征，如HorizontalPodAutoscaler用于自动伸缩工作负载类型的资源对象的规模
 
 
+
+### HPA
+
+自动调整元数据的相关信息
+
+
+
+### PodTemplate
+
+用于让控制器创建pod的模板
+
+
+
+### LimitRange
+
+定义资源限制
+
+
+
+### 
 
 
 
