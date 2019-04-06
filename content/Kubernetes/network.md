@@ -26,9 +26,9 @@ date: 2019-03-29 14:02
 
 
 
-## Service 集群网络 (网络独立)
+## Service/cluster 集群网络 (网络独立)
 
-仅存在于iptables 和ipvs中，即iptables规则中的地址
+虚拟地址， 仅存在于iptables 和ipvs中，即iptables规则中的地址
 
 
 

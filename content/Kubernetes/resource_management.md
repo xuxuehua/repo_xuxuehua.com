@@ -34,6 +34,8 @@ Pod 为此基础资源，负责运行容器，控制器负责Pod监控和管理
 
 比上一代支持基于集合的选择器
 
+代用户创建对pod副本，并保证其运行数量的状态
+
 
 
 #### 结构
@@ -173,13 +175,13 @@ nginx-deployment-3167673210   0         0         0       30s
 
 
 
-### Deployment  无状态
+### Deployment  无状态 (常用)
 
-负责无状态应用
+负责无状态应用, 一个deployment 可以管理多个ReplicaSet
 
 用于管理无状态持久化的应用，如HTTP
 
-构建在ReplicaSet之上
+构建在ReplicaSet之上，通过控制ReplicaSet来控制副本
 
 负责在Pod定义发生变化时，对每个副本进行跟懂更新
 
@@ -196,6 +198,34 @@ Deployment 所管理的Pod，他的ownerReference 时ReplicaSet
 Deployment 实际上并不足以覆盖所有的应用编排问题。即所有的Pod都是一样的，相互之间没有顺序，也无宿主机要求。
 
 但分布式应用的多个实例之间是相互有依赖关系的
+
+
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+      release: canary
+  template:
+   metadata:
+     labels:
+       app: myapp
+       release: canary
+   spec:
+     containers:
+     - name: myapp
+       image: ikubernetes/myapp:v1
+       ports:
+       - name: http
+         containerPort: 80
+```
 
 
 
@@ -216,6 +246,8 @@ Horizontal Pod Autoscaler
 负责有状态应用
 
 用于管理有状态的持久化应用，如database
+
+运维操作极其复杂，需要将脚本写入到statefulset里面完成其对应的操作
 
 比Deployment会为每个Pod创建一个独有的持久性标识符，并确保Pod之间的顺序性，即管理的是不同的Pod 实例，而不是ReplicaSet中完全一样的Pod
 
@@ -393,17 +425,17 @@ web-1     1/1       Running   0         32s
 
 
 
-### DaemonSet 守护进程
+### DaemonSet 守护进程 无状态
+
+这个Pod会运行在Kubernetes集群里面的每一个节点(Node)上面， 而且只会有一个这样的pod 实例
+
+
 
 常用于运行集群存储的守护进程，如glusterd，ceph，
 
 日志收集进程如fluentd，logstash，
 
 监控进程，如prometheus的Node Explorter，collected，datadog agent， Ganglia的gmond
-
-这个Pod会运行在Kubernetes集群里面的每一个节点(Node)上面
-
-每一个Node上面只有一个这样的Pod实例
 
 当有新的节点加入到Kubernetes集群中，该Pod会自动在新节点上创建完成，旧节点删除后，Pod也会被回收
 
@@ -412,8 +444,6 @@ web-1     1/1       Running   0         32s
 DaemonSet没有replicas字段
 
 创建每个Pod的时候，DaemonSet会自动给这个Pod加上一个nodeAffinity，从而保证Pod只会在这个节点上启动，同时还会自动加上一个Toleration，从而忽略节点的unschedulable污点
-
-
 
 
 
@@ -470,6 +500,72 @@ spec:
 
 
 
+```
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: myapp-ds
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: filebeat
+      release: stable
+  template:
+   metadata:
+     labels:
+       app: filebeat
+       release: stable
+   spec:
+     containers:
+     - name: filebeat
+       image: ikubernetes/filebeat:5.6.5-alpine
+       env:
+       - name: REDIS_HOST
+         value: redis.default.svc.cluster.local
+       - name: REDIS_LOG_LEVEL
+         value: info
+```
+
+
+
+
+
+#### 滚动更新方式
+
+```
+root@master ~]# kubectl set image daemonsets filebeat-ds filebeat=ikubernetes/filebeat:5.6.6-alpine
+daemonset.extensions/filebeat-ds image updated
+[root@master ~]# kubectl  get pods -w
+NAME                               READY   STATUS              RESTARTS   AGE
+client                             1/1     Running             0          3d10h
+filebeat-ds-9tgw8                  1/1     Running             1          11m
+filebeat-ds-x8zpd                  0/1     ContainerCreating   0          3s
+liveness-exec-pod                  0/1     CrashLoopBackOff    806        2d1h
+liveness-httpget-pod               1/1     Running             1          47h
+myapp-deployment-67b6dfcd8-59wxt   1/1     Running             0          50m
+myapp-deployment-67b6dfcd8-g2cnc   1/1     Running             0          50m
+myapp-deployment-67b6dfcd8-jjfml   1/1     Running             0          50m
+myapp-deployment-67b6dfcd8-rc7t8   1/1     Running             0          50m
+myapp-deployment-67b6dfcd8-s6g9m   1/1     Running             0          50m
+poststart-pod                      0/1     CrashLoopBackOff    319        26h
+readiness-httpget-pod              1/1     Running             0          46h
+redis-58b9f5776-bdp8d              1/1     Running             0          11m
+filebeat-ds-x8zpd                  1/1     Running             0          6s
+filebeat-ds-9tgw8                  1/1     Terminating         1          11m
+filebeat-ds-9tgw8                  0/1     Terminating         1          11m
+filebeat-ds-9tgw8                  0/1     Terminating         1          11m
+filebeat-ds-9tgw8                  0/1     Terminating         1          11m
+filebeat-ds-k926z                  0/1     Pending             0          0s
+filebeat-ds-k926z                  0/1     Pending             0          0s
+filebeat-ds-k926z                  0/1     ContainerCreating   0          0s
+filebeat-ds-k926z                  1/1     Running             0          5s
+```
+
+
+
+#### Master 节点 toleration 
+
 添加Toleration，在Master节点上部署Pod
 
 默认Kubernetes集群不允许用户在Master节点上部署Pod，因为Master节点携带了一个`node-role.kubernetes.io/master` 污点，所以要容忍这个污点
@@ -489,6 +585,8 @@ tolerations:
 
 
 ### Job 完成后终止
+
+只能执行一次性的作业
 
 用来描述离线业务的API对象
 
@@ -755,9 +853,11 @@ exit
 
 
 
-### CronJob
+### CronJob 
 
-定时任务
+定时任务，周期性运行
+
+还要处理的问题，如前一个任务未完成，下一个任务时间点已到，将要触发
 
 CronJob是一个Job对象的控制器Controller
 
@@ -853,6 +953,86 @@ concurrencyPolicy=Replace，这意味着新产生的 Job 会替换旧的、没�
 
 
 ### DownwardAPI
+
+
+
+
+
+
+
+## service 服务
+
+依赖于kubernetes的dns 服务器，默认使用CoreDNS, 或kube-dns(1.11之前)
+
+
+
+### 工作模式
+
+
+
+#### user space 模型
+
+![img](https://snag.gy/0kHw5e.jpg)
+
+
+
+来自外部，先到达当前节点内核空间的service 规则，kube-proxy是工作在用户空间的进程
+
+但是效率很低
+
+
+
+#### iptables 模型
+
+![img](https://snag.gy/wMid4m.jpg)
+
+
+
+直接工作在内核空间，直接由service的iptables负责调度
+
+
+
+
+
+#### ipvs 模型
+
+![img](https://snag.gy/ad5SnY.jpg)
+
+
+
+1.11之后使用ipvs，若没有安装ipvs模块，自动降级为iptables
+
+
+
+### 类型 type
+
+
+
+#### ExternalName 
+
+把集群外部的服务引入到集群内部来直接使用
+
+
+
+#### ClusterIP 默认
+
+默认分配一个IP地址，仅用于集群内部通信
+
+
+
+#### NodePort
+
+接入集群外部流量
+
+
+
+#### LoadBalancer
+
+自动触发创建web的负载均衡器
+
+
+
+### 
 
 
 

@@ -456,17 +456,51 @@ deployment.extensions/nginx-deployment paused
 恢复Deployment 滚动更新
 
 ```
-$ kubectl rollout resume deploy/nginx-deployment
-deployment.extensions/nginx-deployment resumed
+[root@master ~]# kubectl rollout resume deployment myapp-deployment
+deployment.extensions/myapp-deployment resumed
+```
+
+可以看到更新状况
+
+```
+[root@master ~]# kubectl rollout status deployment myapp-deployment
+Waiting for deployment "myapp-deployment" rollout to finish: 1 out of 5 new replicas have been updated...
+Waiting for deployment spec update to be observed...
+Waiting for deployment spec update to be observed...
+Waiting for deployment "myapp-deployment" rollout to finish: 1 out of 5 new replicas have been updated...
+Waiting for deployment "myapp-deployment" rollout to finish: 1 out of 5 new replicas have been updated...
+Waiting for deployment "myapp-deployment" rollout to finish: 2 out of 5 new replicas have been updated...
+Waiting for deployment "myapp-deployment" rollout to finish: 2 out of 5 new replicas have been updated...
+Waiting for deployment "myapp-deployment" rollout to finish: 2 out of 5 new replicas have been updated...
+Waiting for deployment "myapp-deployment" rollout to finish: 3 out of 5 new replicas have been updated...
+Waiting for deployment "myapp-deployment" rollout to finish: 3 out of 5 new replicas have been updated...
+Waiting for deployment "myapp-deployment" rollout to finish: 4 out of 5 new replicas have been updated...
+Waiting for deployment "myapp-deployment" rollout to finish: 4 out of 5 new replicas have been updated...
+Waiting for deployment "myapp-deployment" rollout to finish: 4 out of 5 new replicas have been updated...
+Waiting for deployment "myapp-deployment" rollout to finish: 4 out of 5 new replicas have been updated...
+Waiting for deployment "myapp-deployment" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "myapp-deployment" rollout to finish: 1 old replicas are pending termination...
+deployment "myapp-deployment" successfully rolled out
 ```
 
 
+
+#### status
+
+监听更新状态
+
+```
+[root@master ~]# kubectl rollout status deployment myapp-deployment
+Waiting for deployment "myapp-deployment" rollout to finish: 1 out of 5 new replicas have been updated...
+```
 
 
 
 #### undo
 
-撤销滚动版本, 不指明为上一个版本
+撤销滚动版本, 默认为上一个版本
+
+
 
 ```
 $ kubectl rollout undo deployment/nginx-deployment --to-revision=2
@@ -477,9 +511,26 @@ deployment.extensions/nginx-deployment
 
 
 
+```
+[root@master ~]# kubectl rollout history deployment myapp-deployment
+deployment.extensions/myapp-deployment
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+3         <none>
 
+[root@master ~]# kubectl rollout undo deployment myapp-deployment --to-revision=1
+deployment.extensions/myapp-deployment rolled back
+[root@master ~]#
+[root@master ~]# kubectl rollout history deployment myapp-deployment
+deployment.extensions/myapp-deployment
+REVISION  CHANGE-CAUSE
+2         <none>
+3         <none>
+4         <none>
+```
 
-
+> 这里的4 表示revision号码变动了
 
 
 
@@ -717,6 +768,8 @@ kubectl logs kube-apiserver-master.xuxuehua.com -n kube-system
 ## 高级命令
 
 ### apply 实现声明
+
+既可以创建，也可以更新
 
 基于文件或者stdin 将配置应用于资源
 

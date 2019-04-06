@@ -86,7 +86,79 @@ pod.status.phase 表示当前Pod的状态
 
 
 
-### 初始化容器
+### 初始化容器 lifecycle
+
+
+
+#### postStart   ` <Object>` 启动后
+
+##### exec `<Object>` 用户指定命令
+
+根据指令返回码判断
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: poststart-pod
+  namespace: default
+spec:
+  containers:
+  - name: busybox-httpd
+    image: busybox:latest
+    imagePullPolicy: IfNotPresent
+    lifecycle:
+      postStart:
+        exec:
+          command: ['mkdir', '-p', '/data/web/html']
+    command: ['/bin/sh', '-c', 'sleep 3600']
+```
+
+
+
+
+
+##### httpGet      `<Object>`
+
+```
+
+```
+
+
+
+
+
+##### tcpSocket    `<Object>`
+
+
+
+#### preStop     `<Object>` 终止前
+
+##### exec `<Object>` 用户指定命令
+
+根据指令返回码判断
+
+```
+
+```
+
+
+
+
+
+##### httpGet      `<Object>`
+
+```
+
+```
+
+
+
+
+
+##### tcpSocket    `<Object>`
+
+
 
 
 
@@ -135,13 +207,35 @@ spec:
       periodSeconds: 3
 ```
 
-> 
-
 
 
 
 
 ##### httpGet      `<Object>`
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: liveness-httpget-pod
+  namespace: default
+spec:
+  containers:
+  - name: liveness-httpget-container
+    image: ikubernetes/myapp:v1
+    imagePullPolicy: IfNotPresent
+    ports:
+    - name: http
+      containerPort: 80
+    livenessProbe:
+      httpGet:
+      	port: http
+      	path: /index.html
+      initialDelaySeconds: 1
+      periodSeconds: 3
+```
+
+
 
 
 
@@ -151,9 +245,81 @@ spec:
 
 
 
-#### readiness 就绪探测
+#### readiness 就绪探测   (重要)
 
 探测容器中的服务和程序是否提供服务
+
+
+
+##### exec `<Object>` 用户指定命令
+
+根据指令返回码判断
+
+
+
+
+
+
+
+##### httpGet      `<Object>`
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: readiness-httpget-pod
+  namespace: default
+spec:
+  containers:
+  - name: readiness-httpget-container
+    image: ikubernetes/myapp:v1
+    imagePullPolicy: IfNotPresent
+    ports:
+    - name: http
+      containerPort: 80
+    readinessProbe:
+      httpGet:
+      	port: http
+      	path: /index.html
+      initialDelaySeconds: 1
+      periodSeconds: 3
+```
+
+
+
+进入容器后创建和删除index文件，会看到以下效果
+
+```
+[root@master ~]# kubectl exec -it readiness-httpget-pod -- /bin/sh
+```
+
+
+
+```
+[root@master manifests]# kubectl get pods -w
+NAME                           READY   STATUS             RESTARTS   AGE
+client                         1/1     Running            0          35h
+liveness-exec-pod              0/1     CrashLoopBackOff   43         147m
+liveness-httpget-pod           1/1     Running            1          12m
+myapp-5bc569c47d-62hwb         1/1     Running            0          34h
+myapp-5bc569c47d-kwlcp         1/1     Running            0          34h
+myapp-5bc569c47d-tpns4         1/1     Running            0          34h
+nginx-deploy-55d8d67cf-7zkxm   1/1     Running            0          44h
+pod-demo                       2/2     Running            8          8h
+readiness-httpget-pod          1/1     Running            0          67s
+readiness-httpget-pod          0/1     Running            0          69s
+readiness-httpget-pod          1/1     Running            0          4m48s
+```
+
+
+
+
+
+
+
+##### tcpSocket    `<Object>`
+
+
 
 
 

@@ -10,7 +10,9 @@ date: 2019-02-28 19:23
 
 # Kube-proxy
 
-网络代理
+需要连接至Master节点的API_Server进行交互，获取service 相关的资源变动状态
+
+service资源发生的变动，kube-proxy都会将其转化为调动service后端pod节点上的iptables或ipvs规则
 
 
 

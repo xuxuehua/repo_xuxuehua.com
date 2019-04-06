@@ -205,6 +205,26 @@ value 可以为空，只能字母或者数字开头及结尾
 
 
 
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-labels
+  labels:
+    env: qa
+    tier: frontend
+spec: 
+  containers:
+  - name: myapp
+    image: ikubernetes/myapp:v1
+```
+
+
+
+
+
+
+
 ### annotation
 
 资源注解
@@ -275,6 +295,8 @@ specification 规格
 ## Kubectl explain spec.[Object]
 
 返回为对象，可以一直向下嵌套
+
+
 
 ## containers 容器列表
 
@@ -413,6 +435,51 @@ Here are some examples:
 | `[/ep-1]`        | `[foo bar]` | `[/ep-2]`         | <not set>      | `[ep-2]`         |
 | `[/ep-1]`        | `[foo bar]` | <not set>         | `[zoo boo]`    | `[ep-1 zoo boo]` |
 | `[/ep-1]`        | `[foo bar]` | `[/ep-2]`         | `[zoo boo]`    | `[ep-2 zoo boo]` |
+
+
+
+
+
+## selector
+
+### matchLabels
+
+通过直接给定键值来指定标签选择器
+
+```
+selector:
+  matchLabels:
+    component: redis
+```
+
+
+
+
+
+### matchExpressions
+
+基于表达式指定的标签选择器列表，每个选择器都形如
+
+```
+{key: KEY_NAME, operator: OPERATOR, values: [VALUE1, VALUE2, ...]}
+```
+
+
+
+```
+selector:
+  matchExpressions:
+    - {key: tier, operator: In, values: [cache]}
+    - {key: environment, operator: Exists, values:}
+```
+
+
+
+
+
+
+
+
 
 
 
@@ -591,41 +658,6 @@ Never: 从来不重启容器
 
 
 
-#### selector
-
-##### matchLabels
-
-通过直接给定键值来指定标签选择器
-
-```
-selector:
-  matchLabels:
-    component: redis
-```
-
-
-
-
-
-##### matchExpressions
-
-基于表达式指定的标签选择器列表，每个选择器都形如
-
-```
-{key: KEY_NAME, operator: OPERATOR, values: [VALUE1, VALUE2, ...]}
-```
-
-
-
-```
-selector:
-  matchExpressions:
-    - {key: tier, operator: In, values: [cache]}
-    - {key: environment, operator: Exists, values:}
-```
-
-
-
 
 
 ## activeDeadlineSeconds
@@ -745,24 +777,6 @@ spec:
 
 
 
-
-
-
-## labels
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod-with-labels
-  labels:
-    env: qa
-    tier: frontend
-spec: 
-  containers:
-  - name: myapp
-    image: ikubernetes/myapp:v1
-```
 
 
 
