@@ -427,7 +427,7 @@ web-1     1/1       Running   0         32s
 
 ### DaemonSet 守护进程 无状态
 
-这个Pod会运行在Kubernetes集群里面的每一个节点(Node)上面， 而且只会有一个这样的pod 实例
+这个Pod会运行在Kubernetes集群里面的有限节点(Node)上面， 而且只会有一个这样的pod 实例
 
 
 
@@ -575,6 +575,290 @@ tolerations:
 - key: node-role.kubernetes.io/master
   effect: NoSchedule
 ```
+
+
+
+
+
+#### Ingress Controller (七层会话卸载)
+
+一种特殊的Pod，直接监听在宿主机的网络上接入外部请求
+
+独立运行的一组Pod资源，通常为应用程序，即拥有七层调度的代理能力
+
+
+
+![img](https://snag.gy/HhNRni.jpg)
+
+
+
+这里通过一个service，帮助来对Pod进行分组，本身并不接受外部请求，然后通过ingress资源，实时反应Pod节点的状态，将其信息动态注入到ingress controller，并生成对应的配置文件，哪些pod可以被使用
+
+
+
+通常有3种选择，Nginx，Traefik， Envoy(微服务)
+
+
+
+
+
+
+
+##### example
+
+
+
+对应的repo
+
+https://github.com/kubernetes/ingress-nginx.git
+
+
+
+创建名称空间
+
+```
+[root@master ~]# kubectl  create namespace ingress-nginx
+namespace/ingress-nginx created
+```
+
+
+
+激活所有yaml
+
+```
+[root@master deploy]# kubectl apply -f namespace.yaml
+Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply
+namespace/ingress-nginx configured
+[root@master deploy]# kubectl apply -f ./
+configmap/nginx-configuration created
+configmap/tcp-services created
+configmap/udp-services created
+namespace/ingress-nginx unchanged
+configmap/nginx-configuration unchanged
+configmap/tcp-services unchanged
+configmap/udp-services unchanged
+serviceaccount/nginx-ingress-serviceaccount created
+clusterrole.rbac.authorization.k8s.io/nginx-ingress-clusterrole created
+role.rbac.authorization.k8s.io/nginx-ingress-role created
+rolebinding.rbac.authorization.k8s.io/nginx-ingress-role-nisa-binding created
+clusterrolebinding.rbac.authorization.k8s.io/nginx-ingress-clusterrole-nisa-binding created
+deployment.apps/nginx-ingress-controller created
+namespace/ingress-nginx unchanged
+serviceaccount/nginx-ingress-serviceaccount unchanged
+clusterrole.rbac.authorization.k8s.io/nginx-ingress-clusterrole unchanged
+role.rbac.authorization.k8s.io/nginx-ingress-role unchanged
+rolebinding.rbac.authorization.k8s.io/nginx-ingress-role-nisa-binding unchanged
+clusterrolebinding.rbac.authorization.k8s.io/nginx-ingress-clusterrole-nisa-binding unchanged
+deployment.apps/nginx-ingress-controller unchanged
+```
+
+
+
+激活service和pod
+
+```
+[root@master ingress]# cat deploy-demo.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+  namespace: default
+spec:
+  selector:
+    app: myapp
+    release: canary
+  ports:
+  - name: http
+    targetPort: 80
+    port: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deploy
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+      release: canary
+  template:
+   metadata:
+     labels:
+       app: myapp
+       release: canary
+   spec:
+     containers:
+     - name: myapp
+       image: ikubernetes/myapp:v2
+       ports:
+       - name: http
+         containerPort: 80
+[root@master ingress]# kubectl  apply -f deploy-demo.yaml
+deployment.apps/myapp-deploy created
+
+[root@master ingress]# kubectl get pods
+NAME                                READY   STATUS             RESTARTS   AGE
+client                              1/1     Running            0          5d12h
+filebeat-ds-8kc4g                   1/1     Running            0          5h19m
+filebeat-ds-8vwkt                   1/1     Running            0          5h19m
+liveness-exec-pod                   0/1     CrashLoopBackOff   1630       4d4h
+liveness-httpget-pod                1/1     Running            1          4d1h
+myapp-deploy-675558bfc5-6mtj8       1/1     Running            0          78s
+myapp-deploy-675558bfc5-9c52x       1/1     Running            0          78s
+myapp-deploy-675558bfc5-n2949       1/1     Running            0          78s
+myapp-deployment-675558bfc5-q8gxv   1/1     Running            0          5h19m
+myapp-deployment-675558bfc5-tdfk7   1/1     Running            0          5h19m
+myapp-deployment-675558bfc5-zhn8b   1/1     Running            0          5h19m
+poststart-pod                       0/1     CrashLoopBackOff   915        3d5h
+readiness-httpget-pod               1/1     Running            0          4d1h
+redis-58b9f5776-bdp8d               1/1     Running            0          2d3h
+```
+
+
+
+
+
+修改ingress controller，使其能够接入集群外部的流量
+
+```
+[root@master ingress-nginx]# vim deploy/provider/baremetal/service-nodeport.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-nginx
+  namespace: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
+      nodePort: 30080
+    - name: https
+      port: 443
+      targetPort: 443
+      protocol: TCP
+      nodePort: 30443
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+```
+
+> 添加特殊的节点端口30080，30443
+
+
+
+```
+[root@master deploy]# kubectl apply -f provider/baremetal/service-nodeport.yaml
+service/ingress-nginx created
+[root@master deploy]# kubectl  get svc -n ingress-nginx
+NAME            TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+ingress-nginx   NodePort   10.98.203.113   <none>        80:30080/TCP,443:30443/TCP   10s
+```
+
+
+
+
+
+将myapp的代码通过ingress发布出去， 使用虚拟主机来实现
+
+```
+[root@master ingress]# cat ingress-myapp.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-myapp
+  namespace: default
+  annotations:
+    kubenetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: myapp.xurick.com
+    http:
+      paths:
+      - path:
+        backend:
+          serviceName: myapp
+          servicePort: 80
+```
+
+
+
+查看部署结果
+
+```
+[root@master ingress]# kubectl apply -f ingress-myapp.yaml
+ingress.extensions/ingress-myapp created
+[root@master ingress]# kubectl get ingress
+NAME            HOSTS              ADDRESS   PORTS   AGE
+ingress-myapp   myapp.xurick.com             80      6s
+[root@master ingress]# kubectl  describe ingress ingress-myapp
+Name:             ingress-myapp
+Namespace:        default
+Address:
+Default backend:  default-http-backend:80 (<none>)
+Rules:
+  Host              Path  Backends
+  ----              ----  --------
+  myapp.xurick.com
+                       myapp:80 (10.244.1.40:80,10.244.1.41:80,10.244.1.43:80 + 3 more...)
+Annotations:
+  kubenetes.io/ingress.class:                        nginx
+  kubectl.kubernetes.io/last-applied-configuration:  {"apiVersion":"extensions/v1beta1","kind":"Ingress","metadata":{"annotations":{"kubenetes.io/ingress.class":"nginx"},"name":"ingress-myapp","namespace":"default"},"spec":{"rules":[{"host":"myapp.xurick.com","http":{"paths":[{"backend":{"serviceName":"myapp","servicePort":80},"path":null}]}}]}}
+
+Events:
+  Type    Reason  Age   From                      Message
+  ----    ------  ----  ----                      -------
+  Normal  CREATE  46s   nginx-ingress-controller  Ingress default/ingress-myapp
+```
+
+
+
+进入容器可以查看到nginx的配置
+
+```
+[root@master ingress]# kubectl  get pods -n ingress-nginx
+NAME                                        READY   STATUS    RESTARTS   AGE
+nginx-ingress-controller-66f94c89cb-thqfv   1/1     Running   0          25h
+[root@master ingress]# kubectl  exec -n ingress-nginx -it nginx-ingress-controller-66f94c89cb-thqfv -- /bin/sh
+$ cat nginx.conf
+...
+
+## start server myapp.xurick.com
+        server {
+                server_name myapp.xurick.com ;
+
+                listen 80;
+
+                set $proxy_upstream_name "-";
+
+                location / {
+
+                        set $namespace      "default";
+                        set $ingress_name   "ingress-myapp";
+                        set $service_name   "myapp";
+                        set $service_port   "80";
+                        set $location_path  "/";
+
+                        rewrite_by_lua_block {
+                                balancer.rewrite()
+                        }
+
+                        header_filter_by_lua_block {
+
+                        }
+                        body_filter_by_lua_block {
+                        
+                 
+```
+
 
 
 
@@ -927,112 +1211,6 @@ concurrencyPolicy=Replace，这意味着新产生的 Job 会替换旧的、没�
 
 
 
-
-
-
-
-
-## 配置和存储 Config & Storage
-
-支持多种存储确保存储资源持久化，如GlusterFS，ceph RBD， Flocker
-
-使用ConfigMap资源能够以环境变量或存储卷的方式接入到Pod中，还可以被同类Pod共享，不适合存储密钥等敏感数据
-
-
-
-### Volume
-
-
-
-### CSI
-
-
-
-### ConfigMap
-
-
-
-### DownwardAPI
-
-
-
-
-
-
-
-## service 服务
-
-依赖于kubernetes的dns 服务器，默认使用CoreDNS, 或kube-dns(1.11之前)
-
-
-
-### 工作模式
-
-
-
-#### user space 模型
-
-![img](https://snag.gy/0kHw5e.jpg)
-
-
-
-来自外部，先到达当前节点内核空间的service 规则，kube-proxy是工作在用户空间的进程
-
-但是效率很低
-
-
-
-#### iptables 模型
-
-![img](https://snag.gy/wMid4m.jpg)
-
-
-
-直接工作在内核空间，直接由service的iptables负责调度
-
-
-
-
-
-#### ipvs 模型
-
-![img](https://snag.gy/ad5SnY.jpg)
-
-
-
-1.11之后使用ipvs，若没有安装ipvs模块，自动降级为iptables
-
-
-
-### 类型 type
-
-
-
-#### ExternalName 
-
-把集群外部的服务引入到集群内部来直接使用
-
-
-
-#### ClusterIP 默认
-
-默认分配一个IP地址，仅用于集群内部通信
-
-
-
-#### NodePort
-
-接入集群外部流量
-
-
-
-#### LoadBalancer
-
-自动触发创建web的负载均衡器
-
-
-
-### 
 
 
 

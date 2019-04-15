@@ -446,9 +446,27 @@ find . -type f -name "*.php" ! -perm 644
 假设find指令的回传值为Ture，就将文件或目录名称列出到标准输出。格式可以自行指定
 
 
-### -prune
+### -prune 排除
 
 不寻找字符串作为寻找文件或目录的范本样式
+
+
+
+if you want to exclude the `misc` directory just add a `-path ./misc -prune -o` to your find command:
+
+```sh
+find . -path ./misc -prune -o -name '*.txt' -print
+```
+
+Here is an example with multiple directories:
+
+```sh
+find . -type d \( -path dir1 -o -path dir2 -o -path dir3 \) -prune -o -print
+```
+
+Here we exclude dir1, dir2 and dir3, since in `find` expressions it is an action, that acts on the criteria `-path dir1 -o -path dir2 -o -path dir3` (if dir1 or dir2 or dir3), ANDed with `type -d`. Further action is `-o print`, just print.
+
+[](https://nagios.stg.fwmrm.net/thruk/#cgi-bin/status.cgi?hidesearch=0&hidetop=&style=detail&dfl_s0_type=host&dfl_s0_op=%3D&dfl_s0_value=stgcore-new.stg&dfl_s1_type=host&dfl_s1_op=%3D&dfl_s1_value=STGcore.stg)
 
 ### -regex 正则表达式
 

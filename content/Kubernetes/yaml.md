@@ -676,6 +676,54 @@ spec:
 
 
 
+## sessionAffinity
+
+None表示不启用，随机请求后端Pod
+
+ClientIP表示锁定一个后端请求
+
+```
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"myapp","namespace":"default"},"spec":{"clusterIP":"10.99.99.99","ports":[{"nodePort":30080,"port":80,"targetPort":80}],"selector":{"app":"myapp","release":"canary"},"type":"NodePort"}}
+  creationTimestamp: "2019-04-07T05:54:38Z"
+  name: myapp
+  namespace: default
+  resourceVersion: "739917"
+  selfLink: /api/v1/namespaces/default/services/myapp
+  uid: a1636d2f-58f9-11e9-8178-560001fa0d25
+spec:
+  clusterIP: 10.99.99.99
+  externalTrafficPolicy: Cluster
+  ports:
+  - nodePort: 30080
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: myapp
+    release: canary
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
+```
+
+
+
+
+
+
+
+
+
 ## parallelism
 
 它定义的是一个 Job 在任意时间最多可以启动多少个 Pod 同时运行

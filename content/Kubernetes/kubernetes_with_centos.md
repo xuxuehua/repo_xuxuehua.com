@@ -112,6 +112,22 @@ KUBELET_EXTRA_ARGS="--fail-swap-on=false"
 
 
 
+添加ipvs 模块 (未测试)
+
+```
+KUBE_PROXY_MODE=ipvs
+```
+
+并且导入模块
+
+```
+ip_vs, ip_vs_rr, ip_vs_wrr, ip_vs_sh, nf_conntrack_ipv4
+```
+
+
+
+
+
  若无法启动服务
 
 ```

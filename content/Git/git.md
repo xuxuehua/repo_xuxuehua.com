@@ -86,6 +86,14 @@ git checkout -b temp COMMIT_ID
 
 
 
+基于远端的分支进行创建
+
+```
+git checkout -b BRANCH_NAME/INFO  origin/BRANCH_NAME/INFO
+```
+
+
+
 
 
 ### --  指定files  工作区变回暂存区
@@ -388,6 +396,45 @@ git stash pop
 
 
 
+
+
+## status
+
+
+
+### --porcelain 简单输出
+
+```
+$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   content/Kubernetes/kubernetes_with_centos.md
+	modified:   content/Kubernetes/resource_management.md
+	modified:   content/Kubernetes/yaml.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	content/Kubernetes/services.md
+```
+
+```
+$ git status --porcelain
+ M content/Kubernetes/kubernetes_with_centos.md
+ M content/Kubernetes/resource_management.md
+ M content/Kubernetes/yaml.md
+?? content/Kubernetes/services.md
+```
+
+
+
+
+
 ## log
 
 
@@ -426,3 +473,8 @@ git log --oneline
 
 
 
+
+
+### --force
+
+不要用 git push --force，而要用 git push --force-with-lease 代替。在你上次提交之后，只要其他人往该分支提交给代码，git push --force-with-lease 会拒绝覆盖
