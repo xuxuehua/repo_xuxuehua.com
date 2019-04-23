@@ -23,7 +23,7 @@ if commands; then
 fi
 ```
 
-```javascript
+```
 FILE=~/.zshrc # 随便找个路径
 if [ -e "$FILE" ]; then # -e 单目操作符
     if [ -f "$FILE" ]; then
@@ -52,7 +52,7 @@ fi
 
 `case` 其实就是我们熟悉的那个 `swich` ，但语法形式上有很大的不同。
 
-```javascript
+```
 case "$variable" in
     "$condition1" )
         command...
@@ -70,7 +70,7 @@ esac
 
 来个例子。
 
-```javascript
+```
 x=4
 
 case $x in
@@ -99,7 +99,7 @@ done
 - 循环体必须 `done` 结尾
 - `[in words]` 取值很宽泛，可以是通配符，可以是一个命令(`ls`)，一句话，必须是数组形式
 
-```javascript
+```
 for i in *
 do
     echo $i;
@@ -140,7 +140,7 @@ done
 
 ## while
 
-```javascript
+```
 count=1
 while [ $count -le 5 ]; do
     echo $count
@@ -153,7 +153,7 @@ echo "Finished."
 
 语法如下：
 
-```javascript
+```
 while commands; do commands; done
 ```
 

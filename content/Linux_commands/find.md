@@ -337,6 +337,16 @@ find . -mindepth 2 -type f
 
 查找在指定时间曾被更改过的文件或目录，单位以24小时计算
 
+To find all files modified in the last 24 hours (last full day) in a particular specific directory and its sub-directories:
+
+```sh
+find /directory_path -mtime -1 -ls
+```
+
+>  The `-` before `1` is important - it means anything changed one day or less ago. A `+` before `1`would instead mean anything changed at least one day ago, while having nothing before the `1`would have meant it was changed exacted one day ago, no more, no less.
+
+
+
 
 ### -name 指定字符串
 

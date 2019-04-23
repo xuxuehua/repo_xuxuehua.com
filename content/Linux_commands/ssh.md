@@ -106,7 +106,7 @@ Can be used to give options in the format used in the configuration file.  This 
 
 
 
-## ServerAliveInterval
+### ServerAliveInterval
 
 指定ssh 超时时间
 
@@ -125,6 +125,28 @@ ssh -oStrictHostKeyChecking=no $h
 ```
 
 
+
+
+
+### PreferredAuthentications
+
+Force SSH client to use password authentication instead of public key
+
+```
+ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no user@host
+```
+
+
+
+
+
+### PubkeyAuthentication
+
+Force SSH client to use password authentication instead of public key
+
+```
+ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no user@host
+```
 
 
 

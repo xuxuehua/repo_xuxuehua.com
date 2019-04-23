@@ -247,11 +247,17 @@ Horizontal Pod Autoscaler
 
 用于管理有状态的持久化应用，如database
 
+要稳定且拥有唯一的网络标识符
+
+而且需要有序，平滑的部署，扩展，滚动更新，删除，终止
+
 运维操作极其复杂，需要将脚本写入到statefulset里面完成其对应的操作
 
 比Deployment会为每个Pod创建一个独有的持久性标识符，并确保Pod之间的顺序性，即管理的是不同的Pod 实例，而不是ReplicaSet中完全一样的Pod
 
 创建statefulset必须要先创建一个headless的service，分为两个步骤， 而且必须是Headless Service
+
+
 
 
 
@@ -420,6 +426,212 @@ web-1     1/1       Running   0         32s
 
 
 尽管 web-0.nginx 这条记录本身不会变，但它解析到的 Pod 的 IP 地址，并不是固定的。这就意味着，对于“有状态应用”实例的访问，必须使用 DNS 记录或者 hostname 的方式，而绝不应该直接访问这些 Pod 的 IP 地址。
+
+
+
+##### StatefulSet
+
+
+
+
+
+
+
+##### volumeClaimTemplate
+
+不同过pod模版生产，即生成每一个Pod时，会对每一个pod自动创建volume， 而且对每一个volume生成对应的PVC，从而绑定预设好的PV
+
+
+
+###### example
+
+生成PV
+
+```
+[root@master volumes]# cat pv-demo.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv001
+  labels:
+    name: pv001
+spec:
+  nfs:
+    path: /data/volumes/v1
+    server: 202.182.104.162
+  accessModes: ["ReadWriteMany", "ReadWriteOnce"]
+  capacity:
+    storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv002
+  labels:
+    name: pv002
+spec:
+  nfs:
+    path: /data/volumes/v2
+    server: 202.182.104.162
+  accessModes: ["ReadWriteOnce"]
+  capacity:
+    storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv003
+  labels:
+    name: pv003
+spec:
+  nfs:
+    path: /data/volumes/v3
+    server: 202.182.104.162
+  accessModes: ["ReadWriteMany", "ReadWriteOnce"]
+  capacity:
+    storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv004
+  labels:
+    name: pv004
+spec:
+  nfs:
+    path: /data/volumes/v4
+    server: 202.182.104.162
+  accessModes: ["ReadWriteMany", "ReadWriteOnce"]
+  capacity:
+    storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv005
+  labels:
+    name: pv005
+spec:
+  nfs:
+    path: /data/volumes/v5
+    server: 202.182.104.162
+  accessModes: ["ReadWriteMany", "ReadWriteOnce"]
+  capacity:
+    storage: 5Gi
+---
+
+[root@master volumes]# kubectl  get pv
+NAME    CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
+pv001   5Gi        RWO,RWX        Retain           Available                                   11m
+pv002   5Gi        RWO            Retain           Available                                   11m
+pv003   5Gi        RWO,RWX        Retain           Available                                   11m
+pv004   5Gi        RWO,RWX        Retain           Available                                   11m
+pv005   5Gi        RWO,RWX        Retain           Available                                   11m
+```
+
+
+
+
+
+生成StatefulSet
+
+```
+[root@master manifests]# cat stateful-demo.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+  labels:
+    app: myapp
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    app: myapp-pod
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: myapp
+spec:
+  serviceName: myapp
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp-pod
+  template:
+    metadata:
+      labels:
+        app: myapp-pod
+    spec:
+      containers:
+      - name: myapp
+        image: ikubernetes/myapp:v1
+        ports:
+        - containerPort: 80
+          name: web
+        volumeMounts:
+        - name: myappdata
+          mountPath: /usr/share/nginx/html/
+  volumeClaimTemplates:
+  - metadata:
+      name: myappdata
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi                   
+```
+
+> 要在每个worker node提前挂载nfs目录
+
+
+
+
+```
+[root@master manifests]# kubectl  apply -f stateful-demo.yaml
+service/myapp unchanged
+statefulset.apps/myapp created
+
+[root@master ~]# kubectl  get pods
+NAME          READY   STATUS    RESTARTS   AGE
+myapp-0       1/1     Running   0          59m
+myapp-1       1/1     Running   0          58m
+myapp-2       1/1     Running   0          52m
+pod-vol-nfs   1/1     Running   0          5d23h
+[root@master ~]# kubectl  get pods
+NAME          READY   STATUS    RESTARTS   AGE
+myapp-0       1/1     Running   0          59m
+myapp-1       1/1     Running   0          59m
+myapp-2       1/1     Running   0          52m
+pod-vol-nfs   1/1     Running   0          5d23h
+[root@master ~]# kubectl  get svc
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   7d20h
+myapp        ClusterIP   None         <none>        80/TCP    59m
+[root@master ~]# kubectl  get sts
+NAME    READY   AGE
+myapp   3/3     59m
+
+[root@master ~]# kubectl  get pv
+NAME    CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                       STORAGECLASS   REASON   AGE
+pv001   5Gi        RWO,RWX        Retain           Bound       default/myappdata-myapp-1                           59m
+pv002   5Gi        RWO            Retain           Bound       default/myappdata-myapp-0                           59m
+pv003   5Gi        RWO,RWX        Retain           Bound       default/myappdata-myapp-2                           59m
+pv004   5Gi        RWO,RWX        Retain           Available                                                       59m
+pv005   5Gi        RWO,RWX        Retain           Available                                                       59m
+
+
+[root@master ~]# kubectl  get pvc
+NAME                STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+myappdata-myapp-0   Bound    pv002    5Gi        RWO                           59m
+myappdata-myapp-1   Bound    pv001    5Gi        RWO,RWX                       59m
+myappdata-myapp-2   Bound    pv003    5Gi        RWO,RWX                       53m
+```
+
+
 
 
 

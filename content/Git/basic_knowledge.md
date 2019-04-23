@@ -10,10 +10,6 @@ date: 2019-03-21 18:42
 
 
 
-
-
-## 特点
-
 最优的存储能力
 
 非凡的性能
@@ -25,6 +21,36 @@ date: 2019-03-21 18:42
 支持离线操作
 
 很容易定制工作流程
+
+
+
+## WorkFlow 流程
+
+
+
+![img](https://snag.gy/0KAW7k.jpg)
+
+
+
+### Workspace 工作区
+
+
+
+### Index / Stage 暂存区
+
+
+
+### Repository  仓库区/本地仓库
+
+
+
+### Remote 远程仓库
+
+
+
+
+
+
 
 
 
@@ -92,32 +118,6 @@ git config --global user.email "USERNAME@DOMAIN.com"
 
 
 ### `--list` 查看配置
-
-
-
-
-
-## 流程
-
-
-
-### 工作目录
-
-
-
-### 暂存区
-
-
-
-#### 清除
-
-```
-git reset --hard
-```
-
-
-
-### 版本历史
 
 
 
@@ -218,6 +218,10 @@ git仓库存放的对象，是commit的类型
 项目标签信息
 
 
+
+## index 暂存区
+
+存放暂存区信息
 
 
 

@@ -29,6 +29,14 @@ sudo apt-get install goaccess
 
 
 
+### CentOS
+
+```
+yum -y install goaccess
+```
+
+
+
 ## Terminal Output
 
 ```

@@ -192,6 +192,8 @@ kubeadm join 10.0.3.15:6443 --token 4r0o8m.uq64pq6xmvsdejip \
     --discovery-token-ca-cert-hash sha256:657d1fb969a9c1f08c0b2fe763d06adfe3d33fe21d89dedda2c0ddbbb5569a2c
 ```
 
+> 可通过`kubeadm token create --print-join-command` 再次获取token
+
 
 
 查看状态

@@ -11,6 +11,74 @@ date: 2018-09-15 11:17
 
 
 
+## Author name / email address
+
+use Git's "filter-branch" command. It allows you to batch-process a (potentially large) number of commits with a script.
+You can run the below sample script in your repository (filling in real values for the old and new email and name):
+
+```
+$ git filter-branch --env-filter '
+WRONG_EMAIL="wrong@example.com"
+NEW_NAME="New Name Value"
+NEW_EMAIL="correct@example.com"
+
+if [ "$GIT_COMMITTER_EMAIL" = "$WRONG_EMAIL" ]
+then
+    export GIT_COMMITTER_NAME="$NEW_NAME"
+    export GIT_COMMITTER_EMAIL="$NEW_EMAIL"
+fi
+if [ "$GIT_AUTHOR_EMAIL" = "$WRONG_EMAIL" ]
+then
+    export GIT_AUTHOR_NAME="$NEW_NAME"
+    export GIT_AUTHOR_EMAIL="$NEW_EMAIL"
+fi
+' --tag-name-filter cat -- --branches --tags
+```
+
+
+
+## credential
+
+```
+git config credential.helper 'cache --timeout 1800'
+```
+
+
+
+
+
+## detached HEAD
+
+分离头指针状态，即没有分支的状态下产生的问题
+
+需要将当前操作挂到一个分支上或一个tag上以确保变更不会被丢弃
+
+```
+$ git checkout 941a378ffcc76dc8fb30d3cc29a
+Note: checking out '941a378ffcc76dc8fb30d3cc29a'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b <new-branch-name>
+
+HEAD is now at 941a378 Updates
+```
+
+
+
+常用于测试的操作，其不在任何分支当中
+
+若需撤销此操作，`git checkout` 到其他分支即可
+
+
+
+
+
 ## Everything up-to-date
 
 确保配置了基本的user.name & user.email
@@ -103,48 +171,6 @@ $ git branch -D newbranch
 ```
 
 如果想保留分支只是想删除已经合并的部分只要把大写的D改成小写的d就行了。
-
-
-
-
-
-## credential
-
-```
-git config credential.helper 'cache --timeout 1800'
-```
-
-
-
-
-
-## detached HEAD
-
-分离头指针状态，即没有分支的状态下产生的问题
-
-需要将当前操作挂到一个分支上或一个tag上以确保变更不会被丢弃
-
-```
-$ git checkout 941a378ffcc76dc8fb30d3cc29a
-Note: checking out '941a378ffcc76dc8fb30d3cc29a'.
-
-You are in 'detached HEAD' state. You can look around, make experimental
-changes and commit them, and you can discard any commits you make in this
-state without impacting any branches by performing another checkout.
-
-If you want to create a new branch to retain commits you create, you may
-do so (now or later) by using -b with the checkout command again. Example:
-
-  git checkout -b <new-branch-name>
-
-HEAD is now at 941a378 Updates
-```
-
-
-
-常用于测试的操作，其不在任何分支当中
-
-若需撤销此操作，`git checkout` 到其他分支即可
 
 
 

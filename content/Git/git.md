@@ -12,6 +12,10 @@ date: 2019-03-21 19:10
 
 
 
+
+
+
+
 ## branch
 
 
@@ -27,7 +31,7 @@ date: 2019-03-21 19:10
 清除分支
 
 ```
-git branch -d
+git branch -d BRANCH_NAME
 ```
 
 
@@ -97,6 +101,10 @@ git checkout -b BRANCH_NAME/INFO  origin/BRANCH_NAME/INFO
 
 
 ### --  指定files  工作区变回暂存区
+
+即丢弃工作区的修改
+
+`--` 很重要，如果没有 -- 的话，那么命令变成创建分支了
 
 ```
 git checkout -- SOME_FILES
@@ -234,11 +242,39 @@ git diff HASH_VALUE1 HASH_VALUE2 -- file1
 
 
 
+
+
+
+
+
+
 ## merge 合并
+
+git merge命令用于合并指定分支到当前分支上
+
+
+
+在master 分支上合并dev 分支内容
+
+```
+git merge dev
+```
 
 
 
 ### --allow-unrelated-histories   
+
+
+
+### --no-ff 
+
+git一般使用”Fast forward”模式，在这种模式下，删除分支后，会丢掉分支信息，带参数 –no-ff来禁用”Fast forward”模式
+
+```
+git merge --no-ff -m "Merged with no-ff mode" dev
+```
+
+
 
 
 
@@ -282,12 +318,24 @@ s
 
 
 
+## reflog 查看回退历史	
+
+可查看reset --hard 之前的操作
+
+
+
 ## remote 远程提交
 
 ### add
 
 ```
 git remote add REPO_NAME LOCATION
+```
+
+
+
+```
+git remote add origin https://github.com/YOUR_NAME/YOUR_REPO.git
 ```
 
 
@@ -346,9 +394,33 @@ git reset --hard HEAD
 
 
 
+回到上一个版本
+
+```
+git reset --hard HEAD^
+```
+
+
+
+回到上上一个版本
+
+```
+git reset --hard HEAD^^
+```
+
+
+
+回到前100个版本
+
+```
+git reset --hard HEAD~100
+```
+
+
+
 ## rm 删除文件
 
-删除后续commit不需要的文件
+删除后续commit不需要的文件，即放置到暂存区里面
 
 ```
 git rm FILENAMES
@@ -368,7 +440,9 @@ git stash
 
 
 
-### --  list 查看保存信息
+### --  list 查看临时现场保存信息
+
+查看工作现场信息
 
 ```
 git stash --list
@@ -376,7 +450,7 @@ git stash --list
 
 
 
-### apply 恢复临时现场
+### apply 恢复临时现场 (保留堆栈)
 
 比pop会保留stash的堆栈信息
 
@@ -386,12 +460,20 @@ git stash apply
 
 
 
-### pop 恢复临时现场
+### pop 恢复临时现场 (不保留堆栈)
 
-不会保留stash的堆栈信息
+不会保留stash的堆栈信息，会同时把stash 内容也删除掉
 
 ```
 git stash pop
+```
+
+
+
+### drop 删除临时现场
+
+```
+git stash drop
 ```
 
 
@@ -470,6 +552,16 @@ git log --oneline
 
 
 ## push 推送到远端
+
+
+
+### -u 关联分支
+
+Git 不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令
+
+```
+git push -u origin master
+```
 
 
 
