@@ -35,11 +35,23 @@ date: 2018-08-05 01:29
 
 
 
-## 外键
+## 外键 
 
-主要用于两个表直接的关联
+主要用于两个表直接的关联, 必须使用InnoDB 表引擎
+
+外键可以方便的解决数据关联和一致性的问题，但是由于目前互联网数据流量很大，一般在中间层实现约束和控制，尤其是面向Web 应用，
+
+
 
 比如我现在有一个名为`A` 和 `B` 的表单，在`A` 中有一个名为 **username**的字段，在`B`中有一个名为**user_email**的字段，这时**username去关联user_emai**l的字段，这时的**username**字段就叫做**外键.**
+
+
+
+user 表：id 为主键
+
+profile 表： uid 为主键
+
+简单来说，若表 profile 的 uid 列 作为表外键（外建名称：user_profile），以表 user 做为主表，以其 id列 做为参照（references），且联动删除/更新操作（on delete/update cascade）。则 user表 中删除 id 为 1 的记录，会联动删除 profile 中 uid 为 1 的记录。user 表中更新 id 为 1 的记录至 id 为 2，则profile 表中 uid 为 1 的记录也会被联动更新至 uid 为 2，这样即保持了数据的完整性和一致性。
 
 
 
