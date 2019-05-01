@@ -56,7 +56,7 @@ goaccess access.log -o report.html --log-format=COMBINED
 ## Real-Time HTML Output
 
 ```
-goaccess access.log -o /var/www/html/report.html --log-format=COMBINED --real-time-html
+goaccess access_log -o /var/www/html/report.html --log-format=COMBINED --real-time-html
 ```
 
 

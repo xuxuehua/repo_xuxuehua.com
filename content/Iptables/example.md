@@ -424,7 +424,7 @@ num  target     prot opt source               destination
 ```
 iptables -I INPUT -p tcp --dport 22 -m connlimit --connlimit-above 3 -j DROP
 iptables -I INPUT -p tcp --dport 22 -m state --state NEW -m recent --set --name SSH
-iptables -I INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 300 -hitcount 3 --name SSH -j DROP
+iptables -I INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 300 --hitcount 3 --name SSH -j DROP
 ```
 
 > 利用connlimit模块将单IP并发设置为3；会误杀使用NAT上网的用户，可以根据实际情况增大该值。 

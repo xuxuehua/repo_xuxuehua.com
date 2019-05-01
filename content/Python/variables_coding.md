@@ -36,7 +36,7 @@ date: 2018-06-29 13:30
 
 ASCII（American Standard Code for Information Interchange，美国标准信息交换代码）是基于拉丁字母的一套电脑编码系统，主要用于显示现代英语和其他西欧语言，其最多只能用 8 位来表示（一个字节），即：2**8 = 256，所以，ASCII码最多只能表示 256 个符号。
 
-![img](https://cdn.pbrd.co/images/Hs5H3Nu.png)
+![img](https://snag.gy/R0xrZH.jpg)
 
 
 
@@ -197,7 +197,7 @@ str是一种高层对象。bytes是一种底层的东西。
 
 在与外部通信的时候，比如保存文件，socket通信，使用bytes。
 
-![img](https://cdn.pbrd.co/images/HzUl0CK.png)
+![img](https://snag.gy/J5uRa3.jpg)
 
 
 
@@ -215,7 +215,7 @@ str是一种高层对象。bytes是一种底层的东西。
 
 * Python2 图解
 
-![img](https://cdn.pbrd.co/images/HzSb0CT.png)
+![img](https://snag.gy/EbpdFC.jpg)
 
 
 
