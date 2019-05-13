@@ -96,11 +96,17 @@ find . -type f -atime +7
 
 查找在指定时间之时被更改过的文件或目录
 
+### -cnewer<参考文件或目录>
 
-### -cnewer<参考文件或目录>查找其更改时间较指定文件或目录的更改时间更接近现在的文件或目录；
--ctime<24小时数>
+查找其更改时间较指定文件或目录的更改时间更接近现在的文件或目录；
+
+
+
+### -ctime<24小时数>
 
 查找在指定时间之时被更改的文件或目录，单位以24小时计算
+
+
 
 
 ### -daystart
@@ -446,14 +452,17 @@ find . -type f -name "*.php" ! -perm 644
 假设find指令的回传值为Ture，就将文件或目录名称列出到标准输出。格式为每列一个名称，每个名称前皆有“./”字符串
 
 
+
 ### -print0
 
 假设find指令的回传值为Ture，就将文件或目录名称列出到标准输出。格式为全部的名称皆在同一行
 
 
+
 ### -printf<输出格式>
 
 假设find指令的回传值为Ture，就将文件或目录名称列出到标准输出。格式可以自行指定
+
 
 
 ### -prune 排除
@@ -476,7 +485,7 @@ find . -type d \( -path dir1 -o -path dir2 -o -path dir3 \) -prune -o -print
 
 Here we exclude dir1, dir2 and dir3, since in `find` expressions it is an action, that acts on the criteria `-path dir1 -o -path dir2 -o -path dir3` (if dir1 or dir2 or dir3), ANDed with `type -d`. Further action is `-o print`, just print.
 
-[](https://nagios.stg.fwmrm.net/thruk/#cgi-bin/status.cgi?hidesearch=0&hidetop=&style=detail&dfl_s0_type=host&dfl_s0_op=%3D&dfl_s0_value=stgcore-new.stg&dfl_s1_type=host&dfl_s1_op=%3D&dfl_s1_value=STGcore.stg)
+
 
 ### -regex 正则表达式
 

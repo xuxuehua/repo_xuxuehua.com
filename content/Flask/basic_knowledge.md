@@ -103,3 +103,33 @@ from . import admin
 @admin.route("/")
 ```
 
+
+
+
+
+# 前端布局
+
+## 静态文件引入
+
+```
+{{ url_for('static', filename='FILE_PATH') }}
+```
+
+
+
+## 定义路由
+
+```
+{{ url_for('MODULE_NAME.VIEW_NAME', VARIABLE=PARAMETER) }}
+```
+
+
+
+## 定义数据块
+
+```
+{% block BLOCK_NAME %}
+INFO
+{% endblock %}
+```
+

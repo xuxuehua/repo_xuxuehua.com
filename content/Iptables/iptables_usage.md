@@ -359,9 +359,9 @@ iptables -I OUTPUT -d 172.16.0.0/16 -s 172.16.0.9 -p tcp -m multiport --sports 2
 
 ##### icmp 
 
-​        icmp-type 8 请求
+icmp-type 8 请求
 
-​        icmp-type 0 应答
+icmp-type 0 应答
 
 基于发包速率作限制；
 
@@ -370,7 +370,6 @@ iptables -I OUTPUT -d 172.16.0.0/16 -s 172.16.0.9 -p tcp -m multiport --sports 2
         --limit-burst n
 ```
 
-##### 
 
 ##### iprange
 
@@ -385,8 +384,6 @@ iptables -I OUTPUT -d 172.16.0.0/16 -s 172.16.0.9 -p tcp -m multiport --sports 2
 iptables -I INPUT -d 172.16.0.9 -p tcp -m multiport --dports 22:23,80 -m iprange --src-range 172.16.100.1-172.16.100.100 -j ACCEPT
 iptables -I OUTPUT -s 172.16.0.9 -p tcp -m multiport --sports 22:23,80 -m iprange --drc-range 172.16.100.1-172.16.100.100 -j ACCEPT
 ```
-
-
 
 
 
@@ -689,7 +686,7 @@ iptables -A OUTPUT -s local_ip -p tcp -m state --state ESTABLISHED -j ACCEPT
 
 ## Target 采取的动作
 
- target/jump决定符合条件的包到何处去，
+target/jump决定符合条件的包到何处去，
 
 
 
@@ -705,9 +702,15 @@ target指定要对包做的操作，比如DROP和ACCEPT。不同的target有不�
 
 
 
+
+
 ### DROP
 
 丢弃；当信息包与具有DROP目标的规则完全匹配时，会阻塞该信息包，并且不对它做进一步处理。该目标被指定为-j DROP。若包符合条件，该target就会将target丢掉，也就是说包的生命到此结束，效果就是包被阻塞了。在某些情况下，这个target会引起意外的结果，因为它不会向发送者返回任何信 息，也不会向路由器返回信息，这就可能会使连接的另一方的sockets因苦等回音而亡:) 解决这个问题的较 好的办法是使用REJECT target，（译者注：因为它在丢弃包的同时还会向发送者返 回一个错误信息，这样另一方就能正常结束），尤其是在阻止端口扫描工具获得更多的信息时，可以隐蔽被 过滤掉的端口等等（译者注：因为扫描工具扫描一个端口时，如果没有返回信息，一般会认为端口未打开或 被防火墙等设备过滤掉了）。还要注意如果包在子链中被DROP了，那么它在主链里也不会再继续前进，不管 是在当前的表还是在其他表里。总之，包死翘翘了。
+
+
+
+
 
 
 

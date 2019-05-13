@@ -141,12 +141,24 @@ objs/  # 中间文件
 
 
 
-#### --prefix 
 
-指定安装目录
+
+#### 常用编译模块
 
 ```
+--prefix 指定安装目录
 --prefix=/home/user/nginx
+
+
+--with-http_realip_module 服务器记录原始客户端IP
+
+--with-http_ssl_module	加载https模块
+
+--with-pcre 	支持正则
+
+--with-google_perftools_module 	加载Google优化模块
+
+--with-http_gzip_static_module	加载静态资源压缩模块
 ```
 
 

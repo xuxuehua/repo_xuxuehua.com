@@ -1,5 +1,5 @@
 ---
-title: "backup_and_recovery 备份和恢复"
+  title: "backup_and_recovery 备份和恢复"
 date: 2019-01-09 21:19
 ---
 
@@ -23,6 +23,8 @@ date: 2019-01-09 21:19
 
 备份整个数据集
 
+
+
 ## 增量备份
 
 仅仅备份最近一次的完全备份，或者增量备份以来变化的数据
@@ -32,6 +34,8 @@ date: 2019-01-09 21:19
 ## 差异备份
 
 仅仅备份最近一次完全备份以来变化的数据
+
+即提供运行完整备份后变更的文件的备份选择式备份
 
 
 
@@ -99,6 +103,8 @@ MyISAM 支持
 
 ### 二进制日志
 
+
+
 ### InnoDB的事务日志
 
 ### 代码
@@ -122,6 +128,10 @@ MyISAM 支持
 物理，逻辑
 
 
+
+## 常用策略
+
+全量备份+增量备份+binlogs
 
 
 
@@ -475,6 +485,16 @@ innobackupex --user=root /backups/
 
 
 
+
+
+或者（未测试）
+
+```
+innobackupex --user=root --password=redhat --apply-log /data/xt_full_backup/20181112
+```
+
+
+
 ## 完全还原
 
 确保`innodb_file_per_table`参数是ON
@@ -504,6 +524,14 @@ chown -R mysql.mysql ./*
 ```
 
 
+
+或者(未测试)
+
+```
+innobackupex --user=root --password=redhat --copy-back /data/xt_full_backup/20181112
+```
+
+> --copy-back需要再mysqld本地主机执行，mysqld不能启动
 
 
 

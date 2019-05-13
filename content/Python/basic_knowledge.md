@@ -361,9 +361,11 @@ setuptools的[文档](https://pythonhosted.org/setuptools/setuptools.html#develo
 
 ## 垃圾回收
 
-* Python的某个对象的引用计数降为0时，说明没有任何引用指向改对象，该对象就要被垃圾回收
+Python的某个对象的引用计数降为0时，说明没有任何引用指向改对象，该对象就要被垃圾回收
 
-* 在垃圾回收的时候，Python不能执行其他的任何任务。当Python运行时，会记录其中分配对象(object allocation)和取消分配对象(object deallocaiton)的次数，当两者差值高于某个阀值的时候，垃圾回收会自动启动。
+
+
+在垃圾回收的时候，Python不能执行其他的任何任务。当Python运行时，会记录其中分配对象(object allocation)和取消分配对象(object deallocaiton)的次数，当两者差值高于某个阀值的时候，垃圾回收会自动启动。
 
 ```
 #700是垃圾回收的阀值，可以使用set_threshold方法重新设置
