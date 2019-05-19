@@ -176,6 +176,16 @@ $ git branch -D newbranch
 
 
 
+## The following untracked working tree files would be overwritten by merge:
+
+we want to overwrite these files.
+
+```
+`git fetch --all``git reset --hard origin``/master`
+```
+
+This grabs the latest repository files without merging and resets the master branch and overwrites the modified ones.
+
 
 
 ## Git fire

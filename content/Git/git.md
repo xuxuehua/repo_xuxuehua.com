@@ -14,6 +14,10 @@ date: 2019-03-21 19:10
 
 
 
+## add 添加到暂存区
+
+把文件修改添加到暂存区
+
 
 
 ## branch
@@ -128,7 +132,9 @@ git checkout -- SOME_FILES
 
 
 
-## commit
+## commit 提交更改
+
+把暂存区的所有内容提交到当前分支（若是多分支，就不一定是master分支）
 
 
 
@@ -338,6 +344,8 @@ git remote add REPO_NAME LOCATION
 git remote add origin https://github.com/YOUR_NAME/YOUR_REPO.git
 ```
 
+> 这里的origin指远程库的名称
+
 
 
 ## reset
@@ -354,7 +362,7 @@ git reset HEAD
 
 
 
-#### --  filename 取消部分文件修改
+#### --filename 取消部分文件修改
 
 ```
 git reset HEAD -- FILENAME
@@ -547,6 +555,14 @@ git log --oneline
 
 
 
+### --pretty 编辑输出信息
+
+```
+git log --pretty=oneline
+```
+
+
+
 ## pull 拉取远端
 
 
@@ -555,7 +571,9 @@ git log --oneline
 
 
 
-### -u 关联分支
+### -u/--set-upstream 关联分支
+
+set upstream for git pull/status
 
 Git 不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令
 

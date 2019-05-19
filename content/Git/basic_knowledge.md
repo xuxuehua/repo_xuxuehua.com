@@ -173,7 +173,23 @@ git config --global user.email "USERNAME@DOMAIN.com"
 
 ## HEAD 
 
-文本信息，分支信息
+文本信息，分支信息，即当前版本
+
+HEAD指向哪个版本，当前版本就会定位到那里
+
+```
+┌────┐
+│HEAD│
+└────┘
+   │
+   │    ○ Version 3
+   │    │
+   └──> ○ Version 2
+        │
+        ○ Version 1
+```
+
+> 当前处于version2
 
 
 

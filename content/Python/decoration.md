@@ -194,6 +194,51 @@ ret value (1, 2, 3)
 
 
 
+
+
+## 叠放装饰器
+
+如果一个函数被多个装饰器修饰，其实应该是该函数先被最里面的装饰器修饰
+
+
+
+```
+def outer(func):
+    print('Enter outer', func)
+    def wrapper():
+        print('Running outer')
+        func()
+    return wrapper
+
+def inner(func):
+    print('Enter inner', func)
+    def wrapper():
+        print('Running inner')
+        func()
+    return wrapper
+
+@outer
+@inner
+def main():
+    print('Running main')
+
+if __name__ == "__main__":
+    main()
+    
+>>>
+Enter inner <function main at 0x10a1ae730>
+Enter outer <function inner.<locals>.wrapper at 0x10a1ae7b8>
+Running outer
+Running inner
+Running main
+```
+
+> 函数main()先被inner装饰，变成新的函数，变成另一个函数后，再次被装饰器修饰
+
+
+
+
+
 ## 装饰类
 
 一个装饰器可以接收一个类，并返回一个类，起到加工的作用。
@@ -257,3 +302,10 @@ In [8]: "name={}\ndoc={}".format(add.__name__, add.__doc__)
 Out[8]: 'name=add\ndoc=This is doc string'
 ```
 
+
+
+
+
+# wraps 装饰器
+
+使用装饰器会产生我们可能不希望出现的副作用，　例如：改变被修饰函数名称，对于调试器或者对象序列化器等需要使用内省机制的那些工具，可能会无法正常运行；其实调用装饰器后，会将同一个作用域中原来函数同名的那个变量（例如下面的func_1）,重新赋值为装饰器返回的对象；使用＠wraps后，会把与内部函数（被修饰函数，例如下面的func_1）相关的重要元数据全部复制到外围函数

@@ -1086,6 +1086,12 @@ ALTER TABLE
 
 
 
+```
+mysql> ALTER TABLE movie CHANGE `start` star smallint(6);
+```
+
+
+
 ### 删除表
 
 ```

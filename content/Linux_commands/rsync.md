@@ -21,9 +21,18 @@ rsync -avH [ssh] /path/to/source user@des:/path/to/local
 
 
 
+
+
 ## 远程到本地  PULL
 
 ```
 rsync -avH [ssh] user@des:/path/to/source /path/to/local  
 ```
 
+
+
+```
+rsync -vare ssh jono@192.168.0.2:/home/jono/importantfiles/* /home/jono/backup/
+```
+
+> 备份了192.168.0.2地址上/home/jono/importantfiles/目录下的所有文件到当前机器上的/home/jono/backup目录下。
