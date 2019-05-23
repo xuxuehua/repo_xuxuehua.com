@@ -569,6 +569,10 @@ git log --pretty=oneline
 
 ## push 推送到远端
 
+```
+git push https://user:pass@example.com
+```
+
 
 
 ### -u/--set-upstream 关联分支

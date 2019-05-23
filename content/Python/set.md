@@ -87,7 +87,7 @@ Out[3]: 3
 
 
 
-### in
+#### in
 
 ```
 In [2]: s
@@ -202,7 +202,7 @@ Out[5]: {1, 2, 3, 4}
 
 ```
 
-#### 
+
 
 #### intersection 交集
 
@@ -217,7 +217,7 @@ In [8]: s1.intersection(s2)
 Out[8]: {2, 3}
 ```
 
-#### 
+
 
 #### difference 差集
 
@@ -235,7 +235,7 @@ In [15]: s2.difference(s1)
 Out[15]: {4}
 ```
 
-#### 
+
 
 #### symmetric_difference 对称差集
 

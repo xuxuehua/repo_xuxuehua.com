@@ -83,6 +83,42 @@ date: 2019-05-14 19:23
 
 
 
+# 应用程序
+
+## 服务器端
+
+```
+wu-ftpd: Washington University, 非模块化设计 
+
+vsftpd：Very Secure ftp Daemon 
+
+proftpd:  
+
+pureftpd： 
+
+Filezilla： 
+
+Serv-U 
+```
+
+
+
+## 客户端
+
+```
+CLI: 
+  ftp 
+	lftp 
+
+GUI: 
+	gftpd 
+	FlashFXP 
+	Cuteftp 
+  filezilla 
+```
+
+
+
 # vsftpd
 
 Vsftpd是基于ftp协议来对网络数据交换的一种实现，是一个开源的解决方案

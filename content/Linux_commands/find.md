@@ -496,6 +496,29 @@ find . -regex ".*\(\.txt\|\.pdf\)$"
 ```
 
 
+
+```sh
+find . -name "file-$a.sh" -o -name "file-$b.sh"
+```
+
+> To combine it into one using `-regex` option:
+
+
+
+**On OSX**
+
+```sh
+find -E . -regex ".*file-($a|$b)\.txt"
+```
+
+**On Linux:**
+
+```sh
+find . -regextype posix-extended -regex ".*file-($a|$b)\.txt"
+```
+
+
+
 ### -size 文件大小
 
 查找符合指定的文件大小的文件

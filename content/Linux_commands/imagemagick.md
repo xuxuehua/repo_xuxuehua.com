@@ -23,13 +23,25 @@ yum -y install ImageMagick ImageMagick-devel
 
 ## convert
 
-### -thumnail
 
-So to create a thumbnail of the abc.png image with 200px width, you need to type:
-`$ convert -thumbnail 200 abc.png thumb.abc.png`
 
-To create a thumbnail of the abc.png image with 200px height, you need to type:
-`$ convert -thumbnail x200 abc.png thumb.abc.png`
+### -draw
+
+使用-draw选项还可以在图像里面添加文字：
+
+```
+convert -fill black -pointsize 60 -font helvetica -draw 'text 10,80 "Hello, World!" ‘  hello.jpg  helloworld.jpg
+```
+
+
+
+### -quality
+
+大多时候，我们的网站并不需要那么清晰的图片，适量调节JPG图片的压缩比会减少图片大小，肉眼并不会分辨出质量被压缩后的图片。通常75%是最佳比例。
+
+```
+convert -quality 75% input.jpg output.jpg
+```
 
 
 
@@ -39,6 +51,18 @@ To create a thumbnail of the abc.png image with 200px height, you need to type:
 
 ```
 convert -resize 1024x768  xxx.jpg   xxx1.jpg    
+```
+
+
+
+
+
+### -rotate
+
+将图像顺时针旋转270度
+
+```
+convert -rotate 270 sky.jpg sky-final.jpg      
 ```
 
 
@@ -53,22 +77,18 @@ convert -sample 50%x50%  xxx.jpg  xxx1.jpg
 
 
 
-### -rotate
+### -thumnail
 
-将图像顺时针旋转270度
-
-```
-convert -rotate 270 sky.jpg sky-final.jpg      
-```
-
-
-
-### -draw
-
-使用-draw选项还可以在图像里面添加文字：
+So to create a thumbnail of the abc.png image with 200px width, you need to type:
 
 ```
-convert -fill black -pointsize 60 -font helvetica -draw 'text 10,80 "Hello, World!" ‘  hello.jpg  helloworld.jpg
+$ convert -thumbnail 200 abc.png thumb.abc.png
+```
+
+To create a thumbnail of the abc.png image with 200px height, you need to type:
+
+```
+$ convert -thumbnail x200 abc.png thumb.abc.png
 ```
 
 
