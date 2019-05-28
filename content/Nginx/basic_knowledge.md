@@ -195,8 +195,6 @@ include语句允许组合多个配置文件以提升可维护性
 
 
 
-## 配置参数
-
 
 
 ### 时间的单位
@@ -225,6 +223,16 @@ g/G -> gigabytes
  
 
 ## 配置指令块  
+
+### general
+
+```
+user nobody nobody;
+```
+
+
+
+
 
 ### http
 

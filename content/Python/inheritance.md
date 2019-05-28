@@ -359,6 +359,105 @@ method of B
 
 
 
+### 里式替换原则
+
+在实际开发中，我们经常会用子类对象去替换掉一个父类对象，这是面向对象编程中一个常见的行为，对应的原则称之为[里氏替换原则](https://zh.wikipedia.org/wiki/里氏替换原则)
+
+```
+class Person(object):
+    """Person info
+    """
+
+    def __init__(self, name, age):
+        self._name = name
+        self._age = age
+    
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def age(self):
+        return self._age
+        
+    @age.setter
+    def age(self, age):
+        self._age = age
+
+    def play(self):
+        print('%s is enjoying.' % self._name)
+
+    def watch_av(self):
+        if self._age >= 18:
+            print('%s is enjoy the av' % self._name)
+        else:
+            print('%s is lower 18 ages.' % self._name)
+
+
+class Student(Person):
+    """Inherit Person class
+    """
+
+    def __init__(self, name, age, grade):
+        super().__init__(name, age)
+        self._grade = grade
+
+    @property
+    def grade(self):
+        return self._grade
+
+    @grade.setter
+    def grade(self, grade):
+        self._grade = grade
+
+    def study(self, course):
+        print('The %s of %s is studying %s' % (self._grade, self._name, course))
+
+
+class Teacher(Person):
+    """Inherit Person class
+    """
+
+    def __init__(self, name, age, title):
+        super().__init__(name, age)
+        self._title = title
+
+    @property
+    def title(self):
+        return self._title
+
+    @title.setter
+    def title(self, title):
+        self._title = title
+
+    def teach(self, course):
+        print('%s with %s is teaching %s' % (self._name, self._title, course))
+
+
+def main():
+    stu = Student('Rick Xu', 15, 'Middle school grade 3')
+    stu.study('English')
+    stu.watch_av()
+    t = Teacher('Jack Li', 40, 'Professor')
+    t.teach('Mathematics')
+    t.watch_av()
+
+if __name__ == "__main__":
+    main()
+    
+>>>
+The Middle school grade 3 of Rick Xu is studying English
+Rick Xu is lower 18 ages.
+Jack Li with Professor is teaching Mathematics
+Jack Li is enjoy the av
+```
+
+
+
+
+
+
+
 
 
 ## 多继承
@@ -599,7 +698,7 @@ Python 20000 4 months
 
 
 
-## 多态 Polymorphism 
+# 多态 Polymorphism 
 
 多态是面向对象的重要特性,简单点说:“一个接口，多种实现”，指一个基类中派生出了不同的子类，且每个子类在继承了同样的方法名的同时又对父类的方法做了不同的实现，这就是同一种事物表现出的多种形态。
 

@@ -38,6 +38,98 @@ if __name__ =="__main__":
 
 
 
+## 自动刷新
+
+将debug=True 开启即可
+
+
+
+
+
+# 视图函数注册
+
+
+
+## 装饰器方法
+
+常用方法
+
+```
+from flask import Flask
+
+app = Flask(__name__)
+
+
+@app.route('/hello/')
+def hello():
+    return 'Hello, Rick'
+
+app.run(debug=True)
+```
+
+
+
+## add_url_url
+
+在使用基于类的视图，即插式图，需要使用该方法
+
+```
+from flask import Flask
+
+app = Flask(__name__)
+
+def hello():
+    return 'Hello, Rick'
+
+
+app.add_url_rule('/hello/', view_func=hello)
+
+app.run(debug=True)
+
+
+
+```
+
+
+
+
+
+# response 对象
+
+response对象所返回的结果取决于`content-type` 所定义的value
+
+```
+from flask import Flask, make_response
+
+
+app = Flask(__name__)
+
+app.config.from_object('config')
+
+
+@app.route('/hello/')
+def hello():
+    headers = {
+        'content-type': 'text/plain',
+        'location': 'http://www.bing.com'
+    }
+    # response = make_response('<html></html>', 301)
+    # response.headers = headers
+    return '<html></html>', 301, headers
+
+
+app.add_url_rule('/hello/', view_func=hello)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=app.config['DEBUG'])
+```
+
+
+
+
+
+
+
 # 目录结构
 
 ```
@@ -73,6 +165,18 @@ if __name__ =="__main__":
 
 可以将不同的功能模块化，增强可读性，易于维护
 
+不建议将其作为试图函数的拆分
+
+蓝图不能独立存在，需要插入到app的核心对象里面
+
+
+
+![img](https://snag.gy/2kzj6W.jpg)
+
+
+
+
+
 
 
 ## 定义蓝图
@@ -102,6 +206,8 @@ app.register_blueprint(admin_blueprint, url_prefix="/admin")
 from . import admin
 @admin.route("/")
 ```
+
+
 
 
 

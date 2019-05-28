@@ -312,6 +312,8 @@ Out[8]: 'name=add\ndoc=This is doc string'
 
 静态方法并不能访问私有变量，只是给类方法加了类的属性
 
+即和类以及对象都没有关系
+
 ```
 class A:
     __val = 3
@@ -333,15 +335,15 @@ Traceback (most recent call last):
 NameError: name '_A__val' is not defined
 ```
 
-静态方法只属于定义他的类，而不属于任何一个具体的对象
-
-即不能传self，相当于单纯的一个函数，主要
+静态方法只属于定义他的类，而不属于任何一个具体的对象, 即不能传self，相当于单纯的一个函数
 
 静态方法无需传入self参数，因此在静态方法中无法访问实例变量
 
 静态方法不能直接访问类的静态变量，但可以通过类名引用静态变量
 
 与成员方法的区别是没有 self 参数，并且可以在类不进行实例化的情况下调用。
+
+静态方法和类方法都是通过给类发消息来调用的
 
 
 
@@ -364,7 +366,9 @@ I am static method
 
 ## classmethod 类方法
 
-至少一个cls参数；执行类方法时，自动将调用该方法的类复制给cls, cls指代调用者即类对象自身
+至少一个cls参数；
+
+执行类方法时，自动将调用该方法的类复制给cls, cls指代调用者即类对象自身,通过这个cls参数我们可以获取和类相关的信息并且可以创建出类的对象
 
 类方法传递类本身， 可以访问私有的类变量
 
@@ -410,6 +414,54 @@ Class: <class '__main__.MyClass'>,val1: String1, Cannot access value 2
 
 
 
+```
+from time import time, localtime, sleep
+
+class Clock(object):
+    """Digital clock
+    """
+
+    def __init__(self, hour=0, minute=0, second=0):
+        self._hour = hour
+        self._minute = minute
+        self._second = second
+
+    @classmethod
+    def now(cls):
+        ctime = localtime(time())
+        return cls(ctime.tm_hour, ctime.tm_min, ctime.tm_sec)
+
+    def run(self):
+        self._second += 1
+        if self._second == 60:
+            self._second = 0
+            self._minute += 1
+            if self._minute == 60:
+                self._minute = 0
+                self._hour += 1
+                if self._hour == 24:
+                    self._hour = 0 
+
+    def show(self):
+        return '%02d:%02d:%02d' % \
+            (self._hour, self._minute, self._second)
+
+def main():
+		# 通过类方法创建对象并获取系统时间
+    clock = Clock.now()
+    while True:
+        print(clock.show())
+        sleep(1)
+        clock.run()
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+
+
 类方法不能访问实例变量, 但可以访问类变量
 
 ```
@@ -447,7 +499,7 @@ property调用的时候，只能调用self参数
 
 类属性可以直接被类调用，如果想要实现能被类直接调用的方法就可以借助staticmethod和classmethod了，区别在于staticmethod的方法没有self参数，通常用来直接定一个静态类方法，如果想将一个普通动态方法变成类方法就要使用classmethod了。
 
-property 属性必须再setter 和 deleter之前
+property 属性必须在setter 和 deleter之前
 
 ```python
 class A:

@@ -96,3 +96,62 @@ SBit对目录的作用是：“在具有SBit的目录下，用户若在该目录
 
 
 
+## 文件隐藏属性 
+
+文件有隐藏属性，隐藏属性对系统有很大的帮助。尤其是在系统安全（Security）方面，非常重要。
+
+### chattr
+
+```
+chattr [+-=][ASacdistu] 文件或目录名 
+```
+
+
+
+```
+[root@linux~]# cd /tmp 
+[root@linuxtmp]# touch attrtest 
+[root@linuxtmp]# chattr +i attrtest 
+[root@linuxtmp]# rm attrtest 
+rm: remove write-protected regular empty file `attrtest'? y 
+rm: cannot remove `attrtest': Operation not permitted 
+```
+
+> 看到了吗？连root也没有办法删除这个文件。赶紧解除设置。 
+
+
+
+```
+[root@linuxtmp]# chattr -i attrtest 
+```
+
+这个命令很重要，尤其是在系统的安全性方面。由于这些属性是隐藏的，所以需要用lsattr才能看到。
+
+笔者认为，最重要的是 +i属性，因为它可以让一个文件无法被更改，对于需要很高系统安全性的人来说，相当重要。还有相当多的属性是需要root才能设置的。此外，如果是登录文件，就更需要 +a参数，使之可以增加但不能修改与删除原有的数据。将来提到登录文件时，我们再来介绍如何设置它。 
+
+### lsattr
+
+```
+lsattr [-aR] 文件或目录 
+```
+
+
+
+```
+-a : 将隐藏文件的属性也显示出来。 
+
+-R : 连同子目录的数据也一并列出来。 
+```
+
+
+
+
+
+```
+[root@linuxtmp]# chattr +aij attrtest 
+[root@linuxtmp]# lsattr 
+----ia---j--- ./attrtest 
+```
+
+使用chattr设置后，可以利用lsattr来查看隐藏属性。不过，这两个命令在使用上必须要特别小心，否则会造成很大的困扰。例如，某天你心情好，突然将 /etc/shadow这个重要的密码记录文件设置为具有i属性，那么，过了若干天之后，突然要新增用户，却一直无法新增。怎么办？将i的属性去掉即可。 
+
