@@ -20,6 +20,20 @@ date: 2019-03-21 19:10
 
 
 
+## alias 设置别名
+
+```
+git config --global alias.co checkout
+git config --global alias.ci commit
+git config --global alias.br branch
+```
+
+```
+git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+```
+
+
+
 ## branch
 
 
@@ -50,6 +64,22 @@ git branch -v
 
 
 
+
+
+### --set-upstream-to 关联分支
+
+`no tracking information`，则说明本地分支和远程分支的链接关系没有创建
+
+```
+git branch --set-upstream-to <branch-name> origin/<branch-name>
+```
+
+```
+git branch --set-upstream-to=origin/master master
+```
+
+
+
 ## cat-file
 
 
@@ -75,6 +105,14 @@ git cat-file -t HASH_VALUE
 ```
 
 
+
+## check-ignore
+
+检查`.gitignore` 是否配置正确
+
+```
+git check-ignore -v App.class
+```
 
 
 
@@ -145,6 +183,14 @@ git commit --amend
 ```
 
 
+
+## config
+
+配置显示颜色
+
+```
+git config --global color.ui true
+```
 
 
 
@@ -252,6 +298,44 @@ git diff HASH_VALUE1 HASH_VALUE2 -- file1
 
 
 
+## log
+
+
+
+### --graph 图形化
+
+开启图形化
+
+
+
+
+
+### -n 行数
+
+```
+git log -n4 
+```
+
+
+
+
+
+### --oneline 一行信息
+
+```
+git log --oneline
+```
+
+
+
+### --pretty 编辑输出信息
+
+```
+git log --pretty=oneline
+```
+
+
+
 
 
 ## merge 合并
@@ -280,11 +364,47 @@ git一般使用”Fast forward”模式，在这种模式下，删除分支后�
 git merge --no-ff -m "Merged with no-ff mode" dev
 ```
 
+合并分支时，加上`--no-ff`参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而`fast forward`合并就看不出来曾经做过合并。
 
+
+
+
+
+## pull 拉取远端
+
+
+
+## push 推送到远端
+
+```
+git push https://user:pass@example.com
+```
+
+
+
+### -u/--set-upstream 关联分支
+
+set upstream for git pull/status
+
+Git 不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令
+
+```
+git push -u origin master
+```
+
+
+
+
+
+### --force
+
+不要用 git push --force，而要用 git push --force-with-lease 代替。在你上次提交之后，只要其他人往该分支提交给代码，git push --force-with-lease 会拒绝覆盖
 
 
 
 ## rebase 
+
+把分叉的提交历史“整理”成一条直线，看上去更直观。缺点是本地的分叉提交已经被修改过了。
 
 
 
@@ -436,9 +556,109 @@ git rm FILENAMES
 
 
 
+## tag
+
+
+
+创建标签
+
+默认为`HEAD`，也可以指定一个commit id
+
+```
+git tag <tagname>
+```
+
+
+
+查看标签
+
+```
+git tag
+```
+
+
+
+
+
+### show 查看标签
+
+```
+git show v0.1
+```
+
+
+
+#### -a 指定标签名
+
+```
+git tag -a v0.1 -m "version 0.1 released" 1094adb
+```
+
+
+
+#### -m 指定说明文字
+
+```
+git tag -a v0.1 -m "version 0.1 released" 1094adb
+```
+
+
+
+
+
+### -d 删除
+
+```
+git tag -d v0.1
+```
+
+
+
+
+
+推送某个标签到远程
+
+```
+git push origin v1.0
+```
+
+
+
+一次性推送全部尚未推送到远程的本地标签
+
+```
+git push origin --tags
+```
+
+
+
+从远程删除。删除命令也是push
+
+```
+git push origin :refs/tags/v0.9
+```
+
+
+
 
 
 ## stash 保存临时现场
+
+设A为游戏软件 
+
+```
+1、master 上面发布的是A的1.0版本 
+2、dev 上开发的是A的2.0版本 
+3、这时，用户反映 1.0版本存在漏洞，有人利用这个漏洞开外挂 
+4、需要从dev切换到master去填这个漏洞，正常必须先提交dev目前的工作，才能切换。 
+5、而dev的工作还未完成，不想提交，所以先把dev的工作stash一下。然后切换到master 
+6、在master建立分支issue101并切换. 
+7、在issue101上修复漏洞。 
+8、修复后，在master上合并issue101 
+9、切回dev，恢复原本工作，继续工作。
+```
+
+
 
 不影响工作区的环境
 
@@ -448,7 +668,7 @@ git stash
 
 
 
-### --  list 查看临时现场保存信息
+### --list 查看临时现场保存信息
 
 查看工作现场信息
 
@@ -524,71 +744,3 @@ $ git status --porcelain
 
 
 
-
-## log
-
-
-
-### --graph 图形化
-
-开启图形化
-
-
-
-
-
-### -n 行数
-
-```
-git log -n4 
-```
-
-
-
-
-
-### --oneline 一行信息
-
-```
-git log --oneline
-```
-
-
-
-### --pretty 编辑输出信息
-
-```
-git log --pretty=oneline
-```
-
-
-
-## pull 拉取远端
-
-
-
-## push 推送到远端
-
-```
-git push https://user:pass@example.com
-```
-
-
-
-### -u/--set-upstream 关联分支
-
-set upstream for git pull/status
-
-Git 不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令
-
-```
-git push -u origin master
-```
-
-
-
-
-
-### --force
-
-不要用 git push --force，而要用 git push --force-with-lease 代替。在你上次提交之后，只要其他人往该分支提交给代码，git push --force-with-lease 会拒绝覆盖

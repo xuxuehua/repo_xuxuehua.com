@@ -38,9 +38,101 @@ if __name__ =="__main__":
 
 
 
+
+
 ## 自动刷新
 
 将debug=True 开启即可
+
+
+
+# 工作原理
+
+![img](https://snag.gy/JNTclY.jpg)
+
+
+
+当一个请求进来，先检查`_app_ctx_stack` 的堆栈中是否为空，若没有，那么将实例化 的`AppContext` 推入到栈中，然后 实例化一个Request Context，封装的信息在Request中，然后将Request Context推入到LocalStack中，LocalStack实例化之后，存储到`_request_ctx_stack` 中
+
+在使用`current_app(Local Proxy)` 和 `request(Local Proxy)` 其实就是间接的操作两个栈顶的元素，也就是这两个上下文
+
+
+
+
+
+# Flask 源码结构
+
+```
+├── __init__.py
+├── __main__.py
+├── _compat.py
+├── app.py
+├── blueprints.py
+├── cli.py
+├── config.py
+├── ctx.py
+├── debughelpers.py
+├── globals.py
+├── helpers.py
+├── json
+│   ├── __init__.py
+│   └── tag.py
+├── logging.py
+├── sessions.py
+├── signals.py
+├── templating.py
+├── testing.py
+├── views.py
+└── wrappers.py
+```
+
+
+
+## app.py
+
+含有核心实例化的Flask类
+
+
+
+### Flask
+
+保存配置文件信息， 注册路由，以及试图函数的功能
+
+
+
+
+
+## ctx.py
+
+
+
+### AppContext 
+
+应用上下文， 对Flask 核心对象的封装
+
+self.app = app 即封装了Flask实例化的核心对象 
+
+定义了4个方法，`push`， `pop`， `__enter__`  , `__exit__`
+
+
+
+设计思想，即有些对象的属性是在对象外部的，不属于对象本身的，所以可以设计上下文对象将对象外部的属性和操作关联起来,放到新的上下文对象中
+
+
+
+
+
+### RequestContext
+
+请求上下文，即封装请求对象Request
+
+同样和AppContext一样，定义了4个方法，`push`， `pop`， `__enter__`  , `__exit__`
+
+
+
+
+
+
 
 
 
@@ -123,6 +215,10 @@ app.add_url_rule('/hello/', view_func=hello)
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=app.config['DEBUG'])
 ```
+
+
+
+
 
 
 
