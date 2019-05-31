@@ -27,6 +27,41 @@ ubuntu               14.04               1e0c3dd64ccd        4 weeks ago        
 
 
 
+**获取所有的IDs**
+
+```
+docker images | col 3
+
+IMAGE
+65a9e3ef7171
+7c01ca6c30f2
+9518620e6a0e
+430707ee7fe8
+1dbd7ebffe31
+f47686df00df
+df1e39df8dbf
+```
+
+```
+docker images | col 3 | xargs
+
+IMAGE 65a9e3ef7171 7c01ca6c30f2 9518620e6a0e 430707ee7fe8 1dbd7ebffe31 f47686df00df df1e39df8dbf c5e6cf38d985 e426f6ef897e 8cdd417ec611 511136ea3c5a
+```
+
+**前面的”IMAGE”字符去掉**
+
+```
+docker images | col 3 | xargs | skip 1
+
+65a9e3ef7171 7c01ca6c30f2 9518620e6a0e 430707ee7fe8 1dbd7ebffe31 f47686df00df df1e39df8dbf c5e6cf38d985 e426f6ef897e 8cdd417ec611 511136ea3c5a
+```
+
+```
+docker rmi $(docker images | col 3 | xargs | skip 1)
+```
+
+
+
 
 
 ### 显示虚悬镜像

@@ -46,6 +46,16 @@ if __name__ =="__main__":
 
 
 
+
+
+## 开启多线程
+
+```
+app.run(threaded=True)
+```
+
+
+
 # 工作原理
 
 ![img](https://snag.gy/JNTclY.jpg)
@@ -55,6 +65,90 @@ if __name__ =="__main__":
 当一个请求进来，先检查`_app_ctx_stack` 的堆栈中是否为空，若没有，那么将实例化 的`AppContext` 推入到栈中，然后 实例化一个Request Context，封装的信息在Request中，然后将Request Context推入到LocalStack中，LocalStack实例化之后，存储到`_request_ctx_stack` 中
 
 在使用`current_app(Local Proxy)` 和 `request(Local Proxy)` 其实就是间接的操作两个栈顶的元素，也就是这两个上下文
+
+
+
+AppContext 将Flask作为核心对象保存起来，RequestContext 把Request对象封装并保存了起来 
+
+
+
+current_app指向的是LocalStack.top 栈顶元素的一个属性也就是 AppContext top.app = Flask 的核心对象
+
+request是指向LocalStack.top 栈顶元素下面的Request请求对象,即 RequestContext top.resquest = Request
+
+ 
+
+## LocalStack原理
+
+Local是用字典的方式实现线程隔离，访问Local通常使用.点来访问下面的属性
+
+LocalStack封装了Local对象，把Local对象作为一个属性，从而实现了线程隔离的栈结构，访问LocalStack需要使用指定的方法push，pop，top
+
+
+
+```
+from werkzeug.local import LocalStack
+
+s = LocalStack()
+s.push(1)
+print(s.top)
+print(s.top)
+print(s.pop())
+print(s.top)
+
+s.push(1)
+s.push(2)
+print(s.top)
+print(s.top)
+print(s.pop())
+print(s.top)
+
+>>>
+1
+1
+1
+None
+2
+2
+2
+1
+```
+
+
+
+## 线程隔离
+
+使用线程隔离的意义在于，使当前线程能够正确引用到他自己所创建的对象，而不是引用到其他线程所创建的对象
+
+
+
+```
+import threading, time
+from werkzeug.local import LocalStack
+
+my_stack = LocalStack()
+my_stack.push(1)
+print('Main thread with push value:', str(my_stack.top))
+
+
+def worker():
+    "New thread"
+    print('New thread before push with value:', str(my_stack.top))
+    my_stack.push(2)
+    print('New thread after push with value:', str(my_stack.top))
+
+
+new_t = threading.Thread(target=worker, name='rick_thread')
+new_t.start()
+time.sleep(1)
+print('Eventually, main thread value:', str(my_stack.top))
+
+>>>
+Main thread with push value: 1
+New thread before push with value: None
+New thread after push with value: 2
+Eventually, main thread value: 1
+```
 
 
 
@@ -85,6 +179,8 @@ if __name__ =="__main__":
 ├── views.py
 └── wrappers.py
 ```
+
+
 
 
 
@@ -131,6 +227,14 @@ self.app = app 即封装了Flask实例化的核心对象
 
 
 
+
+
+
+
+
+## 线程隔离
+
+通过werkzeug 中的Local对象，实现线程隔离的数据操作
 
 
 

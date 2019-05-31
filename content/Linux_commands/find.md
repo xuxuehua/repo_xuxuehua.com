@@ -566,15 +566,24 @@ find . -type f -size 10k
 
 类型参数列表：
 
-- **f** 普通文件
-- **l** 符号连接
-- **d** 目录
-- **c** 字符设备
-- **b** 块设备
-- **s** 套接字
-- **p** Fifo
+```
+f 普通文件
+l 符号连接
+d 目录
+c 字符设备
+b 块设备
+s 套接字
+p Fifo
+```
 
 
+
+使用命令行对一个目录进行递归搜索和替换
+
+```
+# OSX version
+find . -type f -name '*.txt' -exec sed -i '' s/this/that/g {} +
+```
 
 
 

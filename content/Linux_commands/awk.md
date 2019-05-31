@@ -44,7 +44,7 @@ awk "END{print $0}" file_name
 
 
 
-## \$NF 最后一列
+## NF 最后一列
 
 ```
 $ echo $a
@@ -53,6 +53,34 @@ $ echo $a
 $ echo $a | awk '{print $NF}'
 4
 ```
+
+
+
+## OFS 输出字段分隔符
+
+Output Field Operator
+
+默认为空格
+
+```
+awk -F' ' 'BEGIN{OFS="--"}{print $1,$2,$3}' num.txt
+```
+
+> 使用`--` 进行分割
+
+
+
+
+
+## ORS 输出记录分隔符
+
+默认为换行符
+
+```
+awk -F' ' 'BEGIN{OFS="--";ORS="#"}{print $1,$2,$3}' num.txt
+```
+
+> 换行符变为#
 
 
 

@@ -33,7 +33,7 @@ date: 2018-08-19 11:30
 
 ### x 创建写入
 
-创建并写入一个新文件， 要求文件事先不存在
+创建并写入一个新文件， 文件存在会报异常
 
 
 
@@ -57,7 +57,7 @@ date: 2018-08-19 11:30
 
 
 
-### t 文本
+### t 文本
 
 字符流，将文件的字节按照某种字符编码理解，按照字符操作
 
@@ -296,6 +296,51 @@ with open('log','r') as f:
 ```
 with open('log1') as obj1, open('log2') as obj2:
 	pass
+```
+
+
+
+
+
+### 实现原理
+
+```
+class A:
+
+    def __enter__(self):
+        a = 1
+        return a
+
+    def __exit__(self):
+        b = 2
+
+
+with A() as obj_a:
+    pass
+```
+
+> 通过debug 模式，obj_a是返回`__enter__` 的返回值， 但是一旦执行了`__exit__` 结束了上下文管理
+
+
+
+
+
+```
+class MyResource:
+
+    def __enter__(self):
+        print('Connect to resource')
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print('Disconnect to resource')
+
+    def query(self):
+        print('Query data')
+
+
+with MyResource() as resource:
+    resource.query()
 ```
 
 
