@@ -76,6 +76,36 @@ deb http://security.ubuntu.com/ubuntu bionic-security multiverse
 
 
 
+### aliyun
+
+cp /etc/apt/sources.list /etc/apt/sources.list.bak
+
+在/etc/apt/sources.list文件前面添加如下条目
+
+```
+deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
+```
+
+sudo apt-get update
+sudo apt-get upgrade
+
+
+
+
+
+
+
+
+
 ## Guest additions (copy&paste)
 
  install the package **virtualbox-guest-additions-iso** in the **host** Ubuntu.

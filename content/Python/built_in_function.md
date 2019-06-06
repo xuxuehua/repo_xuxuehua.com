@@ -99,7 +99,7 @@ In [23]: chr(99)
 Out[23]: 'c'
 ```
 
-### 
+
 
 ## ceil
 
@@ -166,7 +166,13 @@ In [34]: for i in x:
 9
 ```
 
-### 
+
+
+```
+filter(lambda x: True if x else False, [self.author, self.publisher, self.price])
+```
+
+
 
 ## floor
 

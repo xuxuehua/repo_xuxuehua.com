@@ -324,9 +324,37 @@ if __name__ == '__main__':
 
 
 
+# static
+
+static文件分应用程序static和blueprint static
 
 
 
+Flask 核心的对象调用，默认为app目录下面的static，可以手动指定目录, 如果是共享static文件，就放到app应用程序下面
+
+```
+app = Flask(__name__, static_folder='view_models/statics', static_url_path='')
+```
+
+
+
+Blueprint 方法
+
+```
+web = Blueprint('web', __name__, static_folder='', static_url_path='')
+```
+
+
+
+
+
+# template
+
+在初始化Flask核心对象或者blueprint的时候, 传入参数
+
+```
+template_folder='templates'
+```
 
 
 
