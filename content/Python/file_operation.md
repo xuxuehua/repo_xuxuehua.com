@@ -131,8 +131,10 @@ date: 2018-08-19 11:30
 
 读取二进制文件
 
-```
-
+```python
+with open('Rick.jpg', 'rb') as f:
+    data = f.read()
+    print(type(data))    
 ```
 
 
@@ -140,7 +142,8 @@ date: 2018-08-19 11:30
 ### wb
 
 ```
-
+with open('Rick.jpg', 'wb') as e:
+    e.write(data)
 ```
 
 
