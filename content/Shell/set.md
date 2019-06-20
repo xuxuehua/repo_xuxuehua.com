@@ -45,7 +45,21 @@ disable a command history system wide
 
 
 
-## -o pipefail
+## -o
+
+
+
+
+
+### -o errexit
+
+遇到执行错误，会抛出并终止
+
+
+
+
+
+### -o pipefail
 
 希望在执行错误之后立即退出, 不要再向下执行了. 而 `-o pipefail` 的作用域是管道, 也就是说在 Linux 脚本中的管道, 如果前面的命令执行出了问题, 应该立即退出
 
@@ -77,4 +91,24 @@ $
 ```
 
 
+
+
+
+### -o nounset
+
+抛出默认不存在的变量错误 
+
+
+
+
+
+## -o verbose
+
+永久指定输出调试信息
+
+
+
+## -o xtrace
+
+永久指定输出调试信息
 

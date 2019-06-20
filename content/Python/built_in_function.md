@@ -44,7 +44,36 @@ Out[11]: '0b11111111'
 
 
 
+## bool 布尔计算
 
+```
+In [1]: bool(1)
+Out[1]: True
+
+In [2]: bool(0)
+Out[2]: False
+
+In [3]: bool('abc')
+Out[3]: True
+
+In [4]: bool('')
+Out[4]: False
+
+In [5]: bool([1, 2, 3])
+Out[5]: True
+
+In [6]: bool([])
+Out[6]: False
+
+In [7]: bool({1, 2, 3})
+Out[7]: True
+
+In [8]: bool({})
+Out[8]: False
+
+In [9]: bool(None)
+Out[9]: False
+```
 
 
 
@@ -213,8 +242,6 @@ print(...)
 数字转16进制
 
 返回值为字符串
-
-
 
 ```
 In [38]: hex(10)
