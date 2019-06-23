@@ -388,7 +388,27 @@ obj_son.show() # 派生类中访问错误
 
 
 
-# 内置特殊方法
+# 内置变量属性
+
+## `__all__`
+
+指定所导入的变量
+
+```
+__all__ = ['a', 'b']
+```
+
+
+
+指定可导入的模块
+
+```
+__all__ = ['Module1', 'Module2']
+```
+
+
+
+
 
 ## `__init__`
 
@@ -436,6 +456,18 @@ Traceback (most recent call last):
     a.__val
 AttributeError: 'A' object has no attribute '__val'
 3
+```
+
+
+
+
+
+该模块中的代码在导入的时候会被自动执行，可以在其内部写入复用导入的模块名称
+
+```
+import os
+import sys
+import datetime
 ```
 
 

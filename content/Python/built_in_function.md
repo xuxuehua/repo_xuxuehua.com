@@ -560,7 +560,23 @@ print(type(list))
 
 
 
+## vars
 
+**vars()** 函数返回对象object的属性和属性值的字典对象
+
+```
+In [7]: class Rick: 
+   ...:     age=18 
+   ...:                                                                                                 
+
+In [8]: print(vars(Rick))                                                                               
+{'age': 18, '__weakref__': <attribute '__weakref__' of 'Rick' objects>, '__module__': '__main__', '__dict__': <attribute '__dict__' of 'Rick' objects>, '__doc__': None}
+
+In [9]: rick = Rick()                                                                                   
+
+In [10]: print(vars(rick))                                                                              
+{}
+```
 
 
 

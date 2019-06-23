@@ -140,12 +140,6 @@ sh install_salt.sh -i Minion
 
 
 
-
-
-# 
-
-
-
 # 架构
 
 
@@ -434,9 +428,13 @@ Total states run:     3
 
 
 
-### Master -> Syndic -> Minion 
+## Master -> Syndic -> Minion 
 
  通过syndic 对Minion进行管理 
+
+Syndic 建立在中心master 和minion之间，并允许多层分级Syndic
+
+Syndic运行在一个Master上，并连接到另外一个Master(比她更高级别)，然后Syndic minion所连接的高级Master就可以控制连接到运行Syndic的Master 上的minion。
 
 ​    
 
@@ -444,9 +442,11 @@ Total states run:     3
 
 只需要在每台机器上安装Minion，然后采用本机只负责对本机的配置管理工作机制服务模式
 
+直接在本地使用salt-call命令使用Saltstack的各种功能，而不用连接到master上
 
-
-
+```
+# salt-call --local state.highstate
+```
 
 
 

@@ -8,13 +8,11 @@ date: 2019-06-19 13:59
 
 # salt
 
-
-
 ```
 Usage: salt [options] '<target>' <function> [arguments]
 ```
 
-## 
+
 
 ## Options
 
@@ -79,9 +77,7 @@ Options:
 
 ```
 
-## 
-
-Logging Options 日志相关
+## Logging Options 日志相关
 
 ```
   Logging Options:
@@ -98,9 +94,9 @@ Logging Options 日志相关
                         Logfile logging log level. One of 'all', 'garbage',
                         'trace', 'debug', 'info', 'warning', 'error',
                         'critical', 'quiet'. Default: 'warning'.
-
-
 ```
+
+
 
 
 
@@ -184,36 +180,6 @@ Logging Options 日志相关
 
 
 
-
-
-
-
-
-
-
-## cp.get_file 复制文件到客户端
-
-```
- salt 'nb1' cp.get_file salt://apache.sls /tmp/cp.txt
-```
-
-
-
-
-
-## cp.get_dir 复制目录到客户端
-
-```
-salt 'nb1' cp.get_dir salt://test /tmp
-```
-
-
-
-## salt-run 显示存活的客户端
-
-```
-salt-run manage.up
-```
 
 
 

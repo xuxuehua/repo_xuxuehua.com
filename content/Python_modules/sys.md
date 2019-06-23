@@ -86,5 +86,15 @@ Out[13]: 'darwin'
 
 
 
+## setrecursionlimit
+
+Python 默认递归约995次
+
+这里可以设置最大递归次数
+
+```
+sys.setrecursionlimit(1000000)
+```
+
 
 

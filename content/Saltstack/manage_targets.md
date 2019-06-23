@@ -138,7 +138,7 @@ nb1:
 ## -C 复合匹配
 
 ```
-[root@Master pillar]# salt  -C  'G@os:CentOS and I@key:value'  test.ping
+[root@Master pillar]# salt  -C  'G@os:CentOS and L@minion1'  test.ping
 aliserver:
     True
 ```

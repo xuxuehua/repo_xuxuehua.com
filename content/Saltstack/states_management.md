@@ -103,6 +103,43 @@ base:
 
 保证目录存在并且为对应状态，否则change。
 
+```
+minion_yum:
+  file.recurse:
+    - name: /etc/yum.repos.d
+    - source: salt://minions/yum.repos.d ##提前准备的yum文件路径
+    - user: root
+    - group: root
+    - file_mode: 644
+    - dir_mode: 755
+    - include_empty: True
+minion_install:
+  pkg.installed:
+    - pkgs:
+      - salt-minion
+    - require:
+      - file: minion_yum
+    - unless: rpm -qa | grep salt-minion
+minion_conf:
+  file.managed:
+    - name: /etc/salt/minion
+    - source: salt://minions/conf/minion  ##minion端需要配置的minion主配置文件
+    -user: root
+    - group: root
+    - mode: 640
+    - template: jinja
+    - defaults:
+      minion_id: {{ grains['fqdn_ip4'][0]}}        ##这里grains是收集minion端/etc/hosts文件IP和主机名的
+    - require:
+      - pkg: minion_install
+minion_service:
+  service.running:
+    - name: salt-minion
+    - enable: True
+    - require:
+      - file: minion_conf
+```
+
 
 
 ### file.absent
@@ -213,13 +250,39 @@ require_in 被某个状态所依赖
 
 
 
+
+
 ### watch/watch_in
 
 watch关注某个状态
 
 watch_in被某个状态所关注
 
+```
+salt-minion-install:
+  pkg.installed:
+    - name: salt-minion
 
+salt-minion-conf:
+  file.managed:
+    - name: /etc/salt/minion
+    - source: salt://init/files/minion
+    - user: root
+    - group: root
+    - mode: 644
+    - template: jinja
+    - default:
+      ID: {{ grains[‘ipv4‘] [1] }}
+    - require:
+      - pkg: salt-minion-install
+
+salt-minion-service:
+  service.running:
+    - name: salt-minion
+    - enable: True
+    - watch:
+       - file: /etc/salt/minion
+```
 
 
 

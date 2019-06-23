@@ -124,16 +124,24 @@ raw shell command
 Roster 系统编译了一个内部数据结构，称为 Targets。Targets 是一个目标系统和关于如何连接到系统属性的列表。对于一个在 Salt 中的 Roster 模块来说，唯一要求是返回 Targets 数据结构：
 
 ```
-Salt ID：   # ID，用于salt-ssh引用
-    host:    # IP或域名
-　　 user:    # 登录用户名
-    passwd:  # 登录密码
- 
-    # 可选参数
-    port:    # 自定义的端口
-    sudo:    # 是否允许sudo到root,默认不允许
-    priv:    # ssh登录key路径，默认为salt-ssh.rsa
-    timeout:  # 等待超时
+<Salt ID>:       # 定义引用目标系统的标识ID
+    host:        # 主机IP或域名
+    user:        # 目标主机用户名
+    passwd:      # 目标主机密码
+
+    #以下是可选项
+    port:                   # 主机 ssh连接端口,如果是默认22 可以省略
+    sudo:                # 是否以sudo方式 执行   (True|False)
+    tty:                    # 布尔类型: 如果设置为True 同时sudo也设置为True
+                             # 目标主机的sudoer配置文件中 requiretty 也需要配置
+
+    priv：                    ＃文件路径用ssh私钥，默认为 salt-ssh.rsa 
+                                   ＃的私钥也可以设置为agent-forwarding 
+    timeout:                   #接数字是秒,连接超时时间
+    minion_opts:          #minion 目录 
+    thin_dir:                  #目标存储目录. 默认存到 /tmp/salt-<hash>.
+    cmd_umask:        # umask to enforce for the salt-call command. Should be in
+                                 # octal (so for 0o077 in YAML you would do 0077, or 63)
 ```
 
 
@@ -156,4 +164,15 @@ minion:
 第一次运行 Salt SSH 会提示进行 salt-ssh key 的部署，需要在 Rosters 中配置用户的密码，即可进行 Key 的部署
 
 
+
+Salt-roster-template.yaml
+
+```
+{% for minion_id, minion_ip in salt['mine.get']('*', 'network.ip_addrs').iteritems() - %}
+{{ minion_id }}:
+  host: {{ minion_ip[0] }}
+  user: salt
+  sudo: True
+{% endfor -%}
+```
 

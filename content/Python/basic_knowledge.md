@@ -147,7 +147,7 @@ IronPython和Jython类似，只不过IronPython是运行在微软.Net平台上�
 
  
 
-## pyc
+## pyc 文件
 
 PyCodeObject和pyc文件。
 
