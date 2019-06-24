@@ -30,6 +30,16 @@ collection: 面向对象
 
 # 类的定义
 
+类的最基本的作用就是封装
+
+
+
+类是现实世界或者思维世界中的实体在计算机中的反映
+
+它将数据以及这些数据上的操作封装在一起
+
+
+
 ```python
 class ClassName:
     pass
@@ -50,6 +60,8 @@ p.SayHi()              #调用类Person的成员函数SayHi()
 >>>
 hi
 ```
+
+
 
 ## 自定义类的新的属性
 
@@ -80,6 +92,50 @@ True
 class ClassName:
     def method_name(self):
         pass
+```
+
+
+
+相对于普通函数，需要传入self参数
+
+```
+class A:
+    def print_file(self):
+        pass
+```
+
+
+
+### 实例方法
+
+是和对象实例相关联的，是实例可以调用的
+
+用于描述类的行为
+
+
+
+#### 操作类变量
+
+也可以来操作类变量, 但类变量有专门操作的classmethod
+
+```
+class Student():
+    sum1 = 0
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+        self.__class__.sum1 += 1
+        print("Total students is " + str(self.__class__.sum1))
+
+
+student = Student('Rick', 18)
+student = Student('Michelle', 18)
+student = Student('Sam', 18)
+>>>
+Total students is 1
+Total students is 2
+Total students is 3
 ```
 
 
@@ -198,15 +254,21 @@ print(a._A__val)
 
 
 
+## self 
 
+self就是当前调用某一个方法的对象， self 代表的是一个实例，而不是一个类
 
+可以在类中定义成为任意的标识，比如this
 
-
-
-
-
-
-
+```python
+class A:
+    name = 'Rick'
+    age = 18
+    
+    def __init__(this, name, age):
+        this.name = name
+        this.age = age
+```
 
 
 
@@ -291,7 +353,11 @@ obj_son.show() # 派生类中访问  ==> 错误
 
 实例变量没有，会找类变量调用
 
-类变量通常不作为实例变量使用
+类变量通常不作为实例变量使用, 即类变量不用做定义实例变量
+
+也称为数据成员，用于描述刻画类的特征
+
+
 
 ```python
 class A:
@@ -341,6 +407,44 @@ print(a4.val_s, id(a4.val_s))
 [1, 2, 3, 4] 4442997640
 s 4437293632
 a 4437455120
+```
+
+
+
+在类内部中的实例方法内，访问类变量的方式
+
+```
+class Student():
+    sum1 = 0
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+        print(Student.sum1)
+
+
+student = Student('Rick', 18)
+>>>
+0
+```
+
+
+
+或者通过内置变量`__class__`访问类变量的值
+
+```
+class Student():
+    sum1 = 0
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+        print(self.__class__.sum1)
+
+
+student = Student('Rick', 18)
+>>>
+0
 ```
 
 
@@ -412,9 +516,11 @@ __all__ = ['Module1', 'Module2']
 
 ## `__init__`
 
-构造方法, 通过类创建对象时，自动触发执行， 可用于绑定属性
+构造函数, 通过类创建对象时，自动触发执行， 可用于绑定属性
 
-不能有返回值，也就是None
+用于初始化类的特征值或属性值
+
+不能有返回值，也就是None， 而且只能返回None
 
 ```python
 class ClassName:
@@ -474,9 +580,13 @@ import datetime
 
 
 
+
+
+
+
 ## `__dict__`
 
-类或对象中的所有成员信息
+类或对象中的所有的变量信息
 
 对象的属性可能来自与其类定义，叫做类属性(class attribute)。 
 
@@ -574,6 +684,8 @@ list
 
 
 
+
+
 ## `__module__`
 
 `__module__`:   类定义所在的模块（类的全名是'`__main__`.className'，如果类位于一个导入模块mymod中，那么className.`__module__` 等于 mymod）
@@ -616,7 +728,7 @@ print(Exam.__bases__)
 
 ## `__class__`
 
-表示当前操作的对象的类是什么
+表示当前操作的对象的类是什么, 指向当前类
 
 ```
 class A:

@@ -14,3 +14,39 @@ date: 2019-06-20 17:43
 
 异步复制数据
 
+
+
+## SQL vs NoSQL
+
+![img](https://snag.gy/mTv50t.jpg)
+
+
+
+## DB Instances
+
+Isolated database env
+
+Can contain mulple user created databases
+
+Backups works are enabled by default
+
+Restore your database to a point in time
+
+
+
+## RDS Security
+
+Run DB instance in a VPC
+
+Use IAM policies for accessing 
+
+Use Security groups
+
+Use SSL connection
+
+
+
+
+
+
+
