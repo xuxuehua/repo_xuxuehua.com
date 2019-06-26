@@ -41,6 +41,18 @@ fi
 
 
 
+### Metadata Service
+
+e.g.
+
+```
+http://169.254.169.254/latest/meta-data/iam/security-credentials/rolename
+```
+
+
+
+
+
 ## Instance Technologies
 
 ![img](https://snag.gy/WReOKS.jpg)
@@ -60,6 +72,31 @@ fi
 
 
 
+
+# Auto-scaling
+
+
+
+## Launch configurations
+
+Specify below info when launch a instance
+
+```
+AMI ID
+Instance type
+Key pair
+Security groups
+Block deivce mapping
+User data
+```
+
+
+
+![img](https://snag.gy/qIGpfX.jpg)
+
+
+
+## Load Balancer Types
 
 
 

@@ -24,12 +24,106 @@ collection: 面向对象
 
 
 
+C1.py
+
+```
+from c2 import Human
+
+class Student(Human):
+
+    def do_homework(self):
+        print('English homework')
+
+student1 = Student('Rick', 18)
+print(student1.sum)
+print(Student.sum)
+print(student1.name)
+print(student1.age)
+student1.get_name()
+>>>
+0
+0
+Rick
+18
+Rick
+```
+
+
+
+c2.py
+
+```
+class Human():
+    sum = 0
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def get_name(self):
+        print(self.name)
+```
+
+
+
+
+
 ## super 方法
 
 父类，也可以称为超类，基类
 定一个父类的重名方法，称为重写
 子类中调用父类的方法，使用super对象
 super对象使用super方法生成
+
+
+
+通过子类调用父类的super方法
+
+c1.py
+
+```
+from c2 import Human
+
+class Student(Human):
+    def __init__(self, school, name, age):
+        self.school = school
+        super(Student, self).__init__(name, age)
+
+    def do_homework(self):
+        super(Student, self).do_homework()
+        print('English homework')
+
+
+student1 = Student('Xinghua', 'Rick', 18)
+student1.do_homework()
+>>>
+This is parent method
+English homework
+```
+
+> 子类方法和父类重名，子类方法会覆盖父类方法
+>
+> 但也可以通过super方法调用父类的方法
+
+
+
+c2.py
+
+```
+class Human():
+    sum = 0
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def get_name(self):
+        print(self.name)
+
+    def do_homework(self):
+        print('This is parent method')
+    
+```
+
+
 
 
 

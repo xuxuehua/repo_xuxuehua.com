@@ -16,6 +16,16 @@ Can be used to configure or manage a running instance
 
 
 
+### Retrieving 
+
+```
+curl http://169.254.169.254/latest/meta-data
+```
+
+returned as text (Content-type: text/plain)
+
+
+
 
 
 
@@ -32,7 +42,17 @@ Runs scripts after the instance starts
 
 
 
+## AWS-CLI
 
+### Mac OSX
+
+```
+curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+
+unzip awscli-bundle.zip
+
+
+```
 
 
 

@@ -254,6 +254,53 @@ print(a._A__val)
 
 
 
+```
+class Student():
+    sum1 = 0
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+        self.__score = 0
+        self.__class__.sum1 += 1
+        print("Total students is " + str(self.__class__.sum1))
+
+    def marking(self, score):
+        self.score = score
+        if self.score < 0:
+            print('Invalid num')
+        else:
+            print('score', self.score)
+        
+
+    def do_homework(self):
+        pass
+
+    def do_english_homework(self):
+        pass
+
+student = Student('Rick', 18)
+student = Student('Michelle', 18)
+student1 = Student('Sam', 18)
+result = student.marking(-1)
+student1.__score = -1
+print(student1.__dict__)
+print(student1._Student__score)
+>>>
+Total students is 1
+Total students is 2
+Total students is 3
+Invalid num
+{'age': 18, '__score': -1, 'name': 'Sam', '_Student__score': 0}
+0
+```
+
+> 这里将`__score` 的私有变量重新命名成`_Student__score` 这种类名+score 的形式
+>
+> 但是可以强行读取到数值
+
+
+
 ## self 
 
 self就是当前调用某一个方法的对象， self 代表的是一个实例，而不是一个类
@@ -316,7 +363,7 @@ public var
 
 ## 私有变量
 
-仅类内部可以访问
+仅类内部可以访问, 无法被外部调用修改
 
 ```
 class C:
