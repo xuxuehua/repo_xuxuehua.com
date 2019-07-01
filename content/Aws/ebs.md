@@ -32,6 +32,12 @@ Snapshots stored durably in S3
 
 
 
+Provisioned IOPS (specify performance parameters)
+
+
+
+
+
 ## Lifecycle
 
 ![img](https://snag.gy/dqAXpo.jpg)

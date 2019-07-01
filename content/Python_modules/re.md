@@ -37,36 +37,41 @@ Perl Compatible Regular Expressions
 
 ### 单个字符
 
-| 表达式 | 描述                           |
-| ------ | ------------------------------ |
-| .      | 任意的一个字符                 |
-| a\|b   | 字符a或者字符b                 |
-| [afg]  | a或者f或者g的一个字符          |
-| [0-4]  | 0-4范围内的一个字符            |
-| [a-f]  | a-f 范围内的一个字符           |
-| [^m]   | 不是m的一个字符                |
-| \b     | 匹配单词边界                   |
-| \B     | 不匹配单词边界                 |
-| \s     | 小写字母 一个空白字符，包含    |
-| \S     | 大写字母 一个非空格            |
-| \d     | 小写字母 等同于`[0-9]`         |
-| \D     | 大写字母 等同于 `[^0-9]`       |
-| \w     | 小写字母 等同于` [0-9a-zA-Z]`  |
-| \W     | 大写字母 等同于 `[^0-9a-zA-Z]` |
+| 表达式 | 描述                                                 |
+| ------ | ---------------------------------------------------- |
+| .      | 任意的一个字符, 除了换行符\n                         |
+| a\|b   | 字符a或者字符b                                       |
+| [afg]  | a或者f或者g的一个字符 ， 内部为或关系                |
+| [0-4]  | 0-4范围内的一个字符                                  |
+| [a-f]  | a-f 范围内的一个字符                                 |
+| [^m]   | 不是m的一个字符                                      |
+| a[cf]d | 字符集操作，中括号内为或的关系, 若内部添加^,表示取反 |
+| \b     | 匹配单词边界                                         |
+| \B     | 不匹配单词边界                                       |
+| \s     | 小写字母 一个空白字符                                |
+| \S     | 大写字母 一个非空白字符                              |
+| \d     | 小写字母 等同于`[0-9]`                               |
+| \D     | 大写字母 等同于 `[^0-9]`                             |
+| \w     | 单词字符 等同于` [0-9a-zA-Z_]`                       |
+| \W     | 非单词字符 等同于 `[^0-9a-zA-Z_]`                    |
+
+
 
 ### 重复
 
 | 表达式| 描述|
 |-|-|
-| * | 重复 >=0 次|
+| * | 重复 >=0 次， |
 | + | 重复 >=1 次|
-| ? | 重复 0 或者 1次|
+| ? | 重复 0 或者 1次， 非贪婪匹配 |
 | {m} | 重复m次。a{4}相当于aaaa|
 | {m, n} | 重复m到n次。a{2, 5} 表示a重复2到5次|
 
 
 
 ### 位置
+
+边界匹配
 
 | 表达式  |       描述       |
 | :-----: | :--------------: |
@@ -86,7 +91,7 @@ Perl Compatible Regular Expressions
 '{m}'   匹配前一个字符m次
 '{n,m}' 匹配前一个字符n到m次，re.findall("ab{1,3}","abb abc abbcbbb") 结果'abb', 'ab', 'abb']
 '|'     匹配|左或|右的字符，re.search("abc|ABC","ABCBabcCD").group() 结果'ABC'
-'(...)' 分组匹配，re.search("(abc){2}a(123|456)c", "abcabca456c").group() 结果 abcabca456c
+'(...)' 分组匹配，re.search("(abc){2}a(123|456)c", "abcabca456c").group() 结果 abcabca456c， 内部为且关系
  
  
 '\A'    只从字符开头匹配，re.search("\Aabc","alexabc") 是匹配不到的
@@ -165,6 +170,8 @@ re.compile(pattern, flags=0)
 
 ### re.match 匹配
 
+返回值为对象， 匹配成功就结束，即匹配一次就结束
+
 ```
 re.match(pattern, string, flags=0)
 ```
@@ -180,7 +187,11 @@ Out[46]: 'Rick'
 
 
 
+
+
 ### re.search 搜索
+
+匹配不到返回None。 匹配成功就结束，即匹配一次就结束
 
 ```
 re.search(pattern, string, flags=0)
@@ -212,7 +223,11 @@ print(m.group(0))
 
 
 
+
+
 ### re.fullmatch 整个匹配
+
+返回结果是列表
 
 ```
 re.fullmatch(pattern, string, flags=0)
@@ -220,11 +235,17 @@ re.fullmatch(pattern, string, flags=0)
 
 整个字符串和正则匹配
 
+ 
 
 
-### re.findall 匹配所有，返回列表
+
+
+
+### re.findall 匹配所有，返回列表 （常用）
 
 根据正则表达式所有字符串，将所有符合的子字符串放在一个表list中返回
+
+
 
 
 
@@ -248,7 +269,9 @@ Out[49]: ['abcd', '', '', '', 'EFGH!@#$']
 ### re.sub 匹配替换
 
 在string中利用正则变换pattern进行搜索，对于搜索到的字符串，用另一字符串replacement替换，返回替换后的字符串
-str = re.sub(pattern, replacement, string)
+str = re.sub(pattern, replacement, string, count=0, flags=0)
+
+
 
 ```
 In [52]: re.sub('[0-9]+', '|', 'abcd1234EFGH!@#$')
@@ -258,11 +281,54 @@ In [55]: re.sub('[0-9]+', '|', 'abcd1234EFGH!@#$1111', count=1)
 Out[55]: 'abcd|EFGH!@#$1111'
 ```
 
+count=0 表示无限次匹配
+
+count=1 表示最大匹配次数为1次
+
+
+
+
+
+replacement 可以是一个函数
+
+```
+In [43]: language = 'PythonC#\njavaPHPC#'
+
+In [44]: def convert(value):
+    ...:     matched = value.group()
+    ...:     return '!!' + matched + '!!'
+    ...:
+
+In [45]: re.sub('C#', convert, language)
+Out[45]: 'Python!!C#!!\njavaPHP!!C#!!'
+```
+
+
+
+```
+In [48]: s = 'A8C3721D86'
+
+In [49]: def convert(value):
+    ...:     matched = value.group()
+    ...:     if int(matched) >= 6:
+    ...:         return '9'
+    ...:     else:
+    ...:         return '0'
+    ...:
+
+In [50]: re.sub('\d', convert, s)
+Out[50]: 'A9C0900D99'
+```
+
+
+
 
 
 ## 返回控制
 
 ### group 分组
+
+获取分组匹配
 
 m.group(number) 的方法来查询群组。
 
@@ -273,6 +339,10 @@ m.group(1) 表示第一个群组信息
 m.group(nam) 以命名的方式返回分组
 
 m.groupdict() 返回所有命名的分组
+
+小括号内部是且关系
+
+
 
 ```
 import re
@@ -286,11 +356,64 @@ output_1989
 
 
 
+```
+In [64]: s = 'Life is short, I use Python'
+
+In [65]: r = re.search('Life(.*)Python', s)
+
+In [66]: r.group(1)
+Out[66]: ' is short, I use '
+```
+
+```
+In [67]: s = 'Life is short, I use Python'
+
+In [68]: re.findall('Life(.*)Python', s)
+Out[68]: [' is short, I use ']
+```
+
+
+
+```
+In [69]: s = 'Life is short, I use Python, I love Python'
+
+In [70]: r = re.search('Life(.*)Python(.*)Python', s)
+
+In [71]: r.group(0)
+Out[71]: 'Life is short, I use Python, I love Python'
+
+In [72]: r.group(1)
+Out[72]: ' is short, I use '
+
+In [73]: r.group(2)
+Out[73]: ', I love '
+
+In [74]: r.group(0, 1, 2)
+Out[74]:
+('Life is short, I use Python, I love Python',
+ ' is short, I use ',
+ ', I love ')
+```
+
+
+
+
+
+
+
+
+
 ## 匹配模式
 
 ### re.I(re.IGNORECASE)
 
 忽略大小写（括号内是完整写法，下同）
+
+```
+re.findall("c#", 1.txt, re.I)
+```
+
+
 
 
 
@@ -302,9 +425,16 @@ output_1989
 
 ### S(DOTALL)
 
-点任意匹配模式，改变'.'的行为
+点任意匹配模式，改变'.'的行为, 即可以匹配到\n
 
+```
+In [40]: language = 'PythonC#\njavaPHP'
 
+In [41]: import re
+
+In [42]: re.findall('c#.{1}', language, re.I | re.S)  # | 表示且关系，即两个都需要支持
+Out[42]: ['C#\n']
+```
 
 
 

@@ -6,13 +6,25 @@ date: 2019-06-20 10:23
 
 # defaultdict
 
-defaultdict属于内建函数dict的一个子类
+defaultdict属于内建函数dict的一个子类, 提供一个default_factory 属性，该属性所指定的函数负责为不存在的key来生成value，即在没有key的情况下不会报错
 
 
 
 构建的是一个类似*dictionary*的对象，其中*keys*的值，自行确定赋值，但是*values*的类型，是*function_factory*的类实例，而且具有默认值。
 
 比如*default(int)*则创建一个类似dictionary对象，里面任何的*values*都是*int*的实例，而且就算是一个不存在的`key, d[key] `也有一个默认值，这个默认值是*int()*的默认值0.
+
+```
+In [29]: from collections import defaultdict
+
+In [30]: dd = defaultdict(list)
+
+In [31]: dd
+Out[31]: defaultdict(list, {})
+
+In [32]: print(dd)
+defaultdict(<class 'list'>, {})
+```
 
  
 
@@ -40,5 +52,23 @@ In [14]: for k, v in s:
 
 In [15]: list(d.items())
 Out[15]: [('yellow', [1, 3]), ('blue', [2, 4]), ('red', [1])]
+```
+
+
+
+
+
+```
+from collections import defaultdict
+import re
+
+f = open('ini.txt', mode='r', encoding='utf-8')
+d = defaultdict
+
+for line in f:
+    for word in filter(lambda x: x, re.split(r'\s', line)):
+        d[word] += 1
+
+print(d)
 ```
 

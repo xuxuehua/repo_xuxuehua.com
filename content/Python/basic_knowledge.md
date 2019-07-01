@@ -13,7 +13,7 @@ date: 2018-06-11 02:14
 
 ## 语言类型
 
-![img](https://cdn.pbrd.co/images/HY6xtAd.png)
+![img](https://snag.gy/w1efAd.jpg)
 
 
 
@@ -212,11 +212,13 @@ $ which -a python3.5
 
  
 
-## 用户输入
+## 用户输入 input 方法
+
+input() 函数暂停程序运行，同时等待键盘输入;直到回车被按下，函数的参数即为提示语，输入的类型永远是字符串型(str)
 
 
 
-* input 方法
+
 
 ### 多行输入
 

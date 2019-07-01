@@ -16,6 +16,14 @@ SQS eliminates the complexity and overhead associated with managing and operatin
 
 send, store, and receive messages between software components at any volume, without losing messages or requiring other services to be available. 
 
+SQS requires applications to poll constantly (pull approach)
+
+
+
+![img](https://snag.gy/EJh9Py.jpg)
+
+
+
 
 
 ## Standard queues

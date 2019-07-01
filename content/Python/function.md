@@ -370,16 +370,23 @@ y = 2
 函数是一个对象，所以可以作为某个函数的返回结果
 
 ```
-def line_conf():
-    def line(x):
-        return 2*x+1
-    return line   # Return a function object
+def curve_pre():
+    a = 25
+    def curve(x):
+        return a*x*x
+    return curve
 
-my_line = line_conf()
-print(my_line(5))
+f = curve_pre()
+print(f.__closure__)
+print(f.__closure__[0].cell_contents)
+print(f(2))
 >>>
-11
+(<cell at 0x10b60c468: int object at 0x10b2e4210>,)
+25
+100
 ```
+
+
 
 
 
@@ -402,6 +409,24 @@ print(my_line.__closure__[0].cell_contents)
 (<cell at 0x10dfd2fd8: int object at 0x10dce7830>,)
 15
 ```
+
+
+
+```
+def f1():
+    a = 10
+    def f2():
+        a = 20
+    return f2
+
+f = f1()
+print(f)
+print(f.__closure__)
+>>>
+
+```
+
+
 
 
 

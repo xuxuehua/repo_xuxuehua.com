@@ -53,7 +53,7 @@ sys.path.append(BASE_DIR)
 
 
 
-## verion
+## version
 
  获取Python解释程序的版本信息
 
@@ -77,6 +77,24 @@ Out[13]: 'darwin'
 ```
 
 
+
+## path
+
+系统环境变量PYTHONPATH
+
+```
+In [39]: sys.path
+Out[39]:
+['/Users/rxu/.pyenv/versions/3.5.3/envs/general_3.5.3/bin',
+ '/Users/rxu/.pyenv/versions/3.5.3/lib/python35.zip',
+ '/Users/rxu/.pyenv/versions/3.5.3/lib/python3.5',
+ '/Users/rxu/.pyenv/versions/3.5.3/lib/python3.5/plat-darwin',
+ '/Users/rxu/.pyenv/versions/3.5.3/lib/python3.5/lib-dynload',
+ '',
+ '/Users/rxu/.pyenv/versions/3.5.3/envs/general_3.5.3/lib/python3.5/site-packages',
+ '/Users/rxu/.pyenv/versions/3.5.3/envs/general_3.5.3/lib/python3.5/site-packages/IPython/extensions',
+ '/Users/rxu/.ipython']
+```
 
 
 

@@ -6,6 +6,8 @@ date: 2019-06-20 17:35
 
 # DynamoDB
 
+Data stored on SSD
+
 文档和键值对nosql，适合广告，游戏，IOT
 
 
@@ -61,6 +63,12 @@ Primary keys is unique identity of each items in the table
 ![img](https://snag.gy/xkaIhq.jpg)
 
 
+
+
+
+## RDS vs DynamoDB
+
+![img](https://snag.gy/2apWHm.jpg)
 
 
 

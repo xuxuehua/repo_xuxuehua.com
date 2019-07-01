@@ -21,6 +21,51 @@ collection: 基本变量类型
 
 
 
+## 特点
+
+字典和集合的内部结构都是一张哈希表。 
+
+而对集合来说，区别就是哈希表内没有键和值的配对，只有单一的元素了。 
+
+
+
+初始化了含有100,000个元素的产品，并分别计算了使用列表和集合来统计产品价格数量的运行时间
+
+```
+def find_unique_price_using_list(products):
+      unique_price_list = []
+      for _, price in products: # A
+          if price not in unique_price_list: #B
+              unique_price_list.append(price)
+      return len(unique_price_list)
+
+def find_unique_price_using_set(products):
+      unique_price_set = set()
+      for _, price in products:
+          unique_price_set.add(price)
+      return len(unique_price_set)
+
+import time
+id = [x for x in range(0, 100000)]
+price = [x for x in range(200000, 300000)]
+products = list(zip(id, price))
+
+# 计算列表版本的时间
+start_using_list = time.perf_counter()
+find_unique_price_using_list(products)
+end_using_list = time.perf_counter()
+print("time elapse using list: {}".format(end_using_list - start_using_list)) ## 输出
+time elapse using list: 41.61519479751587
+
+# 计算集合版本的时间
+start_using_set = time.perf_counter() find_unique_price_using_set(products)
+end_using_set = time.perf_counter()
+print("time elapse using set: {}".format(end_using_set - start_using_set)) # 输出
+time elapse using set: 0.008238077163696289
+```
+
+
+
 
 ## 定义集合
 
@@ -167,7 +212,9 @@ Out[101]: set()
 
 #### pop
 
-移除并返回任意的元素
+移除并返回任意的元素， 删除集合中最后一个元素，可是集合本身是无序的，你无法知道会删除哪 
+
+个元素 
 
 空集会返回key error异常
 

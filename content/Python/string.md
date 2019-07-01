@@ -17,6 +17,26 @@ python3中的字符串是unicode的有序序列
 
 
 
+## 特点
+
+改变字符串，往往需要O(n)的时间复杂度，其中，n为新字符串的长度。
+
+
+
+```
+s = ''
+for n in range(0, 100000):
+	  s += str(n)
+```
+
+> 自从Python2.5开始，每次处理字符串的拼接操作时(str1 += str2)，Python首先会检测str1还有没有其他的引用。如果没有的话，就会尝试原地扩充字符串buffer的大小，而不是重新分配一块内存来创建新的字符串并拷贝。这样的话，上述例子中的时间复杂度就仅为O(n)了。
+
+
+
+
+
+
+
 ## 非特殊处理 r前缀
 
 在字符串前面加上r或者R前缀，表示该字符串不做特殊处理
@@ -266,6 +286,136 @@ In [4]: s = 'Rick Xu {age} years old'
 In [5]: s.format_map({'age': 29})
 Out[5]: 'Rick Xu 29 years old'
 ```
+
+
+
+### f-strings   Python3.6新的字符串格式化
+
+```
+f ' <text> { <expression> <optional !s, !r, or !a> <optional : format specifier> } <text> ... '
+```
+
+
+
+* 基本用法
+
+```
+>>> name = "Tom"
+>>> age = 3
+>>> f"His name is {name}, he's {age} years old."
+>>> "His name is Tom, he's 3 years old."
+```
+
+
+
+* 支持表达式
+
+```
+# 数学运算
+>>> f'He will be { age+1 } years old next year.'
+>>> 'He will be 4 years old next year.'
+
+# 对象操作
+>>> spurs = {"Guard": "Parker", "Forward": "Duncan"}
+>>> f"The {len(spurs)} players are: {spurs['Guard']} the guard, and {spurs['Forward']} the forward."
+>>> 'The 2 players are: Parker the guard, and Duncan the forward.'
+
+>>> f'Numbers from 1-10 are {[_ for _ in range(1, 11)]}'
+>>> 'Numbers from 1-10 are [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]'
+```
+
+
+
+* 排版格式
+
+```
+>>> def show_players():
+    print(f"{'Position':^10}{'Name':^10}")
+    for player in spurs:
+        print(f"{player:^10}{spurs[player]:^10}")
+>>> show_players()
+ Position    Name   
+  Guard     Parker  
+ Forward    Duncan
+```
+
+
+
+* 数字操作
+
+```
+# 小数精度
+>>> PI = 3.141592653
+>>> f"Pi is {PI:.2f}"
+>>> 'Pi is 3.14'
+
+# 进制转换
+>>> f'int: 31, hex: {31:x}, oct: {31:o}'
+'int: 31, hex: 1f, oct: 37'
+```
+
+
+
+* 与原始字符串联合使用
+
+```
+>>> fr'hello\nworld'
+'hello\\nworld'
+```
+
+## 
+
+* `{}`内不能包含反斜杠`\`
+
+```
+f'His name is {\'Tom\'}'
+SyntaxError: f-string expression part cannot include a backslash
+
+# 而应该使用不同的引号，或使用三引号。
+>>> f"His name is {'Tom'}"
+'His name is Tom'
+```
+
+
+
+* 不能与`'u'`联合使用
+
+`'u'`是为了与Python2.7兼容的，而Python2.7不会支持f-strings，因此与`'u'`联合使用不会有任何效果。
+
+
+
+* 如何插入大括号？
+
+```
+>>> f"{{ {10 * 8} }}"
+'{ 80 }'
+>>> f"{{ 10 * 8 }}"
+'{ 10 * 8 }'
+```
+
+
+
+* 与`str.format()`的一点不同
+
+使用`str.format()`，非数字索引将自动转化为字符串，而f-strings则不会。
+
+```
+>>> "Guard is {spurs[Guard]}".format(spurs=spurs)
+'Guard is Parker'
+
+>>> f"Guard is {spurs[Guard]}"
+Traceback (most recent call last):
+  File "<pyshell#34>", line 1, in <module>
+    f"Guard is {spurs[Guard]}"
+NameError: name 'Guard' is not defined
+
+>>> f"Guard is {spurs['Guard']}"
+'Guard is Parker'
+```
+
+
+
+
 
 
 
@@ -649,7 +799,7 @@ Out[105]: '00000Python'
 
 ### strip 
 
-常用于处理文本, 去除空格和换行符
+常用于处理文本, 去除空格和去掉首尾的str字符串换行符
 
 ```
 strip([chars]) -> str
@@ -660,14 +810,17 @@ strip([chars]) -> str
 
 
 ```python
-In [111]: s
-Out[111]: 'abc \n  '
+In [25]: a = '\n abc \n'
 
-In [112]: s.strip()
-Out[112]: 'abc'
+In [26]: a.strip()
+Out[26]: 'abc'
 ```
 
+
+
 ### rstrip
+
+表示只去掉尾部的str字符串。
 
 ```python
 In [113]: s
@@ -677,14 +830,17 @@ In [114]: s.rstrip()
 Out[114]: 'abc'
 ```
 
+
+
 ### lstrip
 
-```python
-In [117]: s
-Out[117]: 'abc \n  '
+表示只去掉开头的str字符串
 
-In [118]: s.lstrip()
-Out[118]: 'abc \n  '
+```python
+In [24]: a = '\n abc \n'
+
+In [25]: a.lstrip()
+Out[25]: 'abc \n'
 ```
 
 
@@ -1006,4 +1162,42 @@ In [9]: b.decode()
 Out[9]: '中文'
 ```
 
-  1. 
+
+
+
+
+
+
+
+
+# 优化
+
+```
+s = ''
+for n in range(0, 100000):
+    s += str(n)
+```
+
+
+
+```
+l = []
+for n in range(0, 100000):
+    l.append(str(n))
+s = ' '.join(l)
+```
+
+
+
+直观上看似乎第二种方法的复杂度高一倍，但实际运行了下，第二种方法效率略高，当调高到50万的时候第二种的效率比第一种高出两倍以上。
+
+join的运行时间只占了很小一部分，不到10%，复杂度推测大致是O(logn)。综上，list的扩充速度优于str，且join的速度在大数面前可忽略。
+
+
+
+推荐方法
+
+```
+s = " ".join(map(str, range(0, 10000))) 
+```
+
