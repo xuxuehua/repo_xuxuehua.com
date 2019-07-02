@@ -423,7 +423,8 @@ f = f1()
 print(f)
 print(f.__closure__)
 >>>
-
+<function f1 at 0x1050937b8>
+None
 ```
 
 
@@ -474,7 +475,32 @@ In [187]: foo()
 Out[187]: 3
 ```
 
+```
+origin = 0 
 
+def factory(pos):
+    def go(step):
+        nonlocal pos
+        new_pos = pos + step
+        pos = new_pos
+        return new_pos
+    return go
+
+tourist = factory(origin)
+print(tourist(2))
+print(tourist.__closure__[0].cell_contents)
+print(tourist(3))
+print(tourist.__closure__[0].cell_contents)
+print(tourist(5))
+print(tourist.__closure__[0].cell_contents)
+>>>
+2
+2
+5
+5
+10
+10
+```
 
 
 
