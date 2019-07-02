@@ -12,6 +12,8 @@ Provision a private, isolated virtual network on AWS cloud to only one AWS accou
 
 Private and public interface control
 
+Use CIDR notation
+
 Inbound and Outbound traffic can be controlled
 
 Multiple IP addresses can be assigned

@@ -26,6 +26,16 @@ Full Managed
 
 
 
+## Additional Features
+
+Multiple versions and release stages
+
+Automatic SDK generation
+
+Monitoring and logging
+
+
+
 
 
 

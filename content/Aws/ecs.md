@@ -203,6 +203,8 @@ e05b4c8e247c        193160586263.dkr.ecr.us-east-1.amazonaws.com/nginx   "nginx 
 
 # ecs-refarch-cloudformation
 
+A reference architecture for deploying containerized microservices with Amazon ECS and AWS CloudFormation (YAML)
+
 [https://github.com/aws-samples/ecs-refarch-cloudformation](https://github.com/aws-samples/ecs-refarch-cloudformation)
 
 

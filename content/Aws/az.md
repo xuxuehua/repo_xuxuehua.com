@@ -12,3 +12,5 @@ Fast fiber network connection
 
 Physically isolated
 
+Conceptually like logical data centers
+

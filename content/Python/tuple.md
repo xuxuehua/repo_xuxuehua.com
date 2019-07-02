@@ -15,6 +15,8 @@ collection: 基本变量类型
 
 
 
+
+参考源码
 列表:https://github.com/python/cpython/blob/3.7/Include/listobject.h
 元祖:https://github.com/python/cpython/blob/3.7/Include/tupleobject.h
 

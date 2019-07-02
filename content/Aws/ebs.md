@@ -28,7 +28,9 @@ Amazon EBS volume usage and storing your AMI as an Amazon EBS snapshot.
 
 Automatically replicated within its Availability Zone
 
-Snapshots stored durably in S3
+Create point-in-time snapshots
+
+Snapshots stored durably in S3, and could copy it acroos regions
 
 
 

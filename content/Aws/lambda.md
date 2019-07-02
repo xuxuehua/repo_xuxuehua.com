@@ -30,6 +30,18 @@ Execution timeout
 
 ### Event source
 
+S3
+
+DynamoDB
+
+SNS
+
+Kinesis
+
+Gateway API
+
+
+
 
 
 

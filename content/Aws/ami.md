@@ -16,3 +16,13 @@ Basic unit of deployment
 
 Deploy one or several
 
+
+
+## Typical components
+
+Template for the root volume
+
+Launch permissions
+
+Block device mapping
+

@@ -28,7 +28,13 @@ https://github.com/jupyterhub/binderhub
 
 
 
-## Installing Jupyter using Anaconda
+
+
+# Installation
+
+
+
+## Anaconda
 
 We **strongly recommend** installing Python and Jupyter using the [Anaconda Distribution](https://www.anaconda.com/downloads), which includes Python, the Jupyter Notebook, and other commonly used packages for scientific computing and data science.
 
@@ -62,7 +68,7 @@ jupyter notebook
 
 
 
-## Installing Jupyter with pip
+## pip
 
 As an existing or experienced Python user, you may wish to install Jupyter using Python’s package manager, pip, instead of Anaconda.
 

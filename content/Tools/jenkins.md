@@ -175,6 +175,22 @@ Go to 'Manage and Assign Roles'
 
 
 
+## reset password
+
+The simplest solution is to completely disable security - change `true` to `false` in `/var/lib/jenkins/config.xml` file.
+
+```
+<useSecurity>true</useSecurity>
+```
+
+Then just restart Jenkins, by
+
+```
+sudo service jenkins restart
+```
+
+And then go to admin panel and set everything once again.
+
 
 
 ## https
@@ -224,7 +240,7 @@ server {
 
 Change the /etc/default/jenkins file to include JAVA_ARGS
 
-`JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpListenAddress=127.0.0.1 --httpPort=​$HTTP_PORT" -ajp13Port=$AJP_PORT"`
+`JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpListenAddress=127.0.0.1 --httpPort=$HTTP_PORT" -ajp13Port=$AJP_PORT"`
 
 
 

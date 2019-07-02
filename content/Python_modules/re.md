@@ -393,6 +393,9 @@ Out[74]:
 ('Life is short, I use Python, I love Python',
  ' is short, I use ',
  ', I love ')
+ 
+In [75]: r.groups()
+Out[75]: (' is short, I use ', ', I love ')
 ```
 
 

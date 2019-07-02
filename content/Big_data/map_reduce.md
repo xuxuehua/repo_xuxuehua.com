@@ -26,6 +26,8 @@ Hadoop MapReduce的出现，使得大数据计算通用编程成为可能。我�
 
 WordCount主要解决的是文本处理中词频统计的问题，就是统计文本中每一个单词出现的次数。如果只是统计一篇文章的词频，几十KB到几MB的数据，只需要写一个程序，将数据读入内存，建一个Hash表记录每个词出现的次数就可以了。
 
+![img](https://snag.gy/hw714m.jpg)
+
 
 
 ```python
@@ -87,11 +89,108 @@ public class WordCount {
 
 
 
+map函数的输入主要是一个<Key, Value>对，在这个例子里，Value是要统计的所有文本中的一行数据，Key在一般计算中都不会用到。
+
+```
+public void map(Object key, Text value, Context context
+                    )
+```
+
+map函数的计算过程是，将这行文本中的单词提取出来，针对每个单词输出一个<word, 1>这样的<Key, Value>对。
+
+MapReduce计算框架会将这些<word , 1>收集起来，将相同的word放在一起，形成<word , <1,1,1,1,1,1,1…>>这样的<Key, Value集合>数据，然后将其输入给reduce函数。
+
+```
+public void reduce(Text key, Iterable<IntWritable> values,
+                       Context context
+                       ) 
+```
+
+这里reduce的输入参数Values就是由很多个1组成的集合，而Key就是具体的单词word。
+
+reduce函数的计算过程是，将这个集合里的1求和，再将单词（word）和这个和（sum）组成一个<Key, Value>，也就是<word, sum>输出。每一个输出就是一个单词和它的词频统计总和。
+
+一个map函数可以针对一部分数据进行运算，这样就可以将一个大数据切分成很多块（这也正是HDFS所做的），MapReduce计算框架为每个数据块分配一个map函数去计算，从而实现大数据的分布式计算。
+
+
+
+# 作业启动
+
+
+
+![img](https://snag.gy/EwucmX.jpg)
 
 
 
 
 
+
+
+
+
+以Hadoop 1为例，MapReduce运行过程涉及三类关键进程
+
+
+
+## 大数据应用进程
+
+这类进程是启动MapReduce程序的主入口，主要是指定Map和Reduce类、输入输出文件路径等，并提交作业给Hadoop集群，也就是下面提到的JobTracker进程。这是由用户启动的MapReduce程序进程，比如我们上期提到的WordCount程序。
+
+## 
+
+## JobTracker进程
+
+这类进程根据要处理的输入数据量，命令下面提到的TaskTracker进程启动相应数量的Map和Reduce进程任务，并管理整个作业生命周期的任务调度和监控。这是Hadoop集群的常驻进程，需要注意的是，JobTracker进程在整个Hadoop集群全局唯一。
+
+
+
+## TaskTracker进程
+
+这个进程负责启动和管理Map进程以及Reduce进程。因为需要每个数据块都有对应的map函数，TaskTracker进程通常和HDFS的DataNode进程启动在同一个服务器。也就是说，Hadoop集群中绝大多数服务器同时运行DataNode进程和TaskTracker进程。
+
+
+
+JobTracker进程和TaskTracker进程是主从关系，主服务器通常只有一台（或者另有一台备机提供高可用服务，但运行时只有一台服务器对外提供服务，真正起作用的只有一台），从服务器可能有几百上千台，所有的从服务器听从主服务器的控制和调度安排。主服务器负责为应用程序分配服务器资源以及作业执行的调度，而具体的计算操作则在从服务器上完成。
+
+
+
+# 运行机制
+
+![img](https://snag.gy/d1NEpn.jpg)
+
+
+
+1.应用进程JobClient将用户作业JAR包存储在HDFS中，将来这些JAR包会分发给Hadoop集群中的服务器执行MapReduce计算。
+
+2.应用程序提交job作业给JobTracker。
+
+3.JobTracker根据作业调度策略创建JobInProcess树，每个作业都会有一个自己的JobInProcess树。
+
+4.JobInProcess根据输入数据分片数目（通常情况就是数据块的数目）和设置的Reduce数目创建相应数量的TaskInProcess。
+
+5.TaskTracker进程和JobTracker进程进行定时通信。
+
+6.如果TaskTracker有空闲的计算资源（有空闲CPU核心），JobTracker就会给它分配任务。分配任务的时候会根据TaskTracker的服务器名字匹配在同一台机器上的数据块计算任务给它，使启动的计算任务正好处理本机上的数据，以实现我们一开始就提到的“移动计算比移动数据更划算”。
+
+7.TaskTracker收到任务后根据任务类型（是Map还是Reduce）和任务参数（作业JAR包路径、输入数据文件路径、要处理的数据在文件中的起始位置和偏移量、数据块多个备份的DataNode主机名等），启动相应的Map或者Reduce进程。
+
+8.Map或者Reduce进程启动后，检查本地是否有要执行任务的JAR包文件，如果没有，就去HDFS上下载，然后加载Map或者Reduce代码开始执行。
+
+9.如果是Map进程，从HDFS读取数据（通常要读取的数据块正好存储在本机）；如果是Reduce进程，将结果数据写出到HDFS。
+
+
+
+做的仅仅是编写一个map函数和一个reduce函数就可以了，根本不用关心这两个函数是如何被分布启动到集群上的，也不用关心数据块又是如何分配给计算任务的。**这一切都由MapReduce计算框架完成**
+
+
+
+
+
+## shuffle
+
+在map输出与reduce输入之间，MapReduce计算框架处理数据合并与连接操作，这个操作有个专门的词汇叫**shuffle**
+
+![img](https://snag.gy/NJDsAq.jpg)
 
 
 

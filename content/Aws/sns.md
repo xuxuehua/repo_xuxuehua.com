@@ -38,11 +38,11 @@ email-json
 
 sms
 
-sqs
+sqs: Json-encoded message to an Amazon SQS service
 
-application
+application: Json-encoded message to an EndpointArn for a mobile app and device
 
-lambda
+lambda: Json-encoded message to an AWS Lambda function
 
 
 

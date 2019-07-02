@@ -46,7 +46,9 @@ An alternative to credential sharing
 
 No need to define permissions and manage on each entity
 
+Use case: Third-party vendor account access
 
+AWS resource can be launched into roles
 
 
 

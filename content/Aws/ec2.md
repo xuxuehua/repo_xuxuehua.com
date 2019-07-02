@@ -98,6 +98,8 @@ User data
 
 ## Load Balancer Types
 
+![img](https://snag.gy/Z2RNzQ.jpg)
+
 
 
 

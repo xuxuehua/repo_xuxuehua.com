@@ -8,6 +8,10 @@ date: 2019-06-20 17:35
 
 Data stored on SSD
 
+Automatically replicate across multiple AZs
+
+
+
 文档和键值对nosql，适合广告，游戏，IOT
 
 

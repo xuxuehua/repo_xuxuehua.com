@@ -152,4 +152,9 @@ Which can store any blob of data or files, videos, images, PDFs, text, documents
 
 # Example
 
-![img]()
+![img](https://snag.gy/Rvb5Y6.jpg)
+
+
+
+
+
