@@ -38,7 +38,7 @@ Pipenv是一款旨在将所有包管理工具（如bundler, composer, npm, cargo
 
 ` pip install --user --upgrade pipenv` 
 
-`export PATH="/Users/dongweiming/Library/Python/3.6/bin:$PATH"`  # 把用户目录下bin放在最前面，这样可以直接使用pipenv了 
+`export PATH="/Users/xhxu/Library/Python/3.6/bin:$PATH"`  # 把用户目录下bin放在最前面，这样可以直接使用pipenv了 
 
 
 

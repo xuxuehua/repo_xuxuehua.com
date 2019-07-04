@@ -406,6 +406,13 @@ git push -u origin master
 
 把分叉的提交历史“整理”成一条直线，看上去更直观。缺点是本地的分叉提交已经被修改过了。
 
+Rebases current branch onto origin/master
+
+```
+git rebase origin/master
+```
+
+
 
 
 ### -i 交互式操作

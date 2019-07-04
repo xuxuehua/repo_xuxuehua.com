@@ -190,7 +190,27 @@ JobTracker进程和TaskTracker进程是主从关系，主服务器通常只有�
 
 在map输出与reduce输入之间，MapReduce计算框架处理数据合并与连接操作，这个操作有个专门的词汇叫**shuffle**
 
+**分布式计算需要将不同服务器上的相关数据合并到一起进行下一步计算，这就是shuffle**。
+
 ![img](https://snag.gy/NJDsAq.jpg)
 
 
 
+每个Map任务的计算结果都会写入到本地文件系统，等Map任务快要计算完成的时候，MapReduce计算框架会启动shuffle过程，在Map任务进程调用一个Partitioner接口，对Map产生的每个<Key, Value>进行Reduce分区选择，然后通过HTTP通信发送给对应的Reduce进程。这样不管Map位于哪个服务器节点，相同的Key一定会被发送给相同的Reduce进程。Reduce任务进程对收到的<Key, Value>进行排序和合并，相同的Key放在一起，组成一个<Key, Value集合>传递给Reduce执行。
+
+map输出的<Key, Value>shuffle到哪个Reduce进程是这里的关键，它是由Partitioner来实现，MapReduce框架默认的Partitioner用Key的哈希值对Reduce任务数量取模，相同的Key一定会落在相同的Reduce任务ID上。
+
+从实现上来看的话，这样的Partitioner代码只需要一行。
+
+```
+ /** Use {@link Object#hashCode()} to partition. */ 
+public int getPartition(K2 key, V2 value, int numReduceTasks) { 
+    return (key.hashCode() & Integer.MAX_VALUE) % numReduceTasks; 
+ }
+```
+
+
+
+不管是MapReduce还是Spark，只要是大数据批处理计算，一定都会有shuffle过程，只有**让数据关联起来**
+
+shuffle也是整个MapReduce过程中最难、最消耗性能的地方，在MapReduce早期代码中，一半代码都是关于shuffle处理的。

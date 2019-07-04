@@ -37,6 +37,14 @@ fi
 
 
 
+```
+git commit --amend --author="Rick Xu <me@xurick.com>"
+```
+
+
+
+
+
 ## credential
 
 ```
