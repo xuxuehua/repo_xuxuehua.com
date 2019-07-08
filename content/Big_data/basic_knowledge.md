@@ -95,6 +95,42 @@ Hive可以在Hadoop上进行SQL操作，实现数据统计与分析。也就是�
 
 
 
+### 框架设计
+
+框架在架构设计上遵循一个重要的设计原则叫“**依赖倒转原则**”，依赖倒转原则是**高层模块不能依赖低层模块，它们应该共同依赖一个抽象，这个抽象由高层模块定义，由低层模块实现。**
+
+所谓高层模块和低层模块的划分，简单说来就是在调用链上，处于前面的是高层，后面的是低层。我们以典型的Java Web应用举例，用户请求在到达服务器以后，最先处理用户请求的是Java Web容器，比如Tomcat、Jetty这些，通过监听80端口，把HTTP二进制流封装成Request对象；然后是Spring MVC框架，把Request对象里的用户参数提取出来，根据请求的URL分发给相应的Model对象处理；再然后就是我们的应用程序，负责处理用户请求，具体来看，还会分成服务层、数据持久层等。
+
+在这个例子中，Tomcat相对于Spring MVC就是高层模块，Spring MVC相对于我们的应用程序也算是高层模块。我们看到虽然Tomcat会调用Spring MVC，因为Tomcat要把Request交给Spring MVC处理，但是Tomcat并没有依赖Spring MVC，Tomcat的代码里不可能有任何一行关于Spring MVC的代码。
+
+Tomcat和Spring MVC都依赖J2EE规范，Spring MVC实现了J2EE规范的HttpServlet抽象类，即DispatcherServlet，并配置在web.xml中。这样，Tomcat就可以调用DispatcherServlet处理用户发来的请求。
+
+同样Spring MVC也不需要依赖我们写的Java代码，而是通过依赖Spring MVC的配置文件或者Annotation这样的抽象，来调用我们的Java代码。
+
+所以，Tomcat或者Spring MVC都可以称作是框架，它们都遵循依赖倒转原则。
+
+
+
+实际项目开发中，要做到依赖倒置的方法，一般就是抽象出相应的接口的方法，不依赖具体。面向接口编程。 
+
+更重要的是接口是高层需求的抽象，还是底层实现的抽象。这是依赖倒置的关键，面向接口本身并不能保证依赖倒置原则，否则和接口隔离原则没有区别。
+
+
+
+## SQL 引擎
+
+Cloudera开发了Impala，这是一种运行在HDFS上的MPP架构的SQL引擎。和MapReduce启动Map和Reduce两种执行进程，将计算过程分成两个阶段进行计算不同，Impala在所有DataNode服务器上部署相同的Impalad进程，多个Impalad进程相互协作，共同完成SQL计算。在一些统计场景中，Impala可以做到毫秒级的计算速度
+
+
+
+Spark出道以后，也迅速推出了自己的SQL引擎Shark，也就是后来的Spark SQL，将SQL语句解析成Spark的执行计划，在Spark上执行。由于Spark比MapReduce快很多，Spark SQL也相应比Hive快很多，并且随着Spark的普及，Spark SQL也逐渐被人们接受。后来Hive推出了Hive on Spark，将Hive的执行计划转换成Spark的计算模型，当然这是后话了。
+
+
+
+此外，我们还希望在NoSQL的数据库上执行SQL，毕竟SQL发展了几十年，积累了庞大的用户群体，很多人习惯了用SQL解决问题。于是Saleforce推出了Phoenix，一个执行在HBase上的SQL引擎。
+
+这些SQL引擎基本上都只支持类SQL语法，并不能像数据库那样支持标准SQL，特别是数据仓库领域几乎必然会用到嵌套查询SQL，也就是在where条件里面嵌套select子查询，但是几乎所有的大数据SQL引擎都不支持。
+
 # 计算类型
 
 在典型的大数据的业务场景下，数据业务最通用的做法是，采用批处理的技术处理历史全量数据，采用流式计算处理实时新增数据。而像Flink这样的计算引擎，可以同时支持流式计算和批处理计算。

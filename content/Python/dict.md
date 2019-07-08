@@ -475,3 +475,53 @@ Out[29]: {'a': 1, 'b': 2}
 
 
 
+
+
+## dict 实现 switch 方法
+
+```
+day = 0
+
+switcher = {
+    0: 'Sunday',
+    1: 'Monday', 
+    2: 'Tuesday'
+}
+
+day_name = switcher.get(day, 'Unknown')
+print(day_name)
+>>>
+Sunday
+```
+
+
+
+推荐方法
+
+```
+day = 7
+
+def get_sunday():
+    return 'Sunday'
+
+def get_monday():
+    return 'Monday'
+
+def get_tuesday():
+    return 'Tuesday'
+
+def get_default():
+    return 'Unknown'
+
+switcher = {
+    0: get_sunday,
+    1: get_monday,
+    2: get_tuesday
+}
+
+day_name = switcher.get(day, get_default)()
+print(day_name)
+>>>
+Unknown
+```
+

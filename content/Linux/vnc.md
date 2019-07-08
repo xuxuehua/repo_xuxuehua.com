@@ -22,12 +22,13 @@ vim /etc/systemd/system/vncserver@:1.service
 
 
 ExecStartPre=/bin/sh -c '/usr/bin/vncserver -kill %i > /dev/null 2>&1 || :'
-ExecStart=/sbin/runuser -l rick -c "/usr/bin/vncserver %i -geometry 1280x1024" 
-PIDFile=/home/rick/.vnc/%H%i.pid
+ExecStart=/sbin/runuser -l vnc -c "/usr/bin/vncserver %i -geometry 1280x1024" 
+PIDFile=/home/vnc/.vnc/%H%i.pid
 ExecStop=/bin/sh -c '/usr/bin/vncserver -kill %i > /dev/null 2>&1 || :'
 
 
-su - rick
+useradd vnc
+su - vnc
 vncserver
 ```
 

@@ -37,6 +37,8 @@ fi
 
 
 
+Using --amend for the Very Last Commit
+
 ```
 git commit --amend --author="Rick Xu <me@xurick.com>"
 ```

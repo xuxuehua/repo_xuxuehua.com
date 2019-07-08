@@ -41,17 +41,19 @@ else
 
 ### 真值判断
 
-| 对象/常量 | True or False |
-| :-------- | ------------- |
-| ""        | False         |
-| "string"  | True          |
-| 0         | False         |
-| \>=1      | True          |
-| \<=-1     | True          |
-| () 空元组 | False         |
-| [] 空列表 | False         |
-| {} 空字典 | False         |
-| None      | False         |
+| 对象/常量  | True or False              |
+| :--------- | -------------------------- |
+| ""         | False                      |
+| "string"   | True， 空字符串为False     |
+| 0          | False， 其他数字为True     |
+| \>=1       | True                       |
+| \<=-1      | True                       |
+| () 空元组  | False                      |
+| [] 空列表  | False                      |
+| {} 空字典  | False                      |
+| None       | False                      |
+| bool       | True为True    False为False |
+| object对象 | None为False， 其他为True   |
 
 
 

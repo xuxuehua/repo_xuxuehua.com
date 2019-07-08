@@ -144,6 +144,12 @@ Pipfile.lock 顾名思义，这个文件时对于`Pipfile`的一个锁定。支�
 
 
 
+#### 自动补齐
+
+```
+eval "$(pipenv --completion)"
+```
+
 
 
 ### Virtualenv
@@ -322,7 +328,18 @@ requests==2.19.1
 `pipenv install PACKAGE_NAME`
 
 ```
-xhxu-mac:test_pipenv xhxu$ pipenv install elasticsearch-dsl requests
+$ pipenv install elasticsearch-dsl requests
+```
+
+
+
+指定版本
+
+
+```
+$ pipenv install --python 3
+$ pipenv install --python 3.6
+$ pipenv install --python 2.7.14
 ```
 
 

@@ -120,6 +120,10 @@ None
 
 使用线程隔离的意义在于，使当前线程能够正确引用到他自己所创建的对象，而不是引用到其他线程所创建的对象
 
+使用线程ID作为字典的Key来实现线程隔离
+
+
+
 
 
 ```
@@ -149,6 +153,12 @@ New thread before push with value: None
 New thread after push with value: 2
 Eventually, main thread value: 1
 ```
+
+
+
+
+
+
 
 
 
@@ -248,7 +258,7 @@ self.app = app 即封装了Flask实例化的核心对象
 
 ## 装饰器方法
 
-常用方法
+常用方法, 但是其实调用的是add_url_rule实现的
 
 ```
 from flask import Flask
@@ -265,9 +275,25 @@ app.run(debug=True)
 
 
 
-## add_url_url
+## 传递参数
+
+通过`<>` 中包含的参数传递
+
+```
+@app.route('/book/search/<q>/<page>')
+def search(q, page):
+    pass
+```
+
+
+
+
+
+## add_url_rule
 
 在使用基于类的视图，即插式图，需要使用该方法
+
+但装饰器里面不需要输入view_func 
 
 ```
 from flask import Flask
@@ -281,16 +307,46 @@ def hello():
 app.add_url_rule('/hello/', view_func=hello)
 
 app.run(debug=True)
-
-
-
 ```
 
 
 
 
 
+# 导入配置文件
+
+config.py
+
+```
+DEBUG=True
+```
+
+
+
+```
+from flask import Flask
+
+# from config import DEBUG #该方法可以省略了
+
+
+app = Flask(__name__)
+app.config.from_object('config')
+
+
+@app.route('/hello')
+def hello():
+    return 'hello world'
+
+
+app.run(debug=app.config['DEBUG'])
+
+```
+
+
+
 # response 对象
+
+视图函数返回的是response 对象， make_response可以创建一个对象
 
 response对象所返回的结果取决于`content-type` 所定义的value
 
@@ -466,4 +522,26 @@ from . import admin
 INFO
 {% endblock %}
 ```
+
+
+
+
+
+# 插件
+
+
+
+## wtforms
+
+对传入的http参数进行验证
+
+
+
+
+
+### 验证层
+
+对参数校验， 一般防止在app下面，叫forms
+
+
 
