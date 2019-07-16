@@ -54,18 +54,6 @@ Runs scripts after the instance starts
 
 
 
-## AWS-CLI
-
-### Mac OSX
-
-```
-curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
-
-unzip awscli-bundle.zip
-
-sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
-```
-
 
 
 ## Roles
@@ -150,7 +138,58 @@ Which can store any blob of data or files, videos, images, PDFs, text, documents
 
 
 
-# Example
+
+
+# AWS CLI
+
+
+
+## Linux
+
+```
+$ curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+$ unzip awscli-bundle.zip
+$ sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+```
+
+Add your Access Key ID and Secret Access Key to ~/`.aws/config` using this format:
+
+```
+[default]
+aws_access_key_id = <access key id>
+aws_secret_access_key = <secret access key>
+region = us-east-1
+```
+
+Protect the config file:
+
+```
+chmod 600 ~/.aws/config
+```
+
+Optionally, you can set an environment variable pointing to the config file. This is especially important if you want to keep it in a non-standard location. For future convenience, also add this line to your ~/.bashrc file:
+
+```
+export AWS_CONFIG_FILE=$HOME/.aws/config
+```
+
+
+
+
+
+## Mac OSX
+
+```
+curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+
+unzip awscli-bundle.zip
+
+sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+```
+
+
+
+Example
 
 ![img](https://snag.gy/Rvb5Y6.jpg)
 

@@ -80,6 +80,16 @@ google-chrome-beta
 ## Ubuntu 安装
 
 ```
+wget -O ~/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+```
+
+
+
+
+
+
+
+```
 sudo vim /etc/apt/sources.list
 deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main
 ```

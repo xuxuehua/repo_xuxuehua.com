@@ -358,11 +358,42 @@ l.show()
 
 getattr(object, name, default=None)
 
+一般情况我们这么用getattr(object,name)。一般来说这里的object是对象，name传的是字符串。
+
+对又是什么呢？可以简单的理解为：在import 引入模块时，通过dir可查询的目标就是对象，而查询得到的结果就是属性，属性就是getattr用法中name部分传入的值。
+
+
+
+```
+>>> class test:
+...     cal=1
+...
+>>> getattr(test,"cal")
+1
+>>> test.cal
+```
+
+```
+>>> dir(test)
+['__doc__', '__module__', 'cal']
+>>> getattr(test,__doc__)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: getattr(): attribute name must be string
+>>> getattr(test,'__doc__')
+```
+
+
+
 
 
 ### hasattr
 
 hasattr(object,name)
+
+
+
+
 
 
 

@@ -76,6 +76,17 @@ deb http://security.ubuntu.com/ubuntu bionic-security multiverse
 
 
 
+### Update time
+
+确保时间已更新
+
+```
+sudo timedatectl set-ntp off
+sudo timedatectl set-ntp on
+```
+
+
+
 ### aliyun
 
 cp /etc/apt/sources.list /etc/apt/sources.list.bak
@@ -99,6 +110,21 @@ sudo apt-get update
 sudo apt-get upgrade
 
 
+
+### 163
+
+```
+deb http://mirrors.163.com/ubuntu/ bionic main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ bionic-security main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ bionic-updates main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ bionic-proposed main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ bionic-backports main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ bionic main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ bionic-security main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ bionic-updates main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ bionic-proposed main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ bionic-backports main restricted universe multiverse
+```
 
 
 

@@ -29,7 +29,21 @@ python setup.py  install
 
 
 
-## 
+# Roster
+
+用于salt ssh 获取需要连接的服务器信息
+
+
+
+默认路径为/etc/salt/roster
+
+
+
+## Target
+
+Roster系统编译了一个内部数据结构，称为Targets。Targets是一个目标系统和关于如何连接到系统属性的列表。
+
+
 
 # usage
 
@@ -46,6 +60,16 @@ Usage: salt-ssh [options]
 -c CONFIG_DIR, --config-dir=CONFIG_DIR
 Pass in an alternative configuration directory.
 Default: /etc/salt
+
+ YAML contents
+
+```
+salt-ssh:
+  config_dir: path/to/config/dir
+  ssh_log_file: salt-ssh.log
+  ssh_max_procs: 30
+  ssh_wipe: True
+```
 
 
 

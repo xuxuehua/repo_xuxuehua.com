@@ -31,6 +31,8 @@ https://www.consul.io/downloads.html 下载所需平台的包，下载对应的 
 
 
 
+### raft 算法一致性
+
 使用 Raft 算法来保证一致性, 比复杂的 Paxos 算法更直接. 相比较而言, zookeeper 采用的是 Paxos, 而 etcd 使用的则是 Raft.
 
 Consul 的 raft 协议要求必须过半数的节点都写入成功才认为注册成功 
@@ -261,7 +263,7 @@ Server节点有一个Leader和多个Follower，Leader节点会将数据同步到
 ## 启动节点1（server模式）
 
 ```
-  docker run -d -e 'CONSUL_LOCAL_CONFIG={"skip_leave_on_interrupt": true}' --name=node1 consul agent -server -bind=172.17.0.2  -bootstrap-expect=3 -node=node1
+docker run -d -e 'CONSUL_LOCAL_CONFIG={"skip_leave_on_interrupt": true}' --name=node1 consul agent -server -bind=172.17.0.2  -bootstrap-expect=3 -node=node1
 ```
 
 > -node：节点的名称

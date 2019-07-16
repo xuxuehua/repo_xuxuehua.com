@@ -8,6 +8,12 @@ date: 2019-06-25 11:32
 
 # Elastic Container Service
 
+![img](https://snag.gy/F1MYG9.jpg)
+
+
+
+
+
 
 
 ## Task
@@ -164,6 +170,10 @@ Send grow and shrink signals to ASGs
 
 
 
+## Cluster
+
+Logical group of EC2 instances that you can place containers onto
+
 
 
 # ecs-agent
@@ -171,6 +181,18 @@ Send grow and shrink signals to ASGs
 The Amazon ECS Container Agent is a component of Amazon Elastic Container Service ([Amazon ECS](http://aws.amazon.com/ecs/)) and is responsible for managing containers on behalf of Amazon ECS.
 
 [https://github.com/aws/amazon-ecs-agent](https://github.com/aws/amazon-ecs-agent)
+
+
+
+Manages the state of containers on a single Ec2 instance
+
+How ECS communicates with the docker daemon on the EC2 instance
+
+Must be on every EC2 instance in your ECS Cluster
+
+Included with the ECS-OPTIMIZED AMI
+
+
 
 
 
