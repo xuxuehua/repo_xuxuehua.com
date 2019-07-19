@@ -21,7 +21,7 @@ date: 2018-11-20 18:06
 
 
 
-
+### 清除样式（常用操作）
 
 网站一般会将内边距盒外边距设置为0
 
@@ -32,6 +32,15 @@ body,button,code,dd,details,dl,dt,fieldset,figcaption,figure,footer,form,h1,h2,h
 
 
 行内元素不要给上下的margin和padding，默认是不起作用的
+
+```
+body, div {
+  margin: 0;
+  padding: 0;
+}
+```
+
+
 
 
 
@@ -109,6 +118,8 @@ padding: 0;
 margin: 0 auto;
 ```
 
+> 确保元素内容包裹在container之中
+
 
 
 使用margin定义块元素的垂直外边距时，可能会出现外边距合并的现象
@@ -126,6 +137,36 @@ margin: 0 auto;
 > 两个container之间的间距是100，不是200
 >
 > 若不一样，以边距大的数值为最终结果
+
+
+
+#### max-width
+
+使用max-width替换掉width，会帮助浏览器处理小窗口，常用于mobile 页面
+
+
+
+### box-sizing
+
+设置`box-sizing: border-box`  会将padding和border元素相内增长
+
+
+
+也可以设置在真个页面之上
+
+```
+* {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+```
+
+
+
+
+
+
 
 
 
@@ -157,48 +198,27 @@ div {
 
 
 
-通常div是独占一行，可以设置浮动类型居左
-
-```
-div {
-    float: left;
-}
-```
 
 
 
-### overflow 属性
-
-父容器高度塌陷
-
-如果一个标准流中的盒子中所有的子元素都进行了浮动，而且盒子没有设置高度，那么父容器整个高度会塌陷，使用hidden 解决
-
-```
-.parent {
-    overflow: hidden;
-}
-```
 
 
 
-| 属性值  | 描述                                           |
-| ------- | ---------------------------------------------- |
-| visible | 内容不会被修剪，会呈现在元素框之外（默认操作） |
-| hidden  | 溢出内容会被修剪，并且被修剪的内容是不可见的   |
-| auto    | 在需要时产生滚动条，即自适应所要显示的内容     |
-| scroll  | 溢出内容会被修剪，并且浏览器会始终显示滚动条   |
+## inline-block
+
+可设置每一列的宽度
+
+受控于vertical-align 属性， 一般设置为top
+
+[http://learnlayout.com/inline-block-layout.html](http://learnlayout.com/inline-block-layout.html
 
 
 
-### 清除浮动
-
-```
-clear:left/right/both/b
-```
 
 
 
-#### 常用布局案例
+
+## 常用布局案例
 
 ![img](https://snag.gy/od7icm.jpg)
 
@@ -460,6 +480,14 @@ clear:left/right/both/b
 
 
 
+### 百分比width 布局
+
+根据浏览器大小自适应
+
+[http://learnlayout.com/media-queries.html](http://learnlayout.com/media-queries.html)
+
+
+
 
 
 ### 瀑布流
@@ -498,4 +526,8 @@ clear:left/right/both/b
     margin: 5px 0;
 }
 ```
+
+
+
+
 
