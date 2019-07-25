@@ -461,13 +461,15 @@ Out[27]: 'HelloWorld'
 
 ### split
 
+sep 指分隔符，默认为空格
+
+maxsplit 指分割次数， -1表示遍历整个字符串
+
 ```
 split(sep=None, maxsplit=-1)
 ```
 
-> sep 指分隔符，默认为空格
->
-> maxsplit 指分割次数， -1表示遍历整个字符串
+
 
 
 
@@ -503,6 +505,28 @@ In [43]: k, v = new_s.split(':', 1)
 In [44]: k, v
 Out[44]: ('URL', 'http://xuxuehua.com')
 ```
+
+
+
+#### 多种分隔符分割
+
+```
+In [80]: import re
+
+In [81]: s
+Out[81]: 'ab;cd|efg|hi,jkl|mn\topq;rst,uvw\txyz'
+
+In [82]: re.split(r'[,;\t|]+', s)
+Out[82]: ['ab', 'cd', 'efg', 'hi', 'jkl', 'mn', 'opq', 'rst', 'uvw', 'xyz']
+```
+
+
+
+
+
+
+
+
 
 ### rsplit
 

@@ -10,7 +10,7 @@ collection: Standard Object 标准对象
 
 
 
-## 判断对象
+## typeof 判断对象
 
 为了区分对象的类型，我们用`typeof`操作符获取对象的类型，它总是返回一个字符串：
 

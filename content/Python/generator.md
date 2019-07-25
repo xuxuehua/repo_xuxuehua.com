@@ -179,7 +179,7 @@ next(A) 之后，A执行到yield语句暂停，然后去执行next(B), B执行�
 
 生成器本身并没有返回任何值，只是返回了一个生成器对象
 
-# 语法
+
 
 其返回一个生成器，为惰性求值，需要的时候才计算值
 
@@ -217,4 +217,18 @@ Out[146]: '0003'
 ```
 
 
+
+
+
+## 字符串连接
+
+```
+In [83]: l = ['abc', 123, 45, 'xyz']
+
+In [84]: (str(x) for x in l)
+Out[84]: <generator object <genexpr> at 0x104a62de0>
+
+In [85]: ''.join(str(x) for x in l)
+Out[85]: 'abc12345xyz'
+```
 

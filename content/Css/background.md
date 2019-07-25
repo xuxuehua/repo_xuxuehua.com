@@ -22,7 +22,13 @@ body {
 }
 ```
 
-> 不滚动
+
+
+scroll 默认值，背景图片随着滚动条滚动
+
+fixed	背景图片不滚动，其余部分滚动
+
+
 
 
 
@@ -55,10 +61,28 @@ body {
 设置背景图片的起始位置
 
 ```
+长度值 (x, y) ， 百分比 (x%, y%)
+
+top, right, left, bottom, center
+```
+
+
+
+```
 body {
     background-position: right;
 }
 ```
+
+```
+body {
+    background-position: 20%, 20%;
+}
+```
+
+
+
+
 
 
 

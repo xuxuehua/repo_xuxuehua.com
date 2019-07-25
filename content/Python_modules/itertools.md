@@ -25,32 +25,7 @@ Out[4]: [1, 2, 3, 4, 5, 6]
 
 
 
-## product()
 
-多个循环器集合的笛卡尔积，相当于嵌套循环
-
-```
-In [1]: from itertools import product
-
-In [2]: product('abc', [1, 2])
-Out[2]: <itertools.product at 0x10a399ea0>
-
-In [3]: list(product('abc', [1, 2]))
-Out[3]: [('a', 1), ('a', 2), ('b', 1), ('b', 2), ('c', 1), ('c', 2)]
-```
-
-
-
-## permutations()
-
-从'abcd'中挑选两个元素称为新的循环
-
-```
-In [4]: from itertools import permutations
-
-In [5]: list(permutations('abc', 2))
-Out[5]: [('a', 'b'), ('a', 'c'), ('b', 'a'), ('b', 'c'), ('c', 'a'), ('c', 'b')]
-```
 
 
 
@@ -91,6 +66,48 @@ Out[11]: ['A', 'B', 'C']
 
 
 
+## islice()
+
+切片操作， 返回一个迭代器
+
+```
+In [42]: from itertools import islice
+
+In [43]: l = range(20)
+
+In [44]: l
+Out[44]: range(0, 20)
+
+In [45]: t = iter(l)
+
+In [46]: for i in islice(t, 5, 10):
+    ...:     print(i)
+    ...:
+5
+6
+7
+8
+9
+
+In [47]: for i in t:
+    ...:     print(i)
+    ...:
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+```
+
+
+
+
+
 ## groupby()
 
 将key()函数作用于原循环器的各个元素，根据key函数结果，将拥有相同函数结果的元素分配到一个新的循环器中。
@@ -122,3 +139,39 @@ short
 tall
 [191, 181, 187, 190]
 ```
+
+
+
+## permutations()
+
+从'abcd'中挑选两个元素称为新的循环
+
+```
+In [4]: from itertools import permutations
+
+In [5]: list(permutations('abc', 2))
+Out[5]: [('a', 'b'), ('a', 'c'), ('b', 'a'), ('b', 'c'), ('c', 'a'), ('c', 'b')]
+```
+
+
+
+## product()
+
+多个循环器集合的笛卡尔积，相当于嵌套循环
+
+```
+In [1]: from itertools import product
+
+In [2]: product('abc', [1, 2])
+Out[2]: <itertools.product at 0x10a399ea0>
+
+In [3]: list(product('abc', [1, 2]))
+Out[3]: [('a', 1), ('a', 2), ('b', 1), ('b', 2), ('c', 1), ('c', 2)]
+```
+
+
+
+
+
+
+

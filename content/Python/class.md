@@ -924,6 +924,42 @@ for i in obj:
 
 
 
+将`__iter__` 方法实现成生成器函数， 每次yield 返回一个素数
+
+```
+class PrimeNum:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end 
+
+    def Is_Prime_num(self, k):
+        if k < 2:
+            return False
+        
+        for i in range(2, k):
+            if k % i == 0:
+                return False
+        return True
+
+    def __iter__(self):
+        for k in range(self.start, self.end + 1):
+            if self.Is_Prime_num(k):
+                yield k 
+
+for x in PrimeNum(1, 20):
+    print(x)
+        
+>>>
+2
+3
+5
+7
+11
+13
+17
+19
+```
+
 
 
 ## 查询对象的属性

@@ -23,7 +23,7 @@ date: 2018-11-20 18:06
 
 ### 清除样式（常用操作）
 
-网站一般会将内边距盒外边距设置为0
+网站一般会将内边距盒外边距设置为0， 清除元素的默认边距设定
 
 ```
 body,button,code,dd,details,dl,dt,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,hr,input,legend,li,menu,nav,ol,p,pre,section,td,textarea,th,ul{margin:0;padding:0}
@@ -164,11 +164,33 @@ margin: 0 auto;
 
 
 
+### 水平垂直居中
+
+```
+{
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -50%width; 
+	margin-top: -50%height;
+}
+```
 
 
 
+### 页面自适应
+
+```
+width: 100%
+```
 
 
+
+### 上下为0， 左右居中
+
+```
+margin: 0 auto;
+```
 
 
 
@@ -526,6 +548,104 @@ div {
     margin: 5px 0;
 }
 ```
+
+
+
+### 三联布局
+
+![img](https://snag.gy/yxZTbg.jpg)
+
+
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-width: 700px;
+        }
+        .header, .footer {
+            float: left;
+            width: 100%;
+            background-color: red;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+        }
+        .container {
+            padding: 0 220px 0 220px;
+        }
+        .left, .right, .middle {
+            position: relative;
+            float: left;
+            min-height: 200px;
+        }
+        .middle {
+            width: 100%;
+            background-color: orange;
+        }
+        .left {
+            width: 220px;
+            background-color: blue;
+            margin-left: -100%;
+            left: -220px;
+        }
+        .right {
+            width: 220px;
+            background-color: yellow;
+            margin-left: -220px;
+            right: -220px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h4>header area</h4>
+    </div>
+
+    <div class="container">
+        <div class="middle">
+            <h4>middle area</h4>
+        </div>
+        <div class="left">
+            <h4>left area</h4>
+        </div>
+        <div class="right">
+            <h4>right area</h4>
+        </div>
+    </div>
+    <div class="footer">
+       <h4>footer area</h4> 
+    </div>
+    
+</body>
+</html>
+```
+
+
+
+
+
+## z-index 元素叠加
+
+可以设置元素叠加顺序， 但依赖定位属性
+
+z-index大的元素会覆盖小的元素
+
+z-index为auto 不参与层级比较
+
+z-index为负值，元素被普通流中的元素覆盖
+
+
 
 
 

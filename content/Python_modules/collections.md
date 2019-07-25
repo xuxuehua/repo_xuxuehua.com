@@ -4,6 +4,70 @@ date: 2019-06-20 10:23
 ---
 [TOC]
 
+
+
+# namedtuple
+
+```
+In [1]: from collections import namedtuple
+
+In [2]: Student = namedtuple('Student' , ['name', 'age', 'gender'])
+
+In [3]: s = Student('Rick', 18, 'male')
+
+In [4]: s
+Out[4]: Student(name='Rick', age=18, gender='male')
+
+In [5]: s.name
+Out[5]: 'Rick'
+
+In [6]: s.age
+Out[6]: 18
+```
+
+
+
+# Counter
+
+```
+In [34]: d
+Out[34]:
+{'0': 15,
+ '1': 31,
+ '2': 71,
+ '3': 1,
+ '4': 1,
+ '5': 28,
+ '6': 87,
+ '7': 35,
+ '8': 99,
+ '9': 28}
+
+In [35]: from collections import Counter
+
+In [36]: c = Counter()
+
+In [37]: c = Counter(d)
+
+In [38]: c.most_common()
+Out[38]:
+[('8', 99),
+ ('6', 87),
+ ('2', 71),
+ ('7', 35),
+ ('1', 31),
+ ('5', 28),
+ ('9', 28),
+ ('0', 15),
+ ('3', 1),
+ ('4', 1)]
+
+In [39]: c.most_common(2)  # 传销频率最高
+Out[39]: [('8', 99), ('6', 87)]
+```
+
+
+
 # defaultdict
 
 defaultdict属于内建函数dict的一个子类, 提供一个default_factory 属性，该属性所指定的函数负责为不存在的key来生成value，即在没有key的情况下不会报错
