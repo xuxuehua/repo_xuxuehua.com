@@ -26,6 +26,24 @@ Preferences -> Settings
 
 
 
+## Enable UTF-8
+
+调出console
+
+```
+ctrl + ` 
+```
+
+
+
+install package 选项， 然后输入ConvertToUTF8
+
+
+
+
+
+
+
 ## Installation
 
 ### Ubuntu

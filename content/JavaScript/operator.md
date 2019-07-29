@@ -110,7 +110,7 @@ div.removeClass('highlight'); // 删除highlight这个class
 
 分别用`css()`方法和`addClass()`方法高亮显示JavaScript：
 
- ```
+```
 <!-- HTML结构 -->
 <style>
 .highlight {
@@ -136,7 +136,7 @@ div.find("li[class=js]").addClass("highlight");//寫法一
 div.find("li[class=js]").css("color","#dd1144").css("background-color","red");//寫法二
 
 $("div li.js").css("color","#dd1144").css("background-color","red");//或者可以這樣寫
- ```
+```
 
 
 
@@ -369,8 +369,6 @@ $.fn.highlight1 = function () {
 $('#test-highlight1 span').highlight1();
 ```
 
-![alt](https://cdn.pbrd.co/images/Hs1eBTe.png)
-
 
 
 
@@ -489,11 +487,11 @@ $('#test-highlight p:last-child span').highlight({
 });
 ```
 
-![alt](https://cdn.pbrd.co/images/Hs1fZ9a.png)
 
 
 
-### 编写一个jQuery插件的原则：
+
+### 编写一个jQuery插件的原则
 
 1. 给`$.fn`绑定函数，实现插件的代码逻辑；
 2. 插件函数最后要`return this;`以支持链式调用；

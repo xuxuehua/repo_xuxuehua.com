@@ -438,3 +438,22 @@ i server        Basic Ubuntu server
 pkexec vi /etc/sudoer
 ```
 
+
+
+## Encryped grub
+
+```
+grub-mkpasswd-pbkdf2
+```
+
+```
+sudo vim  /etc/grub.d/40_custom
+
+set superusers="ubuntu"
+password_pbkdf2 ubuntu HASH_VALUE
+```
+
+```
+sudo update-grub
+```
+
