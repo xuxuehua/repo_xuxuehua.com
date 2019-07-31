@@ -138,7 +138,7 @@ Then `Create Stack`  and specify below template
 From S3 template
 https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2018-08-30/amazon-eks-vpc-sample.yaml
 
-and specify the stack name `classEKSVPS`
+and specify the stack name `classEKSVPC`
 
 
 
@@ -212,7 +212,7 @@ Input Cluster Name with `classCluster`, click next
 
 The VPC we need is 192.168.0.0/16 subnet
 
-And Security Group is the right classEKSVPS 
+And Security Group is the right classEKSVPC 
 
 
 
@@ -259,6 +259,8 @@ https://console.aws.amazon.com/cloudformation/
 create stack with below S3 template
 https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2018-08-30/amazon-eks-nodegroup.yaml
 
+(New from AWS TS https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-02-11/amazon-eks-nodegroup.yaml )
+
 and then specify the stack name `eksNodeStake` , Clustername `classCluster` and VPC with `classEKSVPS-ControlPlainSecurity`
 
 NodeGroupName with `workerNodes`
@@ -268,7 +270,7 @@ NodeImageID with below Oregon AMI `ami-0a54c984b9f908c81`
 ```
 Region	                     Amazon EKS-optimized   AMI	with GPU support
 US West (Oregon) (us-west-2)  ami-0a54c984b9f908c81	ami-0731694d53ef9604b
-US East (N. Va)  (us-east-1)	ami-0440e4f6b9713faf6	ami-058bfb8c236caae89
+US East (N. Va)  (us-east-1)	ami-0440e4f6b9713faf6 (new from AWS TS ami-0f2e8e5663e16b436 )	ami-058bfb8c236caae89
 EU (Ireland)     (eu-west-1)	ami-0c7a4976cb6fafd3a	ami-0706dc8a5eed2eed9
 ```
 

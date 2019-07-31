@@ -72,6 +72,21 @@ PID   USER     TIME  COMMAND
 
 
 
+主要包含这个几个Namespaces
+
+| namespace | 系统调用参数  | 隔离内容                   |
+| --------- | ------------- | -------------------------- |
+| UTS       | CLONE_NEWUTS  | 主机名和域名               |
+| IPC       | CLONE_NEWIPC  | 信号量，消息队列和共享内存 |
+| PID       | CLONE_NEWPID  | 进程编号                   |
+| Network   | CLONE_NEWNET  | 网络设备，网络栈，端口等   |
+| Mount     | CLONE_NEWNS   | 挂载点 （文件系统）        |
+| User      | CLONE_NEWUSER | 用户和用户组               |
+
+
+
+
+
 ## 本质
 
 容器的本质就是一个进程，用户的应用进程实际上就是容器里 PID=1 的进程，也是其他后续创建的所有进程的父进程。这就意味着，在一个容器中，你没办法同时运行两个不同的应用，除非你能事先找到一个公共的 PID=1 的程序来充当两个不同应用的父进程，这也是为什么很多人都会用 systemd 或者 supervisord 这样的软件来代替应用本身作为容器的启动进程。
