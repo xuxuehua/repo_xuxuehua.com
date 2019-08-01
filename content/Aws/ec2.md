@@ -41,6 +41,14 @@ fi
 
 
 
+query user-data info
+
+```
+curl http://169.254.169.254/latest/user-data
+```
+
+
+
 ### Metadata Service
 
 e.g.

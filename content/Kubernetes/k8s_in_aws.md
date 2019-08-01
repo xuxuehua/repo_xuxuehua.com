@@ -138,6 +138,10 @@ Then `Create Stack`  and specify below template
 From S3 template
 https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2018-08-30/amazon-eks-vpc-sample.yaml
 
+(New version   https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-02-11/amazon-eks-vpc-private-subnets.yaml )
+
+
+
 and specify the stack name `classEKSVPC`
 
 
@@ -178,17 +182,27 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/w
 We also need the aws-iam-authenticator binary:
 https://docs.aws.amazon.com/eks/latest/userguide/configure-kubectl.html
 
-You need the binary appropriate to your OS:
-Linux:
-curl -sLO https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-07-26/bin/linux/amd64/aws-iam-authenticator
+You need the binary appropriate to your OS
 
-MacOS:
-curl -sLO https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-07-26/bin/darwin/amd64/aws-iam-authenticator
+linux 
 
-Windows:
-curl -sLO https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-07-26/bin/windows/amd64/aws-iam-authenticator.exe
+```
+curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.13.7/2019-06-11/bin/linux/amd64/aws-iam-authenticator
+```
+
+mac
+
+```
+brew install aws-iam-authenticator
+```
+
+
 
 In both cases, make the binary executable if necessary (chmod +x), and copy it to a directory in the command PATH (/usr/local/bin or %system32%/)
+
+
+
+
 
 
 
@@ -219,7 +233,7 @@ And Security Group is the right classEKSVPC
 After cluster activing, we go to below command line operation
 
 ```
-aws configure --profile=clusterAdmin 
+aws configure --profile=clusterAdmin (AWS User ID)
 
 # Key & Secret could get it from IAM console
 Default region name [Oregon]: us-west-2
@@ -231,16 +245,21 @@ Default output format [json]: json
 Enable variables
 
 ```
-export AWS_PROFILE=clusterAdmin # Re-enable it when you reset your terminal 
+export AWS_PROFILE=clusterAdmin # Re-enable it when you reset your terminal (AWS UID)
 ```
 
 
 
 ```
-aws eks update-kubeconfig --name classCluster
+aws eks --region (region) update-kubeconfig --name classCluster
 
 # Verify Kubernetes access
 And lastly, we should be able to confirm our access
+
+$ kubectl get svc
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.100.0.1   <none>        443/TCP   4h
+
 
 kubectl get pods
 kubectl get nodes
