@@ -387,6 +387,53 @@ In [41]: d.pop('c', True)
 Out[41]: True
 ```
 
+
+
+pythonic usage
+
+若第一个参数不存在，则获取第二个参数作为value
+
+若第一个参数存在，则抛出第一个参数
+
+```
+In [4]: d
+Out[4]: {'a': 5, 'b': 2}
+
+In [5]: d.pop('c', 'a')
+Out[5]: 'a'
+
+In [6]: d
+Out[6]: {'a': 5, 'b': 2}
+
+In [7]: d.pop('a', 'a')
+Out[7]: 5
+
+In [8]: d
+Out[8]: {'b': 2}
+```
+
+
+
+详见Flask  blueprint register 用法
+
+```
+    def route(self, rule, **options):
+        """Like :meth:`Flask.route` but for a blueprint.  The endpoint for the
+        :func:`url_for` function is prefixed with the name of the blueprint.
+        """
+
+        def decorator(f):
+            endpoint = options.pop("endpoint", f.__name__)
+            self.add_url_rule(rule, endpoint, f, **options)
+            return f
+
+        return decorator
+```
+
+
+
+
+
 #### popitem 
 
 随机删除任意的键值对

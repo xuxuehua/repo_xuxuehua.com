@@ -271,6 +271,38 @@ For either framework, to learn more about input methods, fonts, or OpenOffice/Li
 
  
 
+### fcitx
+
+```
+sudo apt install fcitx*
+```
+
+
+
+#### telegram
+
+1. 修改快捷方式
+
+```
+vim /home/ubuntu/.local/share/applications/telegramdesktop.desktop
+
+Exec=env QT_IM_MODULE=fcitx /opt/telegram/Telegram -- %u
+```
+
+
+
+2. 强制增加变量
+
+```
+sudo vim /home/ubuntu/.bashrc
+
+export XIM_PROGRAM=fcitx
+export XIM=fcitx
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS="@im=fcitx"
+```
+
 
 
 

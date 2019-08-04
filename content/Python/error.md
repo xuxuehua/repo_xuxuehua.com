@@ -10,9 +10,9 @@ ollection: 异常处理
 
 # 异常处理
 
+异常处理一般用于debug程序,以不终止程序，让其照样运行做操作
 
-
-异常处理一般用于debug程序
+对于flow-control(流程控制)的代码逻辑，我们一般不用异常处理，直接用条件语句解决就可以了
 
 
 
@@ -42,60 +42,45 @@ hahaha
 
 
 
+当程序中存在多个except block时，最多只有一个except block会被执行。换句话说，如果多个
+except声明的异常类型都与实际相匹配，那么只有最前面的except block会被执行，其他则被忽略。
+
+```
+try:
+    s = input('please enter two numbers separated by comma: ')
+    num1 = int(s.split(',')[0].strip())
+    num2 = int(s.split(',')[1].strip())
+except (ValueError, IndexError) as err:
+    print('Error: {}'.format(err))
+print('continue')
+```
+
+或者
+
+```
+try:
+    s = input('please enter two numbers separated by comma: ')
+    num1 = int(s.split(',')[0].strip())
+    num2 = int(s.split(',')[1].strip())
+
+except ValueError as err:
+    print('Value Error: {}'.format(err))
+except IndexError as err:
+    print('Index Error: {}'.format(err))
+print('continue')
+```
+
+
+
+
+
+
+
 ## 异常类型
 
-Exception 能抓住所有错误，不建议使用
+[https://docs.python.org/3/library/exceptions.html#bltin-exceptions](https://docs.python.org/3/library/exceptions.html#bltin-exceptions)
 
 
-
-## 异常处理顺序
-
-无法将异常交给合适的对象，异常将继续向上层抛出，直到捕捉或者造成主程序出错
-
-```
-def test_func():
-    try:
-        m = 1/0
-    except NameError:
-        print('Catch NameError in the sub-function')
-
-try:
-    test_func()
-except ZeroDivisionError:
-    print('Catch error in the main program')
->>>
-Catch error in the main program
-```
-
-
-
-## finally
-
-finally是无论是否有异常，最后都要做的一件事
-1. try -> 异常 -> except -> finally
-2. try -> 无异常 -> else -> finally
-
-
-
-## raise 抛出异常
-
-raise 语句可以抛出异常
-
-```
-print('test')
-raise StopIteration
-print('yes')
->>>
-Traceback (most recent call last):
-  File "/Users/xhxu/python/machine_learning/test.py", line 2, in <module>
-    raise StopIteration
-StopIteration
-test
-```
-
-
-
-### 异常种类
 
 | 异常名称                  | 描述                                               |
 | ------------------------- | -------------------------------------------------- |
@@ -149,6 +134,136 @@ test
 
 
 
+
+
+### BaseException
+
+The base class for all built-in exceptions. It is not meant to be directly inherited by user-defined classes (for that, use [`Exception`](https://docs.python.org/3/library/exceptions.html#Exception)). If [`str()`](https://docs.python.org/3/library/stdtypes.html#str) is called on an instance of this class, the representation of the argument(s) to the instance are returned, or the empty string when there were no arguments.
+
+except后面省略异常类型，这表示与任意异常相匹配(包括系统异常等)
+
+```
+try:
+    s = input('please enter two numbers separated by comma: ')
+    num1 = int(s.split(',')[0].strip())
+    num2 = int(s.split(',')[1].strip())
+
+except ValueError as err:
+    print('Value Error: {}'.format(err))
+except IndexError as err:
+    print('Index Error: {}'.format(err))
+except:
+    print('Other error')
+print('continue')
+```
+
+
+
+### Exception
+
+All built-in, non-system-exiting exceptions are derived from this class. All user-defined exceptions should also be derived from this class.
+
+Exception是其他所有非系统异常的基类，能够匹配任意非系统异常， 常用于except最后一个异常处理
+
+```python
+try:
+    s = input('please enter two numbers separated by comma: ')
+    num1 = int(s.split(',')[0].strip())
+    num2 = int(s.split(',')[1].strip())
+
+except ValueError as err:                   
+     print('Value Error: {}'.format(err))
+except IndexError as err:
+    print('Index Error: {}'.format(err))
+except Exception as err:
+    print('Other error: {}'.format(err))
+print('continue')
+```
+
+
+
+
+
+
+
+
+
+## 异常处理顺序
+
+无法将异常交给合适的对象，异常将继续向上层抛出，直到捕捉或者造成主程序出错
+
+```
+def test_func():
+    try:
+        m = 1/0
+    except NameError:
+        print('Catch NameError in the sub-function')
+
+try:
+    test_func()
+except ZeroDivisionError:
+    print('Catch error in the main program')
+>>>
+Catch error in the main program
+```
+
+
+
+
+
+
+
+## finally
+
+finally是无论是否有异常，最后都要做的一件事
+
+无论发生什么情况，
+finally block中的语句都会被执行，哪怕前面的try和excep block中使用了return语句
+
+1. try -> 异常 -> except -> finally
+2. try -> 无异常 -> else -> finally
+
+
+
+常用于文件读取， 但with open可以最后自动关闭文件
+
+```
+import sys
+try:
+    f = open('file.txt', 'r')
+    .... # some data processing
+except OSError as err:
+    print('OS error: {}'.format(err))
+except:
+    print('Unexpected error:', sys.exc_info()[0])
+finally:
+    f.close()
+```
+
+
+
+
+
+## raise 抛出异常
+
+raise 语句可以抛出异常
+
+```
+print('test')
+raise StopIteration
+print('yes')
+>>>
+Traceback (most recent call last):
+  File "/Users/xhxu/python/machine_learning/test.py", line 2, in <module>
+    raise StopIteration
+StopIteration
+test
+```
+
+
+
+
+
 ## 自定义异常
 
 ```
@@ -162,4 +277,22 @@ try:
 except MyError as e:
     print(e)
 ```
+
+
+
+```
+class MyInputError(Exception):
+		"""Exception raised when there're errors in input""" 
+		def __init__(self, value): # 自定义异常类型的初始化
+				self.value = value
+		def __str__(self): # 自定义异常类型的string表达形式
+        return ("{} is invalid input".format(repr(self.value)))
+
+try:
+		raise MyInputError(1) # 抛出MyInputError这个异常
+except MyInputError as err:
+    print('error: {}'.format(err))
+```
+
+
 

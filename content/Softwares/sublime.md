@@ -12,7 +12,38 @@ date: 2018-12-18 20:03
 
 
 
-## Vintage Mode (Enable VIM)
+## ActualVim
+
+先安装依赖NeoVim
+
+下载并解压到任意位置 https://github.com/neovim/neovim/releases
+
+添加到环境变量
+
+```
+vim ~/.bash_profile
+export PATH="/Users/rxu/coding/nvim-osx64/bin:$PATH"
+```
+
+
+
+安装ActualVim
+
+Ctrl+Shift+P 安装package control
+
+Ctrl+Shift+P  install package 
+
+弹出选项选择 ActualVim
+
+
+
+重启Sublime后，完美的Vim已经可以正常使用了
+
+
+
+
+
+## Vintage Mode (Enable VIM) (Not too  recommended)
 
 Preferences -> Settings	
 

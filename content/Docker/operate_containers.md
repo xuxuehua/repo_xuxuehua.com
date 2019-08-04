@@ -11,6 +11,18 @@ date: 2018-10-24 16:23
 
 在 Docker 1.13+ 推荐使用 docker container 子命令来管理 Docker 容器。
 
+
+
+## create 创建容器
+
+```
+docker create
+```
+
+
+
+
+
 ## run 运行容器
 
 docker run 就是运行容器的命令
@@ -153,6 +165,12 @@ drwxr-xr-x 3 root root 4.0K Mar  9 16:54 ..
 
 
 
+## start 启动容器
+
+```
+docker start
+```
+
 
 
 ## stop 终止容器
@@ -178,6 +196,26 @@ docker restart container_id 命令会将一个运行态的容器终止，然后�
 ```
 docker inspect --format '{{ .State.Pid }}' af3f3c9d2428
 ```
+
+
+
+## logs 查看容器日志
+
+```
+docker logs
+```
+
+
+
+## kill 杀死运行中的容器
+
+```
+docker kill
+```
+
+
+
+
 
 
 

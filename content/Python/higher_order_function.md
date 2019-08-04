@@ -83,6 +83,8 @@ Out[4]: [3, 2, 1]
 
 ## lamba 匿名函数
 
+Python之所以发明lambda，就是为了让它和常规函数各司其职:lambda专注于简单的任务，而常规函数则负责更复杂的多行逻辑
+
 
 
 lambda后面不能是代码块
@@ -93,7 +95,7 @@ lambda parameter_list: expression
 
 
 
-将lambda函数依次作用域每个元素，如果函数返回True，则手机原来的元素6，7
+将lambda函数依次作用域每个元素，如果函数返回True，则返回原来的元素6，7，被用作某些函数的参数
 
 ```
 In [5]: filter(lambda x: x > 5, [2, 3, 5, 6, 7])

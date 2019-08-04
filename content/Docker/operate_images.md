@@ -6,7 +6,6 @@ date: 2018-10-24 15:52
 
 [TOC]
 
-
 # 操作镜像
 
 ## image 列出镜像
@@ -304,6 +303,14 @@ Loaded image: alpine:latest
 $ docker history openvz/ubuntu:14.04
 IMAGE               CREATED              CREATED BY          SIZE                COMMENT
 f477a6e18e98        About a minute ago                       214.9 MB            Imported from http://download.openvz.org/template/precreated/ubuntu-14.04-x86_64-minimal.tar.gz
+```
+
+
+
+## search 查找镜像
+
+```
+docker search
 ```
 
 

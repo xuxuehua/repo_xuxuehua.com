@@ -84,6 +84,28 @@ View the role in details and copy `Role ARN`
 
 
 
+Deny_non_office_ip
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": [
+          "eks.amazonaws.com",
+          "cloudformation.amazonaws.com"
+        ]
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
+
+
 ### Users
 
 create two users, an admin user and a second eks system user.
@@ -138,7 +160,11 @@ Then `Create Stack`  and specify below template
 From S3 template
 https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2018-08-30/amazon-eks-vpc-sample.yaml
 
-(New version   https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-02-11/amazon-eks-vpc-private-subnets.yaml )
+(New version  
+
+Public https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-02-11/amazon-eks-vpc-sample.yaml
+
+Private https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-02-11/amazon-eks-vpc-private-subnets.yaml )
 
 
 
@@ -278,7 +304,9 @@ https://console.aws.amazon.com/cloudformation/
 create stack with below S3 template
 https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2018-08-30/amazon-eks-nodegroup.yaml
 
-(New from AWS TS https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-02-11/amazon-eks-nodegroup.yaml )
+(New from AWS
+
+private https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-02-11/amazon-eks-nodegroup.yaml )
 
 and then specify the stack name `eksNodeStake` , Clustername `classCluster` and VPC with `classEKSVPS-ControlPlainSecurity`
 
