@@ -154,6 +154,12 @@ eval "$(pipenv --completion)"
 
 ### Virtualenv
 
+Linux 默认会在`~/.local/share/virtualenvs/` 下面创建
+
+在项目目录内创建虚拟环境文件夹，可以设置环境变量`PIPENV_VENV_IN_PROJECT` ，名为`.venv` 的虚拟环境文件夹将在项目根目录被创建
+
+
+
 
 
 
@@ -267,6 +273,8 @@ echo "source `which activate.sh`" >> ~/.zshrc
 ## pipenv 命令参数
 
 ### run 虚拟环境运行 
+
+即不显示激活虚拟环境即可在当前项目的虚拟环境中执行命令
 
 `pipenv run which python `
 

@@ -63,7 +63,7 @@ test
 ## sorted 函数
 
 ```
-sorted(iterable[, key][, reverse])
+sorted(iterable, /, *, key=None, reverse=False)
 ```
 
 返回一个新的列表，对一个可迭代对象的所有元素排序，排序规则为key定义的函数，reverse表示是否翻转
@@ -84,6 +84,9 @@ Out[4]: [3, 2, 1]
 ## lamba 匿名函数
 
 Python之所以发明lambda，就是为了让它和常规函数各司其职:lambda专注于简单的任务，而常规函数则负责更复杂的多行逻辑
+
+lambda是一个表达式，并不是一个语句;它只能写成一行的表达形式，语法上并不支持多行。匿名函数通
+常的使用场景是:程序中需要使用一个函数完成一个简单的功能，并且该函数只调用一次。
 
 
 
@@ -142,6 +145,18 @@ Out[13]: [6, 7, 1]
 
 
 
+### 排序
+
+对value进行排序
+
+```
+In [21]: d
+Out[21]: {'mike': 10, 'lucy': 2, 'ben': 30}
+
+In [22]: sorted(d.items(),key=lambda item:item[1])
+Out[22]: [('lucy', 2), ('mike', 10), ('ben', 30)]
+```
+
 
 
 ## map 函数
@@ -152,7 +167,7 @@ map(func, *iterable) -> map object
 
 map()函数的第一个参数是一个函数对象。
 
-map()的功能是将函数对象依次作用与表的每个元素。每次作用的结果存储与返回的表re中。
+map()的功能是对iterable中的每个元素，都运用function这个函数，最后返回一个新的可遍历的集合
 
 
 
@@ -180,7 +195,7 @@ for num in result:
 
 
 
-map结合lambda表达式
+### map结合lambda
 
 ```
 In [10]: list_x = [1, 2, 3, 4, 5]
@@ -208,7 +223,21 @@ Out[20]: [2, 6, 19]
 
 
 
+### 高效性
 
+map()是最快的。因为map()函数直接由C语言写的，运行时不需要通过Python解释器间接调
+用，并且内部做了诸多优化，所以运行速度最快
+
+```
+python3 -mtimeit -s'xs=range(1000000)' 'map(lambda x: x*2, xs)'
+  2000000 loops, best of 5: 171 nsec per loop
+
+python3 -mtimeit -s'xs=range(1000000)' '[x * 2 for x in xs]'
+  5 loops, best of 5: 62.9 msec per loop
+
+python3 -mtimeit -s'xs=range(1000000)' 'l = []' 'for i in xs: l.append(i * 2)'
+  5 loops, best of 5: 92.7 msec per loop
+```
 
 
 
@@ -216,7 +245,7 @@ Out[20]: [2, 6, 19]
 
 ## filter 函数
 
-过滤掉不需要的的元素
+filter()函数表示对iterable中的每个元素，都使用function判断，并返回True或者False，最后将返回True的元素组成一个新的可遍历的集合。
 
 ```
 filter(function, iterable) -> filter object
@@ -227,9 +256,9 @@ filter(function, iterable) -> filter object
 filter函数的第一个参数也是函数对象， 将作为参数的函数对象作用于多个元素。
 如果函数的返回为True，则该次的元素将被存储到返回的表中。
 
+
+
 在python3 中，filter返回的不是表，而是循环对象
-
-
 
 ```
 def func(a):
@@ -247,6 +276,13 @@ print(list(filter(func, [10, 20, 101, 400])))
 
 
 
+```
+l = [1, 2, 3, 4, 5]
+new_list = filter(lambda x: x % 2 == 0, l) 
+>>>
+[2, 4]
+```
+
 
 
 
@@ -255,7 +291,9 @@ print(list(filter(func, [10, 20, 101, 400])))
 
 ## reduce 函数
 
-reduce函数的第一个参数也是函数，但是要求函数自身能够接受两个参数。 reduce可以累进的将函数作用与各个参数
+reduce函数的第一个参数也是函数，但是要求函数自身能够接受两个参数。 表示对iterable中的每个元素以及上一次调用后的结果，运用function进行计算，所以最后返回的是一个单独的数值
+
+通常用来对一个集合做一些累积操作
 
 ```
 from functools import reduce
@@ -265,6 +303,13 @@ print(reduce((lambda x,y: x+y), [1, 2, 4, 6, 8]))
 ```
 
 
+
+```
+l = [1, 2, 3, 4, 5]
+product = reduce(lambda x, y: x * y, l)
+>>>
+120
+```
 
 
 

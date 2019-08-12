@@ -61,6 +61,18 @@ docker rmi $(docker images | col 3 | xargs | skip 1)
 
 
 
+### 完成镜像名
+
+```
+$ docker image ls --no-trunc
+REPOSITORY                   TAG                 IMAGE ID                                                                  CREATED             SIZE
+selenium/standalone-chrome   latest              sha256:9e599fb82f84937004eedba8fa498886f095a959421e5f522af9c1b5e04c522a   9 days ago          840MB
+browserless/chrome           latest              sha256:d2904ed5f20f33d85c102029561483aee7d9bf94138c1b1888ea6e84d0306819   2 weeks ago         2.14GB
+consul                       latest              sha256:7d52b83f718fbd487246da5f655b048a2078cfb8d21fb6b06539608a3961dcba   6 weeks ago         115MB
+```
+
+
+
 
 
 ### 显示虚悬镜像
@@ -178,16 +190,26 @@ f753707788c5        ubuntu              latest
 
 使用 docker images -q 来配合使用 docker rmi，这样可以成批的删除希望删除的镜像。
 
-`$ docker rmi $(docker images -q -f dangling=true)
-`
+```
+$ docker rmi $(docker images -q -f dangling=true)
+```
+
+
+
 
 删除所有仓库名为 redis 的镜像：
 
-`$ docker rmi $(docker images -q redis)`
+```
+$ docker rmi $(docker images -q redis)
+```
 
 删除所有在 mongo:3.2 之前的镜像：
 
-`$ docker rmi $(docker images -q -f before=mongo:3.2)`
+```
+$ docker rmi $(docker images -q -f before=mongo:3.2)
+```
+
+
 
 ### 用 ID、镜像名、摘要删除镜像
 

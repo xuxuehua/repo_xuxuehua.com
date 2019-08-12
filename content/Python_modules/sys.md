@@ -116,3 +116,23 @@ sys.setrecursionlimit(1000000)
 
 
 
+```
+>>> def factorial(n):
+...     return 1 if n<=1 else n*factorial(n-1)
+
+>>> factorial(5000)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<stdin>", line 2, in factorial
+  File "<stdin>", line 2, in factorial
+  File "<stdin>", line 2, in factorial
+  [Previous line repeated 995 more times]
+RecursionError: maximum recursion depth exceeded in comparison
+
+>>> sys.setrecursionlimit(1000000)
+>>> factorial(5000)
+
+
+```
+
+>  mac内存是16G，如果把递归层数设定到1百万，大概跑到35000层左右，服务就挂了

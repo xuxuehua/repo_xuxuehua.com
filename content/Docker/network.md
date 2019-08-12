@@ -6,10 +6,100 @@ date: 2018-10-24 16:43
 
 [TOC]
 
-
 # network
 
+![img](https://snag.gy/nuSP42.jpg)
+
+
+
 Docker 允许通过外部访问容器或容器互联的方式来提供网络服务
+
+```
+$ docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+109df3c7dc8b        bridge              bridge              local
+5ddf10f7dd1e        host                host                local
+301b64cf3798        none                null                local
+```
+
+> bridge 即使docker0 网卡， 同时会生成4个虚拟网卡
+>
+> host 表示使用宿主机的网络名称空间
+>
+> none 不给使用网络，即loopback网络
+
+
+
+```
+# apt install bridge-utils
+
+
+root@w:~# brctl show
+bridge name	bridge id		STP enabled	interfaces
+docker0		8000.02422fc7d74c	no		vethdefab17
+
+
+root@w:~# ip link show
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP mode DEFAULT group default qlen 1000
+    link/ether 56:00:02:37:5b:32 brd ff:ff:ff:ff:ff:ff
+3: docker0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default 
+    link/ether 02:42:2f:c7:d7:4c brd ff:ff:ff:ff:ff:ff
+9: vethdefab17@if8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether be:51:1f:ef:0e:c0 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+```
+
+
+
+```
+# docker network inspect bridge
+[
+    {
+        "Name": "bridge",
+        "Id": "51b5dfa10b6e2db69dfb8f2bb59f9f0c5a6a028fa2ad66b7484f0b66124f76f0",
+        "Created": "2019-08-11T03:25:45.658544312Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.17.0.0/16"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "11dd458e175df74b0388dd7174d222c06f9fe8bdbd3b8f2f148cce2e187ad798": {
+                "Name": "myNginx",
+                "EndpointID": "7f0cb7baad73d87d3b88190335f973f2f70ab2125029040adca6ade432998630",
+                "MacAddress": "02:42:ac:11:00:02",
+                "IPv4Address": "172.17.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {
+            "com.docker.network.bridge.default_bridge": "true",
+            "com.docker.network.bridge.enable_icc": "true",
+            "com.docker.network.bridge.enable_ip_masquerade": "true",
+            "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+            "com.docker.network.bridge.name": "docker0",
+            "com.docker.network.driver.mtu": "1500"
+        },
+        "Labels": {}
+    }
+]
+
+```
 
 
 
@@ -26,11 +116,15 @@ CONTAINER ID  IMAGE                   COMMAND       CREATED        STATUS       
 bc533791f3f5  training/webapp:latest  python app.py 5 seconds ago  Up 2 seconds  0.0.0.0:49155->5000/tcp  nostalgic_morse
 ```
 
+
+
 ### -p 则可以指定要映射的端口
 
 * 在一个指定端口上只可以绑定一个容器
 
 `ip:hostPort:containerPort | ip::containerPort | hostPort:containerPort`
+
+
 
 ###  docker logs 命令来查看应用的信息
 
@@ -93,6 +187,7 @@ $ docker run -d \
     training/webapp \
     python app.py
 ```
+
 
 
 ### 容器互联 
@@ -533,18 +628,26 @@ $ sudo ip netns exec $pid ip route add default via 172.17.42.1
 > 此外，用户可以使用 ip netns exec 命令来在指定网络命名空间中进行配置，从而配置容器内的网络。
 
 
+
+
+
+# Overlay Network
+
+通过在叠加网络，即封装一个新的IP封包形成隧道
+
+
+
 ## Docker Compose 项目
 
->
+
 
 ### Compose 简介
 
->
 
 
-> 通过第一部分中的介绍，我们知道使用一个 Dockerfile 模板文件，可以让用户很方便的定义一个单独的应用容器。然而，在日常工作中，经常会碰到需要多个容器相互配合来完成某项任务的情况。例如要实现一个 Web 项目，除了 Web 服务容器本身，往往还需要再加上后端的数据库服务容器，甚至还包括负载均衡容器等。
+通过第一部分中的介绍，我们知道使用一个 Dockerfile 模板文件，可以让用户很方便的定义一个单独的应用容器。然而，在日常工作中，经常会碰到需要多个容器相互配合来完成某项任务的情况。例如要实现一个 Web 项目，除了 Web 服务容器本身，往往还需要再加上后端的数据库服务容器，甚至还包括负载均衡容器等。
 
-> Compose 恰好满足了这样的需求。它允许用户通过一个单独的 docker-compose.yml 模板文件（YAML 格式）来定义一组相关联的应用容器为一个项目（project）。
+Compose 恰好满足了这样的需求。它允许用户通过一个单独的 docker-compose.yml 模板文件（YAML 格式）来定义一组相关联的应用容器为一个项目（project）。
 
 * Compose 中有两个重要的概念：
 * 服务 (service)：一个应用的容器，实际上可以包括若干运行相同镜像的容器实例。

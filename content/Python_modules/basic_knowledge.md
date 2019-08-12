@@ -9,6 +9,16 @@ date: 2018-08-25 00:39
 
 
 
+## 路径
+
+大型工程尽可能使用绝对路径
+
+独立项目，所有模块从项目根目录开始追溯，称相对的绝对路径
+
+
+
+
+
 ## 定义
 
  .py 文件组成的代码集合就称为模块
@@ -33,15 +43,17 @@ date: 2018-08-25 00:39
 
 
 
-导入包的本质，就是解释`__init__` 文件
+导入包的本质，就是解释`__init__` 文件， 即运行该文件
 
-* `__init__.py` (package_testing 包)
+`__init__.py` (package_testing 包)
 
 ```
 print('Package testing file')
 ```
 
-* My_testing.py
+
+
+My_testing.py
 
 ```
 import package_testing

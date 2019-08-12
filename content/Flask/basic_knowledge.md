@@ -32,7 +32,7 @@ if __name__ =="__main__":
     app.run(debug=True, port=8080)
 ```
 
-> **name** 是Python中的特殊变量，如果文件作为主程序执行，那么`__name__`变量的值就是`__main__`，如果是被其他模块引入，那么`__name__`的值就是模块名称
+> **name** 是Python中的特殊变量，如果文件作为主程序执行，那么`__name__`变量的值就是`__main__`，如果是被其他模块引入，那么`__name__`的值就是模块名称, 这里的值就是app
 >
 > 默认情况下其地址是`localhost:5000`，在上面的代码中，我们使用关键字参数`port`将监听端口修改为8080
 
@@ -208,7 +208,13 @@ Eventually, main thread value: 1
 
 
 
-## ctx.py
+## Context 上下文 ctx.py 
+
+上下文可以理解为环境，为了程序的正常运行，一些操作的相关状态和数据需要被临时保存下来，这些状态和数据被统称为上下文
+
+flask中有两种，分别为应用上下文和请求上下文
+
+
 
 
 
@@ -252,64 +258,25 @@ self.app = app 即封装了Flask实例化的核心对象
 
 
 
-# 视图函数注册
+# 环境变量
 
-
-
-## 装饰器方法
-
-常用方法, 但是其实调用的是add_url_rule实现的
+如果安装了python-dotenv，使用flask run 或者其他命令时会自动从`.flaskenv` 文件和.env文件中加载环境变量
 
 ```
-from flask import Flask
-
-app = Flask(__name__)
-
-
-@app.route('/hello/')
-def hello():
-    return 'Hello, Rick'
-
-app.run(debug=True)
+pipenv install python-dotenv
 ```
 
 
 
-## 传递参数
+## `.flaskenv`
 
-通过`<>` 中包含的参数传递
-
-```
-@app.route('/book/search/<q>/<page>')
-def search(q, page):
-    pass
-```
+存储和Flask相关的公开环境变量
 
 
 
+## `.env`
 
-
-## add_url_rule
-
-在使用基于类的视图，即插式图，需要使用该方法
-
-但装饰器里面不需要输入view_func 
-
-```
-from flask import Flask
-
-app = Flask(__name__)
-
-def hello():
-    return 'Hello, Rick'
-
-
-app.add_url_rule('/hello/', view_func=hello)
-
-app.run(debug=True)
-```
-
-
+存储包含敏感信息的环境变量
 
 
 
@@ -344,37 +311,7 @@ app.run(debug=app.config['DEBUG'])
 
 
 
-# response 对象
 
-视图函数返回的是response 对象， make_response可以创建一个对象
-
-response对象所返回的结果取决于`content-type` 所定义的value
-
-```
-from flask import Flask, make_response
-
-
-app = Flask(__name__)
-
-app.config.from_object('config')
-
-
-@app.route('/hello/')
-def hello():
-    headers = {
-        'content-type': 'text/plain',
-        'location': 'http://www.bing.com'
-    }
-    # response = make_response('<html></html>', 301)
-    # response.headers = headers
-    return '<html></html>', 301, headers
-
-
-app.add_url_rule('/hello/', view_func=hello)
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=app.config['DEBUG'])
-```
 
 
 
@@ -402,9 +339,11 @@ web = Blueprint('web', __name__, static_folder='', static_url_path='')
 
 
 
-
+ 
 
 # template
+
+默认和程序实例模块处于同一个目录下面
 
 在初始化Flask核心对象或者blueprint的时候, 传入参数
 
@@ -542,6 +481,14 @@ INFO
 ### 验证层
 
 对参数校验， 一般防止在app下面，叫forms
+
+
+
+# WSGI
+
+Web Server Gateway Interface 
+
+Flask 通过Werkzeug实现请求解析（request）和响应封装（response）, 通过WSGI将HTTP的请求数据转换成Flask程序能够接受的python数据， flask 根据URL对应的视图函数获取返回值生成响应，再经过WSGI转换生成HTTP响应返回给客户端
 
 
 

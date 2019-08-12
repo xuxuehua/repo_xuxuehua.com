@@ -74,6 +74,10 @@ class Human():
 子类中调用父类的方法，使用super对象
 super对象使用super方法生成
 
+不过使用super这种方法时，要求继承链的最顶层父类必须要继承 object
+
+
+
 
 
 通过子类调用父类的super方法
@@ -557,6 +561,8 @@ Jack Li is enjoy the av
 ## 多继承
 
 多继承是毒药，不到万不得已不要使用
+
+多重继承，是基于mro进行查找，使用的是一种C3的算法。
 
 ```python
 class A:

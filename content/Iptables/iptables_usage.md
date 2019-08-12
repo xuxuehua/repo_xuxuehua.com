@@ -774,7 +774,7 @@ target指定要对包做的操作，比如DROP和ACCEPT。不同的target有不�
 
 ### MASQUERADE
 
-地址伪装 
+地址伪装, 即SNAT
 
 ​     
 

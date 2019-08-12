@@ -363,9 +363,19 @@ public var
 
 
 
+## 保护变量（单下划线）
+
+"单下划线" 开始的成员变量叫做保护变量，意思是只有类对象和子类对象自己能访问到这些变量
+
+不过根据python的约定，应该将其视作private，而不要在外部使用它们
+
+​	
 
 
-## 私有变量
+
+## 私有变量 (双下划线)
+
+"双下划线" 开始的是私有成员，意思是只有类对象自己能访问，连子类对象也不能访问到这个数据
 
 仅类内部可以访问, 无法被外部调用修改
 
@@ -500,7 +510,11 @@ student = Student('Rick', 18)
 
 
 
-## 私有类变量
+
+
+
+
+## 私有类变量 (双下划线)
 
 私有类变量不能被实例访问
 
@@ -713,7 +727,7 @@ hahaha
 
 ## `__name__`
 
-`__name__`: 类名， 即对象的名称
+`__name__`: 类名， 即模块对象的名称， Python的魔术内置参数，即被赋值为该模块的名字
 
 查询对象所属的类和类名称
 
@@ -1278,5 +1292,33 @@ print(isinstance(l, list))
 >>> 
 True
 True
+```
+
+
+
+# 函数重载
+
+使子类必须重新写一遍 方法，来覆盖掉原有函数， 这里通过raise 一个exception来提示
+
+```
+class Entity():
+      def __init__(self, object_type):
+          print('parent class init called')
+          self.object_type = object_type
+      def get_context_length(self):
+          raise Exception('get_context_length not implemented')
+      def print_title(self):
+          print(self.title)
+
+
+class Document(Entity):
+    def __init__(self, title, author, context):
+        print('Document class init called')
+        Entity.__init__(self, 'document')
+        self.title = title
+        self.author = author
+        self.__context = context
+    def get_context_length(self):
+        return len(self.__context)
 ```
 

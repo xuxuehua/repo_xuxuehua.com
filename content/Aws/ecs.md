@@ -140,6 +140,18 @@ Publish statistics and keep history
 
 
 
+### Launch Type
+
+Fargate Launch Type
+
+The Fargate launch type allows you to run your containerized applications without the need to provision and manage the backend infrastructure. Just register your task definition and Fargate launches the container for you.
+
+
+
+EC2 Launch Type
+
+The EC2 launch type allows you to run your containerized applications on a cluster of Amazon EC2 instances that you manage.
+
 
 
 
@@ -155,6 +167,8 @@ Start identical copies from a template
 Tries to maintain the proper number of healthy instances
 
 There are usually controlled by another service called ASG
+
+
 
 
 
