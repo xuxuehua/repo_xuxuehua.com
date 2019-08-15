@@ -1,5 +1,5 @@
 ---
-title: "string"
+title: "string"
 date: 2018-08-18 09:48
 collection: 基本变量类型
 ---
