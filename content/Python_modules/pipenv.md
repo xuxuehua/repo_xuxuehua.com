@@ -126,6 +126,14 @@ Creating a Pipfile for this project...
 
 
 
+指定具体版本
+
+```
+pipenv --python 3.7.0
+```
+
+
+
 #### Pipfile & Pipfile.lock
 
 Pipfile 存放着当前虚拟环境的配置信息，包含python版本，pypi源，以及项目安装的依赖库

@@ -1227,7 +1227,7 @@ type类中实现的创建类
 
 
 
-# 元类
+# 元类 metaclass
 
 类的生成 调用 顺序依次是 `__new__` --> `__init__` --> `__call__`
 
@@ -1271,7 +1271,130 @@ print("fname",f.name)
 
 
 
+## 特性
 
+yaml是一个家喻户晓的 Python 工具，可以方便地序列化 / 逆序列化结构数据。YAMLObject 的任意子类支持序列化和反序列化（serialization & deserialization）。比如说下面这段代码：
+
+```
+class Monster(yaml.YAMLObject):
+  yaml_tag = u'!Monster'
+  def __init__(self, name, hp, ac, attacks):
+    self.name = name
+    self.hp = hp
+    self.ac = ac
+    self.attacks = attacks
+  def __repr__(self):
+    return "%s(name=%r, hp=%r, ac=%r, attacks=%r)" % (
+       self.__class__.__name__, self.name, self.hp, self.ac,      
+       self.attacks)
+
+yaml.load("""
+--- !Monster
+name: Cave spider
+hp: [2,6]    # 2d6
+ac: 16
+attacks: [BITE, HURT]
+""")
+
+Monster(name='Cave spider', hp=[2, 6], ac=16, attacks=['BITE', 'HURT'])
+
+print yaml.dump(Monster(
+    name='Cave lizard', hp=[3,6], ac=16, attacks=['BITE','HURT']))
+
+# 输出
+!Monster
+ac: 16
+attacks: [BITE, HURT]
+hp: [3, 6]
+name: Cave lizard
+```
+
+
+
+调用统一的 yaml.load()，就能把任意一个 yaml 序列载入成一个 Python Object；而调用统一的 yaml.dump()，就能把一个 YAMLObject 子类序列化。对于 load() 和 dump() 的使用者来说，他们完全不需要提前知道任何类型信息，这让超动态配置编程成了可能。在我的实战经验中，许多大型项目都需要应用这种超动态配置的理念。
+
+比方说，在一个智能语音助手的大型项目中，我们有 1 万个语音对话场景，每一个场景都是不同团队开发的。作为智能语音助手的核心团队成员，我不可能去了解每个子场景的实现细节。
+
+在动态配置实验不同场景时，经常是今天我要实验场景 A 和 B 的配置，明天实验 B 和 C 的配置，光配置文件就有几万行量级，工作量不可谓不小。而应用这样的动态配置理念，我就可以让引擎根据我的文本配置文件，动态加载所需要的 Python 类。
+
+对于 YAML 的使用者，这一点也很方便，你只要简单地继承 yaml.YAMLObject，就能让你的 Python Object 具有序列化和逆序列化能力。是不是相比普通 Python 类，有一点“变态”，有一点“超越”？
+
+
+
+## metaclass底层实现
+
+在 Python 的类型世界里，type 这个类就是造物的上帝
+
+```
+# Python 3 和 Python 2 类似
+class MyClass:
+  pass
+
+instance = MyClass()
+
+type(instance)
+# 输出
+<class '__main__.C'>
+
+type(MyClass)
+# 输出
+<class 'type'>
+```
+
+> instance 是 MyClass 的实例，而 MyClass 不过是“上帝”type 的实例
+
+
+
+当我们定义一个类的语句结束时，真正发生的情况，是 Python 调用 type 的`__call__`, 运算符。简单来说，当你定义一个类时，写成下面这样时：
+
+```
+class MyClass:
+  data = 1
+```
+
+
+
+Python 真正执行的是下面这段代码：
+
+```
+class = type(classname, superclasses, attributedict)
+```
+
+
+
+这里等号右边的`type(classname, superclasses, attributedict)`  ，就是 type 的 `__call__` 运算符重载，它会进一步调用：
+
+```
+type.__new__(typeclass, classname, superclasses, attributedict)
+type.__init__(class, classname, superclasses, attributedict)
+```
+
+
+
+代码验证 
+
+```
+class MyClass:
+  data = 1
+  
+instance = MyClass()
+MyClass, instance
+# 输出
+(__main__.MyClass, <__main__.MyClass instance at 0x7fe4f0b00ab8>)
+instance.data
+# 输出
+1
+
+MyClass = type('MyClass', (), {'data': 1})
+instance = MyClass()
+MyClass, instance
+# 输出
+(__main__.MyClass, <__main__.MyClass at 0x7fe4f0aea5d0>)
+
+instance.data
+# 输出
+1
+```
 
 
 
@@ -1293,6 +1416,10 @@ print(isinstance(l, list))
 True
 True
 ```
+
+
+
+
 
 
 

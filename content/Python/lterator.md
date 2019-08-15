@@ -59,6 +59,42 @@ Out[30]: True
 
 
 
+## 判断iter类型
+
+```
+def is_iterable(param):
+    try:
+        iter(param)
+        return True
+    except TypeError:
+        return False
+
+
+params = [
+    1234,
+    '1234',
+    [1, 2, 3, 4],
+    set([1, 2, 3, 4]),
+    {1:1, 2:2, 3:3, 4:4},
+    (1, 2, 3, 4)
+]
+
+for param in params:
+    print('{} is iterable? {}'.format(param, is_iterable(param)))
+
+>>>
+1234 is iterable? False
+1234 is iterable? True
+[1, 2, 3, 4] is iterable? True
+{1, 2, 3, 4} is iterable? True
+{1: 1, 2: 2, 3: 3, 4: 4} is iterable? True
+(1, 2, 3, 4) is iterable? True
+```
+
+
+
+
+
 ## 特点
 
 Python的`Iterator`对象表示的是一个数据流，Iterator对象可以被`next()`函数调用并不断返回下一个数据，直到没有数据时抛出`StopIteration`错误。可以把这个数据流看做是一个有序序列，但我们却不能提前知道序列的长度，只能不断通过`next()`函数实现按需计算下一个数据，所以`Iterator`的计算是惰性的，只有在需要返回下一个数据时它才会计算。

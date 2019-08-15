@@ -198,7 +198,22 @@ ret value (1, 2, 3)
 
 ## 叠放装饰器
 
-如果一个函数被多个装饰器修饰，其实应该是该函数先被最里面的装饰器修饰
+如果一个函数被多个装饰器修饰，其实应该是该函数先被最里面的装饰器修饰, 即从里到外执行
+
+```
+@deco1
+@deco2
+@deco3
+def func()
+    pass
+    
+    
+等价于
+
+deco1(deco2(deco3(func)))
+```
+
+
 
 
 
@@ -239,7 +254,7 @@ Running main
 
 
 
-## 装饰类
+## 类装饰器
 
 一个装饰器可以接收一个类，并返回一个类，起到加工的作用。
 
@@ -280,6 +295,41 @@ My age:  5
 total display 3
 My age:  5
 ```
+
+
+
+类装饰器主要依赖于函数`__call__()`, 每当调用一个类实例，函数`__call__()` 就会被执行一次
+
+```
+class Count:
+    def __init__(self, func):
+        self.func = func
+        self.num_calls = 0
+
+    def __call__(self, *args, **kwargs):
+        self.num_calls += 1
+        print('Num of calls is : {}'.format(self.num_calls))
+        return self.func(*args, **kwargs)
+
+
+@Count
+def example():
+    print('hello world')
+
+
+example()
+example()
+
+>>>
+Num of calls is : 1
+hello world
+Num of calls is : 2
+hello world
+```
+
+
+
+
 
 
 
@@ -801,3 +851,159 @@ print(a.val)
 # wraps 装饰器
 
 使用装饰器会产生我们可能不希望出现的副作用，　例如：改变被修饰函数名称，对于调试器或者对象序列化器等需要使用内省机制的那些工具，可能会无法正常运行；其实调用装饰器后，会将同一个作用域中原来函数同名的那个变量（例如下面的func_1）,重新赋值为装饰器返回的对象；使用＠wraps后，会把与内部函数（被修饰函数，例如下面的func_1）相关的重要元数据全部复制到外围函数
+
+
+
+这里函数的元信息改变了
+
+```
+def my_decorator(func):
+    def wrapper(*args, **kwargs):
+        print('Wrapper of decorator')
+        func(*args, **kwargs)
+    return wrapper
+
+
+@my_decorator
+def greet(message):
+    print(message)
+
+
+greet('hello world')
+print(greet.__name__)
+
+>>>
+Wrapper of decorator
+hello world
+wrapper
+```
+
+
+
+使用内置的wraps 保留原函数的元信息
+
+```
+from functools import wraps
+
+
+def my_decorator(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print('Wrapper of decorator')
+        func(*args, **kwargs)
+    return wrapper
+
+
+@my_decorator
+def greet(message):
+    print(message)
+
+
+greet('hello world')
+print(greet.__name__)
+
+>>>
+Wrapper of decorator
+hello world
+greet
+```
+
+
+
+
+
+# example
+
+## 认证
+
+```
+from functools import wraps
+
+
+def authenticate(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        request = args[0]
+        if check_user_logged_in(request):
+            return func(*args, **kwargs)
+        else:
+            raise Exception('Authentication failed')
+    return wrapper
+
+
+@authenticate
+def post_message(request, ...):
+    pass
+```
+
+
+
+## 日志记录
+
+在实际工作中，如果你怀疑某些函数的耗时过长，导致整个系统的latency(延迟)增加，所以想在线上测试某些函数的执行时间，那么，装饰器就是一种很常用的手段。
+
+```
+import time
+import functools
+
+
+def log_executed_time(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        res = func(*args, **kwargs)
+        end = time.perf_counter()
+        print('{} took {} ms'.format(func.__name__, (end - start) * 1000))
+        return res
+    return wrapper
+
+@log_executed_time
+def calculate_similarity(items)
+    pass
+```
+
+
+
+## 输入合理性检查
+
+在大型公司的机器学习框架中，调用机器集群进行模型训练前，往往会用装饰器对其输入(往往是很长的json文件)进行合理性检查。这样就可以大大避免，输入不正确对机器造成的巨大开销。
+
+```
+import functools
+def validation_check(input):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        ... # 检查输入是否合法
+
+@validation_check
+def neural_network_training(param1, param2, ...):
+...
+```
+
+
+
+## 缓存
+
+关于缓存装饰器的用法，其实十分常见，以Python内置的LRU cache为例来说明
+
+LRU cache，在Python中的表示形式是@lru_cache。@lru_cache会缓存进程中的函数参数和结果，当缓 存满了以后，会删除least recenly used 的数据。 
+
+正确使用缓存装饰器，往往能极大地提高程序运行效率。为什么呢?我举一个常见的例子来说明。
+
+大型公司服务器端的代码中往往存在很多关于设备的检查，比如你使用的设备是安卓还是iPhone，版本号 是多少。这其中的一个原因，就是一些新的feature，往往只在某些特定的手机系统或版本上才有(比如 Android v200+)。 
+
+这样一来，我们通常使用缓存装饰器，来包裹这些检查函数，避免其被反复调用，进而提高程序运行效率，
+比如写成下面这样
+
+```
+@lru_cache
+def check(param1, param2): # 检查用戶设备类型，版本号等等
+    pass
+```
+
+
+
+
+
+
+
