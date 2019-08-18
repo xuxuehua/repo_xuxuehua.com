@@ -26,7 +26,8 @@ threading是python中专门用作多线程，常用类是Thread
 
 
 
-
+Python实现多线程/多进程，大家常常会用到标准库中的threading和multiprocessing模块。
+但从Python3.2开始，标准库为我们提供了concurrent.futures模块，它提供了ThreadPoolExecutor和ProcessPoolExecutor两个类，实现了对threading和multiprocessing的进一步抽象，使得开发者只需编写少量代码即可让程序实现并行计算。
 
 
 

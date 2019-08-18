@@ -6,12 +6,15 @@ date: 2018-10-24 16:12
 
 [TOC]
 
-
 # dockerfile
 
-## Dockerfile 指令
+纯文本文件，通过其命令构建一个镜像
 
-### FROM
+
+
+
+
+## FROM
 
 在Dockerfile中第一条非注释INSTRUCTION一定是`FROM`，它决定了以哪一个镜像作为基准，`<image>`首选本地是否存在，如果不存在则会从公共仓库下载（当然也可以使用私有仓库的格式）
 
@@ -23,9 +26,9 @@ FROM <image>:<tag>
 
 
 
-### RUN 指令安装
+## RUN 指令安装
 
-构建指令，RUN可以运行任何被基础image支持的命令。如基础image选择了ubuntu，那么软件管理部分只能使用ubuntu的命令。
+在docker build 期间的构建指令，RUN可以运行任何被基础image支持的命令。如基础image选择了ubuntu，那么软件管理部分只能使用ubuntu的命令。
 
 - RUN命令将在当前image中执行任意合法命令并提交执行结果。命令执行提交后，就会自动执行Dockerfile中的下一个指令。
 - 层级 RUN 指令和生成提交是符合Docker核心理念的做法。它允许像版本控制那样，在任意一个点，对image 镜像进行定制化构建。
@@ -43,9 +46,9 @@ RUN ["executable", "param1", "param2"]
 
 
 
-#### shell 格式
+### shell 格式
 
-shell格式，相当于执行`/bin/sh -c "<command>"`：
+shell格式，相当于执行`/bin/sh -c "<command>"` 这样意味着此进程在容器中的PID不为1，不能接收Unix信号， 当使用docker stop <container_id> 命令停止容器时，此进程接收不到SIGTERM信号
 
 ```
 RUN apt-get install vim -y
@@ -53,9 +56,9 @@ RUN apt-get install vim -y
 
 
 
-#### exec 格式
+### exec 格式
 
-exec格式，不会触发shell，所以`$HOME`这样的环境变量无法使用，但它可以在没有`bash`的镜像中执行，而且可以避免错误的解析命令字符串：
+exec格式，不会触发以/bin/sh -c来发起的操作，常见的shell 操作如变量替换以及通配符等替换不会执行，所以`$HOME`这样的环境变量无法使用，不过可以在内部显式替换以生效
 
 ```
 RUN ["apt-get", "install", "vim", "-y"]
@@ -67,14 +70,28 @@ RUN ["/bin/bash", "-c", "apt-get install vim -y"]  与shell风格相同
 
 
 
-### COPY 复制文件
+## COPY 复制文件
 
-复制本地主机的src文件为container的dest
+复制本地主机的当前的src文件 到container的dest
 
 ```
-COPY <源路径>... <目标路径>
+COPY <src>... <desk>
 COPY ["<源路径1>",... "<目标路径>"]
 ```
+
+src 必须是build上下文中的路径，不能是其父目录中的文件， Dockerfile所在的目录
+
+如果src是目录，其内部文件或子目录会被递归，但src目录自身不会被复制 
+
+```
+COPY yum.repos.d /etc/yum.repos.d/
+```
+
+如果指定多个src，或在src中使用通配符，dest必须是同一个目录，必须以/结尾
+
+如果dest不存在，会被自动创建，包括父目录路径
+
+
 
 Same as ‘ADD’ but without the tar and remote url handling.
 
@@ -82,7 +99,11 @@ Same as ‘ADD’ but without the tar and remote url handling.
 
 
 
-### ADD 
+
+
+
+
+## ADD 
 
 ```
 ADD <src>... <dest>
@@ -90,8 +111,19 @@ ADD <src>... <dest>
 
 将文件`<src>`拷贝到container的文件系统对应的路径`<dest>`下。
 
-> `<src>`可以是文件、文件夹、URL，对于文件和文件夹`<src>`必须是在Dockerfile的相对路径下（build context path），即只能是相对路径且不能包含`../path/`。
-> `<dest>`只能是容器中的绝对路径。如果路径不存在则会自动级联创建，根据你的需要是`<dest>`里是否需要反斜杠`/`，习惯使用`/`结尾从而避免被当成文件。
+ADD 支持TAR文件和URL路径
+
+操作同COPY指令
+
+如果src为URL且dest不以/结尾，则src指定的文件将被下载并直接被创建为dest
+
+如果dest以/结尾，则文件名URL指定的文件将被直接下载并保存为dest/filename
+
+如果src是一个本地系统上说他人文件，将被展开为一个目录，其行为类似于tar -x，然而通过URL获取的tar文件不会自动展开
+
+如果src有多个，或间接直接使用了通配符，则dest必须是一个以/结尾的目录路径，
+
+如果dest不以/结尾，则被视为一个普通文件，src的内容将被直接写入到dest
 
 
 
@@ -116,7 +148,9 @@ ADD只有在build镜像的时候运行一次，后面运行container的时候不
 
 
 
-### MAINTAINER 维护者
+
+
+## MAINTAINER 维护者 （deprecated ）
 
 ```
 MAINTAINER <name>
@@ -132,9 +166,9 @@ MAINTAINER <name>
 
 
 
-### CMD 容器启动命令
+## CMD 容器启动命令
 
-用于container启动时指定的操作。该操作可以是执行自定义脚本，也可以是执行系统命令。该指令只能在文件中存在一次，如果有多个，则只执行最后一条。
+用于container启动时指定的操作， 即docker run期间的操作。该操作可以是执行自定义脚本，也可以是执行系统命令。该指令只能在文件中存在一次，如果有多个，则只执行最后一条。
 
 
 
@@ -144,7 +178,9 @@ CMD 的 exec 格式中，第一个元素是 shell 的 `$0`, 其余元素是 shel
 
 
 
-#### shell 格式
+### shell 格式
+
+shell格式，相当于执行`/bin/sh -c "<command>"` 这样意味着此进程在容器中的PID不为1，不能接收Unix信号， 当使用docker stop <container_id> 命令停止容器时，此进程接收不到SIGTERM信号
 
 ```
 CMD command param1 param2  (shell格式)
@@ -152,7 +188,7 @@ CMD command param1 param2  (shell格式)
 
 
 
-#### exec 格式 （推荐）
+### exec 格式 （推荐）
 
 推荐使用 exec 格式，这类格式在解析时会被解析为 JSON 数组
 
@@ -186,15 +222,25 @@ Dockerfile:
 
 
 
-### ENTRYPOINT 入口点
+## ENTRYPOINT 入口点
 
 ENTRYPOINT 的目的和 CMD 一样，都是在指定容器启动程序及参数。
 
-当然可以在`run`时使用`--entrypoint`来覆盖`ENTRYPOINT`指令。
+与CMD不同的是，ENTRYPOINT启动的程序不会被docker run命令行指定的参数所覆盖，而且这些命令行参数会被当作参数传递给ENTRYPOINT指定的程序
+
+当然可以在`docker run`时使用`--entrypoint`来覆盖`ENTRYPOINT`指令。
 
 
 
-#### exec 格式
+默认ENTRYPOINT 启动的就是`/bin/sh -c` ，可以强制显式指定
+
+```
+ENTRYPOINT ["/bin/sh", "-c"]
+```
+
+
+
+### exec 格式
 
 ENTRYPOINT 和 CMD 合并前需转换为 exec 格式(用 `docker inspect <image>` 查看)，合并后(相当于数组) 第一个元素是命令，其他都为参数
 
@@ -216,7 +262,7 @@ Dockerfile:
 
 
 
-#### docker run 操作
+### docker run 操作
 
 定义了 ENTRYPOINT, CMD 由 docker run 提供
 
@@ -353,9 +399,11 @@ gosu 直接借用了 libcontainer 在容器中启动应用程序的原理, 使�
 
 
 
-### ENV 设置环境变量
+## ENV 设置环境变量
 
 ENV设置的环境变量，可以使用docker inspect命令来查看。同时还可以使用`docker run --env <key>=<value>`来修改环境变量。
+
+用于其后的其他指令所调用，如ENV ADD COPY等
 
 
 
@@ -411,9 +459,29 @@ USER=denis
 
 
 
+### 变量替换
+
+```
+${variable:-word} 变量设置，即为word，变量未设置，结果为word
+${variable:+word} 变量设置，即为word，变量未设置，结果为空
+```
+
+```
+rxus-MacBook-Pro:~ rxu$ echo ${NAME:-rick}
+rick
+rxus-MacBook-Pro:~ rxu$ NAME=Rick
+rxus-MacBook-Pro:~ rxu$ echo ${NAME:-rick}
+Rick
+rxus-MacBook-Pro:~ rxu$ echo ${NAME:+rick}
+rick
+rxus-MacBook-Pro:~ rxu$ unset NAME
+rxus-MacBook-Pro:~ rxu$ echo ${NAME:+rick}
+
+```
 
 
-### ARG 构建参数
+
+## ARG 构建参数
 
 ARG 定义的变量只在建立 image 时有效，建立完成后变量就失效消失
 
@@ -423,7 +491,7 @@ ARG <参数名>[=<默认值>]
 
 
 
-### LABEL 定义标签
+## LABEL 定义标签
 
 定义一个 image 标签 Owner，并赋值，其值为变量 Name 的值。
 
@@ -433,11 +501,11 @@ LABEL Owner=$Name
 
 
 
-### VOLUME 挂载点
+## VOLUME 挂载点
 
-创建一个可以从本地主机或其他容器挂载的挂载点，一般用来存放数据库和需要保持的数据等。
+用于在image中创建一个挂在点目录，以挂在Docker host上的卷或其他容器上的卷
 
-为了防止运行时用户忘记将动态文件所保存目录挂载为卷，在 Dockerfile 中，我们可以事先指定某些目录挂载为匿名卷，这样在运行时如果用户不指定挂载，其应用也可以正常运行，不会向容器存储层写入大量数据。
+如果挂在点目录路径下此前文件存在，docker run命令会在卷挂在完成后将此前的所有文件复制到新挂在的卷中
 
 ```
 VOLUME ["<路径1>", "<路径2>"...]
@@ -462,7 +530,7 @@ docker run -t -i -rm -volumes-from container1 image2 bash
 
 
 
-### EXPOSE 声明端口
+## EXPOSE 声明端口
 
 `EXPOSE <端口1> [<端口2>...]`
 
@@ -488,7 +556,7 @@ EXPOSE port1
 docker run -p port1 image  
   
 # 映射多个端口  
-EXPOSE port1 port2 port3  
+EXPOSE 11211/udp 11211/tcp
 # 相应的运行容器使用的命令  
 docker run -p port1 -p port2 -p port3 image  
 # 还可以指定需要映射到宿主机器上的某个端口号  
@@ -499,7 +567,7 @@ docker run -p host_port1:port1 -p host_port2:port2 -p host_port3:port3 image
 
 
 
-### WORKDIR 指定工作目录
+## WORKDIR 指定工作目录
 
 设置指令，可以多次切换(相当于cd命令)，对RUN,CMD,ENTRYPOINT生效
 
@@ -524,11 +592,13 @@ RUN echo "hello" > world.txt
 
 
 
-### USER 指定当前用户
+## USER 指定当前用户
 
 设置指令，设置启动容器的用户，默认是root用户
 
 USER 指令和 WORKDIR 相似，都是改变环境状态并影响以后的层。
+
+UID必须是/etc/passwd中某用户的有效UID，否则docker run命令将运行失败
 
 `USER <用户名>`
 
@@ -556,7 +626,13 @@ CMD [ "exec", "gosu", "redis", "redis-server" ]
 
 
 
-### HEALTHCHECK 健康检查
+
+
+
+
+
+
+## HEALTHCHECK 健康检查
 
 设置检查容器健康状况的命令
 
@@ -603,9 +679,11 @@ $ docker inspect --format '{{json .State.Health}}' web | python -m json.tool
 
 
 
-### ONBUILD 在子镜像中执行
 
-`ONBUILD`指令用来设置一些触发的指令，用于在当该镜像被作为基础镜像来创建其他镜像时(也就是`Dockerfile`中的`FROM`为当前镜像时)执行一些操作，`ONBUILD中`定义的指令会在用于生成其他镜像的`Dockerfile`文件的`FROM`指令之后被执行，上述介绍的任何一个指令都可以用于`ONBUILD`指令，可以用来执行一些因为环境而变化的操作，使镜像更加通用。
+
+## ONBUILD 在子镜像中执行
+
+`ONBUILD`指令用来设置一些触发的指令，用于在当该镜像被作为基础镜像来创建其他镜像时(也就是`Dockerfile`中的`FROM`为当前镜像时)执行一些操作，`ONBUILD中`定义的指令会在用于生成其他镜像的`Dockerfile`文件的`FROM`指令之后被执行，上述介绍的任何一个指令都可以用于`ONBUILD`指令，可以用来执行一些因为环境而变化的操作，使镜像更加通用
 
 
 
@@ -614,7 +692,8 @@ $ docker inspect --format '{{json .State.Health}}' web | python -m json.tool
 3. ONBUILD中定义的指令会当做引用该镜像的Dockerfile文件的FROM指令的一部分来执行，执行顺序会按ONBUILD定义的先后顺序执行，如果ONBUILD中定义的任何一个指令运行失败，则会使FROM指令中断并导致整个build失败，当所有的ONBUILD中定义的指令成功完成后，会按正常顺序继续执行build。
 4. ONBUILD中定义的指令不会继承到当前引用的镜像中，也就是当引用ONBUILD的镜像创建完成后将会清除所有引用的ONBUILD指令。
 5. ONBUILD指令不允许嵌套，例如`ONBUILD ONBUILD ADD . /data`是不允许的。
-6. ONBUILD指令不会执行其定义的FROM或MAINTAINER指令。
+6. ONBUILD指令不会执行其定义的FROM或MAINTAINER指令
+7. 在ONBUILD指令中使用ADD或COPY指令要小心，因为新构建过程的上下文在缺少指定的源文件时会失败
 
 例如，`Dockerfile`使用如下的内容创建了镜像 image-A ：
 
@@ -639,7 +718,7 @@ RUN /usr/local/bin/python-build --dir /app/src
 
 
 
-### .dockerignore 文件
+## .dockerignore 文件
 
 `.dockerignore`用来忽略上下文目录中包含的一些image用不到的文件，它们不会传送到docker daemon。规则使用go语言的匹配语法。如：
 
@@ -650,8 +729,6 @@ tmp*
 ```
 
 
-
-更多内容参考[Dockerfile最佳实践](http://seanlook.com/2014/12/20/dockerfile_best_practice1)系列。官方有个[Dockerfile tutorial](http://seanlook.com/2014/11/17/dockerfile-introduction/%E6%A0%BC%E5%BC%8F)练习Dockerfile的写法，非常简单但对于养成良好的格式、注释有一些帮助。
 
 
 
@@ -672,9 +749,9 @@ CMD [ "redis-server" ]
 
 
 
-## example
+# example
 
-### mysql 构建过程
+## mysql 构建过程
 
 下面的`Dockerfile`是MySQL官方镜像的构建过程。从ubuntu基础镜像开始构建，安装mysql-server、配置权限、映射目录和端口，`CMD`在从这个镜像运行到容器时启动mysql。其中`VOLUME`定义的两个可挂载点，用于在host中挂载，因为数据库保存在主机上而非容器中才是比较安全的。
 
@@ -737,7 +814,7 @@ $ docker run -it --rm --link mysql:mysql dockerfile/mysql bash -c 'mysql -h $MYS
 
 
 
-### 让镜像变成像命令一样使用
+## 让镜像变成像命令一样使用
 
 * 查看当前公网 IP 的镜像
 
@@ -879,7 +956,7 @@ docker run -d -p 8090:8080 wechat-tomcat
 
 
 
-### 构建Wordpress + nginx运行环境
+## 构建Wordpress + nginx运行环境
 
 ```
 # 指定基于的基础镜像
@@ -954,7 +1031,7 @@ CMD ["/bin/bash", "/start.sh"]
 
 
 
-### 构建Ruby on Rails环境
+## 构建Ruby on Rails环境
 
 ```
 # 指定基础镜像
@@ -1001,7 +1078,7 @@ CMD /start
 
 
 
-### 构建Nginx运行环境
+## 构建Nginx运行环境
 
 ```
 # 指定基础镜像
@@ -1050,7 +1127,7 @@ CMD ["/usr/sbin/nginx"]
 
 
 
-### 构建Postgres镜像
+## 构建Postgres镜像
 
 ```
 # 指定基础镜像

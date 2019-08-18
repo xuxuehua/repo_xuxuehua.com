@@ -62,11 +62,70 @@ await是同步调用，所以结果为10s
 
 
 
-## asyncio
+# asyncio
 
-### create_task()
+由于多线程的局限性， （多线程运行中容易被打断，即出现race condition情况， 再者，线程切换本身存在一定的损耗， 线程数不能无限增加，若I/O操作非常频繁，多线程很可能满足不了高效率，高质量需求）
+
+因而asyncio产生来解决这些问题
+
+
+
+## 上下文切换
+
+操作系统及多线程/多进程中称为“上下文切换” (context switch)。其中“上下文”记录了某个线程执行的状态，包括线程里用到的各个变量，线程的调用栈等。而“切换”指的就是保存某个线程当前的运行状态，之后再从之前的状态中恢复。只不过线程相关的工作是由操作系统完成，而协程则是由应用程序自己来完成。
+
+与线程不同的时，协程完成的功能通常较小，所以会有需求将不同的协程串起来，我们暂时称它为协程链 (coroutine chain)。
+
+
+
+## asyncio 原理
+
+Asyncio也是单线程的，只有一个主线程，可以进行多个不同的任务(就是future对象)， 不同的任务被event loop对象控制
+
+
+
+### 局限性
+
+常用的requests库不兼容asyncio ，只能使用aiohttp库
+
+使用asyncio在任务调度有更多主权，但是逻辑书写要注意，很容易出错
+
+
+
+## event loop
+
+若任务有两个状态，
+
+预备状态：任务当前空闲，随时准备运行。
+
+等待状态：任务已经运行，但正在等待外部的操作完成，如I/O操作
+
+event loop会维护这两个任务列表，并且选取预备状态的一个任务，使其运行，一直到把这个任务控制权交还给event loop 为止。
+
+当任务把控制权交还给event loop， event loop会根据其是否完成，放置在不同的状态列表中，然后遍历等待状态列表中的任务，查看其是否完成。
+
+* 完成就放到预备状态
+* 未完成就继续放在等待状态
+
+这样，所有任务被重新放置在合适的列表后，开始新的循环，直到所有任务完成。
+
+根据event loop的特点， 任务运行时不会被外部的一些因素打断，因此Asyncio内的操作不会出现race condition情况，也就不会出现线程安全的问题
+
+
+
+> async 和 await 
+
+
+
+
+
+
+
+## create_task()
 
 可以通过 asyncio.create_task() 来创建任务
+
+asyncio.create_task(coro)表示对输入的协程 coro创建一个任务，安排其执行，并返回次任务对象
 
 ```
 In [26]: import asyncio 
@@ -101,7 +160,7 @@ Wall time: 4.01 s
 
 
 
-#### add_done_callback()
+### add_done_callback()
 
 协程实现callback函数, 即绑定特定回调函数获得返回值
 
@@ -146,9 +205,11 @@ Wall time: 4 s
 
 
 
-### gather()
+## gather()
 
-另一种task写法
+另一种task写法， 针对await的一系列操作，如果只是单个future，只用asyncio.wait() 即可
+
+asyncio.gather(*coro, loop=None, return_exception=False) 表示在event loop中运行coro序列中的所有任务
 
 ```
 In [27]: import asyncio 
@@ -182,9 +243,11 @@ Wall time: 4.01 s
 
 
 
-### run()
+## run()
 
- asyncio.run 来触发运行。asyncio.run 这个函数是 Python 3.7 之后才有的特性，可以让 Python 的协程接口变得非常简单，你不用去理会事件循环怎么定义和怎么使用的问题，一个非常好的编程规范是，asyncio.run(main()) 作为主程序的入口函数，在程序运行周期内，只调用一次 asyncio.run。
+asyncio.run 来触发运行, 是Asyncio的root call， 表示拿到event loop，直到结束才关闭这个event loop
+
+asyncio.run 这个函数是 Python 3.7 之后才有的特性，可以让 Python 的协程接口变得非常简单，你不用去理会事件循环怎么定义和怎么使用的问题，一个非常好的编程规范是，asyncio.run(main()) 作为主程序的入口函数，在程序运行周期内，只调用一次 asyncio.run。
 
 
 
@@ -373,5 +436,118 @@ Wall time: 10 s
 
 
 
+# example
 
+
+
+## 效率对比
+
+```
+import asyncio
+import requests
+from bs4 import BeautifulSoup
+
+def main():
+    url = "https://movie.douban.com/cinema/later/beijing"
+    init_page = requests.get(url).content
+    init_soup = BeautifulSoup(init_page, 'lxml')
+
+    all_movies = init_soup.find('div', id='showing-soon')
+    for each_movie in all_movies.find_all('div', class_="item"):
+        all_a_tag = each_movie.find_all('a')
+        all_li_tag = each_movie.find_all('li')
+
+        movie_name = all_a_tag[1].text
+        url_to_fetch = all_a_tag[1]['href']
+        movie_date = all_li_tag[0].text
+        
+        response_item = requests.get(url_to_fetch).content
+        soup_item = BeautifulSoup(response_item, 'lxml')
+        img_tag = soup_item.find('img')
+        print('{} {} {}'.format(movie_name, movie_date, img_tag['src']))
+
+%time main()
+
+>>>
+CPU times: user 1.3 s, sys: 46.2 ms, total: 1.35 s
+Wall time: 19.8 s
+```
+
+
+
+```
+import asyncio, aiohttp
+import time
+from bs4 import BeautifulSoup
+
+def cost_time(func):
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        res = func(*args, **kwargs)
+        end = time.perf_counter()
+        print('Time costs: {}s'.format(end - start))
+        return res
+    return wrapper
+
+
+async def fetch_content(url):
+    header={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36"}
+    async with aiohttp.ClientSession(
+        headers=header,  connector=aiohttp.TCPConnector(ssl=False)
+    ) as session:
+        async with session.get(url) as response:
+            return await response.text()
+    
+@cost_time
+async def main():
+    url = "https://movie.douban.com/cinema/later/beijing"
+    init_page = await fetch_content(url)
+    init_soup = BeautifulSoup(init_page, 'lxml')
+
+    movie_names, urls_to_fetch, movie_dates = [], [], []
+
+    all_movies = init_soup.find('div', id='showing-soon')
+    for each_movie in all_movies.find_all('div', class_="item"):
+        all_a_tag = each_movie.find_all('a')
+        all_li_tag = each_movie.find_all('li')
+
+        movie_names.append(all_a_tag[1].text)
+        urls_to_fetch.append(all_a_tag[1]['href'])
+        movie_dates.append(all_li_tag[0].text)
+
+    tasks = [fetch_content(url) for url in urls_to_fetch]
+    pages = await asyncio.gather(*tasks)
+
+    for movie_name, movie_date, page in zip(movie_names, movie_dates, pages):
+        soup_item = BeautifulSoup(page, 'lxml')
+        img_tag = soup_item.find('img')
+        print('{} {} {}'.format(movie_name, movie_date, img_tag['src']))
+
+asyncio.run(main())
+
+>>>
+Time costs: 1.5269999948941404e-06s
+```
+
+
+
+
+
+# 多线程 vs Asyncio
+
+```
+if io_bound:
+    if io_slow:
+        print('Use Asyncio')
+    else:
+        print('Use multi-threading')
+else if cpu_bound:
+    print('Use multi-processing')
+```
+
+如果是 I/O bound，并且 I/O 操作很慢，需要很多任务 / 线程协同实现，那么使用 Asyncio 更合适。
+
+如果是 I/O bound，但是 I/O 操作很快，只需要有限数量的任务 / 线程，那么使用多线程就可以了。
+
+如果是 CPU bound，则需要使用多进程来提高程序运行效率。
 

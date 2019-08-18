@@ -6,8 +6,12 @@ date: 2018-10-05 02:51
 
 [TOC]
 
-
 # multiprocessing
+
+Python实现多线程/多进程，大家常常会用到标准库中的threading和multiprocessing模块。
+但从Python3.2开始，标准库为我们提供了concurrent.futures模块，它提供了ThreadPoolExecutor和ProcessPoolExecutor两个类，实现了对threading和multiprocessing的进一步抽象，使得开发者只需编写少量代码即可让程序实现并行计算。
+
+
 
 避免的subprocess包的局限性
 1. 总是通过subprocess运行外部的程序，而不是运行一个Python脚本内部编写的函数

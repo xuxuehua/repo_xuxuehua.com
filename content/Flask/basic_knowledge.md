@@ -212,6 +212,8 @@ Eventually, main thread value: 1
 
 上下文可以理解为环境，为了程序的正常运行，一些操作的相关状态和数据需要被临时保存下来，这些状态和数据被统称为上下文
 
+而“切换”指的就是保存某个线程当前的运行状态，之后再从之前的状态中恢复
+
 flask中有两种，分别为应用上下文和请求上下文
 
 
@@ -537,3 +539,104 @@ Flask 通过Werkzeug实现请求解析（request）和响应封装（response）
 
 
 
+# 服务器端推送
+
+
+
+## SSE 
+
+Server-Sent Event
+
+通过HTML5种的EventSource API实现，SSE会在客户端和服务器端建立一个单向的通道，客户端监听服务器端的数据，而服务器端可以在任意时间发送数据，二者建立类似订阅发布的通信模式
+
+
+
+## 传统轮询 AJAX
+
+客户端使用AJAX技术不断向服务器发送HTTP请求，然后获取新的数据并更新页面
+
+
+
+## 长轮询
+
+类似于传统轮询，服务器端若没有返回数据，就一直保持连接开启，直到有数据返回，取回数据
+
+
+
+## Websocket
+
+基于TCP协议的全双工通信协议，对比上述3种，实时性更强
+
+
+
+
+
+# 安全防护
+
+
+
+## SQL 注入
+
+通过ORM(Object Relational Mapper) 可以一定程度避免SQL注入的问题
+
+
+
+
+
+## XSS
+
+Cross-site Scripting
+
+### 反射型
+
+通过URL注入攻击脚本，用户访问URL时会执行攻击脚本
+
+```
+@app.route('/hello')
+def hello():
+    name = request.args.get('name')
+    response = '<h1>Hello, %s!</h1>' % name
+```
+
+```
+http://example.com/hello?name=<script>alert('Bingo!'); </script>
+
+客户端接收的响应会变成为
+<h1>Hello, <script>alert('Bingo! '); </script>! </h1>
+```
+
+如果站点A存在XSS漏洞，攻击者将包含攻击的代码链接发送给网站A用户Rick，当Rick访问这个链接就会被执行攻击代码
+
+
+
+### 存储型
+
+任何用户访问包含攻击代码的页面都会被殃及。如果用户的表单数据不经过任何处理存到数据库，很容易插入Javascript代码
+
+```
+<script>window.location.href="http://attacker.com";</script>
+```
+
+
+
+通过对用户输入的内容进行转义，可以防范。即把变量的标记内容转换为文本而不是HTML代码， 如Jinja2 的escape()函数
+
+```
+from jinja2 import escape
+
+
+@app.route('/hello')
+def hell():
+    name = request.args.get('name')
+    response = '<h1>Hello, %s! </h1>' % escape(name)
+```
+
+
+
+
+
+## CSRF
+
+Cross Site Request Forgery  跨站请求伪造
+
+若用户登陆A站点，认证信息保存在cookie中。攻击者
