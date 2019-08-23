@@ -133,6 +133,12 @@ HTTP POST方式传送数据
 
 
 
+```
+curl host:port/post-file -H "Content-Type: text/xml" --data "contents_of_file"
+```
+
+
+
 ### -e/--referer 告知来源地址
 
 

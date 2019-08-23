@@ -533,6 +533,10 @@ Time costs: 1.5269999948941404e-06s
 
 
 
+
+
+
+
 # 多线程 vs Asyncio
 
 ```
@@ -550,4 +554,33 @@ else if cpu_bound:
 如果是 I/O bound，但是 I/O 操作很快，只需要有限数量的任务 / 线程，那么使用多线程就可以了。
 
 如果是 CPU bound，则需要使用多进程来提高程序运行效率。
+
+
+
+# 多进程
+
+```
+import time
+def cpu_bound(number):
+    print(sum(i * i for i in range(number)))
+
+def calculate_sums(numbers):
+    for number in numbers:
+        cpu_bound(number)
+
+def main():
+    start_time = time.perf_counter()  
+    numbers = [10000000 + x for x in range(20)]
+    calculate_sums(numbers)
+    end_time = time.perf_counter()
+    print('Calculation takes {} seconds'.format(end_time - start_time))
+    
+if __name__ == '__main__':
+    main()
+
+>>>
+Calculation takes 17.826206894 seconds
+
+
+```
 

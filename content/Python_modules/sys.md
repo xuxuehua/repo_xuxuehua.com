@@ -67,6 +67,23 @@ sys.path.append(BASE_DIR)
 
 
 
+## getrefcount()
+
+引用计数
+
+```
+In [1]: import sys
+
+In [2]: a = []
+
+In [3]: b = a
+
+In [4]: sys.getrefcount(a)
+Out[4]: 27
+```
+
+
+
 ## platform
 
 返回操作系统平台名称
@@ -136,3 +153,4 @@ RecursionError: maximum recursion depth exceeded in comparison
 ```
 
 >  mac内存是16G，如果把递归层数设定到1百万，大概跑到35000层左右，服务就挂了
+

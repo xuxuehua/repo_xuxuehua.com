@@ -579,6 +579,12 @@ Server-Sent Event
 
 通过ORM(Object Relational Mapper) 可以一定程度避免SQL注入的问题
 
+安全检查清单，参考OWASP Top 10 或是CWE Top 25 [https://cwe.mitre.org/top25](https://cwe.mitre.org/top25) , 漏洞检测工具[https://github.com/OWASP/OWASP-WebScarab](https://github.com/OWASP/OWASP-WebScarab)
+
+
+
+
+
 
 
 
@@ -639,4 +645,17 @@ def hell():
 
 Cross Site Request Forgery  跨站请求伪造
 
-若用户登陆A站点，认证信息保存在cookie中。攻击者
+若用户登陆A站点，认证信息保存在cookie中。用户访问攻击者创建的B网站时，攻击者通过在B网站发送一个伪造的请求提交到A服务器上，让A服务器误认为请求来自于自己的网站， 对用户信息造成篡改。
+
+
+
+解决方法就是正确使用HTTP方法，GET方法属于安全方法，不会改变资源状态， POST方法用于创建修改删除资源。
+
+一般通过在客户端页面加入伪随机数来防御CSRF攻击，这个数称为CSRF token
+
+POST方法请求通过表单创建，把服务器创建的伪随机数天假到表单中的隐藏字段的里和session变量中，当用户提交表单是，令牌会和表单数据一起提交，在服务器端处理POST请求时，对表单中的令牌进行验证来确认session的令牌
+
+对于AJAX请求，可以在XMLHttp Request请求首部天假一个自定义字段X-CSRFtoken保存CSRF令牌
+
+
+
