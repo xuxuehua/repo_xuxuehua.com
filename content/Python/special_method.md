@@ -162,6 +162,28 @@ False
 
 
 
+```
+class UrlGenerator(object):
+    def __init__(self, root_url):
+        self.url = root_url
+
+    def __getattr__(self, item):
+        if item == 'get' or item == 'post':
+            print self.url
+        return UrlGenerator('{}/{}'.format(self.url, item))
+
+
+url_gen = UrlGenerator('http://xxxx')
+url_gen.users.show.get
+
+>>> 
+http://xxxx/users/show
+```
+
+
+
+
+
 ### `__setattr__`
 `__setattr__(self, name, value)` 
 可用于修改属性，可用于任意属性。

@@ -16,28 +16,50 @@ date: 2019-06-02 16:21
 
 
 
+1. 模板不支持多继承，也就是子模板中定义的块，不可能同时被两个父模板替换。
+2. 模板中不能定义多个同名的块，子模板和父模板都不行，因为这样无法知道要替换哪一个部分的内容。
+
+建议在`endblock`关键字后也加上块名，比如`{% endblock block_name %}`。虽然对程序没什么作用，但是当有多个块嵌套时，可读性好很多。
+
 
 
 ## 模版继承
 
 super函数可以向基类模板中的块追加内容, 即父类块中添加内容
 
+
+
+将父模板”layout.html”改为
+
 ```
-{% extends 'layout.html' %}
-{% block content %}
+<!doctype html>
+<head>
+    {% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>{% block title %}{% endblock %}</title>
+    {% endblock %}
+</head>
+<body>
+    <div class="page">
+    {% block body %}
+    {% endblock %}
+    </div>
+</body>
+```
+
+并在子模板里，加上”head”块和”title”块
+
+```
+{% block title %}Block Sample{% endblock %}
+{% block head %}
     {{ super() }}
-    {{ data.age }}
-    {% if data.age < 18 %}
-        {{ data.name }}
-    {% elif data.age == 30 %}
-        I am 30 years old.
-    {% else %}
-        {{ data.age }}
-    {% endif %}
+    <style type="text/css">
+        h1 { color: #336699; }
+    </style>
 {% endblock %}
 ```
 
-> 这里的super() 会实现继承效果
+父模板同子模板的”head”块中都有内容。运行后，你可以看到，父模板中的”head”块语句先被加载，而后是子模板中的”head”块语句。这就得益于我们在子模板的”head”块中加上了表达式`{{ super() }}`。
 
 
 
@@ -288,7 +310,7 @@ Flask， Jinja2和Werkzeug等相关依赖均将文本类型设定为Unicode
 
 将变量值标记为安全，避免转义
 
-不要直接对用户输入的内容实用safe过滤器，否则很容器被植入恶意代码，导致XSS攻击
+不要直接对用户输入的内容使用safe过滤器，否则很容器被植入恶意代码，导致XSS攻击
 
 
 
