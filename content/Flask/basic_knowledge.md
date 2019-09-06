@@ -449,40 +449,6 @@ template_folder='templates'
 
 
 
-## 定义蓝图
-
-`app/admin/__init__.py`
-
-```
-from flask import Blueprint
-admin = Blueprint("admin", __name__)
-import views
-```
-
-## 注册蓝图
-
-`app/__init__.py`
-
-```
-from admin import admin as admin_blueprint
-app.register_blueprint(admin_blueprint, url_prefix="/admin")
-```
-
-## 调用蓝图
-
-`app/admin/views.py`
-
-```
-from . import admin
-@admin.route("/")
-```
-
-
-
-
-
-
-
 # 前端布局
 
 ## 静态文件引入
@@ -658,4 +624,70 @@ POST方法请求通过表单创建，把服务器创建的伪随机数天假到�
 对于AJAX请求，可以在XMLHttp Request请求首部天假一个自定义字段X-CSRFtoken保存CSRF令牌
 
 
+
+# Debug Toolbar
+
+```
+pipenv install flask-debugtoolbar
+```
+
+```
+from flask import Flask
+from flask_debugtoolbar import DebugToolbarExtension
+app = Flask(__name__)
+toolbar = DebugToolbarExtension(app)
+```
+
+
+
+
+
+# 工厂函数
+
+```
+def create_app(config_name=None):
+	if config_name is None:
+			config_name = os.getenv('FLASK_CONFIG', 'development')
+	app = Flask('bluelog')
+	app.config.from_object(config[config_name])
+    register_logging(app)
+    register_extenstions(app)
+    register_blueprints(app)
+    register_commands(app)
+    register_errors(app)
+    register_shell_context(app)
+    register_template_context(app)
+    return app
+        
+def register_logging(app):
+    pass
+
+def register_extensions(app):
+    bootstrap.init_app(app)
+    db.init_app(app)
+    ckeditor.init_app(app)
+    mail.init_app(app)
+    moment.init_app(app)
+
+def register_blueprints(app):
+    app.register_blueprint(blog)
+    app.register_blueprint(admin, url_prefix='/admin')
+    app.register_blueprint(admin, url_prefix='/auth')
+
+def register_shell_context(app):
+    @app.shell_context_processor
+    def make_shell_context():
+        return dict(db=db)
+
+def register_template_context(app):
+    pass
+
+def register_errors(app):
+    @app.errorhandler(400)
+    def bad_request(e):
+        return render_template('error/400.html'), 400
+
+def register_commands(app):
+    pass
+```
 

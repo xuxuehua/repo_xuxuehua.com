@@ -1883,3 +1883,52 @@ Bootstrap 提供了一些辅助类，以便更快地实现对移动设备友好�
 ![响应式实用工具](https://7n.w3cschool.cn/attachments/uploads/2014/06/resonsive_utilies_demo.jpg)
 
 **勾号（✔）** 表示元素在当前视口中可见。
+
+
+
+
+
+
+
+
+
+# 修改bootstrap 4 样式
+
+
+
+## 同名CSS覆盖
+
+```
+<style>
+	.btn-primary {
+		background: green;
+	}
+</style>
+```
+
+
+
+## 修改源码构建
+
+```
+node-sass --output-style expanded bootstrap-custom/scss/bootstrap.scss>bootstrap-custom/dist/css/bootstrap.css
+```
+
+
+
+## 引用scss源文件修改变量
+
+```
+$primary: red;
+
+@import './bootstrap-custom/scss/bootstrap';
+```
+
+
+
+
+
+
+
+
+

@@ -17,7 +17,7 @@ date: 2018-11-20 18:06
 
 ![img](https://snag.gy/sfBe6c.jpg)
 
-
+> height 和weight 只对content区域有效果
 
 
 
@@ -233,8 +233,6 @@ div {
 受控于vertical-align 属性， 一般设置为top
 
 [http://learnlayout.com/inline-block-layout.html](http://learnlayout.com/inline-block-layout.html
-
-
 
 
 

@@ -58,7 +58,7 @@ Pod内部可相互访问
 
 各Pod通过自己的地址直接通信，也就是每个Pod的地址是独立的
 
-通过Overlay network的隧道方式完成Pod之间的通信
+通过Overlay network的隧道方式完成Pod之间的通信，可以转发二层报文，也可以转发三层报文
 
 
 

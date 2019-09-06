@@ -87,9 +87,46 @@ export NVM_DIR="$HOME/.nvm"
 
 Node Package Management
 
+**but** doesn't make life easy *executing* any
+
 ```
 curl -L https://www.npmjs.com/install.sh | sh
 ```
+
+
+
+`NPM` by itself does not simply run any package. it doesn't run any package in a matter of fact. If you want to run a package using NPM, you must specify that package in your `package.json` file.
+
+When executables are installed via NPM packages, NPM links to them:
+
+1. *local* installs have "links" created at `./node_modules/.bin/` directory.
+2. *global* installs have "links" created from the global `bin/` directory (e.g. `/usr/local/bin`) on Linux or at `%AppData%/npm` on Windows.
+
+
+
+
+
+### npx
+
+A tool for *executing* Node packages
+
+`npx` will check whether `<command>` exists in `$PATH`, or in the local project binaries, and execute it.
+
+if you wish to execute the locally-installed package `some-package` all you need to do is type:
+
+```
+npx some-package
+```
+
+Another **major** advantage of `npx` is the ability to execute a package which wasn't previously installed:
+
+```
+$ npx create-react-app my-app
+```
+
+The above example will generate a `react` app boilerplate *within* the path the command had run in, and ensures that you always use the latest version of a generator or build tool without having to upgrade each time you’re about to use it.
+
+
 
 
 
@@ -215,53 +252,17 @@ process.on('exit', function (code) {
 
 ## 全局strict 模式
 
+省去每个js文件都加上'use strict'; 
+
 ```
 node --use_strict example.js
 ```
 
 
 
-## 模块
 
 
-
-### 导出模块
-
-`var ref = require('module_name');`
-
-* 暴露变量也是`module.exports = variable;`
-
-```
-'use strict';
-
-var s = 'Hello';
-
-function greet(name) {
-    console.log(s + ', ' + name + '!');
-}
-
-module.exports = greet;
-```
-
-
-
-### 调用模块
-
-```
-var greet = require('./hello');
-
-var s = 'Rick';
-
-console.log(greet(s))
-```
-
-> 这里调用的时候是相对目录
-
-
-
-
-
-## 判断JavaScript执行环境
+# 判断JavaScript执行环境
 
 有很多JavaScript代码既能在浏览器中执行，也能在Node环境执行，但有些时候，程序本身需要判断自己到底是在什么环境下执行的，常用的方式就是根据浏览器和Node环境提供的全局变量名称来判断：
 

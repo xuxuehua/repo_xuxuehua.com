@@ -64,6 +64,18 @@ git branch -v
 
 
 
+###  -vv
+
+查看当前所有被tracking的分支
+
+```
+git branch -vv
+  main   aaf02f0 [main/master: ahead 25] Some other commit
+* master add0a03 [jdsumsion/master] Some commit
+```
+
+
+
 
 
 ### --set-upstream-to 关联分支
@@ -333,6 +345,12 @@ git log --oneline
 ```
 git log --pretty=oneline
 ```
+
+
+
+### -p 显示历史diff
+
+ This option will add a **diff** with the introduced **changes** to each **commit** in the **log**
 
 
 

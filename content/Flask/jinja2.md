@@ -221,6 +221,34 @@ Flask， Jinja2和Werkzeug等相关依赖均将文本类型设定为Unicode
 
 
 
+宏接收表单类实例的字段属性和附加的关键字参数作为输入，返回包含label标签，表单字段，错误消息列表的HTML表单字段代码
+
+```
+{% macro form_field(field) %}
+  {{ field.label }}<br>
+  {{ field(**kwargs) }}<br>
+	{% if field.errors %}
+		{% for error in field.errors %}
+		<small class="error">{{ error }}</small><br>
+		{% endfor %}
+	{% endif %}
+{% endmacro %}
+```
+
+```
+{% from 'macros.html' import form_field %}
+<form method="post">
+	{{ form.csrf_token }}
+	{{ form_field(form.username) }}
+	{{ form_field(form.password) }}
+		...
+</form>
+```
+
+
+
+
+
 ## 加载静态资源
 
 ```

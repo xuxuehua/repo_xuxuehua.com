@@ -73,6 +73,12 @@ Out[8]: '/Users/xhxu'
 
 分别用来读取和设置环境变量
 
+```
+os.getenv('SECRET_KEY', 'secret string')
+```
+
+
+
 
 ## os.getatime(path)
 

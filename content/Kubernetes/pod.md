@@ -540,7 +540,7 @@ spec:
 
 ## Pod 控制器 Controller
 
-借助Controller 对Pod进行管理，实现一次性的Pod对象管理
+借助Controller 对Pod进行管理，实现一次性的Pod对象管理, 对同一类pod进行管理
 
 包括以下多种调度器
 
@@ -570,11 +570,55 @@ Deployment 为Pod和ReplicaSet提供一个声明方法，用来替代Replication
 
 可以声明一个yaml文件，确保deployment的状态信息
 
+管理无状态的应用
 
 
-### Services
+
+#### HPA
+
+Horizontal Pod Autoscaler
+
+根据资源要求，自动扩展资源
+
+
+
+### StatefulSet 
+
+管理有状态应用
+
+
+
+
+
+### Job
+
+Pods管理程序，包含一系列job
+
+类似于cronjob
+
+
+
+### CronJob
+
+计划的任务
+
+
+
+
+
+### DaemonSet
+
+确保所有nodes 运行同一个指定类型的pod
+
+
+
+## Services
 
 允许多个deployments之间通信，从而确保pods之间通信
+
+Services 通过标签选择器来关联后端的pod
+
+其本质就是iptables的DNAT规则， 在1.11版本之后，使用ipvs来实现更好的负载均衡效果
 
 
 
@@ -596,7 +640,7 @@ spec:
 
 
 
-#### Services 类型
+### Services 类型
 
 ```
 Internal:仅用于集群内部通信的ClusterIP类型，即internal IP
@@ -605,22 +649,6 @@ External: 接入集群外部请求的NodePort类型， 工作于每个节点的�
 
 LoadBalance: 可以把外部请求负载均衡至多个Node主机IP的NodePort之上
 ```
-
-
-
-### Job
-
-Pods管理程序，包含一系列job
-
-类似于cronjob
-
-
-
-### DaemonSet
-
-确保所有nodes 运行同一个指定类型的pod
-
-
 
 
 

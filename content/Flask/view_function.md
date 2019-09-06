@@ -153,7 +153,11 @@ def delete_post(post_id):
 
 ## add_url_rule
 
-在使用基于类的视图，即插式图，需要使用该方法
+在使用基于类的视图，即插式图，需要使用该方法， 实现了route装饰器的效果
+
+```
+add_url_rule(rule, endpoint, view_function)
+```
 
 但装饰器里面不需要输入view_func 
 
@@ -169,6 +173,14 @@ def hello():
 app.add_url_rule('/hello/', view_func=hello)
 
 app.run(debug=True)
+```
+
+
+
+查看当前程序注册的所有路由
+
+```
+$ flask routes
 ```
 
 
@@ -598,6 +610,8 @@ def hi():
 def hello():
     pass
 ```
+
+> 这里的hello是视图函数
 
 
 

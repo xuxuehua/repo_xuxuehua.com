@@ -8,6 +8,10 @@ date: 2019-07-17 14:06
 
 # overflow
 
+![img](https://snipboard.io/b6aUNv.jpg)
+
+
+
 
 
 
@@ -49,3 +53,12 @@ date: 2019-07-17 14:06
 ## scroll
 
 溢出内容会被修剪，并且浏览器会始终显示滚动条
+
+
+
+
+
+## overflow-wrap (word-wrap)
+
+通用换行控制
+

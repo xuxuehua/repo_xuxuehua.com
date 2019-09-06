@@ -1,5 +1,5 @@
 ---
-title: "directories_and_files 目录和文件"
+ otitle: "directories_and_files 目录和文件"
 date: 2018-10-22 03:20
 ---
 
@@ -248,11 +248,53 @@ sudo echo [my_host_name] > /proc/sys/kernel/hostname
 
 
 
+## /var/log/auth.log
+
+身份认证日志
+
+
+
+## /var/log/boot.log
+
+系统启动日志
+
+
+
+## /var/log/cron.log
+
+Cron 日志信息
+
+
+
+## /var/log/kernel.log
+
+内核日志
+
+
+
+## /var/log/maillog
+
+邮件服务器日志
+
+
+
+## /var/log/message
+
+记录系统日志或当前活动日志
+
 
 
 ## /var/log/lastlog
 
 最近登录成功事件
+
+
+
+## /var/log/secure
+
+认证日志
+
+
 
 
 
@@ -266,3 +308,8 @@ sudo echo [my_host_name] > /proc/sys/kernel/hostname
 
 系统创建以来登录过的用户
 
+
+
+## /var/log/yum.log
+
+yum

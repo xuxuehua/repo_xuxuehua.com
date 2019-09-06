@@ -93,7 +93,7 @@ class Student(Human):
         super(Student, self).__init__(name, age)
 
     def do_homework(self):
-        super(Student, self).do_homework()
+        super(Student, self).do_homework()	#调用父类的do_homework 方法
         print('English homework')
 
 
