@@ -1,5 +1,5 @@
 ---
- otitle: "directories_and_files 目录和文件"
+title: "directories_and_files 目录和文件"
 date: 2018-10-22 03:20
 ---
 
