@@ -99,6 +99,8 @@ date: 2018-06-11 02:14
 
 
 
+
+
 ## Python特点
 
 * 线程不能利用多CPU问题，这是Python被人诟病最多的一个缺点，GIL即全局解释器锁（Global Interpreter Lock），是[计算机程序设计语言](http://zh.wikipedia.org/wiki/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80)[解释器](http://zh.wikipedia.org/wiki/%E8%A7%A3%E9%87%8A%E5%99%A8)用于[同步](http://zh.wikipedia.org/wiki/%E5%90%8C%E6%AD%A5)[线程](http://zh.wikipedia.org/wiki/%E7%BA%BF%E7%A8%8B)的工具，使得任何时刻仅有一个线程在执行，Python的线程是操作系统的原生线程。在Linux上为pthread，在Windows上为Win thread，完全由操作系统调度线程的执行。一个python解释器进程内有一条主线程，以及多条用户程序的执行线程。即使在多核CPU平台上，由于GIL的存在，所以禁止多线程的并行执行。
@@ -494,4 +496,16 @@ $ python -i script.py
 ```
 	python -m cProfile -s time PYTHON_SCRIPT
 ```
+
+
+
+# 编码规范
+
+
+
+## Google Python 风格规范 
+
+Google Python Style Guide, 比PEP8 更严格的编程规范
+
+[http://google.github.io/styleguide/pyguide.html](http://google.github.io/styleguide/pyguide.html)
 

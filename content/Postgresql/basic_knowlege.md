@@ -125,6 +125,26 @@ psql exampledb < exampledb.sql
 
 
 
+## Privilege
+
+```
+1、查看某用户的表权限
+select * from information_schema.table_privileges where grantee='user_name';
+
+2、查看usage权限表
+select * from information_schema.usage_privileges where grantee='user_name';
+
+3、查看存储过程函数相关权限表
+select * from information_schema.routine_privileges where grantee='user_name';
+
+4、建用户授权
+create user user_name;
+alter user user_name with password '';
+alter user user_name with CONNECTION LIMIT  20;#连接数限制
+```
+
+
+
 # 数据库操作
 
 ```
@@ -161,4 +181,20 @@ ALTER TABLE user_tbl RENAME TO backup_tbl;
 # 删除表格
 DROP TABLE IF EXISTS backup_tbl;
 ```
+
+
+
+
+
+# Concept
+
+
+
+## Role
+
+PostgreSQL manages database access permissions using the concept of *roles*. A role can be thought of as either a database user, or a group of database users, depending on how the role is set up. 
+
+After version 8.1 Any role can act as a user, a group, or both.
+
+
 

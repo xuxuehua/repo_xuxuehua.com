@@ -149,7 +149,28 @@ Out[208]: 3
 
 
 
+### 读取log
 
+```
+def read(log):
+		with open(log, encoding="utf-8") as f:
+				yield from f
+				
+
+def generate_result(log):
+		result = {}
+		for line in read(log):
+				line = line.split(" ")
+				if len(line) > 8:
+						key = line[8]
+						value = result.get(key, 0)
+						result[key] = value + 1
+		print(result)
+```
+
+
+
+ 
 
 ## 协程 coroutine
 

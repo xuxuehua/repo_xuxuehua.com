@@ -90,6 +90,16 @@ NameNode高可用容错能力非常重要。NameNode采用主从热备的方式�
 
 
 
+# Installation 
+
+
+
+## jdk
+
+```
+https://download.oracle.com/otn/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz
+```
+
 
 
 

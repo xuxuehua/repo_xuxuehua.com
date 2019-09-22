@@ -1461,3 +1461,40 @@ class Document(Entity):
         return len(self.__context)
 ```
 
+
+
+
+
+# 类拆分 （优化）
+
+job 在其中出现了很多次，而且它们表达的是一个意义实体，这种情况下，我们可以考虑将这部分分解出来，作为单独的类。
+
+```
+class Person:
+    def __init__(self, name, sex, age, job_title, job_description, company_name):
+        self.name = name
+        self.sex = sex
+        self.age = age
+        self.job_title = job_title
+        self.job_description = description
+        self.company_name = company_name
+```
+
+
+
+```
+class Person:
+    def __init__(self, name, sex, age, job_title, job_description, company_name):
+        self.name = name
+        self.sex = sex
+        self.age = age
+        self.job = Job(job_title, job_description, company_name)
+ 
+class Job:
+    def __init__(self, job_title, job_description, company_name):
+        
+        self.job_title = job_title
+        self.job_description = description
+        self.company_name = company_name
+```
+

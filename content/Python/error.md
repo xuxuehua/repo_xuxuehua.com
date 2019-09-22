@@ -296,3 +296,49 @@ except MyInputError as err:
 
 
 
+
+
+# assert
+
+Python 的 assert 语句，可以说是一个 debug 的好工具，主要用于测试一个条件是否满足。如果测试的条件满足，则什么也不做，相当于执行了 pass 语句；如果测试条件不满足，便会抛出异常 AssertionError，并返回具体的错误信息（optional）。
+
+assert 并不适用 run-time error 的检查。比如你试图打开一个文件，但文件不存在；再或者是你试图从网上下载一个东西，但中途断网了了等等，这些情况下，还是应该使用错误异常，进行正确处理。
+
+使用 assert 时，一定不要加上括号，否则无论表达式对与错，assert 检查永远不会 fail。
+
+
+
+## 单行
+
+这里的`__debug__`是一个常数。如果 Python 程序执行时附带了`-O`这个选项，比如`Python test.py -O`，那么程序中所有的 assert 语句都会失效，常数`__debug__`便为 False；反之`__debug__`则为 True。
+
+```
+assert 1 == 2
+```
+
+它就相当于下面这两行代码：
+
+```
+if __debug__:
+    if not expression: raise AssertionError
+```
+
+
+
+
+
+## 多行
+
+```
+assert 1 == 2,  'assertion is wrong'
+```
+
+它就相当于下面这两行代码：
+
+```
+if __debug__:
+    if not expression1: raise AssertionError(expression2)
+```
+
+
+
