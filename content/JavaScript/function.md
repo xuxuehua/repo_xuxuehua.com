@@ -668,8 +668,9 @@ xiaoming.age(); // 今年调用是25,明年调用就变成26了
 
 ### this特殊变量
 
-* 在一个方法内部，`this`是一个特殊变量，它始终指向当前对象，也就是`xiaoming`这个变量。所以，`this.birth`可以拿到`xiaoming`的`birth`属性。
-* 让我们拆开写：
+在一个方法内部，`this`是一个特殊变量，它始终指向当前对象，也就是`xiaoming`这个变量。所以，`this.birth`可以拿到`xiaoming`的`birth`属性。
+
+让我们拆开写：
 
 ```
 function getAge() {

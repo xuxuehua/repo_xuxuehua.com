@@ -330,6 +330,89 @@ else
 
 
 
+## 消息框
+
+
+
+### **警告框**
+
+```
+alert("我是警告框！！")
+```
+
+
+
+#### 带有折行的警告框
+
+```
+alert("再次向您问好！在这里，我们向您演示" + '\n' + "如何向警告框添加折行。")
+```
+
+
+
+
+
+### **确认框**
+
+```
+<html>
+<head>
+<script type="text/javascript">
+function show_confirm()
+{
+var r=confirm("Press a button!");
+if (r==true)
+  {
+  alert("You pressed OK!");
+  }
+else
+  {
+  alert("You pressed Cancel!");
+  }
+}
+</script>
+</head>
+<body>
+
+<input type="button" onclick="show_confirm()" value="Show a confirm box" />
+
+</body>
+</html>
+```
+
+
+
+
+
+### **提示框**
+
+```
+<html>
+<head>
+<script type="text/javascript">
+function disp_prompt()
+  {
+  var name=prompt("请输入您的名字","Bill Gates")
+  if (name!=null && name!="")
+    {
+    document.write("你好！" + name + " 今天过得怎么样？")
+    }
+  }
+</script>
+</head>
+<body>
+
+<input type="button" onclick="disp_prompt()" value="显示提示框" />
+
+</body>
+</html>
+
+```
+
+
+
+
+
 
 
 

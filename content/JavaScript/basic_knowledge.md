@@ -127,7 +127,7 @@ job="CEO";
 
 
 
-* 如果在文档已完成加载后执行 document.write，整个 HTML 页面将被覆盖
+如果在文档已完成加载后执行 document.write，整个 HTML 页面将被覆盖
 
 ```
 <!DOCTYPE html>
@@ -304,11 +304,11 @@ if(x==""||isNaN(x))
 
 
 
-## 外部Javascript
+## html 引入外部Javascript
 
 外部 JavaScript 文件的文件扩展名是 .js。
 
-如需使用外部文件，请在 <script> 标签的 "src" 属性中设置该 .js 文件
+如需使用外部文件，请在` <script>` 标签的 "src" 属性中设置该 .js 文件
 
 ```
 <!DOCTYPE html>
@@ -369,12 +369,14 @@ var t = null; // t的值是null
 
 ### 变量赋值
 
-* 在JavaScript中，使用等号`=`对变量进行赋值。可以把任意数据类型赋值给变量，同一个变量可以反复赋值，而且可以是不同类型的变量，但是要注意只能用`var`申明一次
+在JavaScript中，使用等号`=`对变量进行赋值。可以把任意数据类型赋值给变量，同一个变量可以反复赋值，而且可以是不同类型的变量，但是要注意只能用`var`申明一次
 
 ```
 var a = 123; // a的值是整数123
 a = 'ABC'; // a变为字符串
 ```
+
+
 
 #### 静态语言定义
 
@@ -389,114 +391,55 @@ a = "ABC"; // 错误：不能把字符串赋给整型变量
 
 ## strict 模式
 
-* JavaScript在设计之初，为了方便初学者学习，并不强制要求用`var`申明变量。这个设计错误带来了严重的后果：如果一个变量没有通过`var`申明就被使用，那么该变量就自动被申明为全局变量：
+JavaScript在设计之初，为了方便初学者学习，并不强制要求用`var`申明变量。这个设计错误带来了严重的后果：如果一个变量没有通过`var`申明就被使用，那么该变量就自动被申明为全局变量：
 
-  ```
-  i = 10; // i现在是全局变量
-  ```
+```
+i = 10; // i现在是全局变量
+```
 
 > 在同一个页面的不同的JavaScript文件中，如果都不用`var`申明，恰好都使用了变量`i`，将造成变量`i`互相影响，产生难以调试的错误结果。
 >
 > 使用`var`申明的变量则不是全局变量，它的范围被限制在该变量被申明的函数体内，同名变量在不同的函数体内互不冲突。
 
-* 为了修补JavaScript这一严重设计缺陷，ECMA在后续规范中推出了strict模式，在strict模式下运行的JavaScript代码，强制通过`var`申明变量，未使用`var`申明变量就使用的，将导致运行错误。
+为了修补JavaScript这一严重设计缺陷，ECMA在后续规范中推出了strict模式，在strict模式下运行的JavaScript代码，强制通过`var`申明变量，未使用`var`申明变量就使用的，将导致运行错误。
 
 
 
 ### 开启strict模式
 
-* 启用strict模式的方法是在JavaScript代码的第一行写上：
-
-  ```
-  'use strict';
-  ```
-
-
-
-
-
-## 消息框
-
-
-
-### **警告框**
+启用strict模式的方法是在JavaScript代码的第一行写上：
 
 ```
-alert("我是警告框！！")
+'use strict';
 ```
 
 
 
-#### 带有折行的警告框
+# localStorage
+
+本地缓存
 
 ```
-alert("再次向您问好！在这里，我们向您演示" + '\n' + "如何向警告框添加折行。")
+    <script>
+        $(function() {
+            var initial_sidebar = localStorage.getItem('sidebar_local') || 'off';
+            alert('var initial value: ' + initial_sidebar);
+
+            if (initial_sidebar === 'on') {
+                alert('initial on')
+            }
+            else {
+                alert('initial off')
+            }
+
+        $('#sideBarLogo').click(function() {
+            localStorage.setItem('sidebar_local', 'off');
+        })
+
+
+        });
+    </script>
 ```
-
-
-
-
-
-### **确认框**
-
-```
-<html>
-<head>
-<script type="text/javascript">
-function show_confirm()
-{
-var r=confirm("Press a button!");
-if (r==true)
-  {
-  alert("You pressed OK!");
-  }
-else
-  {
-  alert("You pressed Cancel!");
-  }
-}
-</script>
-</head>
-<body>
-
-<input type="button" onclick="show_confirm()" value="Show a confirm box" />
-
-</body>
-</html>
-```
-
-
-
-
-
-### **提示框**
-
-```
-<html>
-<head>
-<script type="text/javascript">
-function disp_prompt()
-  {
-  var name=prompt("请输入您的名字","Bill Gates")
-  if (name!=null && name!="")
-    {
-    document.write("你好！" + name + " 今天过得怎么样？")
-    }
-  }
-</script>
-</head>
-<body>
-
-<input type="button" onclick="disp_prompt()" value="显示提示框" />
-
-</body>
-</html>
-
-```
-
-
-
-
 
 
 
