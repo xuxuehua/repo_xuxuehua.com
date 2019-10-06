@@ -422,20 +422,25 @@ i = 10; // i现在是全局变量
 ```
     <script>
         $(function() {
-            var initial_sidebar = localStorage.getItem('sidebar_local') || 'off';
+            var initial_sidebar = localStorage.getItem('sidebar_local') || 'on';
             alert('var initial value: ' + initial_sidebar);
 
             if (initial_sidebar === 'on') {
-                alert('initial on')
+                alert('current is on');
             }
             else {
-                alert('initial off')
+                alert('current is off');
             }
 
         $('#sideBarLogo').click(function() {
-            localStorage.setItem('sidebar_local', 'off');
+            var current_initial_sidebar_value = localStorage.getItem('sidebar_local');
+            if ( current_initial_sidebar_value === 'on') {
+                localStorage.setItem('sidebar_local', 'off');
+            } 
+            else {
+                localStorage.setItem('sidebar_local', 'on');
+            }
         })
-
 
         });
     </script>

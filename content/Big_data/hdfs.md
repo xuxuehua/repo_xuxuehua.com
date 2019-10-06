@@ -90,14 +90,136 @@ NameNode高可用容错能力非常重要。NameNode采用主从热备的方式�
 
 
 
-# Installation 
+# Installation 伪分布式
+
+single-node in a pseudo-distributed mode
+
+https://archive.cloudera.com/cdh5/cdh/5/hadoop-2.6.0-cdh5.7.0/hadoop-project-dist/hadoop-common/SingleCluster.html
+
+```
+yum -y install vim
+```
 
 
 
 ## jdk
 
 ```
-https://download.oracle.com/otn/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz
+http://mirror.cnop.net/jdk/linux/jdk-7u79-linux-x64.tar.gz
+```
+
+
+
+```
+vim /etc/hostname
+vim /etc/hosts
+hadoop000
+
+mkdir -p ~/app/tmp
+tar -xf jdk-7u79-linux-x64.tar.gz -C ~/app/
+
+cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
+
+vim ~/.bash_profile
+export JAVA_HOME=/home/hadoop/app/jdk1.7.0_79
+export PATH=$JAVA_HOME/bin:$PATH
+
+source ~/.bash_profile
+java -version
+```
+
+
+
+## hadoop
+
+```
+https://archive.cloudera.com/cdh5/cdh/5/hadoop-2.6.0-cdh5.7.0.tar.gz
+```
+
+
+
+```
+tar -xf hadoop-2.6.0-cdh5.7.0.tar.gz  -C ~/app/
+
+vim  etc/hadoop/hadoop-env.sh
+export JAVA_HOME=/home/hadoop/app/jdk1.7.0_79
+```
+
+
+
+```
+vim etc/hadoop/core-site.xml
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://hadoop000:8020</value>
+    </property>
+<property>
+        <name>hadoop.tmp.dir</name>
+        <value>/home/hadoop/app/tmp</value>
+</property>
+</configuration>
+
+
+vim etc/hadoop/hdfs-site.xml
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+</configuration>
+```
+
+
+
+### 启动hdfs
+
+仅仅第一次执行即可，不需要重复执行
+
+```
+bin/hdfs namenode -format
+```
+
+
+
+启动
+
+```
+sbin/start-dfs.sh
+```
+
+
+
+检查状态
+
+```
+$ jps
+11150 SecondaryNameNode
+10996 DataNode
+10881 NameNode
+11253 Jps
+```
+
+或访问
+
+```
+http://localhost:50070
+```
+
+
+
+停止
+
+```
+sbin/stop-dfs.sh
+```
+
+
+
+```
+vim ~/.bash_profile
+export HADOOP_HOME=/home/hadoop/app/hadoop-2.6.0-cdh5.7.0
+export PATH=$HADOOP_HOME/bin:$PATH
 ```
 
 
@@ -106,7 +228,13 @@ https://download.oracle.com/otn/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz
 
 
 
+## mysql
 
+mysql-connector-java-5.1.27-bin.jar
+
+```
+http://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.27/mysql-connector-java-5.1.27.jar
+```
 
 
 
