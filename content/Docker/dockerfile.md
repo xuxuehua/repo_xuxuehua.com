@@ -26,6 +26,15 @@ FROM <image>:<tag>
 
 
 
+
+The same pattern you use in `docker push` works:
+
+```
+FROM 1234567890.dkr.ecr.us-west-2.amazonaws.com/mycompany:latest
+```
+
+
+
 ## RUN 指令安装
 
 在docker build 期间的构建指令，RUN可以运行任何被基础image支持的命令。如基础image选择了ubuntu，那么软件管理部分只能使用ubuntu的命令。
@@ -98,6 +107,18 @@ Same as ‘ADD’ but without the tar and remote url handling.
 `COPY`的语法与功能与`ADD`相同，只是不支持上面讲到的`<src>`是远程URL、自动解压这两个特性，但是[Best Practices for Writing Dockerfiles](https://docs.docker.com/articles/dockerfile_best-practices/)建议**尽量使用COPY**，并使用`RUN`与`COPY`的组合来代替`ADD`，这是因为虽然`COPY`只支持本地文件拷贝到container，但它的处理比`ADD`更加透明，建议只在复制tar文件时使用`ADD`，如`ADD trusty-core-amd64.tar.gz /`。
 
 
+
+### 指定权限复制
+
+**For versions v17.09.0-ce and newer**
+
+Use the optional flag `--chown=<user>:<group>` with either the `ADD` or `COPY` commands.
+
+For example
+
+```
+
+```
 
 
 
@@ -584,7 +605,7 @@ RUN cd /app
 RUN echo "hello" > world.txt
 ```
 
-之前说过每一个 RUN 都是启动一个容器、执行命令、然后提交存储层文件变更。第一层 RUN cd /app 的执行仅仅是当前进程的工作目录变更，一个内存上的变化而已，其结果不会造成任何文件变更。而到第二层的时候，启动的是一个全新的容器，跟第一层的容器更完全没关系，自然不可能继承前一层构建过程中的内存变化。
+每一个 RUN 都是启动一个容器、执行命令、然后提交存储层文件变更。第一层 RUN cd /app 的执行仅仅是当前进程的工作目录变更，一个内存上的变化而已，其结果不会造成任何文件变更。而到第二层的时候，启动的是一个全新的容器，跟第一层的容器更完全没关系，自然不可能继承前一层构建过程中的内存变化。
 
 
 
@@ -608,10 +629,15 @@ USER redis
 RUN [ "redis-server" ]
 ```
 
-* USER 只是帮助你切换到指定用户而已，这个用户必须是事先建立好的，否则无法切换。 
 
 
-* 使用 gosu 切换到其他用户执行某个服务
+USER 只是帮助你切换到指定用户而已，这个用户必须是事先建立好的，否则无法切换。 
+
+
+
+
+
+使用 gosu 切换到其他用户执行某个服务
 
 ```
 # 建立 redis 用户，并使用 gosu 换另一个用户执行命令

@@ -186,6 +186,45 @@ DROP TABLE IF EXISTS backup_tbl;
 
 
 
+## 导出
+
+```
+pg_dump  -U  postgres  -f  c:\db.sql postgis
+```
+
+或者
+
+    pg_dump  -U postgres  postgis > c:\db.sql
+
+
+
+```
+pg_dump -Upostgres -t mytable -f  dump.sql  postgres
+
+>>>
+pg_dump -U USER -d DATABASE_NAME -t SCHEMA.TABLE_NAME -f LOCALFILE_NAME.sql -h DB_INSTANCE -p 5432
+```
+
+
+
+
+
+
+
+## 导入
+
+```
+psql  -d  postgis  -f  c:\db.sql  postgres
+```
+
+
+
+```
+psql  -d  postgis  -f  c:\ dump.sql postgres
+```
+
+
+
 # Concept
 
 

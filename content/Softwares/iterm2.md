@@ -27,3 +27,15 @@ make && make install
 
 Preferences -> General -> Selection -> `Copy to pasteboard on selection`
 
+
+
+## paste 速度
+
+Edit -> Paste Special -> Advanced paste
+
+Chunk size 16B
+
+interchunk Delay 630ms 
+
+
+

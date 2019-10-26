@@ -57,6 +57,12 @@ double │   │   │   │   │   │   │   │   │
        └───┴───┘
 ```
 
+
+
+
+
+
+
 # Hello World
 
 ```
@@ -76,6 +82,10 @@ public class Hello {
 > 使用`java`可以运行一个已编译的Java程序，参数是类名
 
 
+
+# 特点
+
+每个java应用程序都必须有一个main 方法
 
 # 注释
 
@@ -119,6 +129,161 @@ public class Hello {
     }
 }
 ```
+
+
+
+
+
+# 常量
+
+定义变量的时候，如果加上`final`修饰符，这个变量就变成了常量
+
+```
+final double PI = 3.14; // PI是一个常量
+double r = 5.0;
+double area = PI * r * r;
+PI = 300; // compile error!
+```
+
+> 常量在定义时进行初始化后就不可再次赋值，再次赋值会导致编译错误
+
+
+
+
+
+# 输入
+
+从控制台读取一个字符串和一个整数的例子
+
+```
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in); // 创建Scanner对象
+        System.out.print("Input your name: "); // 打印提示
+        String name = scanner.nextLine(); // 读取一行输入并获取字符串
+        System.out.print("Input your age: "); // 打印提示
+        int age = scanner.nextInt(); // 读取一行输入并获取整数
+        System.out.printf("Hi, %s, you are %d\n", name, age); // 格式化输出
+    }
+}
+
+>>>
+Input your name: Rick
+Input your age: 18
+Hi, Rick, you are 18
+```
+
+
+
+# 输出
+
+println 表示 print line ， 即输出并换行，如果不想换行使用print()
+
+
+
+## 格式化输出
+
+格式化输出使用`System.out.printf()`，通过使用占位符`%?`，`printf()`可以把后面的参数格式化成指定格式
+
+Java的格式化功能提供了多种占位符，可以把各种数据类型“格式化”成指定的字符串：
+
+| 占位符 | 说明                             |
+| :----- | :------------------------------- |
+| %d     | 格式化输出整数                   |
+| %x     | 格式化输出十六进制整数           |
+| %f     | 格式化输出浮点数                 |
+| %e     | 格式化输出科学计数法表示的浮点数 |
+| %s     | 格式化字符串                     |
+
+注意，由于%表示占位符，因此，连续两个%%表示一个%字符本身。
+
+
+
+```
+public class Main {
+    public static void main(String[] args) {
+        double d = 3.1415926;
+        System.out.printf("%.2f\n", d);
+        System.out.printf("%.4f\n", d);
+    }
+}
+
+>>>
+3.14
+3.1416
+```
+
+
+
+# var关键字
+
+有些时候，类型的名字太长，写起来比较麻烦。例如：
+
+```
+StringBuilder sb = new StringBuilder();
+```
+
+这个时候，如果想省略变量类型，可以使用`var`关键字：
+
+```
+var sb = new StringBuilder();
+```
+
+编译器会根据赋值语句自动推断出变量`sb`的类型是`StringBuilder`。对编译器来说，语句：
+
+```
+var sb = new StringBuilder();
+```
+
+实际上会自动变成：
+
+```
+StringBuilder sb = new StringBuilder();
+```
+
+因此，使用`var`定义变量，仅仅是少写了变量类型而已。
+
+
+
+
+
+# 命令行参数
+
+Java程序的入口是`main`方法，而`main`方法可以接受一个命令行参数，它是一个`String[]`数组。
+
+命令行参数由JVM接收用户输入并传给`main`方法
+
+
+
+## 位置参数
+
+我们可以利用接收到的命令行参数，根据不同的参数执行不同的代码。例如，实现一个`-version`参数，打印程序版本号
+
+```
+public class Main {
+    public static void main(String[] args) {
+        for (String arg: args) {
+            if ("-version".equals(arg)) {
+                System.out.println("v 1.0");
+                break;
+            }
+        }
+    }
+}
+
+>>>
+javac Main.java
+>>>
+java Main -version
+>>>
+v 1.0
+```
+
+
+
+
 
 # Terminology
 

@@ -671,7 +671,7 @@ def logout():
 
 ## set_cookie()
 
-用来设置一个cookie
+Flask 操作cookie，是通过response 对象来操作，可以在response返回之前，通过response.set_cookie 来设置
 
 ```
 from flask import Flask, make_response
@@ -684,6 +684,29 @@ def set_cookie(name):
 ```
 
 > 生成的Set-Cookie字段为 "Set-Cookie: name=Grey;Path=/"
+
+
+
+其几个参数需要注意
+
+```
+key：设置的cookie的key。
+value：key对应的value。
+max_age：改cookie的过期时间，如果不设置，则浏览器关闭后就会自动过期。
+expires：过期时间，应该是一个datetime类型。
+domain：该cookie在哪个域名中有效。一般设置子域名，比如cms.example.com。
+path：该cookie在哪个路径下有效。
+```
+
+使用：
+
+```
+获取：request.cookies.get(key, '默认值')
+设置：resp.set_cookie(key, value, max_age=整数)
+删除：resp.delete_cookie(key)
+```
+
+
 
 
 
@@ -706,7 +729,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'secret string')
 
 ## session
 
-session可以保存cookie信息
+将session数据加密，然后存储在cookie中，这种专业术语叫做client side session， flask采用这种方式
 
 ```
 from flask import redirect, session, url_for
@@ -719,7 +742,77 @@ def login():
 
 >  session 中的数据可以像字典一样通过键读取，或时使用get方法
 >
-> 
+
+
+
+sqlalchemy
+
+```
+import redis
+from flask import Flask, session
+from flask_session import Session 
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.debug = True
+app.secret_key = 'adavafa'
+
+# 设置数据库链接
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:dev@127.0.0.1:3306/devops?charset=utf8'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+# 实例化SQLAlchemy
+db = SQLAlchemy(app)
+app.config['SESSION_TYPE'] = 'sqlalchemy' # session类型为sqlalchemy
+app.config['SESSION_SQLALCHEMY'] = db # SQLAlchemy对象
+app.config['SESSION_SQLALCHEMY_TABLE'] = '表名' # session要保存的表名称
+
+app.config['SESSION_PERMANENT'] = True # 如果设置为True，则关闭浏览器session就失效。
+app.config['PERMANENT_SESSION_LIFETIME']=timedelta(seconds=20)
+#一个持久化的会话的生存时间，是一个datetime.timedelta对象，也可以用一个整数来表示秒,前提设置了PERMANENT_SESSION_LIFETIME为True
+app.config['SESSION_USE_SIGNER'] = False # 是否对发送到浏览器上session的cookie值进行加密,默认False
+app.config['SESSION_KEY_PREFIX'] = 'flask-session' # 保存的session的key的前缀
+app.config['SESSION_COOKIE_NAME']= 'session_id'  # 保存在浏览器的cookie名称
+
+
+#其他配置，不经常使用
+app.config['SESSION_COOKIE_DOMAIN']='127.0.0.1' # 设置cookie的域名，不建议设置默认为server_name
+app.config['SESSION_COOKIE_PATH']='/' # 会话cookie的路径。 如果未设置，则cookie将对所有url有效，默认为'/'
+app.config['SESSION_COOKIE_HTTPONLY']=True # 是否启动httponly,默认为true，为了防止xss脚本访问cookie
+
+
+
+
+Session(app)
+
+
+@app.route('/login')
+def index():
+ session["username"]="jack"
+ return 'login'
+
+
+if __name__ == '__main__':
+ app.run()
+
+
+###使用SQLAlchemy时候先确保数据库和表都存在
+在命令行中创建表
+#>>> from app import db
+#>>> db.create_all()
+```
+
+
+
+ 设置数据库
+
+```
+CREATE TABLE public.flask_session_table (
+    id integer PRIMARY KEY NOT NULL,
+    session_id character varying(255),
+    data bytea,
+    expiry timestamp without time zone
+);
+```
 
 
 
