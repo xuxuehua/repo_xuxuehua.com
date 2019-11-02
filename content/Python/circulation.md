@@ -158,6 +158,19 @@ for i in range(10):
 
 
 
+```
+In [72]: items = {'a': 1, 'b':2, 'c': 3}                                                                                                                                     
+
+In [73]: for i in items: 
+    ...:     print(i) 
+    ...:                                                                                                                                                                     
+a
+b
+c
+```
+
+
+
 ### for... else 
 
 完成循环，就执行else

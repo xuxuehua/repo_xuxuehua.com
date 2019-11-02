@@ -18,6 +18,18 @@ for (初始条件; 循环检测条件; 循环后更新计数器) {
 
 
 
+
+
+## 设定循环次数
+
+```
+for (int i=1; i<=10; i++) {
+		System.out.println(i);
+}
+```
+
+
+
 整型数组的所有元素求和
 
 ```
@@ -63,7 +75,7 @@ for (;;) {
 }
 ```
 
-通常不推荐这样写，但是，某些情况下，是可以省略`for`循环的某些语句的
+> 通常不推荐这样写，但是，某些情况下，是可以省略`for`循环的某些语句的
 
 
 
@@ -151,6 +163,21 @@ public class Main {
 ```
 
 
+
+for 循环其实是while循环的一种简化形式
+
+```
+for (int i=10; i>0; i--) {
+    System.out.println("Counting down ..." + i);
+}
+
+//等价于
+int i = 10;
+while (i > 10) {
+    System.out.println("Counting down ..." + i);
+    i--;
+}
+```
 
 
 
@@ -289,6 +316,35 @@ Breaked
 ```
 
 
+
+## 带标签的break
+
+跳出的标签后面要加冒号，这次定义为read_data
+
+```
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int n;
+        read_data:
+        while (true) {
+            for (int i=0; i<=10; i--) {
+                System.out.print("Enter a number >=0: ");
+                n = in.nextInt();
+                if (n>4) {
+                    break read_data;
+                }
+            }
+        }
+    }
+}
+
+>>>
+Enter a number >=0: 3
+Enter a number >=0: 5
+```
 
 # continue
 

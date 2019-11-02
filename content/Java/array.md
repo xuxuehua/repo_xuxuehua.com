@@ -22,6 +22,16 @@ collection: 基本变量类型
 
 ## 字符串数组
 
+```
+String[] names = new String[10];
+```
+
+> 创建了一个包含10个字符串数组，所有字符串都为null
+>
+> 可以为其内部元素指定空串
+
+
+
 如果数组元素不是基本类型，而是一个引用类型，字符串是引用类型
 
 ```
@@ -80,6 +90,27 @@ XYZ
 
 
 
+## 匿名数组
+
+即创建数组对象并同时赋值初始值的简化写法
+
+```
+smallPrimes = new int[] {17, 19, 23, 29, 31, 37};
+```
+
+
+
+```
+int [] ns = new int[] {68, 79, 91, 85, 62 };
+System.out.println(ns.length);
+```
+
+还可以进一步简写为：
+
+```
+int[] ns = { 68, 79, 91, 85, 62 };
+```
+
 # 多维数组
 
 ## 二维数组
@@ -106,9 +137,19 @@ public class Main {
 
 ### for 循环打印
 
-```
+for each循环不能自动处理二维数组的每一个元素， 需要使用两个嵌套循环
 
 ```
+for (double[] row: a)
+    for (double value: row)
+    		do something with value
+```
+
+
+
+
+
+
 
 
 
@@ -293,6 +334,14 @@ public class Main {
 ### for each
 
 ```
+for (variable: collection) {
+		statement;
+}
+```
+
+
+
+```
 public class Main {
     public static void main(String[] args) {
         int [] ns = {1, 4, 9, 16, 25};
@@ -309,6 +358,30 @@ public class Main {
 16
 25
 ```
+
+也可以使用for 循环获取
+
+```
+public class Main {
+    public static void main(String[] args) {
+        int[] ns = {1, 4, 9, 16, 25};
+        for (int i=0; i<ns.length; i++) {
+            System.out.println(ns[i]);
+        }
+    }
+}
+
+>>>
+1
+4
+9
+16
+25
+```
+
+
+
+
 
 
 
@@ -347,15 +420,14 @@ System.out.println(ns.length);
 
 
 
-## 指定初始化元素
+## copyOf 复制
 
 ```
-int [] ns = new int[] {68, 79, 91, 85, 62 };
-System.out.println(ns.length);
+int[] luckyNumbers = smallPrimes;
+int[] copiedLuckyNumbers = Arrays.copyOf(luckyNumbers, luckyNumbers.length);
 ```
 
-还可以进一步简写为：
 
-```
-int[] ns = { 68, 79, 91, 85, 62 };
-```
+
+
+

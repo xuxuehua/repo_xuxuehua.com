@@ -73,7 +73,7 @@ public class Main {
 
 
 
-## 自增/自减
+## 自增/自减 （不推荐）
 
 Java还提供了`++`运算和`--`运算，它们可以对一个整数进行加1和减1的操作
 
@@ -83,7 +83,7 @@ public class Main {
         int n = 3300;
         n++; // 3301, 相当于 n = n + 1;
         n--; // 3300, 相当于 n = n - 1;
-        int y = 100 + (++n); // 不要这么写
+        int y = 100 + (++n); // 不要这么写, 会先加然后再计算
         System.out.println(y);
     }
 }
@@ -131,6 +131,26 @@ public class Main {
 ```
 
 
+
+# 逻辑运算符
+
+```
+与 &&
+
+或 ||
+
+非 ! 
+```
+
+
+
+## 三元操作符 ?
+
+```
+condition ? expression1: expression2
+```
+
+> 若条件为true， 为第一个表达式的值，否则为第二个表达式的值
 
 
 
@@ -235,6 +255,12 @@ n = 1 ^ 1; // 0
 
 # 类型转换
 
+虚线会丢失精度
+
+![img](https://snipboard.io/1dsbL4.jpg)
+
+
+
 
 
 ## short to int 
@@ -287,6 +313,17 @@ public class Main {
 ```
 
 
+
+
+
+## 强制类型转换
+
+通过(cast) 实现这个操作, 括号中是想要转换的目标类型
+
+```
+double x = 9.997;
+int nx = (int) x; // 9
+```
 
 
 

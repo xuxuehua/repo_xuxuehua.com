@@ -108,6 +108,42 @@ Not selected
 
 
 
+## case标签
+
+case标签可以是
+
+类型为char，byte，short， int的常量表达式
+
+枚举常量
+
+```
+Size sz = ...;
+switch (sz) {
+		case SMALL: // no need to use Size.SMALL
+				...
+				break;
+}
+```
+
+
+
+从Java7SE开始，可以是字符串字面量
+
+```
+String input = ...;
+switch (input.toLowerCase()) {
+		case "yes": // since Java SE 7
+				...
+				break;
+}
+```
+
+
+
+
+
+
+
 ## switch 语法检查
 
 在Idea中，选择`Preferences` - `Editor` - `Inspections` - `Java` - `Control flow issues`，将以下检查标记为Warning：

@@ -31,12 +31,21 @@ BigInteger`是不变类，并且继承自`Number
 
 
 
-例如，加法运算：
+加法运算：
 
 ```
 BigInteger i1 = new BigInteger("1234567890");
 BigInteger i2 = new BigInteger("12345678901234567890");
 BigInteger sum = i1.add(i2); // 12345678902469135780
+```
+
+
+
+乘法运算
+
+```
+BigInteger c = a.add(b);
+BigInteger d = c.multiply(b.add(BigInteger.valueOf(2)))
 ```
 
 

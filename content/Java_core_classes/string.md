@@ -8,7 +8,9 @@ date: 2019-10-20 12:20
 
 # String
 
-在Java中，`String`是一个引用类型，它本身也是一个`class`。但是，Java编译器对`String`有特殊处理，即可以直接用`"..."`来表示一个字符串
+Java 没有内置的字符串类型，在类库中提供了预定义类
+
+`String`是一个引用类型，它本身也是一个`class`。但是，Java编译器对`String`有特殊处理，即可以直接用`"..."`来表示一个字符串
 
 
 
@@ -49,6 +51,25 @@ HELLO
 
 
 
+## 拼接
+
+将字符串和一个非字符串值进行拼接，后者会被转换成字符串
+
+```
+public class Main {
+    public static void main(String[] args) {
+        int age = 18;
+        String my = "Rick" + age;
+        System.out.println(my);
+        System.out.println(my.getClass());
+    }
+}
+
+>>>
+Rick18
+class java.lang.String
+```
+
 
 
 # 字符串处理 
@@ -78,6 +99,12 @@ true
 ```
 
 > 从表面上看，两个字符串用`==`和`equals()`比较都为`true`，但实际上那只是Java编译器在编译期，会自动把所有相同的字符串当作一个对象放入常量池
+
+
+
+
+
+``		`																		
 
 
 
@@ -366,7 +393,7 @@ String s2 = new String(b, StandardCharsets.UTF_8); // 按UTF-8转换
 
 
 
-# StringBuilder
+# StringBuilder （可变z）
 
 Java标准库提供了`StringBuilder`，它是一个可变对象，可以预分配缓冲区，这样，往`StringBuilder`中新增字符时，不会创建新的临时对象
 
@@ -391,7 +418,7 @@ public class Main {
 
 
 
-## 链式操作
+## 链式操作 
 
 `StringBuilder`还可以进行链式操作
 

@@ -35,7 +35,7 @@ Edit -> Paste Special -> Advanced paste
 
 Chunk size 16B
 
-interchunk Delay 630ms 
+interchunk Delay 251.19ms 
 
 
 

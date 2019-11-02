@@ -92,7 +92,7 @@ Math.acos(1.0); // 0.0
 
 
 
-## 数学常量 pi/e
+## 数学常量 PI/E
 
 ```
 double pi = Math.PI; // 3.14159...

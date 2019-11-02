@@ -1,7 +1,9 @@
 ---
-
+title: "basic_knowledge"
+date: 2019-11-02 11:09
 ---
 [TOC]
+
 
 
 
@@ -132,11 +134,26 @@ public class Hello {
 
 
 
+# 变量
+
+声明变量时，变量类型位于变量名之前
+
+```
+double salary;
+int vacations;
+long earthPopulation;
+boolean done;
+```
 
 
-# 常量
+
+# 常量 final 
 
 定义变量的时候，如果加上`final`修饰符，这个变量就变成了常量
+
+final 表示的这个变量只能被赋值一次
+
+常量在定义时进行初始化后就不可再次赋值，再次赋值会导致编译错误
 
 ```
 final double PI = 3.14; // PI是一个常量
@@ -145,22 +162,41 @@ double area = PI * r * r;
 PI = 300; // compile error!
 ```
 
-> 常量在定义时进行初始化后就不可再次赋值，再次赋值会导致编译错误
+
+
+## 类常量 static final
+
+使用static final 设置一个类常量
+
+```
+public class Main {
+		public static final double CM_PER_INCH = 2.54;
+		
+		public static void main(String[] args) {
+				double paperWidth = 8.5;
+				double paperHeight = 11;
+				System.out.println("Paper size in centimeters: " + paperWidth * CM_PER_INCH + " by " + paperHeight * CM_PER_INCH);
+		}
+}
+
+>>>
+Paper size in centimeters: 21.59 by 27.94
+```
 
 
 
 
 
-# 输入
+# 输入 Scanner
 
-从控制台读取一个字符串和一个整数的例子
+从控制台读取一个字符串和一个整数的
 
 ```
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in); // 创建Scanner对象
+        Scanner scanner = new Scanner(System.in); // 创建Scanner对象, 通过控制台输入
         System.out.print("Input your name: "); // 打印提示
         String name = scanner.nextLine(); // 读取一行输入并获取字符串
         System.out.print("Input your age: "); // 打印提示
@@ -177,7 +213,29 @@ Hi, Rick, you are 18
 
 
 
-# 输出
+
+
+## 常用方法
+
+
+
+| 方法          | 用途                                     |
+| ------------- | ---------------------------------------- |
+| nextLine      | 读取输入的下一行内容                     |
+| next          | 读取下一个单词，以空格作为分隔符         |
+| nextInt       | 读取下一个                               |
+| nextDouble    | 读取下一个浮点数                         |
+| hasNext       | 检测输入中是否还有其他单词               |
+| hasNextInt    |                                          |
+| hasNextDouble | 是否还有表示浮点数或整数的下一个字符序列 |
+
+
+
+
+
+
+
+# 输出 
 
 println 表示 print line ， 即输出并换行，如果不想换行使用print()
 
@@ -187,17 +245,24 @@ println 表示 print line ， 即输出并换行，如果不想换行使用print
 
 格式化输出使用`System.out.printf()`，通过使用占位符`%?`，`printf()`可以把后面的参数格式化成指定格式
 
-Java的格式化功能提供了多种占位符，可以把各种数据类型“格式化”成指定的字符串：
+Java的格式化功能提供了多种占位符，可以把各种数据类型“格式化”成指定的字符串
 
-| 占位符 | 说明                             |
-| :----- | :------------------------------- |
-| %d     | 格式化输出整数                   |
-| %x     | 格式化输出十六进制整数           |
-| %f     | 格式化输出浮点数                 |
-| %e     | 格式化输出科学计数法表示的浮点数 |
-| %s     | 格式化字符串                     |
 
-注意，由于%表示占位符，因此，连续两个%%表示一个%字符本身。
+
+| 占位符 | 说明                   |
+| :----- | :--------------------- |
+| %d     | 十进制整数             |
+| %x     | 十六进制整数           |
+| %o     | 八进制整数             |
+| %f     | 定点浮点数             |
+| %e     | 科学计数法表示的浮点数 |
+| %s     | 字符串                 |
+| %c     | 字符                   |
+| %b     | 布尔                   |
+| %%     | 一个%字符本身          |
+| %n     | 与平台有关的行分隔符   |
+
+
 
 
 
@@ -214,6 +279,25 @@ public class Main {
 3.14
 3.1416
 ```
+
+
+
+### 日期时间转换符
+
+| 转换符 | 类型                     | 例子                         |       |
+| ------ | ------------------------ | ---------------------------- | ----- |
+| c      | 完成的时间和日期         | Mon Feb 09 18:05:19 PST 2019 |       |
+| D      | 美国格式日期（月/日/年） | 02/09/2019                   |       |
+| T      | 24小时时间               | 18:05:09                     |       |
+| Y      | 4位数字年                | 2019                         |       |
+| B      | 月完整拼写               | February                     |       |
+| m      | 2位数字月                | 02                           |       |
+| d      | 2为数字日                | 09                           |       |
+| A      | 星期完整拼写             | Monday                       |       |
+| H      | 2位数字小时              | 18                           |       |
+| M      | 2为数字分钟              | 05                           |       |
+| S      | 2为数字秒                | 19                           | 1起起 |
+| Z      | 时区                     | PST                          |       |
 
 
 
@@ -433,6 +517,7 @@ java调试器，用于开发阶段的运行调试。
 Java SE 6， 7， 8 对应为内部版本号 1.6.0， 1.7.0， 1.8.0
 
 Java SE 8u31表示 Java SE 8 的第31次更新，内部版本号为1.8.0_31， 更新不需要安装在前一个版本之上，其会包含整个JDK的最新版本（这里并不表示所有更新都会公开发布）
+
 
 
 
