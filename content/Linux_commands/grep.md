@@ -298,6 +298,24 @@ root     10017  8011  0 18:20 pts/0    00:00:00 grep --color=auto host
 
 
 
+
+
+## --exclude-dir 排除目录
+
+```
+grep -r --exclude-dir=dev --exclude-dir=sys --exclude-dir=proc PATTERN /path/to/search
+```
+
+通过find 实现
+
+```
+find . -not -path "*/.svn*" -not -type d -exec grep -ni "myfunc" {} \; -print
+
+find /dir \( -name node_modules -prune \) -o -name "*.sh" -exec grep --color -Hn "your text to find" {} 2>/dev/null \;
+```
+
+
+
 ## 规则表达式
 
 | 定义 | 解释 | 实例 |

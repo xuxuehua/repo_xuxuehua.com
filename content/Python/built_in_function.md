@@ -633,3 +633,46 @@ print(na, nb)
 <zip object at 0x1034855c8>
 (1, 2, 3) (4, 5, 6)
 ```
+
+
+
+
+
+## `__import__` 动态加载
+
+`__import__()`函数用于动态加载类和函数 。
+
+如果一个模块经常变化就可以使用 `__import__()` 来动态载入
+
+```
+__import__(name[, globals[, locals[, fromlist[, level]]]])
+```
+
+
+
+```
+a.py
+### 
+#!/usr/bin/env python    
+#encoding: utf-8  
+ 
+import os  
+ 
+print ('在 a.py 文件中 %s' % id(os))
+```
+
+
+
+```
+test.py
+###
+#!/usr/bin/env python    
+#encoding: utf-8  
+ 
+import sys  
+__import__('a')        # 导入 a.py 模块
+
+>>>
+在 a.py 文件中 4394716136
+```
+
