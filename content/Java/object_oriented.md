@@ -102,6 +102,8 @@ class Person {
 
 
 
+
+
 # 对象
 
 对象的行为(behavior)： 可以对对象施加哪些操作，或可以对对象施加哪些方法
@@ -131,7 +133,7 @@ public class Main {
 }
 
 class Person {
-    private String name;
+    private String name; //保证只有自身方法能够访问这些实例域
     private int age;
 
     public String getName() {
@@ -218,7 +220,7 @@ class Person {
 
 
 
-## 静态方法
+## 静态方法 
 
 有静态字段，就有静态方法。用`static`修饰的方法称为静态方法。
 
