@@ -64,18 +64,6 @@ brew install kubernetes-cli
 
 
 
-## minikube
-
-### mac osx
-
-```
-curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.34.1/minikube-darwin-amd64 && chmod +x minikube && sudo cp minikube /usr/local/bin/ && rm minikube
-```
-
-
-
-
-
 
 
 ## 基础命令
@@ -327,7 +315,7 @@ kubectl get pods -o wide
 
 
 
-##### nodes
+#### nodes
 
 查看键名为SSD标签的node资源
 
@@ -567,6 +555,18 @@ REVISION  CHANGE-CAUSE
 ### drain 维护模式
 
 值得node的负载以进入维护模式
+
+
+
+移除worker node
+
+```
+kubectl drain swarm1 --delete-local-data --force --ignore-daemonsets
+
+kubectl delete node swarm1
+```
+
+
 
 
 
@@ -831,7 +831,7 @@ kubectl describe pods pod-example | grep "Annotations"
 
 
 
-### label 资源标签
+### g 资源标签
 
 更新指定资源标签
 

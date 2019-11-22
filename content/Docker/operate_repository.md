@@ -164,3 +164,17 @@ REPOSITORY                         TAG                 IMAGE ID            CREAT
 
 
 
+## 指定registry地址
+
+找到可用IP
+
+```
+dig @114.114.114.114 registry-1.docker.io
+```
+
+修改`/etc/hosts`强制`docker.io`相关的域名解析到其它可用IP
+
+```
+52.87.94.70 registry-1.docker.io
+```
+

@@ -69,7 +69,7 @@ HTML 中的脚本必须位于`<script>` 与 `</script>` 标签之间。
 
 
 
-#### 声明（创建） JavaScript 变量
+#### var 声明（创建） JavaScript 变量
 
 使用 var 关键词来声明变量：
 
@@ -353,9 +353,9 @@ person=null;
 
 ## 变量
 
-### 变量定义
+### var 变量定义
 
-* 变量在JavaScript中就是用一个变量名表示，变量名是大小写英文、数字、`$`和`_`的组合，且不能用数字开头。变量名也不能是JavaScript的关键字，如`if`、`while`等。申明一个变量用`var`语句
+变量在JavaScript中就是用一个变量名表示，变量名是大小写英文、数字、`$`和`_`的组合，且不能用数字开头。变量名也不能是JavaScript的关键字，如`if`、`while`等。申明一个变量用`var`语句
 
 ```
 var a; // 申明了变量a，此时a的值为undefined
@@ -363,6 +363,23 @@ var $b = 1; // 申明了变量$b，同时给$b赋值，此时$b的值为1
 var s_007 = '007'; // s_007是一个字符串
 var Answer = true; // Answer是一个布尔值true
 var t = null; // t的值是null
+```
+
+
+
+### var 的问题
+
+There's a weakness that comes with `var`. I'll use the example below to explain this.
+
+```
+    var greeter = "hey hi";
+    var times = 4;
+
+    if (times > 3) {
+        var greeter = "say Hello instead"; 
+    }
+
+    console.log(greeter) //"say Hello instead"
 ```
 
 
@@ -386,6 +403,12 @@ a = 'ABC'; // a变为字符串
 int a = 123; // a是整数类型变量，类型用int申明
 a = "ABC"; // 错误：不能把字符串赋给整型变量
 ```
+
+
+
+
+
+
 
 
 

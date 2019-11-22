@@ -179,6 +179,19 @@ null
 
 ### replace 
 
+利用`replace()`进行替换的时候，如果传入的是字符串，则只会替换第一个子字符串，要想替换所有的子字符串，则需要传入一个正则表达式，而且要指定全局（g）标志
+
+```
+var text = 'cat , bat , sat , fat';
+var result = text.replace('at','ond');
+console.log(result); // =>'cont , bat , sat , fat'
+
+result = text.replace(/at/g,'ond');
+console.log(result); //=>'cont , bont , sont , font'
+```
+
+
+
 ```
 var str = "Hello World";
 str.replace(/World/, 'Rick');
@@ -198,6 +211,34 @@ str.toString()
 ```
 
 
+
+
+
+### tri 去除空格
+
+ES5中新增`trim()`方法用于去除字符串的左右空格，**该方法会创建一个字符串的副本，不会改变原有的字符串**，此外，Firefox 3.5+、Safari 5+
+和 Chrome 8+还支持非标准的 trimLeft()和 trimRight()方法，分别用于删除字符串开头和末尾的
+空格。
+
+其实去空格可以使用正则去匹配的去掉，这里写一个去空格函数
+
+```
+/*trim    去掉空白
+str要处理的字符串        
+[type]     类型：l 去除左边的空白    r去除右边空白    b去掉两边的空白        a去除所有空白*/
+function trim (str,type) {
+    var type=type||"b";
+    if(type=="b"){
+        return str.replace(/^\s*|\s*$/g,"");
+    }else if(type=="l"){
+        return str.replace(/^\s*/g,"");
+    }else if(type=="r"){
+        return str.replace(/\s*$/g,"");
+    }else if(type=="a"){
+        return str.replace(/\s*/g,"");
+    }
+}
+```
 
 
 

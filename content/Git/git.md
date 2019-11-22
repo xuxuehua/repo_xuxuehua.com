@@ -34,6 +34,18 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 
 
 
+
+
+## apply 合并diff变更
+
+```
+git diff > diff.txt
+
+git apply diff.txt
+```
+
+
+
 ## branch
 
 

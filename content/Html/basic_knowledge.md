@@ -19,6 +19,16 @@ Hyper Text Markup Language 超文本标记语言
 
 
 
+## DOM
+
+Document Object Model 
+
+浏览器加载html文件，每一个html tag转换成DOM树中的对象
+
+![img](https://www.w3schools.com/js/pic_htmltree.gif)
+
+
+
 
 
 ## 结构

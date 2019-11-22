@@ -105,9 +105,7 @@ systemctl enable docker
 关闭swap以防止报错
 
 ```
-vim /etc/sysconfig/kubelet
-
-KUBELET_EXTRA_ARGS="--fail-swap-on=false"
+swapoff -a
 ```
 
 
@@ -234,6 +232,13 @@ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documen
 ```
 
 
+
+For v1.6+
+
+```
+kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
+kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+```
 
 可以看到加载的镜像文件
 

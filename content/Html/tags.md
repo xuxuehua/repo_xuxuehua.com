@@ -8,7 +8,9 @@ date: 2018-11-06 20:08
 
 # 标签
 
-## `<!DOCTYPE html> ` html5版本
+## `<!DOCTYPE html> ` 
+
+html5版本
 
 标签位于文档的最前面，用于向浏览器说明当前文档使用哪种HTML或XHTML标准规范
 
@@ -363,6 +365,16 @@ align bottom：底部和文本的第一行文字对齐，其他文字居图像�
 
 需要输入大量的信息是来处理
 
+```
+<textarea type="text" class="form-control" id="schedule_params" name="schedule_params" placeholder="JSON format parameter passed to schedule function: &quot;&#123;&quot;range_type&quot;&#58; &quot;WEEK&quot;&#125;&quot; "></textarea>                              
+```
+
+> placeholder 要求`<textarea>` 必须在一行，其间不能有空格
+
+
+
+
+
 
 
 ###  属性
@@ -627,6 +639,8 @@ html为特殊符号准备了专门的替代码
 ### 小于 `&lt` 
 
 ### 大于 `&gt`;
+
+[https://ascii.cl/htmlcodes.htm](https://ascii.cl/htmlcodes.htm)
 
 
 

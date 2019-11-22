@@ -131,6 +131,10 @@ yum install git
 git clone git://github.com/yyuu/pyenv.git .pyenv
 ```
 
+```
+https://github.com/pyenv/pyenv-virtualenv.git
+```
+
 
 
 为 pyenv 提供环境配置

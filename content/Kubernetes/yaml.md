@@ -16,6 +16,8 @@ date: 2019-03-08 11:59
 group_name/version
 ```
 
+> group_name 省略表示 core核心群组
+
 
 
 指明资源所在群组以及版本
@@ -58,11 +60,13 @@ v1
 
 
 
-# kind
+# kind 资源类别
 
-资源类别
+初始化资源对象时使用
 
-如Pod，Replicas
+如Pod，Replicas， deployment， StatefulSet
+
+
 
 
 
@@ -175,6 +179,8 @@ API对象的“标识”，即元数据，也是从Kubernetes里找到这个对�
 
 其中最主要使用到的字段是Labels
 
+嵌套字段
+
 
 
 
@@ -195,7 +201,7 @@ name是受限于namespace的
 
 
 
-### labels
+### labels (重要)
 
 key-value 数据
 
@@ -203,7 +209,7 @@ key最多63个字符，只能使用字母，数字，下划线，横线
 
 value 可以为空，只能字母或者数字开头及结尾
 
-
+资源对象进行管理，可以添加多个标签
 
 ```
 apiVersion: v1
@@ -274,7 +280,7 @@ spec:
 
 
 
-# Spec 期待状态
+# Spec 用户期待状态
 
 specification 规格
 
@@ -298,7 +304,7 @@ specification 规格
 
 
 
-## containers 容器列表
+## containers 容器列表 
 
 内容为列表，开头需要添加 `-`
 
@@ -317,6 +323,8 @@ pod 容器使用的镜像
 
 
 若为自定义仓库，需要指明仓库路径以及名称
+
+
 
 
 
@@ -442,6 +450,8 @@ Here are some examples:
 
 ## selector
 
+
+
 ### matchLabels
 
 通过直接给定键值来指定标签选择器
@@ -483,13 +493,13 @@ selector:
 
 
 
-# status 当前状态
+# status 当前状态 (read-only)
 
-目标资源的当前状态
+显示目标资源的当前状态
 
 由kubernetes集群维护，用户不能自定义
 
-
+即status状态尽最大向spec状态转移
 
 
 

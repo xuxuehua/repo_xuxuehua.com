@@ -246,7 +246,7 @@ sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
 ## Create cluster control plane
  https://us-west-2.console.aws.amazon.com/eks
 
-We can launch via the EKS console: https://console.aws.amazon.com/ek
+We can launch via the EKS console: https://console.aws.amazon.com/eks
 
 Input Cluster Name with `classCluster`, click next
 
@@ -276,6 +276,14 @@ export AWS_PROFILE=clusterAdmin # Re-enable it when you reset your terminal (AWS
 
 
 
+If you assumed a role to create the Amazon EKS cluster, you must ensure that **kubectl** is configured to assume the same role. Use the following command to update your kubeconfig file to use an IAM role.
+
+```
+aws --region region eks update-kubeconfig --name cluster_name --role-arn arn:aws:iam::aws_account_id:role/role_name
+```
+
+
+
 ```
 aws eks --region (region) update-kubeconfig --name classCluster
 
@@ -290,6 +298,10 @@ kubernetes   ClusterIP   10.100.0.1   <none>        443/TCP   4h
 kubectl get pods
 kubectl get nodes
 ```
+
+
+
+
 
 
 
