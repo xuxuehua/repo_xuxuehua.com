@@ -17,8 +17,32 @@ date: 2019-03-31 18:26
 docker ce
 
 ```
-wget https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+yum install -y yum-utils \
+  device-mapper-persistent-data \
+  lvm2
 ```
+
+Use the following command to set up the **stable** repository.
+
+```
+yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+```
+
+
+
+```
+yum list docker-ce --showduplicates | sort -r
+
+yum install docker-ce-<VERSION_STRING> docker-ce-cli-<VERSION_STRING> containerd.io
+
+yum -y install docker-ce-18.09.0 docker-ce-cli-18.09.0 containerd.io
+
+systemctl start docker && systemctl enable docker && systemctl status docker
+```
+
+
 
 
 
@@ -51,21 +75,19 @@ yum repolist
 wget https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
 
 rpm --import rpm-package-key.gpg
+
+yum -y install docker-ce kubelet kubeadm kubectl 
 ```
 
 
 
-```
-yum install docker-ce kubelet kubeadm kubectl 
-```
 
 
 
 
+## docker config 
 
-## docker config
-
-Use your own proxy
+Use your own proxy 
 
 ```
 vim /usr/lib/systemd/system/docker.service
@@ -78,7 +100,7 @@ Environment="NO_PROXY=127.0.0.0/8,172.20.0.0/16"
 
 
 
-激活iptables call
+## 激活iptables call
 
 ```
 vim /etc/sysctl.conf
@@ -88,14 +110,12 @@ net.bridge.bridge-nf-call-ip6tables = 1
 ```
 
 ```
-[root@localhost ~]# cat /proc/sys/net/bridge/bridge-nf-call-ip6tables
-1
-[root@localhost ~]# cat /proc/sys/net/bridge/bridge-nf-call-iptables
-1
+cat /proc/sys/net/bridge/bridge-nf-call-ip6tables
+cat /proc/sys/net/bridge/bridge-nf-call-iptables
 ```
 
 ```
-systemctl enable docker
+systemctl enable docker && systemctl start docker && systemctl status docker
 ```
 
 
@@ -106,6 +126,10 @@ systemctl enable docker
 
 ```
 swapoff -a
+```
+
+```
+systemctl enable kubelet && systemctl start kubelet && systemctl status kubelet
 ```
 
 
@@ -166,7 +190,7 @@ systemctl enable --now kubelet
 ## kubeadm
 
 ```
-kubeadm init --kubernetes-version=v1.14.0 --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap
+kubeadm init --kubernetes-version=v1.16.0 --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap
 ```
 
 
@@ -263,6 +287,55 @@ k8s.gcr.io/pause                     3.1                 da86e6ba6ca1        15 
 
 ## Install
 
+docker ce
+
+```
+yum install -y yum-utils \
+  device-mapper-persistent-data \
+  lvm2
+```
+
+Use the following command to set up the **stable** repository.
+
+```
+yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+```
+
+
+
+```
+yum list docker-ce --showduplicates | sort -r
+
+yum install docker-ce-<VERSION_STRING> docker-ce-cli-<VERSION_STRING> containerd.io
+
+yum -y install docker-ce-18.09.0 docker-ce-cli-18.09.0 containerd.io 
+
+systemctl start docker && systemctl enable docker && systemctl status docker
+```
+
+
+
+## kubelet
+
+
+
+### aliyun 
+
+kubernetes.repo
+
+```
+[kubernetes]
+name=Kubernetes Repo
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+enabled=1
+```
+
+
+
 ```
 wget https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
 
@@ -272,7 +345,7 @@ rpm --import rpm-package-key.gpg
 
 
 ```
-yum install docker-ce kubelet kubeadm
+yum install -y kubelet kubeadm
 ```
 
 激活iptables call
@@ -285,20 +358,10 @@ net.bridge.bridge-nf-call-ip6tables = 1
 ```
 
 ```
-[root@localhost ~]# cat /proc/sys/net/bridge/bridge-nf-call-ip6tables
-1
-[root@localhost ~]# cat /proc/sys/net/bridge/bridge-nf-call-iptables
-1
-```
-
-```
-systemctl enable docker kubelet
-systemctl start docker
+sysctl -p 
 ```
 
 
-
-## kubelet
 
 关闭swap以防止报错
 
@@ -319,6 +382,33 @@ echo 'Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false"' >> /etc/systemd/sys
 systemctl daemon-reload
 systemctl restart kubelet
 ```
+
+
+
+### GCE
+
+```
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kube*
+EOF
+
+# Set SELinux in permissive mode (effectively disabling it)
+setenforce 0
+sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+
+systemctl enable --now kubelet
+```
+
+
 
 
 

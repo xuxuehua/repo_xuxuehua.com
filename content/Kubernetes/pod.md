@@ -80,19 +80,17 @@ Infra 容器使用一个特殊的镜像 (k8s.gcr.io/pause)，占用资源极少�
 
 
 
-## Pod 生命周期（phase）
+# Pod 生命周期（phase）
 
 pod.status.phase 表示当前Pod的状态
 
-
-
-### 初始化容器 lifecycle
+极少使用，如依赖git仓库中的代码，在postStart的时候使用git clone
 
 
 
-#### postStart   ` <Object>` 启动后
+## postStart   ` <Object>` 启动后
 
-##### exec `<Object>` 用户指定命令
+### exec `<Object>` 用户指定命令
 
 根据指令返回码判断
 
@@ -118,7 +116,7 @@ spec:
 
 
 
-##### httpGet      `<Object>`
+### httpGet      `<Object>`
 
 ```
 
@@ -128,13 +126,13 @@ spec:
 
 
 
-##### tcpSocket    `<Object>`
+### tcpSocket    `<Object>`
 
 
 
-#### preStop     `<Object>` 终止前
+## preStop     `<Object>` 终止前
 
-##### exec `<Object>` 用户指定命令
+### exec `<Object>` 用户指定命令
 
 根据指令返回码判断
 
@@ -146,7 +144,7 @@ spec:
 
 
 
-##### httpGet      `<Object>`
+### httpGet      `<Object>`
 
 ```
 
@@ -156,13 +154,13 @@ spec:
 
 
 
-##### tcpSocket    `<Object>`
+### tcpSocket    `<Object>`
 
 
 
 
 
-### 容器探测
+# 容器探测
 
 主容器定时探测容器状态
 
@@ -178,13 +176,13 @@ RESOURCE: containers <[]Object>
 
 
 
-#### liveness 存活探测
+## liveness 存活探测
 
 探测容器是否处于存活状态
 
 
 
-##### exec `<Object>` 用户指定命令
+### exec `<Object>` 用户指定命令
 
 根据指令返回码判断
 
@@ -211,7 +209,7 @@ spec:
 
 
 
-##### httpGet      `<Object>`
+### httpGet      `<Object>`
 
 ```
 apiVersion: v1
@@ -239,19 +237,19 @@ spec:
 
 
 
-##### tcpSocket    `<Object>`
+### tcpSocket    `<Object>`
 
 
 
 
 
-#### readiness 就绪探测   (重要)
+## readiness 就绪探测   (重要)
 
-探测容器中的服务和程序是否提供服务
+探测容器中的服务和程序是否提供服务, 不设置会让未经探测的pod被selector匹配之后立即提供服务，从而导致错误
 
 
 
-##### exec `<Object>` 用户指定命令
+### exec `<Object>` 用户指定命令
 
 根据指令返回码判断
 
@@ -261,7 +259,7 @@ spec:
 
 
 
-##### httpGet      `<Object>`
+### httpGet      `<Object>`
 
 ```
 apiVersion: v1
@@ -317,7 +315,7 @@ readiness-httpget-pod          1/1     Running            0          4m48s
 
 
 
-##### tcpSocket    `<Object>`
+### tcpSocket    `<Object>`
 
 
 
@@ -402,7 +400,7 @@ Kubernetes. 尝试一次又一次的重启Pod
 
 ## restartPolicy 容器重启策略
 
-### Always
+### Always (默认)
 
 pod对象终止就将其重启，默认设定
 
@@ -538,7 +536,7 @@ spec:
 
 
 
-## Pod 控制器 Controller
+# Pod 控制器 Controller
 
 借助Controller 对Pod进行管理，实现一次性的Pod对象管理, 对同一类pod进行管理
 
@@ -546,7 +544,7 @@ spec:
 
 
 
-### Replication Controller (淘汰)
+## Replication Controller (淘汰)
 
 定义了一个期望的场景，声明某种pod的副本数量在任意时刻都符合某个预期值
 
@@ -556,15 +554,41 @@ e.g. `apiVersion: extensions/v1beat1 kind: Replication metadata: name: frontend 
 
 
 
-### ReplicaSet
+## ReplicaSet
 
 确保给一个pod所指定数量的replicas 会一直运行
 
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myapp
+  namespace: default
+spec: #控制器的spec
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+      release: canary
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        app: myapp
+        release: canary
+        environment: qa
+    spec:  #pod 的spec
+      containers:
+      - name: myapp-container
+        image: ikubernetes/myapp:v1
+        ports:
+        - name: http
+          containerPort: 80
+```
 
 
 
-
-### Deployment （常用）
+## Deployment  无状态（常用）
 
 Deployment 为Pod和ReplicaSet提供一个声明方法，用来替代Replication Controller 来方便管理
 
@@ -574,7 +598,52 @@ Deployment 为Pod和ReplicaSet提供一个声明方法，用来替代Replication
 
 
 
-#### HPA
+
+
+Deployment可以建立在ReplicasSet之上， 控制多个rs
+
+![img](https://snipboard.io/21EiWY.jpg)
+
+
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deploy
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+      release: canary
+  template:
+    metadata:
+      labels:
+        app: myapp
+        release: canary
+    spec:
+      containers:
+      - name: myapp
+        image: ikubernetes/myapp:v1
+        ports:
+        - name: http
+          containerPort: 80
+```
+
+
+
+```
+# kubectl get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+myapp-deploy-7d574d56c7-nphdc   1/1     Running   0          104s
+myapp-deploy-7d574d56c7-t989l   1/1     Running   0          104s
+```
+
+
+
+## HPA
 
 Horizontal Pod Autoscaler
 
@@ -582,23 +651,27 @@ Horizontal Pod Autoscaler
 
 
 
-### StatefulSet 
+## StatefulSet  有状态
 
-管理有状态应用
-
-
+管理有状态应用，每一个pod副本会单独管理
 
 
 
-### Job
+## Operator 有状态
+
+比较好的有状态应用的解决方案，但目前都未成熟
+
+
+
+## Job
 
 Pods管理程序，包含一系列job
 
-类似于cronjob
+类似于cronjob，一次性任务
 
 
 
-### CronJob
+## CronJob
 
 计划的任务
 
@@ -606,9 +679,15 @@ Pods管理程序，包含一系列job
 
 
 
-### DaemonSet
+## DaemonSet 无状态
 
-确保所有nodes 运行同一个指定类型的pod
+确保所有nodes 只运行一个指定类型的pod副本
+
+常用系统级别的应用，守护进程类的
+
+
+
+
 
 
 

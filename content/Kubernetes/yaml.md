@@ -446,71 +446,6 @@ Here are some examples:
 
 
 
-
-
-## selector
-
-
-
-### matchLabels
-
-通过直接给定键值来指定标签选择器
-
-```
-selector:
-  matchLabels:
-    component: redis
-```
-
-
-
-
-
-### matchExpressions
-
-基于表达式指定的标签选择器列表，每个选择器都形如
-
-```
-{key: KEY_NAME, operator: OPERATOR, values: [VALUE1, VALUE2, ...]}
-```
-
-
-
-```
-selector:
-  matchExpressions:
-    - {key: tier, operator: In, values: [cache]}
-    - {key: environment, operator: Exists, values:}
-```
-
-
-
-
-
-
-
-
-
-
-
-# status 当前状态 (read-only)
-
-显示目标资源的当前状态
-
-由kubernetes集群维护，用户不能自定义
-
-即status状态尽最大向spec状态转移
-
-
-
-
-
-
-
-
-
-
-
 #### Lifecycle
 
 定义了Container Lifecycle Hooks，即容器状态发生变化时触发的一系列钩子
@@ -551,7 +486,7 @@ spec:
 
 
 
-##### exec
+* exec
 
 exec类型探针通过在目标容器中执行由用户自定义的命令来判断容器的健康状态
 
@@ -576,7 +511,9 @@ spec:
 
 
 
-##### httpGet
+
+
+* httpGet
 
 向目标容器发起一个http请求，根据响应状态码进行结果盘点
 
@@ -611,7 +548,7 @@ spec:
 
 
 
-##### tcpSocket
+* tcpSocket
 
 基于TCP的存活性探测(TCPSocketAction) 向容器的特定端口发起TCP请求并尝试建立连接进行判定
 
@@ -663,6 +600,170 @@ Always:	在任何情况下，只要容器不在运行状态，就需要重启容
 OnFailure: 只在容器，异常时才自动重启容器
 Never: 从来不重启容器
 ```
+
+
+
+
+
+## selector
+
+
+
+### matchLabels
+
+通过直接给定键值来指定标签选择器
+
+```
+selector:
+  matchLabels:
+    component: redis
+```
+
+
+
+
+
+### matchExpressions
+
+基于表达式指定的标签选择器列表，每个选择器都形如
+
+```
+{key: KEY_NAME, operator: OPERATOR, values: [VALUE1, VALUE2, ...]}
+```
+
+
+
+```
+selector:
+  matchExpressions:
+    - {key: tier, operator: In, values: [cache]}
+    - {key: environment, operator: Exists, values:}
+```
+
+
+
+
+
+
+
+
+
+## nodeSelector (Deprecated by nodeAffinity)
+
+供用户将Pod与Node进行绑定的字段
+
+
+
+```
+apiVersion: v1
+kind: Pod
+...
+spec:
+ nodeSelector:
+   disktype: ssd
+```
+
+> 这样意味着Pod只能运行在携带disktype： ssd标签的节点上，否则将调度失败
+
+
+
+调度某些资源至指定设备节点，使用nodeSelector选择器
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-nodeselector
+  labels:
+    env: testing
+spec: 
+  containers:
+  - name: myapp
+    image: ikubernetes/myapp:v1
+  nodeSelector:
+    disktype: ssd
+```
+
+
+
+## nodeName
+
+一旦 Pod 的这个字段被赋值，Kubernetes 项目就会被认为这个 Pod 已经经过了调度，调度的结果就是赋值的节点名字。所以，这个字段一般由调度器负责设置，但用户也可以设置它来“骗过”调度器，当然这个做法一般是在测试或者调试的时候才会用到。
+
+
+
+即直接运行在指定节点上
+
+
+
+
+
+## nodeAffinity
+
+spec.affinity字段，是Pod里跟调度相关的一个字段
+
+
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-node-affinity
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: metadata.name
+            operator: In
+            values:
+            - node-geektime
+```
+
+> requiredDuringSchedulingIgnoredDuringExecution	指这个nodeAffinity必须在每次调度的时候予以考虑，也表示可以在设置某些情况下不考虑这个nodeAffinity
+>
+> 当前Pod只会运行在metadata.name 是 node-geektime上面节点运行
+
+
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-toleration
+spec:
+  tolerations:
+  - key: node.kubernetes.io/unschedulable
+    operator: Exists
+    effect: NoSchedule
+```
+
+> Toleration容忍”所有被标记为 unschedulable“污点”的 Node；“容忍”的效果是允许调度。
+
+
+
+
+
+
+
+
+
+# status 当前状态 (read-only)
+
+显示目标资源的当前状态
+
+由kubernetes集群维护，用户不能自定义
+
+即status状态尽最大向spec状态转移
+
+
+
+
+
+
+
+
 
 
 
@@ -839,97 +940,6 @@ spec:
 
 
 
-
-
-
-
-
-## nodeSelector (Deprecated by nodeAffinity)
-
-供用户将Pod与Node进行绑定的字段
-
-
-
-```
-apiVersion: v1
-kind: Pod
-...
-spec:
- nodeSelector:
-   disktype: ssd
-```
-
-> 这样意味着Pod只能运行在携带disktype： ssd标签的节点上，否则将调度失败
-
-
-
-调度某些资源至指定设备节点，使用nodeSelector选择器
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod-with-nodeselector
-  labels:
-    env: testing
-spec: 
-  containers:
-  - name: myapp
-    image: ikubernetes/myapp:v1
-  nodeSelector:
-    disktype: ssd
-```
-
-
-
-### NodeName
-
-一旦 Pod 的这个字段被赋值，Kubernetes 项目就会被认为这个 Pod 已经经过了调度，调度的结果就是赋值的节点名字。所以，这个字段一般由调度器负责设置，但用户也可以设置它来“骗过”调度器，当然这个做法一般是在测试或者调试的时候才会用到。
-
-
-
-## nodeAffinity
-
-spec.affinity字段，是Pod里跟调度相关的一个字段
-
-
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: with-node-affinity
-spec:
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: metadata.name
-            operator: In
-            values:
-            - node-geektime
-```
-
-> requiredDuringSchedulingIgnoredDuringExecution	指这个nodeAffinity必须在每次调度的时候予以考虑，也表示可以在设置某些情况下不考虑这个nodeAffinity
->
-> 当前Pod只会运行在metadata.name 是 node-geektime上面节点运行
-
-
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: with-toleration
-spec:
-  tolerations:
-  - key: node.kubernetes.io/unschedulable
-    operator: Exists
-    effect: NoSchedule
-```
-
-> Toleration容忍”所有被标记为 unschedulable“污点”的 Node；“容忍”的效果是允许调度。
 
 
 

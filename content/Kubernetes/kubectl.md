@@ -345,6 +345,46 @@ kubectl run nginx-deploy --image=nginx:1.12 --replicas=2
 
 设置指定资源的特定属性
 
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deploy
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+      release: canary
+  template:
+    metadata:
+      labels:
+        app: myapp
+        release: canary
+    spec:
+      containers:
+      - name: myapp
+        image: ikubernetes/myapp:v1
+        ports:
+        - name: http
+          containerPort: 80
+```
+
+
+
+```
+# kubectl set image deployment myapp-deploy myapp=ikubernetes/myapp:v3 && kubectl rollout pause deployment myapp-deploy
+deployment.apps/myapp-deploy image updated
+deployment.apps/myapp-deploy paused
+```
+
+
+
+
+
+
+
 
 
 #### image
@@ -352,7 +392,7 @@ kubectl run nginx-deploy --image=nginx:1.12 --replicas=2
 Deployment对应用进行版本控制
 
 ```
-$ kubectl set image deployment/nginx-deployment nginx=nginx:1.91
+$ kubectl image deployment/nginx-deployment nginx=nginx:1.91
 deployment.extensions/nginx-deployment image updated
 ```
 
@@ -495,7 +535,7 @@ $ kubectl rollout undo deployment/nginx-deployment --to-revision=2
 deployment.extensions/nginx-deployment
 ```
 
-> 这里指定了滚动的版本号
+> 这里指定了滚动的版本号2
 
 
 
@@ -788,6 +828,37 @@ kubectl apply -f nginx-deploy.yaml -f nginx-svc.yaml
 ### patch 补丁更新
 
 使用策略合并补丁更新资源字段
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deploy
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+      release: canary
+  template:
+    metadata:
+      labels:
+        app: myapp
+        release: canary
+    spec:
+      containers:
+      - name: myapp
+        image: ikubernetes/myapp:v1
+        ports:
+        - name: http
+          containerPort: 80
+```
+
+```
+# kubectl patch deployment myapp-deploy -p '{"spec":{"strategy":{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0}}}}'
+deployment.apps/myapp-deploy patched
+```
 
 
 
