@@ -685,7 +685,31 @@ Pods管理程序，包含一系列job
 
 常用系统级别的应用，守护进程类的
 
-
+```
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: myapp-ds
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: filebeat
+      release: stable
+  template:
+    metadata:
+      labels:
+        app: filebeat
+        release: stable
+    spec:
+      containers:
+      - name: filebeat
+        image: ikubernetes/filebeat: 5.6.5-alpine
+        env:
+        - name: REDIS_HOST
+          value: redis.default.svc.cluster.local
+        - name: REDIS_LOG_LEVEL
+```
 
 
 
