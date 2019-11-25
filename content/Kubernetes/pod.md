@@ -704,7 +704,7 @@ spec:
     spec:
       containers:
       - name: filebeat
-        image: ikubernetes/filebeat: 5.6.5-alpine
+        image: ikubernetes/filebeat:5.6.5-alpine
         env:
         - name: REDIS_HOST
           value: redis.default.svc.cluster.local
