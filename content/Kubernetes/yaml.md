@@ -749,49 +749,11 @@ spec:
 
 
 
-# status 当前状态 (read-only)
-
-显示目标资源的当前状态
-
-由kubernetes集群维护，用户不能自定义
-
-即status状态尽最大向spec状态转移
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## activeDeadlineSeconds
-
-设置最长运行时间
-
-```
-spec:
- backoffLimit: 5
- activeDeadlineSeconds: 100
-```
-
-> 这是Job对象的例子
-
-
-
-
-
 ## sessionAffinity
 
 None表示不启用，随机请求后端Pod
 
-ClientIP表示锁定一个后端请求
+ClientIP表示锁定一个后端请求,即访问同一个Pod资源
 
 ```
 # Please edit the object below. Lines beginning with a '#' will be ignored,
@@ -828,6 +790,40 @@ status:
 ```
 
 
+
+# status 当前状态 (read-only)
+
+显示目标资源的当前状态
+
+由kubernetes集群维护，用户不能自定义
+
+即status状态尽最大向spec状态转移
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## activeDeadlineSeconds
+
+设置最长运行时间
+
+```
+spec:
+ backoffLimit: 5
+ activeDeadlineSeconds: 100
+```
+
+> 这是Job对象的例子
 
 
 

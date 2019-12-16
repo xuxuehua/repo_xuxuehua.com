@@ -25,6 +25,18 @@ date: 2019-06-11 21:51
 
 
 
+## 新三驾马车
+
+Dremel Google的交互式数据分析系统，处理时间缩短到秒级别，作为MapReduce的补充
+
+Pregel 图计算法
+
+Caffeine 大规模实时增量算法
+
+
+
+
+
 ## HDFS
 
 Hadoop File System 
@@ -130,6 +142,16 @@ Spark出道以后，也迅速推出了自己的SQL引擎Shark，也就是后来�
 此外，我们还希望在NoSQL的数据库上执行SQL，毕竟SQL发展了几十年，积累了庞大的用户群体，很多人习惯了用SQL解决问题。于是Saleforce推出了Phoenix，一个执行在HBase上的SQL引擎。
 
 这些SQL引擎基本上都只支持类SQL语法，并不能像数据库那样支持标准SQL，特别是数据仓库领域几乎必然会用到嵌套查询SQL，也就是在where条件里面嵌套select子查询，但是几乎所有的大数据SQL引擎都不支持。
+
+
+
+## Beam 
+
+An advanced unified programming model 
+
+
+
+
 
 # 计算类型
 

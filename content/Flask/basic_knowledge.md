@@ -44,6 +44,35 @@ if __name__ =="__main__":
 
 将debug=True 开启即可
 
+### 导入配置文件方法
+
+config.py
+
+```
+DEBUG=True
+```
+
+
+
+```
+from flask import Flask
+
+# from config import DEBUG #该方法可以省略了
+
+
+app = Flask(__name__)
+app.config.from_object('config')
+
+
+@app.route('/hello')
+def hello():
+    return 'hello world'
+
+
+app.run(debug=app.config['DEBUG'])  # 通过字典方式读取
+
+```
+
 
 
 
@@ -220,9 +249,9 @@ flask中有两种，分别为应用上下文和请求上下文
 
 
 
-### AppContext 
+### AppContext 应用上下文
 
-应用上下文， 对Flask 核心对象的封装
+对Flask 核心对象的封装
 
 self.app = app 即封装了Flask实例化的核心对象 
 
@@ -245,9 +274,13 @@ self.app = app 即封装了Flask实例化的核心对象
 
 
 
+
+
 #### current_app 上下文全局变量
 
 处理请求的当前程序实例
+
+其指向就是Flask的核心对象， 即LocalStack中top的AppContext 属性
 
 
 
@@ -261,9 +294,9 @@ g在应用上下文随着每一个请求进入而激活，锁着每一个请求�
 
 
 
-### RequestContext
+### RequestContext 请求上下文
 
-请求上下文，即封装请求对象Request
+即封装请求对象Request （这里是大写的Request）
 
 同样和AppContext一样，定义了4个方法，`push`， `pop`， `__enter__`  , `__exit__`
 
@@ -281,6 +314,8 @@ Flask在每个请求产生后自动激活当前请求的上下文，激活请求
 
 封装客户端发出的请求报文数据
 
+其指向就是Request的对象， 即LocalStack中top的RequestContext 属性
+
 
 
 #### session 上下文全局变量
@@ -295,13 +330,102 @@ Flask在每个请求产生后自动激活当前请求的上下文，激活请求
 
 
 
-## 线程隔离
+## werkzeug Local 线程隔离
 
 通过werkzeug 中的Local对象，实现线程隔离的数据操作
 
+线程隔离的作用是: 使当前对象可以正确的使用自己创建的对象, 而不会使用和破坏其他线程的对象.
+
+LocalStack作为栈结构的特性， 是一个线程隔离的对象
+
+Werkzeug 通过自定义 werkzeug.local.Local 类实现线程隔离的栈结构, 封装了push, pop, 和top方法.可以将对象推入、弹出，也可以快速拿到栈顶对象. 同样具有线程隔离的作用. 并没有直接使用threading.Local .
 
 
 
+栈是一种先进后出的基本数据结构.
+
+```python
+from werkzeug.local import LocalStack
+s = LocalStack()
+s.push(1)
+print(s.top)
+print(s.top)  # 获取栈顶元素
+print(s.pop())  # 弹出栈顶元素
+print(s.top)  # 弹出的栈顶元素会删除
+
+s.push(1)
+s.push(2)
+print(s.top) 
+print(s.top)
+print(s.pop())
+print(s.pop())
+```
+
+
+
+线程隔离的特性
+
+```python
+my_stack = LocalStack()
+my_stack.push(2)
+print('in main thread after push , value is ', my_stack.top)  
+
+def my_work():
+    print('in new thread before, value is ', my_stack.top)
+    my_stack.push(3)
+    print('after new thread after push, value is ', my_stack.top)
+new_thread = threading.Thread(target=my_work, name='my_work_thread')
+new_thread.start()
+time.sleep(1)
+print('finally, in new thread , value is', my_stack.top)
+
+>>>
+in main thread after push , value is  2
+in new thread before, value is  None
+after new thread after push, value is  3
+finally, in new thread , value is 2
+```
+
+
+
+源代码
+
+```python
+class Local(object):
+    __slots__ = ('__storage__', '__ident_func__')
+
+    def __init__(self):
+        object.__setattr__(self, '__storage__', {})
+        object.__setattr__(self, '__ident_func__', get_ident)
+    ...
+     def __setattr__(self, name, value):
+        ident = self.__ident_func__()
+        storage = self.__storage__
+        try:
+            storage[ident][name] = value
+        except KeyError:
+            storage[ident] = {name: value}
+```
+
+> `__slots__`限制了Local类只可以有两个属性：`__storage__`和`__ident_func__`。
+>
+> 从构造函数，`__storage__`是一个字典，而`__ident_func__`是一个函数，用来识别当前线程或协程.
+>
+> ident 变量取到的是线程的ID号作为key，实现线程隔离
+
+# Flask工作原理
+
+[![image.png](https://i.postimg.cc/JnLpRp9J/image.png)](https://postimg.cc/5HsB3S9N)
+
+
+
+一个请求进入flask框架后, flask会首先实例化一个Request Context封装了这次请求的相关信息(Request), 然后将请求上下文推入栈_request_ctx_stack(这是LocalStack的一个实例).
+
+在RequestContext对象入栈之前会检查App Context对应栈栈顶的元素, 如果不是当前的app, 则会先将app推入. 因此如果在一个**请求中使用(注意是在请求中)**使用current_app是**不需要**手动push的.
+
+current_app(Local Proxy)取得是`_app_ctx_stack` 的栈顶元素中的app属性, 这个属性就是我们自己创建的`app=Flask(__name__`, 如果栈顶为空,则提示unbound, 
+
+同样的request(Local Proxy)指的是`_request_ctx_stack`的栈顶对应对象, 当一个请求结束的时候会出栈.
 
 
 
@@ -326,35 +450,6 @@ pipenv install python-dotenv
 存储包含敏感信息的环境变量
 
 
-
-# 导入配置文件
-
-config.py
-
-```
-DEBUG=True
-```
-
-
-
-```
-from flask import Flask
-
-# from config import DEBUG #该方法可以省略了
-
-
-app = Flask(__name__)
-app.config.from_object('config')
-
-
-@app.route('/hello')
-def hello():
-    return 'hello world'
-
-
-app.run(debug=app.config['DEBUG'])
-
-```
 
 
 
@@ -442,8 +537,6 @@ template_folder='templates'
 
 
 ![img](https://snag.gy/2kzj6W.jpg)
-
-
 
 
 

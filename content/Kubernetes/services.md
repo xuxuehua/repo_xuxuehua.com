@@ -16,13 +16,21 @@ date: 2019-04-07 17:14
 
 
 
-## 工作模式
+## 原理
+
+worker node上的kube-proxy通过master apiServer 获取任何一个和service相关的变动状态
+
+kube-proxy会watch apiServer中etcd的变化，然后转换为相应的规则
 
 
 
-### user space 模型
+# 实现的工作模式
 
-![img](https://snag.gy/0kHw5e.jpg)
+
+
+## user space 模型
+
+![img](https://snipboard.io/0kHw5e.jpg)
 
 
 
@@ -32,19 +40,19 @@ date: 2019-04-07 17:14
 
 
 
-### iptables 模型
+## iptables 模型
 
 ![img](https://snag.gy/wMid4m.jpg)
 
 
 
-直接工作在内核空间，直接由service的iptables负责调度
+直接工作在内核空间，直接由service的iptables负责调度相关的pod
 
 
 
 
 
-### ipvs 模型
+## ipvs 模型
 
 ![img](https://snag.gy/ad5SnY.jpg)
 
@@ -54,21 +62,21 @@ date: 2019-04-07 17:14
 
 
 
-## 类型 type
+# 类型 type
 
 
 
-### ExternalName 
+## ExternalName 
 
-把集群外部的服务映射到集群内部来使用
+把集群外部的服务映射到集群内部来使用, 即service与外部联系
 
 使集群内部的Pod像使用集群内部的服务一样，使用集群外部的服务
 
-ExternalName需要被DNS服务解析，才能被访问
+ExternalName (CNAME) 需要被DNS服务解析，才能被访问
 
 
 
-### ClusterIP 默认 （内部访问）
+## ClusterIP 默认 （内部访问）
 
 私网地址，默认分配一个IP地址，仅用于集群内部通信
 
@@ -88,6 +96,13 @@ spec:
   ports:
   - port: 6379
     targetPort: 6379
+```
+
+```
+# kubectl get svc
+NAME         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
+kubernetes   ClusterIP   10.96.0.1     <none>        443/TCP    6d1h
+redis        ClusterIP   10.97.97.97   <none>        6379/TCP   4s
 ```
 
 
@@ -120,7 +135,7 @@ redis.default.svc.cluster.local. 5 IN   A       10.97.97.97
 
 
 
-### NodePort （外部访问）
+## NodePort （外部访问）
 
 接入集群外部流量，是以ClusterIP为前提的
 
@@ -141,7 +156,7 @@ client -> NodeIP:NodePort -> ClusterIP:ServicePort -> PodIP: containerPort
 
 
 ```
-[root@master ~]# cat myapp-svc.yaml
+[root@master ~]# cat myapp-svc.yaml 
 apiVersion: v1
 kind: Service
 metadata:
@@ -178,7 +193,7 @@ redis        ClusterIP   10.97.97.97   <none>        6379/TCP       7m35s
 在集群外部访问
 
 ```
-xhxu-mac:~ xhxu$ while True; do curl http://198.13.42.46:30080/hostname.html; sleep 1 ; done
+xhxu-mac:~ xhxu$ while True; do curl http://worker_node_ip:30080/hostname.html; sleep 1 ; done
 myapp-deployment-67b6dfcd8-rc7t8
 myapp-deployment-67b6dfcd8-g2cnc
 myapp-deployment-67b6dfcd8-g2cnc
@@ -190,7 +205,7 @@ myapp-deployment-67b6dfcd8-59wxt
 
 
 
-### LoadBalancer
+## LoadBalancer
 
 自动触发创建web的负载均衡器，是在NodePort上增强的功能
 
@@ -200,7 +215,7 @@ myapp-deployment-67b6dfcd8-59wxt
 
 
 
-### No ClusterIP (Headless)
+## No ClusterIP (Headless)
 
 无头服务，将service name直接解析为Pod IP
 

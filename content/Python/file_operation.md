@@ -358,6 +358,8 @@ with open('log1') as obj1, open('log2') as obj2:
 
 ### 实现原理
 
+只要对象中实现了`__enter__` 和 `__exit__` 就可以使用with 语句
+
 ```
 class A:
 
@@ -395,6 +397,11 @@ class MyResource:
 
 with MyResource() as resource:
     resource.query()
+    
+>>>
+Connect to resource
+Query data
+Disconnect to resource
 ```
 
 

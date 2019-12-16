@@ -8,11 +8,11 @@ date: 2019-02-23 23:05
 
 
 
-# 资源管理
 
 
 
-## Pod控制器 (也称 工作负载 Workload)
+
+# Pod控制器 (也称 工作负载 Workload)
 
 Pod 为此基础资源，负责运行容器，控制器负责Pod监控和管理
 
@@ -20,7 +20,7 @@ Pod 为此基础资源，负责运行容器，控制器负责Pod监控和管理
 
 
 
-### ReplicationController 无状态 （废弃）
+## ReplicationController 无状态 （废弃）
 
 负责无状态应用，上一代应用控制器
 
@@ -28,7 +28,7 @@ Pod 为此基础资源，负责运行容器，控制器负责Pod监控和管理
 
 
 
-### ReplicaSet 无状态
+## ReplicaSet 无状态
 
 负责无状态应用，新一代ReplicationController
 
@@ -38,7 +38,7 @@ Pod 为此基础资源，负责运行容器，控制器负责Pod监控和管理
 
 
 
-#### 结构
+### 结构
 
 Nginx-deployment.yaml
 
@@ -72,7 +72,7 @@ spec:
 
 
 
-#### 水平扩展
+### 水平扩展
 
 ```
 $ kubectl scale deployment nginx-deployment --replicas=4
@@ -81,7 +81,7 @@ deployment.apps/nginx-deployment scaled
 
 
 
-#### 滚动扩展
+### 滚动扩展
 
 ```
 $ kubectl create -f nginx-deployment.yaml --record
@@ -175,7 +175,7 @@ nginx-deployment-3167673210   0         0         0       30s
 
 
 
-### Deployment  无状态 (常用)
+## Deployment  无状态 (常用)
 
 负责无状态应用, 一个deployment 可以管理多个ReplicaSet
 
@@ -229,7 +229,7 @@ spec:
 
 
 
-#### HPA 水平Pod伸缩
+### HPA 水平Pod伸缩
 
 Horizontal Pod Autoscaler
 
@@ -241,7 +241,7 @@ Horizontal Pod Autoscaler
 
 
 
-### StatefulSet 有状态
+## StatefulSet 有状态
 
 负责有状态应用
 
@@ -261,7 +261,7 @@ Horizontal Pod Autoscaler
 
 
 
-#### 设计
+### 设计
 
 ```
 拓扑状态
@@ -279,7 +279,7 @@ Horizontal Pod Autoscaler
 
 
 
-##### Headless Service
+### Headless Service
 
 即一个标准Service YAML文件
 
@@ -429,21 +429,15 @@ web-1     1/1       Running   0         32s
 
 
 
-##### StatefulSet
 
 
-
-
-
-
-
-##### volumeClaimTemplate
+### volumeClaimTemplate
 
 不同过pod模版生产，即生成每一个Pod时，会对每一个pod自动创建volume， 而且对每一个volume生成对应的PVC，从而绑定预设好的PV
 
 
 
-###### example
+#### example
 
 生成PV
 
@@ -637,7 +631,7 @@ myappdata-myapp-2   Bound    pv003    5Gi        RWO,RWX                       5
 
 
 
-### DaemonSet 守护进程 无状态
+## DaemonSet 守护进程 无状态
 
 这个Pod会运行在Kubernetes集群里面的有限节点(Node)上面， 而且只会有一个这样的pod 实例
 
@@ -743,7 +737,7 @@ spec:
 
 
 
-#### 滚动更新方式
+### 滚动更新方式
 
 ```
 root@master ~]# kubectl set image daemonsets filebeat-ds filebeat=ikubernetes/filebeat:5.6.6-alpine
@@ -776,7 +770,7 @@ filebeat-ds-k926z                  1/1     Running             0          5s
 
 
 
-#### Master 节点 toleration 
+### Master 节点 toleration 
 
 添加Toleration，在Master节点上部署Pod
 
@@ -792,7 +786,7 @@ tolerations:
 
 
 
-#### Ingress Controller (七层会话卸载)
+## Ingress Controller (七层调度)
 
 一种特殊的Pod，直接监听在宿主机的网络上接入外部请求
 
@@ -802,9 +796,7 @@ tolerations:
 
 ![img](https://snag.gy/HhNRni.jpg)
 
-
-
-这里通过一个service，帮助来对Pod进行分组，本身并不接受外部请求，然后通过ingress资源，实时反应Pod节点的状态，将其信息动态注入到ingress controller，并生成对应的配置文件，哪些pod可以被使用
+> 这里通过一个service，帮助来对Pod进行分组，本身并不接受外部请求，然后通过ingress资源，实时反应Pod节点的状态，将其信息动态注入到ingress controller，并生成对应的配置文件，哪些pod可以被使用
 
 
 
@@ -816,7 +808,7 @@ tolerations:
 
 
 
-##### example
+### example
 
 
 
@@ -837,7 +829,21 @@ namespace/ingress-nginx created
 
 激活所有yaml
 
+cat namespace.yaml
+
 ```
+---
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ingress-nginx
+```
+
+
+
+```
+
 [root@master deploy]# kubectl apply -f namespace.yaml
 Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply
 namespace/ingress-nginx configured
@@ -1080,7 +1086,7 @@ $ cat nginx.conf
 
 
 
-### Job 完成后终止
+## Job 完成后终止
 
 只能执行一次性的作业
 
@@ -1177,7 +1183,7 @@ $ kubectl logs pi-rq5rl
 
 
 
-#### 并行控制
+### 并行控制
 
 spec.parallelism，它定义的是一个 Job 在任意时间最多可以启动多少个 Pod 同时运行
 
@@ -1200,11 +1206,11 @@ spec.completions，它定义的是 Job 至少要完成的 Pod 数目，即 Job �
 
 
 
-#### 使用方法
+### 使用方法
 
 
 
-##### 外部管理器 +Job 模板 
+#### 外部管理器 +Job 模板 
 
 ```
 apiVersion: batch/v1
@@ -1233,7 +1239,7 @@ spec:
 
 
 
-##### 替换$ITEM操作
+#### 替换$ITEM操作
 
 ```
 $ mkdir ./jobs
@@ -1254,7 +1260,7 @@ process-item-cherry-dnfu9   0/1       Completed   0          4m
 
 
 
-##### 固定数目并行
+#### 固定数目并行
 
 ```
 apiVersion: batch/v1
@@ -1299,7 +1305,7 @@ exit
 
 
 
-##### 指定并行度（parallelism）
+#### 指定并行度（parallelism）
 
 但不设置固定的 completions 的值 
 
@@ -1349,7 +1355,7 @@ exit
 
 
 
-### CronJob 
+## CronJob 
 
 定时任务，周期性运行
 
@@ -1430,9 +1436,9 @@ concurrencyPolicy=Replace，这意味着新产生的 Job 会替换旧的、没�
 
 
 
-## 集群级资源 Cluster
+# 集群级资源 Cluster
 
-### Namespace 
+## Namespace 
 
 资源对象名称的作用范围，默认隶属default
 
@@ -1440,13 +1446,13 @@ concurrencyPolicy=Replace，这意味着新产生的 Job 会替换旧的、没�
 
 
 
-### Node
+## Node
 
 Kubernetes集群工作节点，其标识符在当前集群唯一
 
 
 
-### Role 
+## Role 
 
 名称空间级别有规则组成的权限集合
 
@@ -1454,7 +1460,7 @@ Kubernetes集群工作节点，其标识符在当前集群唯一
 
 
 
-### ClusterRole
+## ClusterRole
 
 Cluster 级别的 
 
@@ -1464,7 +1470,7 @@ Cluster 级别的
 
 
 
-### RoleBinding
+## RoleBinding
 
 将Role权限绑定在一个或一组用户上，
 
@@ -1472,7 +1478,7 @@ Cluster 级别的
 
 
 
-### ClusterRoleBinding
+## ClusterRoleBinding
 
 将ClusterRole中定义的许可权限绑定在一个或一组用户上，引用ClusterRole
 
@@ -1480,25 +1486,25 @@ Cluster 级别的
 
 
 
-## 元数据资源 Metadata
+# 元数据资源 Metadata
 
 用于为集群内部的其他资源配置其行为或特征，如HorizontalPodAutoscaler用于自动伸缩工作负载类型的资源对象的规模
 
 
 
-### HPA
+## HPA
 
 自动调整元数据的相关信息
 
 
 
-### PodTemplate
+## PodTemplate
 
 用于让控制器创建pod的模板
 
 
 
-### LimitRange
+## LimitRange
 
 定义资源限制
 
@@ -1508,11 +1514,11 @@ Cluster 级别的
 
 
 
-## API 群组
+# API 群组
 
 
 
-### 核心群组 core group
+## 核心群组 core group
 
 REST 路径为`/api/v1`，在资源配置信息apiVersion 字段中引用时可以不指定路径，而仅给出版本
 
@@ -1520,7 +1526,7 @@ REST 路径为`/api/v1`，在资源配置信息apiVersion 字段中引用时可�
 
 
 
-### 命名群组 named group
+## 命名群组 named group
 
 REST 路径为`/apis/$GROUP_NAME/$VERSION` 
 
@@ -1534,11 +1540,11 @@ REST 路径为`/apis/$GROUP_NAME/$VERSION`
 
 
 
-## 用户管理
+# 用户管理
 
 
 
-### ServiceAccount
+## ServiceAccount
 
 Kubernetes 负责管理的内置用户
 
@@ -1692,7 +1698,7 @@ token:      <TOKEN 数据 >
 
 
 
-### Group
+## Group
 
 一个ServiceAccount在Kubernetes对应的用户为
 

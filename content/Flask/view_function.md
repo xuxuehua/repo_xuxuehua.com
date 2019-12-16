@@ -10,6 +10,8 @@ date: 2019-08-10 11:51
 
 负责管理URL和函数之间的映射
 
+即MVC中的Controller
+
 
 
 ## 装饰器方法
@@ -22,7 +24,7 @@ from flask import Flask
 app = Flask(__name__)
 
 
-@app.route('/hello/')
+@app.route('/hello')  # 定义路由， 不加斜杠即不兼容用户输入唯一URL的情况
 def hello():
     return 'Hello, Rick'
 
@@ -159,7 +161,7 @@ def delete_post(post_id):
 add_url_rule(rule, endpoint, view_function)
 ```
 
-但装饰器里面不需要输入view_func 
+但装饰器里面不需要输入view_func ， 使用起来更方便
 
 ```
 from flask import Flask
@@ -174,6 +176,8 @@ app.add_url_rule('/hello/', view_func=hello)
 
 app.run(debug=True)
 ```
+
+
 
 
 
@@ -423,7 +427,7 @@ if __name__ == '__main__':
 
 ### before_request
 
-如记录用户最后在线时间，通过用户发送的请求时间来实现，避免在每个视图函数都添加更新在线时间的代码，可以在此调用该袋米
+如记录用户最后在线时间，通过用户发送的请求时间来实现，避免在每个视图函数都添加更新在线时间的代码，可以在此调用该代码
 
 
 
@@ -728,6 +732,8 @@ app.secret_key = os.getenv('SECRET_KEY', 'secret string')
 
 
 ## session
+
+Flask 的 session 默认是client side 的，session是写入到浏览器的cookie中，当浏览器关闭，cookie会自动消失
 
 将session数据加密，然后存储在cookie中，这种专业术语叫做client side session， flask采用这种方式
 

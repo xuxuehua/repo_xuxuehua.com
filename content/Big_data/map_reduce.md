@@ -136,11 +136,18 @@ reduce函数的计算过程是，将这个集合里的1求和，再将单词（w
 
 这类进程是启动MapReduce程序的主入口，主要是指定Map和Reduce类、输入输出文件路径等，并提交作业给Hadoop集群，也就是下面提到的JobTracker进程。这是由用户启动的MapReduce程序进程，比如我们上期提到的WordCount程序。
 
-## 
+
+
 
 ## JobTracker进程
 
-这类进程根据要处理的输入数据量，命令下面提到的TaskTracker进程启动相应数量的Map和Reduce进程任务，并管理整个作业生命周期的任务调度和监控。这是Hadoop集群的常驻进程，需要注意的是，JobTracker进程在整个Hadoop集群全局唯一。
+作业的管理者，这类进程根据要处理的输入数据量，命令下面提到的TaskTracker进程启动相应数量的Map和Reduce进程任务，并管理整个作业生命周期的任务调度和监控（心跳信息）
+
+这是Hadoop集群的常驻进程，需要注意的是，JobTracker进程在整个Hadoop集群全局唯一。
+
+在Hadoop 1.X中，是一个JobTracker 带多个TaskTracker
+
+
 
 
 
@@ -155,6 +162,8 @@ JobTracker进程和TaskTracker进程是主从关系，主服务器通常只有�
 
 
 # 运行机制
+
+## MapReduce 1.X
 
 ![img](https://snag.gy/d1NEpn.jpg)
 
@@ -181,6 +190,14 @@ JobTracker进程和TaskTracker进程是主从关系，主服务器通常只有�
 
 
 做的仅仅是编写一个map函数和一个reduce函数就可以了，根本不用关心这两个函数是如何被分布启动到集群上的，也不用关心数据块又是如何分配给计算任务的。**这一切都由MapReduce计算框架完成**
+
+
+
+## MapReduce 2.X
+
+![img](https://snipboard.io/fZGOsL.jpg)
+
+
 
 
 
@@ -214,3 +231,28 @@ public int getPartition(K2 key, V2 value, int numReduceTasks) {
 不管是MapReduce还是Spark，只要是大数据批处理计算，一定都会有shuffle过程，只有**让数据关联起来**
 
 shuffle也是整个MapReduce过程中最难、最消耗性能的地方，在MapReduce早期代码中，一半代码都是关于shuffle处理的。
+
+
+
+
+
+## 多节点处理
+
+![img](https://snipboard.io/Q1UMNL.jpg)
+
+
+
+# 核心概念
+
+![img](https://snipboard.io/R1SU7w.jpg)
+
+
+
+## Split 最小计算单元
+
+交由MapReduce作业来处理的数据块，是MapReduce中最小的计算单元
+
+默认情况下，其和HDFS中的blocksize( HDFS中最小的存储单元，128M) 是一一对应的，不建议手动设置其之间的关系
+
+
+

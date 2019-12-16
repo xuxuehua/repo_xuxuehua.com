@@ -328,13 +328,15 @@ ca.crt namespace  token
 
 
 
-## Persistent Volume Claim (PVC)
+## Persistent Volume Claim (PVC) (常用)
 
 降低了用户声明和使用持久化 Volume 的门槛。
 
 PVC是一种特殊的Volume，但PVC所指定的volume类型，是和PV绑定之后才知道
 
 
+
+### 定义使用
 
 声明PVC
 

@@ -685,6 +685,8 @@ Pods管理程序，包含一系列job
 
 常用系统级别的应用，守护进程类的
 
+也可以通过定义污点的方式，定义具体哪个节点运行pod副本
+
 ```
 apiVersion: apps/v1
 kind: DaemonSet

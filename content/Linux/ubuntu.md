@@ -489,3 +489,55 @@ password_pbkdf2 ubuntu HASH_VALUE
 sudo update-grub
 ```
 
+
+
+
+
+# 中文语言显示
+
+首先，安装中文支持包language-pack-zh-hans：
+
+```
+$ sudo apt-get install language-pack-zh-hans
+```
+
+然后，修改/etc/environment（在文件的末尾追加）：
+
+```
+LANG="zh_CN.UTF-8"
+LANGUAGE="zh_CN:zh:en_US:en"
+```
+
+再修改/var/lib/locales/supported.d/local(没有这个文件就新建，同样在末尾追加)：
+
+```
+en_US.UTF-8 UTF-8
+zh_CN.UTF-8 UTF-8
+zh_CN.GBK GBK
+zh_CN GB2312
+```
+
+最后，执行命令：
+
+```
+$ sudo locale-gen
+```
+
+对于中文乱码是空格的情况，安装中文字体解决。
+
+```
+$ sudo apt-get install fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
+```
+
+以上，问题解决，中文显示正常。:)
+
+
+
+## software center
+
+```
+sudo apt update
+sudo apt install snap
+sudo snap install snap-store
+```
+

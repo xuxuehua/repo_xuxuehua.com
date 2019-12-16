@@ -1,10 +1,20 @@
 ---
-title: "multiprocessing"
+title: "multiprocessing 多进程"
 date: 2018-10-05 02:51
 ---
 
 
 [TOC]
+
+
+
+# 进程
+
+进程是竞争计算机资源的基本单位
+
+即使是多核的CPU，进程也是需要竞争的
+
+调度算法可以将一个进程挂起，切换到另外一个进程中切换
 
 # multiprocessing
 

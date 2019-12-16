@@ -34,7 +34,7 @@ Uniform Resource Identifier 统一资源标识符，包含各种属性的字符�
 
 # Flask-SQLAlchemy
 
-扩展Flask-SQLAlchemy 集成了SQLAlchemy，简化了连接数据库服务器，管理数据库操作会话等工作
+扩展Flask-SQLAlchemy 集成了SQLAlchemy，简化了连接数据库服务器，管理数据库操作会话等工作， 但是底层还是sqlalchemy，提供了更加人性的API
 
 Flask-SQLAlchemy 使用事物会话，可通过db.session 属性获取
 
@@ -141,4 +141,103 @@ def delete_node(note_id):
 
 
 
+
+
+
+# 上下文数据库操作
+
+As a general rule, the application should manage the lifecycle of the session *externally* to functions that deal with specific data. This is a fundamental separation of concerns which keeps data-specific operations agnostic of the context in which they access and manipulate that data.
+
+E.g. **don’t do this**:
+
+```
+### this is the **wrong way to do it** ###
+
+class ThingOne(object):
+    def go(self):
+        session = Session()
+        try:
+            session.query(FooBar).update({"x": 5})
+            session.commit()
+        except:
+            session.rollback()
+            raise
+
+class ThingTwo(object):
+    def go(self):
+        session = Session()
+        try:
+            session.query(Widget).update({"q": 18})
+            session.commit()
+        except:
+            session.rollback()
+            raise
+
+def run_my_program():
+    ThingOne().go()
+    ThingTwo().go()
+```
+
+Keep the lifecycle of the session (and usually the transaction) **separate and external**:
+
+```
+### this is a **better** (but not the only) way to do it ###
+
+class ThingOne(object):
+    def go(self, session):
+        session.query(FooBar).update({"x": 5})
+
+class ThingTwo(object):
+    def go(self, session):
+        session.query(Widget).update({"q": 18})
+
+def run_my_program():
+    session = Session()
+    try:
+        ThingOne().go(session)
+        ThingTwo().go(session)
+
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+```
+
+The most comprehensive approach, recommended for more substantial applications, will try to keep the details of session, transaction and exception management as far as possible from the details of the program doing its work. For example, we can further separate concerns using a [context manager](http://docs.python.org/3/library/contextlib.html#contextlib.contextmanager):
+
+```
+### another way (but again *not the only way*) to do it ###
+
+from contextlib import contextmanager
+
+@contextmanager
+def session_scope():
+    """Provide a transactional scope around a series of operations."""
+    session = Session()
+    try:
+        yield session
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
+class ThingOne(object):
+    def go(self, session):
+        session.query(FooBar).update({"x": 5})
+
+class ThingTwo(object):
+    def go(self, session):
+        session.query(Widget).update({"q": 18})
+ 
+ 
+def run_my_program():
+    with session_scope() as session:
+        ThingOne().go(session)
+        ThingTwo().go(session)
+```
 

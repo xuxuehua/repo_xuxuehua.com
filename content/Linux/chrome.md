@@ -136,6 +136,43 @@ EOF
 ```
 
 ```
-yum install google-chrome-stable
+yum -y install google-chrome-stable
 ```
 
+
+
+
+
+
+
+# chrome-remote-desktop
+
+
+
+## Centos
+
+```
+yum -y install epel-release && yum -y upgrade && yum -y update && yum -y install chrome-remote-desktop 
+```
+
+
+
+## Ubuntu
+
+```
+echo $(hostname -I | cut -d\  -f1) $(hostname) | sudo tee -a /etc/hosts
+```
+
+
+
+After installing the Debian package `chrome-remote-desktop_current_amd64.deb`, make sure the current user is part of the `chrome-remote-desktop` group:
+
+```
+sudo usermod -a -G chrome-remote-desktop username
+```
+
+Stop Chrome Remote Desktop:
+
+```
+/opt/google/chrome-remote-desktop/chrome-remote-desktop --stop
+```

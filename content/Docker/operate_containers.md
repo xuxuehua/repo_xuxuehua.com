@@ -21,6 +21,22 @@ docker create
 
 
 
+## container 容器操作
+
+Before performing the removal command, you can get a list of all non-running (stopped) containers that will be removed using the following command:
+
+```console-bash
+docker container ls -a --filter status=exited --filter status=created
+```
+
+
+
+To remove all stopped containers
+
+```
+docker container prune
+```
+
 
 
 ## run 运行容器
@@ -358,7 +374,7 @@ trusting_newton
 
 ## prune 清理容器
 
-用 docker container prune 可以清理掉所有处于终止状态的容器。
+用 docker system prune 可以清理掉所有处于终止状态的容器。
 
 
 

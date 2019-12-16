@@ -1,5 +1,5 @@
 ---
-title: "threading"
+title: "threading 线程"
 date: 2018-09-27 19:39
 ---
 
@@ -10,11 +10,11 @@ date: 2018-09-27 19:39
 
 线程是进程的一部分，比进程更灵活，小巧，切换起来更加节省CPU资源。
 
-进程一般是用来分配资源，
+进程一般是用来分配资源，线程可以访问进程的资源
 
-线程是利用CPU执行代码，是不可以分配拥有资源。但是可以访问资源。
+线程是利用CPU执行代码，不可以分配拥有资源。但是可以访问资源，即利用CPU执行代码。
 
-多线程可以更加充分的利用CPU的性能优势
+多线程可以更加充分的利用CPU的性能优势，相互切换是比进程小很多的
 
 
 
@@ -40,6 +40,64 @@ Python实现多线程/多进程，大家常常会用到标准库中的threading�
 ## threading.current_thread()
 
 当前线程名称
+
+单线程需要等所有的代码执行完成之后，才会执行下一步代码
+
+```
+import threading
+import time
+
+
+def worker():
+    print("I am a thread")
+    t = threading.current_thread()
+    time.sleep(10)
+    print(t.getName())
+
+
+worker()
+
+t = threading.current_thread()
+print(t.getName())
+
+>>>
+I am a thread
+MainThread
+MainThread
+```
+
+> 这里会等待10秒再执行剩下的
+
+
+
+看起来会像是主线程和worker线程同时执行
+
+```
+import threading
+import time
+
+
+def worker():
+    print("I am a thread")
+    t = threading.current_thread()
+    time.sleep(10)
+    print(t.getName())
+
+
+# worker()
+new_t = threading.Thread(target=worker, name='my_thread')
+new_t.start()
+
+t = threading.current_thread()
+print(t.getName())
+
+>>>
+I am a thread
+MainThread
+my_thread
+```
+
+> 主线程执行不依赖于worker线程的执行结果
 
 
 
@@ -111,6 +169,30 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
+>>>
+<Producer(Producer threading 0, started 123145326419968)> produced 136, remaining 1136
+<Producer(Producer threading 1, started 123145331675136)> produced 967, remaining 2103
+<Producer(Producer threading 2, started 123145336930304)> produced 456, remaining 2559
+<Producer(Producer threading 3, started 123145342185472)> produced 571, remaining 3130
+<Producer(Producer threading 4, started 123145347440640)> produced 432, remaining 3562
+<Consumer(Consumer threading 0, started 123145352695808)> costs 190, remaining 3372
+<Consumer(Consumer threading 1, started 123145357950976)> costs 757, remaining 2615
+<Consumer(Consumer threading 2, started 123145363206144)> costs 869, remaining 1746
+
+<Producer(Producer threading 0, started 123145326419968)> produced 601, remaining 2347
+<Producer(Producer threading 4, started 123145347440640)> produced 745, remaining 3092
+<Producer(Producer threading 3, started 123145342185472)> produced 680, remaining 3772
+<Producer(Producer threading 1, started 123145331675136)> produced 641, remaining 4413
+<Producer(Producer threading 2, started 123145336930304)> produced 118, remaining 4531
+<Consumer(Consumer threading 1, started 123145357950976)> costs 866, remaining 3665
+<Consumer(Consumer threading 0, started 123145352695808)> costs 647, remaining 3018
+<Consumer(Consumer threading 2, started 123145363206144)> costs 511, remaining 2507
+<Consumer(Consumer threading 1, started 123145357950976)> costs 345, remaining 2162
+<Consumer(Consumer threading 0, started 123145352695808)> costs 338, remaining 1824
+<Consumer(Consumer threading 2, started 123145363206144)> costs 857, remaining 967
+<Consumer(Consumer threading 1, started 123145357950976)> costs 451, remaining 516
+<Consumer(Consumer threading 0, started 123145352695808)> costs 408, remaining 108
 ```
 
 

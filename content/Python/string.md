@@ -1222,6 +1222,53 @@ Out[9]: '中文'
 
 
 
+## 转换
+
+### string to dict 
+
+Starting in Python 2.6 you can use the built-in [`ast.literal_eval`](https://docs.python.org/library/ast.html#ast.literal_eval):
+
+```py
+>>> import ast
+>>> ast.literal_eval("{'muffin' : 'lolz', 'foo' : 'kitty'}")
+{'muffin': 'lolz', 'foo': 'kitty'}
+```
+
+This is safer than using `eval`. As its own docs say:
+
+```
+>>> help(ast.literal_eval)
+Help on function literal_eval in module ast:
+
+literal_eval(node_or_string)
+    Safely evaluate an expression node or a string containing a Python
+    expression.  The string or node provided may only consist of the following
+    Python literal structures: strings, numbers, tuples, lists, dicts, booleans,
+    and None.
+```
+
+For example:
+
+```py
+>>> eval("shutil.rmtree('mongo')")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<string>", line 1, in <module>
+  File "/opt/Python-2.6.1/lib/python2.6/shutil.py", line 208, in rmtree
+    onerror(os.listdir, path, sys.exc_info())
+  File "/opt/Python-2.6.1/lib/python2.6/shutil.py", line 206, in rmtree
+    names = os.listdir(path)
+OSError: [Errno 2] No such file or directory: 'mongo'
+>>> ast.literal_eval("shutil.rmtree('mongo')")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/opt/Python-2.6.1/lib/python2.6/ast.py", line 68, in literal_eval
+    return _convert(node_or_string)
+  File "/opt/Python-2.6.1/lib/python2.6/ast.py", line 67, in _convert
+    raise ValueError('malformed string')
+ValueError: malformed string
+```
+
 
 
 # 优化
