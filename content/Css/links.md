@@ -3,20 +3,13 @@ title: "links"
 date: 2019-03-07 20:27
 ---
 
-
 [TOC]
-
-
 
 # 链接
 
 绑定a标签
 
-
-
 ## 效果
-
-
 
 ### a:link
 
@@ -29,8 +22,6 @@ a:link {
 }
 ```
 
-
-
 ### a:visited
 
 用户已经访问的链接
@@ -40,8 +31,6 @@ a:visited {
     color: #00FF00;
 }
 ```
-
-
 
 ### a:hover
 
@@ -53,8 +42,6 @@ a:hover{
 }
 ```
 
-
-
 ### a:active
 
 链接被点击的时候
@@ -64,4 +51,3 @@ a:active{
     color: #0000FF;
 }
 ```
-

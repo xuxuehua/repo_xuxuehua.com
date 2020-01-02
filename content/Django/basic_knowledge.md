@@ -3,9 +3,7 @@ title: "basic_knowledge"
 date: 2018-10-27 00:52
 ---
 
-
 [TOC]
-
 
 # basic_knowledge
 
@@ -14,8 +12,6 @@ date: 2018-10-27 00:52
 Django是一种基于Python的Web开发框架。
 
 Django本身基于MVC模型，即Model（模型）+View（视图）+ Controller（控制器）设计模式，因此天然具有MVC的出色基因：开发快捷、部署方便、可重用性高、维护成本低等。Python加Django是快速开发、设计、部署网站的最佳组合。
-
-
 
 ### 特点
 
@@ -27,8 +23,6 @@ Django本身基于MVC模型，即Model（模型）+View（视图）+ Controller�
 - 自带免费的后台管理系统：只需要通过简单的几行配置和代码就可以实现一个完整的后台数据管理控制平台。
 - 完整的错误信息提示：在开发调试过程中如果出现运行错误或者异常，Django可以提供非常完整的错误信息帮助定位问题。
 
-
-
 ### MVC设计模式
 
 最早由`Trygve Teenskaug`在1978年提出，上世纪80年代是程序语言Smalltalk的一种内部架构。后来MVC被其他领域借鉴，成为了软件工程中的一种软件架构模式。MVC把Web框架分为3个基础部分：
@@ -38,8 +32,6 @@ Django本身基于MVC模型，即Model（模型）+View（视图）+ Controller�
 **视图(View)**：负责数据的显示和呈现，是对用户的直接输出。
 
 **控制器(Controller)**：负责从用户端收集用户的输入，可以看成提供View的反向功能。
-
-
 
 ### MTV设计模式
 
@@ -51,27 +43,21 @@ Django对传统的MVC设计模式进行了修改，将视图分成View模块和T
 
 **视图(View)**：负责实际的业务逻辑实现
 
-
-
-
-
 ## 安装
 
 Django对Python版本的依赖关系如下表所示：
 
-| Django 版本 | Python 版本                                     |
-| ----------- | ----------------------------------------------- |
-| 1.8         | 2.7, 3.2 (until the end of 2016), 3.3, 3.4, 3.5 |
-| 1.9, 1.10   | 2.7, 3.4, 3.5                                   |
-| 1.11        | 2.7, 3.4, 3.5, 3.6                              |
-| 2.0         | 3.4, 3.5, 3.6                                   |
-| 2.1         | 3.5, 3.6, 3.7                                   |
+| Django 版本 | Python 版本                                       |
+| --------- | ----------------------------------------------- |
+| 1.8       | 2.7, 3.2 (until the end of 2016), 3.3, 3.4, 3.5 |
+| 1.9, 1.10 | 2.7, 3.4, 3.5                                   |
+| 1.11      | 2.7, 3.4, 3.5, 3.6                              |
+| 2.0       | 3.4, 3.5, 3.6                                   |
+| 2.1       | 3.5, 3.6, 3.7                                   |
 
 ```
 pip install django==1.11
 ```
-
-
 
 ### 测试Django
 
@@ -83,8 +69,6 @@ django-admin startproject mysite
 
 在mysite根目录中，又有一个mysite目录，这是整个项目的配置文件目录（一定不要和同名的根目录搞混淆了），还有一个manage.py文件，是整个项目的管理脚本。
 
-
-
 Django会以`127.0.0.1:8000`这个默认配置启动开发服务器
 
 ```
@@ -94,8 +78,6 @@ Python manage.py runserver
 ```
 python manage.py runserver 0.0.0.0:8000
 ```
-
-
 
 ### 项目结构
 
@@ -110,16 +92,14 @@ mysite/
 ```
 
 > 外层的`mysite/`目录与Django无关，只是你项目的容器，可以任意命名。
->
+> 
 > `manage.py`：一个命令行工具，用于与Django进行不同方式的交互脚本，非常重要！
->
+> 
 > 内层的`mysite/`目录是真正的项目文件包裹目录，它的名字是你引用内部文件的包名，例如：`mysite.urls`。
 > `mysite/__init__.py`:一个定义包的空文件。
 > `mysite/settings.py`:项目的主配置文件，非常重要！
 > `mysite/urls.py`:路由文件，所有的任务都是从这里开始分配，相当于Django驱动站点的内容表格，非常重要！
 > `mysite/wsgi.py`:一个基于WSGI的web服务器进入点，提供底层的网络通信功能，通常不用关心。
-
-
 
 ## 第一个APP
 
@@ -133,17 +113,11 @@ app应用与project项目的区别：
 
 app的存放位置可以是任何地点，但是通常都将它们放在与`manage.py`脚本同级的目录下，这样方便导入文件。
 
-
-
 #### 生成app
 
 ```
 $ python manage.py startapp polls
 ```
-
-
-
-
 
 ### 视图views
 
@@ -155,8 +129,6 @@ from django.http import HttpResponse
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 ```
-
-
 
 ### 路由路径
 
@@ -172,8 +144,6 @@ urlpatterns = [
 ```
 
 > 除了admin路由外，尽量给每个app设计自己独立的二级路由。
-
-
 
 #### 导入主urls
 
@@ -191,13 +161,9 @@ urlpatterns = [
 
 > include语法相当于多级路由，它把接收到的url地址去除前面的正则表达式，将剩下的字符串传递给下一级路由进行判断。
 
-
-
 #### url()方法
 
 url()方法可以接收4个参数，其中2个是必须的：`regex`和`view`，以及2个可选的参数：`kwargs`和`name`
-
-
 
 ### 数据库操作
 
@@ -208,16 +174,12 @@ python manage.py migrate
 ```
 
 > migrate命令将遍历`INSTALLED_APPS`设置中的所有项目，在数据库中创建对应的表，并打印出每一条动作信息。
->
+> 
 > `python manage.py migrate`，将操作同步到数据库
-
-
 
 ### 创建模型
 
 定义模型model，模型本质上就是数据库表的布局，再附加一些元数据
-
-
 
 创建两个模型：`Question`和`Choice`。Question包含一个问题和一个发布日期。Choice包含两个字段：该选项的文本描述和该选项的投票数。每一条Choice都关联到一个Question。
 
@@ -235,8 +197,6 @@ class Choice(models.Model):
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
 ```
-
-
 
 * 显示一些我们指定的信息
 
@@ -257,8 +217,6 @@ class Choice(models.Model):
         return self.choice_text
 ```
 
-
-
 #### 自定义模型
 
 用于判断问卷是否最近时间段内发布度的：
@@ -273,8 +231,6 @@ class Question(models.Model):
     def was_published_recently(self):
         return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
 ```
-
-
 
 #### 启用模型
 
@@ -310,8 +266,6 @@ INSTALLED_APPS = [
 ]
 ```
 
-
-
 加入项目
 
 ```
@@ -319,12 +273,8 @@ $ python manage.py makemigrations polls
 ```
 
 > 运行`makemigrations`命令，相当于告诉Django你对模型有改动，并且你想把这些改动保存为一个“迁移(migration)”。
->
+> 
 > `python manage.py makemigrations`为改动创建迁移记录
-
-
-
-
 
 看到类似下面的提示：
 
@@ -336,11 +286,7 @@ Migrations for 'polls':
     - Add field question to choice
 ```
 
-
-
 运行`python manage.py check`命令，它将检查项目中的错误，并不实际进行迁移或者链接数据库的操作
-
-
 
 ### admin后台
 
@@ -370,8 +316,6 @@ Password (again): *********
 Superuser created successfully.
 ```
 
-
-
 #### 修改admin路径
 
 打开根url路由文件`mysite/urls.py`，修改其中admin.site.urls对应的正则表达式，换成你想要的，比如：
@@ -387,8 +331,6 @@ urlpatterns = [
 
 > 访问`http://127.0.0.1:8000/my/set/`才能进入admin界面
 
-
-
 #### admin注册应用
 
 现在还无法看到投票应用，必须先在admin中进行注册，告诉admin站点，请将polls的模型加入站点内，接受站点的管理。
@@ -401,10 +343,6 @@ from .models import Question
 
 admin.site.register(Question)
 ```
-
-
-
-
 
 ### 编写视图
 
@@ -440,10 +378,6 @@ urlpatterns = [
 ]
 ```
 
-
-
-
-
 #### 新的index()视图
 
 用于替代先前无用的index，它会根据发布日期显示最近的5个投票问卷。
@@ -459,13 +393,9 @@ def index(request):
     return HttpResponse(output)
 ```
 
-
-
 ### 模板文件
 
 在polls目录下创建一个新的`templates`目录，Django会在它里面查找模板文件。在templates目录中，再创建一个新的子目录名叫`polls`，进入该子目录，创建一个新的html文件`index.html`。换句话说，你的模板文件应该是`polls/templates/polls/index.html`。可以在DJango中直接使用`polls/index.html`引用该文件。
-
-
 
 写入文件`polls/templates/polls/index.html`:
 
@@ -481,8 +411,6 @@ def index(request):
 {% endif %}
 ```
 
-
-
 修改视图文件`polls/views.py`，让新的`index.html`文件生效：
 
 ```
@@ -499,8 +427,6 @@ def index(request):
     return HttpResponse(template.render(context, request))
 ```
 
-
-
 修改视图文件`polls/views.py`，让新的`index.html`文件生效：
 
 ```
@@ -516,8 +442,6 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 ```
-
-
 
 #### render 函数
 
@@ -536,8 +460,6 @@ def index(request):
 
 > render()函数的第一个位置参数是请求对象（就是view函数的第一个参数），第二个位置参数是模板。还可以有一个可选的第三参数，一个字典，包含需要传递给模板的数据。最后render函数返回一个经过字典数据渲染过的模板封装而成的HttpResponse对象。
 
-
-
 #### 404 页面
 
 视图`polls/views.py`：
@@ -555,8 +477,6 @@ def detail(request, question_id):
     return render(request, 'polls/detail.html', {'question': question})
 ```
 
-
-
 get_object_or_404()
 
 就像render函数一样，Django同样为你提供了一个偷懒的方式，替代上面的多行代码，那就是`get_object_or_404()`方法，参考下面的代码：
@@ -571,8 +491,6 @@ def detail(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'polls/detail.html', {'question': question})
 ```
-
-
 
 ### 模板系统
 
@@ -590,8 +508,6 @@ def detail(request, question_id):
 在模板系统中圆点`.`是万能的魔法师，你可以用它访问对象的属性。在例子`{{ question.question_text }}`中，DJango首先会在question对象中尝试查找一个字典，如果失败，则尝试查找属性，如果再失败，则尝试作为列表的索引进行查询。
 
 在 `{% for %}`循环中的方法调用——`question.choice_set.all`其实就是Python的代码`question.choice_set.all()`,它将返回一组可迭代的`Choice`对象，并用在`{% for %}`标签中。
-
-
 
 #### 删除模板中硬编码的URLs
 
@@ -621,8 +537,6 @@ url(r'^(?P<question_id>[0-9]+)/$', views.detail, name='detail'),
 # 添加新的单词'specifics'
 url(r'^specifics/(?P<question_id>[0-9]+)/$', views.detail, name='detail'),
 ```
-
-
 
 ### URL names的命名空间
 
@@ -655,8 +569,6 @@ urlpatterns = [
 <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
 ```
 
-
-
 ### 表单form
 
 为了接收用户的投票选择，我们需要在前端页面显示一个投票界面。让我们重写先前的`polls/detail.html`文件，代码如下：
@@ -680,8 +592,6 @@ urlpatterns = [
 > - 如果你有一定的前端开发基础，那么form标签的action属性和method属性你应该很清楚它们的含义，action表示你要发送的目的url，method表示提交数据的方式，一般分POST和GET。
 > - forloop.counter是DJango模板系统专门提供的一个变量，用来表示你当前循环的次数，一般用来给循环项目添加有序数标。
 > - 由于我们发送了一个POST请求，就必须考虑一个跨站请求伪造的安全问题，简称CSRF（具体含义请百度）。Django为你提供了一个简单的方法来避免这个困扰，那就是在form表单内添加一条{% csrf_token %}标签，标签名不可更改，固定格式，位置任意，只要是在form表单内。这个方法对form表单的提交方式方便好使，但如果是用ajax的方式提交数据，那么就不能用这个方法了。
-
-
 
 vote视图函数（polls/views.py）
 
@@ -714,8 +624,6 @@ def vote(request, question_id):
 > - 在选择计数器加一后，返回的是一个`HttpResponseRedirect`而不是先前我们常用的`HttpResponse`。HttpResponseRedirect需要一个参数：重定向的URL。这里有一个建议，当你成功处理POST数据后，应当保持一个良好的习惯，始终返回一个HttpResponseRedirect。这不仅仅是对Django而言，它是一个良好的WEB开发习惯。
 > - 我们在上面HttpResponseRedirect的构造器中使用了一个`reverse()`函数。它能帮助我们避免在视图函数中硬编码URL。它首先需要一个我们在URLconf中指定的name，然后是传递的数据。例如`'/polls/3/results/'`，其中的3是某个`question.id`的值。重定向后将进入`polls:results`对应的视图，并将`question.id`传递给它。白话来讲，就是把活扔给另外一个路由对应的视图去干。
 
-
-
 当有人对某个问题投票后，vote()视图重定向到了问卷的结果显示页面。下面我们来写这个处理结果页面的视图(polls/views.py)：
 
 ```
@@ -740,8 +648,6 @@ def results(request, question_id):
 
 现在你可以到浏览器中访问`/polls/1/`了，投票吧。你会看到一个结果页面，每投一次，它的内容就更新一次。如果你提交的时候没有选择项目，则会得到一个错误提示。
 
-
-
 ### 类视图
 
 上面的detail、index和results视图的代码非常相似，有点冗余，这是一个程序猿不能忍受的。他们都具有类似的业务逻辑，实现类似的功能：通过从URL传递过来的参数去数据库查询数据，加载一个模板，利用刚才的数据渲染模板，返回这个模板。由于这个过程是如此的常见，Django很善解人意的帮你想办法偷懒，于是它提供了一种快捷方式，名为“类视图”。
@@ -751,8 +657,6 @@ def results(request, question_id):
 - 修改URLconf设置
 - 删除一些旧的无用的视图
 - 采用基于类视图的新视图
-
-
 
 #### 改良URLconf
 
@@ -812,17 +716,11 @@ def vote(request, question_id):
 - 每一种类视图都需要知道它要作用在哪个模型上，这通过model属性提供。
 - `DetailView`类视图需要从url捕获到的称为"pk"的主键值，因此我们在url文件中将2和3条目的`<question_id>`修改成了`<pk>`。
 
-
-
 ### 静态文件
 
 除了由服务器生成的HTML文件外，WEB应用一般需要提供一些其它的必要文件，比如图片文件、JavaScript脚本和CSS样式表等等，用来为用户呈现出一个完整的网页。在Django中，我们将这些文件统称为“静态文件”
 
-
-
 这个css样式文件应该是`polls/static/polls/style.css`。你可以通过书写`polls/style.css`在Django中访问这个静态文件，与你如何访问模板的路径类似。
-
-
 
 **良好的目录结构是每个应用都应该创建自己的urls、views、models、templates和static，每个templates包含一个与应用同名的子目录，每个static也包含一个与应用同名的子目录。**
 
@@ -845,8 +743,6 @@ li a {
 
 在浏览器访问`http://localhost:8000/polls/`，你会看到Question的超级链接变成了绿色（Django风格！），这意味着你的样式表被成功导入了。
 
-
-
 #### 背景图片
 
 下面，我们在`polls/static/polls/`目录下创建一个用于存放图片的`images`子目录，在这个子目录里放入`background.gif文件。换句话说，这个文件的路径是polls/static/polls/images/background.gif。(你可以使用任何你想要的图片)
@@ -860,7 +756,5 @@ body {
 ```
 
 重新加载`http://localhost:8000/polls/`(CTRL+F5或者直接F5)，你会在屏幕的右下方看到载入的背景图片。
-
-
 
 ### 自定义admin站点

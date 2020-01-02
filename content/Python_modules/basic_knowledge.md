@@ -7,23 +7,15 @@ date: 2018-08-25 00:39
 
 # 模块基本使用
 
-
-
 ## 路径
 
 大型工程尽可能使用绝对路径
 
 独立项目，所有模块从项目根目录开始追溯，称相对的绝对路径
 
-
-
-
-
 ## 定义
 
  .py 文件组成的代码集合就称为模块
-
-
 
 模块分为三种：
 
@@ -31,17 +23,11 @@ date: 2018-08-25 00:39
 - 内置标准模块（又称标准库）
 - 开源模块
 
-
-
 自定义模块 和开源模块的使用参考 http://www.cnblogs.com/wupeiqi/articles/4963027.html
-
-
 
 ## 包
 
 用来从逻辑上组织模块的，本质就是一个目录(含有`__init__`)
-
-
 
 导入包的本质，就是解释`__init__` 文件， 即运行该文件
 
@@ -50,8 +36,6 @@ date: 2018-08-25 00:39
 ```
 print('Package testing file')
 ```
-
-
 
 My_testing.py
 
@@ -62,17 +46,11 @@ import package_testing
 Package testing file
 ```
 
-
-
 导入包就是执行`__init__` 代码，无法执行包内的模块和函数。因此需要在`__init__` 中加载指定的函数
 
 ```
 from . import test1
 ```
-
-
-
-
 
 ## 搜索路径
 
@@ -81,8 +59,6 @@ Python默认会通过下列路径搜索需要的模块
 1. 程序所在的文件夹
 2. 操作系统环境变量PYTHONPATH所包含的路径
 3. 标准库的安装路径
-
-
 
 ## 导入方法
 
@@ -97,10 +73,6 @@ from modules import *
 from modules import logger as my_logger
 ```
 
-
-
-
-
 ### 优化多个调用
 
 当导入的模块被多次函数调用，建议是使用
@@ -109,8 +81,6 @@ from modules import logger as my_logger
 from module_name import my_function
 ```
 
-
-
 ## 使用`__name__`
 
 当整个程序作为库被import的时候，我们并不需要测试语句。可以使用`__name__`跳过
@@ -118,8 +88,6 @@ from module_name import my_function
 `__name__`是Python中一个隐含的变量它代表了模块的名字
 
 只有被Python解释器直接执行的模块的名字才是`__main__`
-
-
 
 ```python
 def lib_func(a):

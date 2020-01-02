@@ -1,10 +1,10 @@
 ---
 title: "position 属性"
 date: 2019-07-17 10:24
+
 ---
+
 [TOC]
-
-
 
 # position
 
@@ -12,17 +12,11 @@ date: 2019-07-17 10:24
 
 [http://learnlayout.com/position-example.html](http://learnlayout.com/position-example.html)
 
-
-
-
-
-## static 
+## static
 
 默认值， 遵循正常的文档流对象。
 
 静态定位的元素不会受到 top, bottom, left, right影响。
-
-
 
 ## relative
 
@@ -39,10 +33,6 @@ date: 2019-07-17 10:24
   width: 500px;
 }
 ```
-
-
-
-
 
 ## fixed
 
@@ -62,10 +52,6 @@ date: 2019-07-17 10:24
 }
 ```
 
-
-
-
-
 ## absolute
 
 绝对位置， 类似于fixed，元素的位置相对于最近的已定位父元素，如果元素没有已定位的父元素，那么它的位置相对于`<html>`
@@ -81,20 +67,3 @@ date: 2019-07-17 10:24
   height: 200px;
 }
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

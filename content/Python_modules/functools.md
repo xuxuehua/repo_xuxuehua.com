@@ -3,12 +3,7 @@ title: "functools"
 date: 2019-01-31 18:38
 ---
 
-
 [TOC]
-
-
-
-
 
 # partial 偏函数
 
@@ -16,7 +11,7 @@ date: 2019-01-31 18:38
 
 从partial生成的新函数，是对原函数的封装
 
-```
+```python
 In [1]: import functools
 
 In [2]: def add(x, y) -> int:
@@ -39,8 +34,6 @@ In [7]: import inspect
 In [8]: inspect.signature(newadd)
 Out[8]: <Signature (x, *, y=5) -> int>
 ```
-
-
 
 ## 本质
 
@@ -66,7 +59,7 @@ In [12]: foo(5)
 Out[12]: 9
 ```
 
-
+# 
 
 # OrderedDict
 
@@ -92,7 +85,7 @@ def base64decode(src:bytes):
             index = alphabet.get(block[-i-1])
             if index is not None:
                 tmp += index << i*6 
-        
+
         ret.extend(tmp.to_bytes(3, 'big'))
     return bytes(ret.rstrip(b'\x00'))
 
@@ -107,4 +100,3 @@ print(base64decode(txt).decode())
 b'TWFu'
 Man
 ```
-

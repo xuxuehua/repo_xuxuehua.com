@@ -4,19 +4,17 @@ date: 2018-06-24 17:19
 collection: 浏览器操作
 ---
 
-
-
 # canvas
 
 Canvas是HTML5新增的组件，它就像一块幕布，可以用JavaScript在上面绘制各种图表、动画等。
 
 没有Canvas的年代，绘图只能借助Flash插件实现，页面不得不用JavaScript和Flash进行交互。有了Canvas，我们就再也不需要Flash了，直接使用JavaScript完成绘制。
 
-
-
 ## 定义
 
-Canvas定义了一个指定尺寸的矩形框，在这个范围内我们可以随意绘制：
+Canvas定义了一个指定尺寸的矩形框，在这个范围内我们可以随意绘制
+
+宽高不能有px
 
 ```
 <canvas id="test-canvas" width="300" height="200"></canvas>
@@ -49,10 +47,7 @@ if (canvas.getContext) {
 } else {
     console.log('你的浏览器不支持Canvas!');
 }
-
 ```
-
-
 
 ### 获取对象
 
@@ -68,8 +63,6 @@ var ctx = canvas.getContext('2d');
 gl = canvas.getContext("webgl");
 ```
 
-
-
 ### 绘制形状
 
 在Canvas上绘制各种形状。在绘制前，我们需要先了解一下Canvas的坐标系统
@@ -77,8 +70,6 @@ gl = canvas.getContext("webgl");
 ![alt](https://cdn.liaoxuefeng.com/cdn/files/attachments/001436926614788af8f274570d54736bddbbf7b2b03a9eb000/l)
 
 Canvas的坐标以左上角为原点，水平向右为X轴，垂直向下为Y轴，以像素为单位，所以每个点都是非负整数
-
-
 
 `CanvasRenderingContext2D`对象有若干方法来绘制图形
 
@@ -106,10 +97,6 @@ ctx.stroke(path);
 
 ![alt](https://cdn.pbrd.co/images/Hrm3W3EF.png)
 
-
-
-
-
 ### 绘制文本
 
 绘制文本就是在指定的位置输出文本，可以设置文本的字体、样式、阴影等，与CSS完全一致
@@ -131,6 +118,7 @@ ctx.fillText('带阴影的文字', 20, 40);
 ```
 
 ![alt](https://cdn.pbrd.co/images/Hrm4vte.png)
+
 
 
 

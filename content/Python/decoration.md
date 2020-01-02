@@ -14,15 +14,11 @@ collection: 函数
 
 常用于: 插入日志，性能测试，事务处理，缓存，权限校验等
 
-
-
 ## 原则
 
 不能修改被装饰的函数的源代码
 
 不能修改被装饰函数的调用方式
-
-
 
 ## 基本实现
 
@@ -45,8 +41,6 @@ start func
 this is test
 ```
 
-
-
 ## @语法糖装饰函数
 
 `test = deco(test)` 
@@ -63,7 +57,7 @@ def test():
 def deco(func):
     def inside():
         print('start func')
-        func()
+        func()   # 调用的时候真正调用的是test函数
         print('end func')
     return inside
 
@@ -100,8 +94,6 @@ start func
 this is test
 end func
 ```
-
-
 
 ## 带参数操作
 
@@ -132,8 +124,6 @@ inside end
 ret value 3
 ```
 
-
-
 ### 参数数量不确定的函数进行装饰
 
 ```
@@ -160,8 +150,6 @@ args: (1, 2, 3), kwargs: {'b': 2, 'a': 1, 'c': 3}
 inside end
 ret value (1, 2, 3)
 ```
-
-
 
 ### 装饰器带参数
 
@@ -192,10 +180,6 @@ inside end with deco params
 ret value (1, 2, 3)
 ```
 
-
-
-
-
 ## 叠放装饰器
 
 如果一个函数被多个装饰器修饰，其实应该是该函数先被最里面的装饰器修饰, 即从里到外执行
@@ -206,16 +190,12 @@ ret value (1, 2, 3)
 @deco3
 def func()
     pass
-    
-    
+
+
 等价于
 
 deco1(deco2(deco3(func)))
 ```
-
-
-
-
 
 ```
 def outer(func):
@@ -239,7 +219,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
+
 >>>
 Enter inner <function main at 0x10a1ae730>
 Enter outer <function inner.<locals>.wrapper at 0x10a1ae7b8>
@@ -249,10 +229,6 @@ Running main
 ```
 
 > 函数main()先被inner装饰，变成新的函数，变成另一个函数后，再次被装饰器修饰
-
-
-
-
 
 ## 类装饰器
 
@@ -296,8 +272,6 @@ total display 3
 My age:  5
 ```
 
-
-
 类装饰器主要依赖于函数`__call__()`, 每当调用一个类实例，函数`__call__()` 就会被执行一次
 
 ```
@@ -327,14 +301,6 @@ Num of calls is : 2
 hello world
 ```
 
-
-
-
-
-
-
-
-
 ## doc string
 
 在函数语句块的第一行书写，习惯使用三个引号封装
@@ -352,10 +318,6 @@ In [8]: "name={}\ndoc={}".format(add.__name__, add.__doc__)
 Out[8]: 'name=add\ndoc=This is doc string'
 ```
 
-
-
-
-
 # 类的装饰器
 
 ## staticmethod 静态方法
@@ -364,7 +326,9 @@ Out[8]: 'name=add\ndoc=This is doc string'
 
 静态函数可以用来做一些简单独立的任务，既方便测试，也能优化代码结构
 
-即和类以及对象都没有关系， 和普通的函数没有太多区别，常用于和类对象无任何关系的时候使用
+即和类以及对象都没有关系， 和普通的函数没有太多区别，常用于和类对象无任何关系的时候使用，即会使用到当前类里面的逻辑
+
+会使用到当前类里面的逻辑
 
 ```
 class A:
@@ -397,8 +361,6 @@ NameError: name '_A__val' is not defined
 
 静态方法和类方法都是通过给类发消息来调用的
 
-
-
 ```python
 class MyClass:
     var1 = "String1"
@@ -414,11 +376,9 @@ I am static method
 I am static method
 ```
 
-
-
 ## classmethod 类方法
 
-至少一个cls参数；
+至少一个cls参数
 
 执行类方法时，自动将调用该方法的类复制给cls, cls指代调用者即类对象自身,通过这个cls参数我们可以获取和类相关的信息并且可以创建出类的对象
 
@@ -466,8 +426,6 @@ Class: <class '__main__.MyClass'>,val1: String1, Cannot access value 2
 Class: <class '__main__.MyClass'>,val1: String1, Cannot access value 2
 ```
 
-
-
 ```
 from time import time, localtime, sleep
 
@@ -501,7 +459,7 @@ class Clock(object):
             (self._hour, self._minute, self._second)
 
 def main():
-		# 通过类方法创建对象并获取系统时间
+        # 通过类方法创建对象并获取系统时间
     clock = Clock.now()
     while True:
         print(clock.show())
@@ -511,10 +469,6 @@ def main():
 if __name__ == "__main__":
     main()
 ```
-
-
-
-
 
 类方法不能访问实例变量, 但可以访问类变量
 
@@ -541,8 +495,6 @@ Traceback (most recent call last):
 AttributeError: type object 'A' has no attribute 'x'
 ```
 
-
-
 ## property 属性
 
 加上property 装饰器，在函数调用的时候，就不需要加上小括号
@@ -551,9 +503,13 @@ property调用的时候，只能调用self参数
 
 将一个类方法转变成一个静态属性,只读属性。
 
+property 属性必须在setter 和 deleter之前
+
+
+
 类属性可以直接被类调用，如果想要实现能被类直接调用的方法就可以借助staticmethod和classmethod了，区别在于staticmethod的方法没有self参数，通常用来直接定一个静态类方法，如果想将一个普通动态方法变成类方法就要使用classmethod了。
 
-property 属性必须在setter 和 deleter之前
+
 
 ```python
 class A:
@@ -583,8 +539,6 @@ print(a.value)
 3
 ```
 
-
-
 同一个对象的不同属性之间可能存在依赖关系。当某个属性被修改时，依赖于该属性的其他属性也会同时变化。
 
 ```
@@ -612,12 +566,6 @@ print(summer.adult)
 True
 False
 ```
-
-
-
-
-
-
 
 ```
 from abc import ABCMeta, abstractmethod
@@ -659,8 +607,8 @@ class Programmer(Employee):
 
     def get_salary(self):
         return 150.00* self._working_hour
-        
-    
+
+
 class Salesman(Employee):
 
     def __init__(self, name, sales=0):
@@ -690,10 +638,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 ```
-
-
 
 ### setter 装饰器
 
@@ -728,9 +673,7 @@ print(a.val)
 3
 ```
 
-
-
-### deleter 装饰器 
+### deleter 装饰器
 
 可以控制是否删除属性，不常用
 
@@ -767,10 +710,6 @@ print(p.age)
 del age
 30
 ```
-
-
-
-
 
 ### property 参数
 
@@ -816,8 +755,6 @@ del obj.PRICE
 160.0
 ```
 
-
-
 ### property 实现的原理
 
 ```
@@ -844,15 +781,9 @@ print(a.val)
 3
 ```
 
-
-
-
-
 # wraps 装饰器
 
 使用装饰器会产生我们可能不希望出现的副作用，　例如：改变被修饰函数名称，对于调试器或者对象序列化器等需要使用内省机制的那些工具，可能会无法正常运行；其实调用装饰器后，会将同一个作用域中原来函数同名的那个变量（例如下面的func_1）,重新赋值为装饰器返回的对象；使用＠wraps后，会把与内部函数（被修饰函数，例如下面的func_1）相关的重要元数据全部复制到外围函数
-
-
 
 这里函数的元信息改变了
 
@@ -877,8 +808,6 @@ Wrapper of decorator
 hello world
 wrapper
 ```
-
-
 
 使用内置的wraps 保留原函数的元信息
 
@@ -908,10 +837,6 @@ hello world
 greet
 ```
 
-
-
-
-
 # example
 
 ## 认证
@@ -935,8 +860,6 @@ def authenticate(func):
 def post_message(request, ...):
     pass
 ```
-
-
 
 ## 日志记录
 
@@ -962,8 +885,6 @@ def calculate_similarity(items)
     pass
 ```
 
-
-
 ## 输入合理性检查
 
 在大型公司的机器学习框架中，调用机器集群进行模型训练前，往往会用装饰器对其输入(往往是很长的json文件)进行合理性检查。这样就可以大大避免，输入不正确对机器造成的巨大开销。
@@ -979,8 +900,6 @@ def validation_check(input):
 def neural_network_training(param1, param2, ...):
 ...
 ```
-
-
 
 ## 缓存
 
@@ -1000,10 +919,3 @@ LRU cache，在Python中的表示形式是@lru_cache。@lru_cache会缓存进程
 def check(param1, param2): # 检查用戶设备类型，版本号等等
     pass
 ```
-
-
-
-
-
-
-

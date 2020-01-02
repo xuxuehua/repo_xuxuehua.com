@@ -3,14 +3,11 @@ title: "network"
 date: 2018-10-24 16:43
 ---
 
-
 [TOC]
 
 # network
 
 ![img](https://snag.gy/nuSP42.jpg)
-
-
 
 Docker 允许通过外部访问容器或容器互联的方式来提供网络服务
 
@@ -23,20 +20,18 @@ NETWORK ID          NAME                DRIVER              SCOPE
 ```
 
 > bridge 即使docker0 网卡， 同时会生成4个虚拟网卡
->
+> 
 > host 表示使用宿主机的网络名称空间
->
+> 
 > none 不给使用网络，即loopback网络
-
-
 
 ```
 # apt install bridge-utils
 
 
 root@w:~# brctl show
-bridge name	bridge id		STP enabled	interfaces
-docker0		8000.02422fc7d74c	no		vethdefab17
+bridge name    bridge id        STP enabled    interfaces
+docker0        8000.02422fc7d74c    no        vethdefab17
 
 
 root@w:~# ip link show
@@ -49,8 +44,6 @@ root@w:~# ip link show
 9: vethdefab17@if8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
     link/ether be:51:1f:ef:0e:c0 brd ff:ff:ff:ff:ff:ff link-netnsid 0
 ```
-
-
 
 ```
 # docker network inspect bridge
@@ -98,10 +91,7 @@ root@w:~# ip link show
         "Labels": {}
     }
 ]
-
 ```
-
-
 
 ## 外部访问容器
 
@@ -116,17 +106,13 @@ CONTAINER ID  IMAGE                   COMMAND       CREATED        STATUS       
 bc533791f3f5  training/webapp:latest  python app.py 5 seconds ago  Up 2 seconds  0.0.0.0:49155->5000/tcp  nostalgic_morse
 ```
 
-
-
 ### -p 则可以指定要映射的端口
 
 * 在一个指定端口上只可以绑定一个容器
 
 `ip:hostPort:containerPort | ip::containerPort | hostPort:containerPort`
 
-
-
-###  docker logs 命令来查看应用的信息
+### docker logs 命令来查看应用的信息
 
 ```
 $ docker logs -f nostalgic_morse
@@ -134,7 +120,6 @@ $ docker logs -f nostalgic_morse
 10.0.2.2 - - [23/May/2014 20:16:31] "GET / HTTP/1.1" 200 -
 10.0.2.2 - - [23/May/2014 20:16:31] "GET /favicon.ico HTTP/1.1" 404 -
 ```
-
 
 ### 映射所有接口地址
 
@@ -188,9 +173,7 @@ $ docker run -d \
     python app.py
 ```
 
-
-
-### 容器互联 
+### 容器互联
 
 * 将容器加入自定义的 Docker 网络来连接多个容器
 
@@ -198,7 +181,6 @@ $ docker run -d \
 
 * 创建一个新的 Docker 网络
 * -d 参数指定 Docker 网络类型，有 bridge overlay
-
 
 ```
 $ docker network create -d bridge my-net
@@ -211,7 +193,6 @@ $ docker network create -d bridge my-net
 ```
 $ docker run -it --rm --name busybox1 --net my-net busybox sh
 ```
-
 
 * 打开新的终端，再运行一个容器并加入到 my-net 网络
 
@@ -241,8 +222,6 @@ PING busybox1 (172.19.0.2): 56 data bytes
 64 bytes from 172.19.0.2: seq=1 ttl=64 time=0.143 ms
 ```
 
-
-
 ## 高级网络配置
 
 > 当 Docker 启动时，会自动在主机上创建一个 docker0 虚拟网桥，实际上是 Linux 的一个 bridge，可以理解为一个软件交换机。它会在挂载到它的网口之间进行转发。
@@ -250,8 +229,6 @@ PING busybox1 (172.19.0.2): 56 data bytes
 > 当创建一个 Docker 容器的时候，同时会创建了一对 veth pair 接口（当数据包发送到一个接口时，另外一个接口也可以收到相同的数据包）。这对接口一端在容器内，即 eth0；另一端在本地并被挂载到 docker0 网桥，名称以 veth 开头（例如 vethAQI2QT）。通过这种方式，主机可以跟容器通信，容器之间也可以相互通信。Docker 就创建了在主机和所有容器之间一个虚拟共享网络。
 
 ![img](https://yeasy.gitbooks.io/docker_practice/content/advanced_network/_images/network.png)
-
-
 
 ## 快速配置指南
 
@@ -320,8 +297,6 @@ nameserver 8.8.8.8
 > --dns-search=DOMAIN 设定容器的搜索域，当设定搜索域为 .example.com 时，在搜索一个名为 host 的主机时，DNS 不仅搜索 host，还会搜索 host.example.com。
 > 注意： 如果没有上述最后 2 个选项，Docker 会默认用主机上的 /etc/resolv.conf 来配置容器。
 
-
-
 容器访问控制
 
 * 通过 Linux 上的 iptables 防火墙来进行管理和实现
@@ -345,8 +320,6 @@ net.ipv4.ip_forward = 1
 
 > 当启动 Docker 服务时候，默认会添加一条转发策略到 iptables 的 FORWARD 链上。策略为通过（ACCEPT）还是禁止（DROP）取决于配置--icc=true（缺省值）还是 --icc=false。当然，如果手动指定 --iptables=false 则不会添加 iptables 规则。
 > 可见，默认情况下，不同容器之间是允许网络互通的。如果为了安全考虑，可以在 /etc/default/docker 文件中配置 DOCKER_OPTS=--icc=false 来禁止它。
-
-
 
 ###### 访问指定端口
 
@@ -383,7 +356,6 @@ DROP       all  --  0.0.0.0/0            0.0.0.0/0
 
 * 容器所有到外部网络的连接，源地址都会被 NAT 成本地系统的 IP 地址。这是使用 iptables 的源地址伪装操作实现的
 * 将所有源地址在 172.17.0.0/16 网段，目标地址为其他网段（外部网络）的流量动态伪装为从系统网卡发出。MASQUERADE 跟传统 SNAT 的好处是它能动态从网卡获取地址。
-
 
 ```
 $ sudo iptables -t nat -nL
@@ -437,7 +409,6 @@ docker0         8000.3a1d7362b4ee       no              veth65f9
 ```
 
 * 注：brctl 命令在 Debian、Ubuntu 中可以使用 sudo apt-get install bridge-utils 来安装。
-
 
 * 每次创建一个新容器的时候，Docker 从可用的地址段中选择一个空闲的 IP 地址分配给容器的 eth0 端口。使用本地主机上 docker0 接口的 IP 作为所有容器的默认网关。
 
@@ -501,7 +472,6 @@ $ ip addr show bridge0
 
 * Brandon Rhodes 创建了一个提供完整的 Docker 容器网络拓扑管理的 Python库，包括路由、NAT 防火墙；以及一些提供 HTTP, SMTP, POP, IMAP, Telnet, SSH, FTP 的服务器。
 
-
 #### 创建一个点到点连接
 
 > 默认情况下，Docker 会将所有容器连接到由 docker0 提供的虚拟子网中。
@@ -549,10 +519,6 @@ $ sudo ip netns exec 3004 ip route add 10.1.1.1/32 dev B
 > 此外，也可以不指定 --net=none 来创建点到点链路。这样容器还可以通过原先的网络来通信。
 > 利用类似的办法，可以创建一个只跟主机通信的容器。但是一般情况下，更推荐使用 --icc=false 来关闭容器之间的通信。
 
-
-
-
-
 #### Docker 网络实现
 
 ##### 基本原理
@@ -574,7 +540,6 @@ $ sudo ip netns exec 3004 ip route add 10.1.1.1/32 dev B
 > --net=host 告诉 Docker 不要将容器网络放到隔离的命名空间中，即不要容器化容器内的网络。此时容器使用本地主机的网络，它拥有完全的本地主机接口访问权限。容器进程可以跟主机其它 root 进程一样可以打开低范围的端口，可以访问本地网络服务比如 D-bus，还可以让容器做一些影响整个主机系统的事情，比如重启主机。因此使用这个选项的时候要非常小心。如果进一步的使用 --privileged=true，容器会被允许直接配置主机的网络堆栈。
 > --net=container:NAME_or_ID 让 Docker 将新建容器的进程放到一个已存在容器的网络栈中，新容器进程有自己的文件系统、进程列表和资源限制，但会和已存在的容器共享 IP 地址和端口等网络资源，两者进程可以直接通过 lo 环回接口通信。
 > --net=none 让 Docker 将新容器放到隔离的网络栈中，但是不进行网络配置。之后，用户可以自己进行配置。
-
 
 ##### 网络配置细节
 
@@ -627,30 +592,22 @@ $ sudo ip netns exec $pid ip route add default via 172.17.42.1
 > 当容器结束后，Docker 会清空容器，容器内的 eth0 会随网络命名空间一起被清除，A 接口也被自动从 docker0 卸载。
 > 此外，用户可以使用 ip netns exec 命令来在指定网络命名空间中进行配置，从而配置容器内的网络。
 
-
-
-
-
 # Overlay Network
 
 通过在叠加网络，即封装一个新的IP封包形成隧道
 
-
-
 ## Docker Compose 项目
 
-
-
 ### Compose 简介
-
-
 
 通过第一部分中的介绍，我们知道使用一个 Dockerfile 模板文件，可以让用户很方便的定义一个单独的应用容器。然而，在日常工作中，经常会碰到需要多个容器相互配合来完成某项任务的情况。例如要实现一个 Web 项目，除了 Web 服务容器本身，往往还需要再加上后端的数据库服务容器，甚至还包括负载均衡容器等。
 
 Compose 恰好满足了这样的需求。它允许用户通过一个单独的 docker-compose.yml 模板文件（YAML 格式）来定义一组相关联的应用容器为一个项目（project）。
 
 * Compose 中有两个重要的概念：
+
 * 服务 (service)：一个应用的容器，实际上可以包括若干运行相同镜像的容器实例。
+
 * 项目 (project)：由一组关联的应用容器组成的一个完整业务单元，在 docker-compose.yml 文件中定义。
 
 * Compose 的默认管理对象是项目，通过子命令对项目中的一组容器进行便捷地生命周期管理。
@@ -665,7 +622,6 @@ Compose 恰好满足了这样的需求。它允许用户通过一个单独的 do
 $ docker-compose --version
 
 docker-compose version 1.17.1, build 6d101fb
-
 ```
 
 #### 二进制包

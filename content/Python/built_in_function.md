@@ -6,11 +6,7 @@ collection: 函数
 
 [TOC]
 
-
-
 # 内置函数
-
-
 
 ## abs 绝对值
 
@@ -19,8 +15,6 @@ print(abs(-1))
 >
 1
 ```
-
-
 
 ## bin 二进制
 
@@ -41,8 +35,6 @@ Out[10]: '0b100'
 In [11]: bin(255)
 Out[11]: '0b11111111'
 ```
-
-
 
 ## bool 布尔计算
 
@@ -75,8 +67,6 @@ In [9]: bool(None)
 Out[9]: False
 ```
 
-
-
 ## bytes
 
 ```
@@ -91,8 +81,6 @@ Out[16]: b'Abc'
 In [17]: a
 Out[17]: b'abc'
 ```
-
-
 
 ## callable
 
@@ -111,8 +99,6 @@ In [20]: callable(1)
 Out[20]: False
 ```
 
-
-
 ## chr 返回字符
 
 转换对应的ascii的值， 输入的是数字
@@ -128,13 +114,9 @@ In [23]: chr(99)
 Out[23]: 'c'
 ```
 
-
-
 ## ceil
 
 向上取整
-
-
 
 ## divmod 取余
 
@@ -148,8 +130,6 @@ print(divmod(8, 3))
 (2, 2)
 ```
 
-
-
 ## enumerate 枚举
 
 迭代一个序列，返回索引数字和元素构成的二元组
@@ -159,8 +139,6 @@ enumerate(seq, start=0)
 ```
 
 > start表示索引开始的数字，默认为0
-
-
 
 ```
 In [151]: for i in enumerate('abcdefg', start=2):
@@ -174,8 +152,6 @@ In [151]: for i in enumerate('abcdefg', start=2):
 (7, 'f')
 (8, 'g')
 ```
-
-
 
 ## filter
 
@@ -195,25 +171,17 @@ In [34]: for i in x:
 9
 ```
 
-
-
 ```
 filter(lambda x: True if x else False, [self.author, self.publisher, self.price])
 ```
-
-
 
 ## floor
 
 向下取整
 
-
-
 ## float
 
 将一个字符串转换成浮点数
-
-
 
 ## help()
 
@@ -224,7 +192,7 @@ Help on built-in function print in module builtins:
 
 print(...)
     print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)
-    
+
     Prints the values to a stream, or to sys.stdout by default.
     Optional keyword arguments:
     file:  a file-like object (stream); defaults to the current sys.stdout.
@@ -232,10 +200,6 @@ print(...)
     end:   string appended after the last value, default a newline.
     flush: whether to forcibly flush the stream.
 ```
-
-
-
-
 
 ## hex 十六进制
 
@@ -254,13 +218,9 @@ In [40]: hex(255)
 Out[40]: '0xff'
 ```
 
-
-
 ## int 整数
 
 将一个数值或字符串转换成整数，可以指定进制
-
-
 
 ## isinstance 判断类型
 
@@ -276,23 +236,17 @@ In [20]: isinstance('6', str)
 Out[20]: True
 ```
 
-
-
 ## issubclass
 
 判断类型是否是某种类型的子类或者元组中列出的某个类型的子类
 
 返回值为布尔类型
 
-
-
 ## iter 迭代器
 
 ```
 iter(iterable)
 ```
-
-
 
 ```
 In [154]: t = iter(range(5))
@@ -320,8 +274,6 @@ StopIteration                             Traceback (most recent call last)
 
 StopIteration:
 ```
-
-
 
 ## join 连接
 
@@ -333,25 +285,13 @@ print(str.join(list))
 Hello#World
 ```
 
-
-
-
-
 ## len 对象长度
 
 返回一个集合类型的元素个数
 
-
-
-
-
 ## min 最小
 
-
-
 ## max 最大
-
-
 
 ## next 获取迭代器
 
@@ -360,8 +300,6 @@ next 对下一个迭代器取下一个元素，如果元素全都取过了，会
 ```
 next(iterable[, default])
 ```
-
-
 
 ```
 In [154]: t = iter(range(5))
@@ -389,8 +327,6 @@ StopIteration                             Traceback (most recent call last)
 
 StopIteration:
 ```
-
-
 
 ## oct 八进制
 
@@ -413,8 +349,6 @@ In [26]: ord('c')
 Out[26]: 99
 ```
 
-
-
 ## pow 幂
 
 pow(x, y) 返回x的y次幂
@@ -427,9 +361,7 @@ In [42]: pow(2, 10)
 Out[42]: 1024
 ```
 
-
-
-## range 
+## range
 
 ```
 range(start, stop[, step])
@@ -451,8 +383,6 @@ i
 k
 ```
 
-
-
 ## reversed 翻转
 
 返回一个翻转元素的迭代器
@@ -461,8 +391,6 @@ k
 In [149]: list(reversed("13579"))
 Out[149]: ['9', '7', '5', '3', '1']
 ```
-
-
 
 ## round
 
@@ -475,8 +403,6 @@ Out[43]: 3
 In [44]: round(3.1415, 2)
 Out[44]: 3.14
 ```
-
-
 
 ## sorted 排序
 
@@ -493,10 +419,6 @@ In [46]: sorted(a.items(), key=lambda x: x[1])
 Out[46]: [(8, 0), (6, 2), (51, 3), (1, 4), (-7, 6), (11, 99)]
 ```
 
-
-
-
-
 ## split 分割
 
 ```python
@@ -505,7 +427,8 @@ print(str.split(' '))
 >
 ['Hello', 'World']
 ```
-## splitlines 
+
+## splitlines
 
 ```python
 str = 'Hello World'
@@ -514,13 +437,9 @@ print(str.splitlines())
 ['Hello World']
 ```
 
-
-
-## str 
+## str
 
 将指定的对象转换成字符串形式，可以指定编码
-
-
 
 ## sum 求和
 
@@ -530,14 +449,6 @@ print(str.splitlines())
 In [148]: sum(range(1, 100, 2))
 Out[148]: 2500
 ```
-
-
-
-
-
-
-
-
 
 ## type 类型
 
@@ -555,10 +466,6 @@ print(type(list))
 <class 'int'>
 <class 'list'>
 ```
-
-
-
-
 
 ## vars
 
@@ -578,15 +485,11 @@ In [10]: print(vars(rick))
 {}
 ```
 
-
-
 ## zip 拉链函数
 
 把多个可迭代对象合并在一起， 返回一个迭代器
 
 将每次从不同对象中取到的元素合并成一个元组
-
-
 
 ### 聚合
 
@@ -616,8 +519,6 @@ for (a, b, c) in zip(ta, tb, tc):
 3 6 c
 ```
 
-
-
 ### 分解
 
 ```python
@@ -634,10 +535,6 @@ print(na, nb)
 (1, 2, 3) (4, 5, 6)
 ```
 
-
-
-
-
 ## `__import__` 动态加载
 
 `__import__()`函数用于动态加载类和函数 。
@@ -648,31 +545,26 @@ print(na, nb)
 __import__(name[, globals[, locals[, fromlist[, level]]]])
 ```
 
-
-
 ```
 a.py
 ### 
 #!/usr/bin/env python    
 #encoding: utf-8  
- 
+
 import os  
- 
+
 print ('在 a.py 文件中 %s' % id(os))
 ```
-
-
 
 ```
 test.py
 ###
 #!/usr/bin/env python    
 #encoding: utf-8  
- 
+
 import sys  
 __import__('a')        # 导入 a.py 模块
 
 >>>
 在 a.py 文件中 4394716136
 ```
-

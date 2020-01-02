@@ -7,34 +7,24 @@ date: 2018-06-04 11:03
 
 # Basic knowledge
 
-
-
 ## 基本语法
 
 每个语句以`;`结束，语句块用`{...}`
 
 > JavaScript并不强制要求在每个语句的结尾加`;`，浏览器中负责执行JavaScript代码的引擎会自动在每个语句的结尾补上`;`
->
+> 
 > * 但是让JavaScript引擎自动加分号在某些情况下会改变程序的语义，导致运行结果与期望不一致。
 
-
-
 花括号`{...}`内的语句具有缩进，通常是4个空格。缩进不是JavaScript语法要求必须的，但缩进有助于我们理解代码的层次，
-
-
 
 ### 注释
 
 * 以`//`开头直到行末的字符被视为行注释，注释是给开发人员看到，JavaScript引擎会自动忽略：
 * 另一种块注释是用`/*...*/`把多行字符包裹起来，把一大“块”视为一个注释
 
-
-
 ### 大小写
 
 * 请注意，JavaScript严格区分大小写，如果弄错了大小写，程序将报错或者运行不正常。
-
-
 
 ### 对代码行进行折行
 
@@ -45,8 +35,6 @@ document.write("Hello \
 World!");
 ```
 
-
-
 ### 代码位置
 
 HTML 中的脚本必须位于`<script>` 与 `</script>` 标签之间。
@@ -54,8 +42,6 @@ HTML 中的脚本必须位于`<script>` 与 `</script>` 标签之间。
 脚本可被放置在 HTML 页面的` <body>` 和 `<head> `部分中。
 
 通常的做法是把函数放入 `<head> `部分中，或者放在页面底部。这样就可以把它们安置到同一处位置，不会干扰页面的内容。
-
-
 
 ### 变量
 
@@ -66,8 +52,6 @@ HTML 中的脚本必须位于`<script>` 与 `</script>` 标签之间。
 - 变量必须以字母开头
 - 变量也能以 $ 和 _ 符号开头（不过我们不推荐这么做）
 - 变量名称对大小写敏感（y 和 Y 是不同的变量）
-
-
 
 #### var 声明（创建） JavaScript 变量
 
@@ -105,8 +89,6 @@ age=56,
 job="CEO";
 ```
 
-
-
 ### 简单操作
 
 #### 写入 HTML 输出
@@ -124,8 +106,6 @@ job="CEO";
 </body>
 </html>
 ```
-
-
 
 如果在文档已完成加载后执行 document.write，整个 HTML 页面将被覆盖
 
@@ -151,12 +131,6 @@ document.write("糟糕！文档消失了。");
 </html>
 ```
 
-
-
-
-
-
-
 #### 对事件作出反应
 
 ```
@@ -174,10 +148,7 @@ JavaScript 能够对事件作出反应。比如对按钮的点击：
 
 </body>
 </html>
-
 ```
-
-
 
 #### 改变 HTML 内容
 
@@ -205,8 +176,6 @@ x.innerHTML="Hello World!";    // 改变内容
 </body>
 </html>
 ```
-
-
 
 #### 改变 HTML 图像
 
@@ -237,8 +206,6 @@ else
 </html>
 ```
 
-
-
 #### 改变 HTML 样式
 
 ```
@@ -266,8 +233,6 @@ x.style.color="#ff0000";          // 改变样式
 </html>
 ```
 
-
-
 #### 验证输入
 
 ```
@@ -286,9 +251,9 @@ function myFunction()
 {
 var x=document.getElementById("demo").value;
 if(x==""||isNaN(x))
-	{
-	alert("Not Numeric");
-	}
+    {
+    alert("Not Numeric");
+    }
 }
 </script>
 
@@ -297,12 +262,6 @@ if(x==""||isNaN(x))
 </body>
 </html>
 ```
-
-
-
-
-
-
 
 ## html 引入外部Javascript
 
@@ -327,14 +286,9 @@ if(x==""||isNaN(x))
 
 </body>
 </html>
-
 ```
 
-
-
-
-
-## Null & undefined 
+## Null & undefined
 
 * `null`表示一个“空”的值，它和`0`以及空字符串`''`不同，`0`是一个数值，`''`表示长度为0的字符串，而`null`表示“空”。
 
@@ -346,10 +300,6 @@ if(x==""||isNaN(x))
 cars=null;
 person=null;
 ```
-
-
-
-
 
 ## 变量
 
@@ -364,8 +314,6 @@ var s_007 = '007'; // s_007是一个字符串
 var Answer = true; // Answer是一个布尔值true
 var t = null; // t的值是null
 ```
-
-
 
 ### var 的问题
 
@@ -382,8 +330,6 @@ There's a weakness that comes with `var`. I'll use the example below to explain 
     console.log(greeter) //"say Hello instead"
 ```
 
-
-
 ### 变量赋值
 
 在JavaScript中，使用等号`=`对变量进行赋值。可以把任意数据类型赋值给变量，同一个变量可以反复赋值，而且可以是不同类型的变量，但是要注意只能用`var`申明一次
@@ -392,8 +338,6 @@ There's a weakness that comes with `var`. I'll use the example below to explain 
 var a = 123; // a的值是整数123
 a = 'ABC'; // a变为字符串
 ```
-
-
 
 #### 静态语言定义
 
@@ -404,14 +348,6 @@ int a = 123; // a是整数类型变量，类型用int申明
 a = "ABC"; // 错误：不能把字符串赋给整型变量
 ```
 
-
-
-
-
-
-
-
-
 ## strict 模式
 
 JavaScript在设计之初，为了方便初学者学习，并不强制要求用`var`申明变量。这个设计错误带来了严重的后果：如果一个变量没有通过`var`申明就被使用，那么该变量就自动被申明为全局变量：
@@ -421,12 +357,10 @@ i = 10; // i现在是全局变量
 ```
 
 > 在同一个页面的不同的JavaScript文件中，如果都不用`var`申明，恰好都使用了变量`i`，将造成变量`i`互相影响，产生难以调试的错误结果。
->
+> 
 > 使用`var`申明的变量则不是全局变量，它的范围被限制在该变量被申明的函数体内，同名变量在不同的函数体内互不冲突。
 
 为了修补JavaScript这一严重设计缺陷，ECMA在后续规范中推出了strict模式，在strict模式下运行的JavaScript代码，强制通过`var`申明变量，未使用`var`申明变量就使用的，将导致运行错误。
-
-
 
 ### 开启strict模式
 
@@ -436,42 +370,4 @@ i = 10; // i现在是全局变量
 'use strict';
 ```
 
-
-
-# localStorage
-
-本地缓存
-
-```
-    <script>
-        $(function() {
-            var initial_sidebar = localStorage.getItem('sidebar_local') || 'on';
-            alert('var initial value: ' + initial_sidebar);
-
-            if (initial_sidebar === 'on') {
-                alert('current is on');
-            }
-            else {
-                alert('current is off');
-            }
-
-        $('#sideBarLogo').click(function() {
-            var current_initial_sidebar_value = localStorage.getItem('sidebar_local');
-            if ( current_initial_sidebar_value === 'on') {
-                localStorage.setItem('sidebar_local', 'off');
-            } 
-            else {
-                localStorage.setItem('sidebar_local', 'on');
-            }
-        })
-
-        });
-    </script>
-```
-
-
-
-
-
-
-
+# 

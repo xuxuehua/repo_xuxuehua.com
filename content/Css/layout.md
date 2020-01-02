@@ -3,23 +3,17 @@ title: "layout 布局"
 date: 2018-11-20 18:06
 ---
 
-
 [TOC]
-
 
 # layout
 
-
-
 ## 盒模型
 
-即把HTML页面中的元素看作是一个矩形的盒子容器，没有矩形都是有元素的内容（content），内边距（padding），边框（border）和外边距（margin） 组成
+即把HTML页面中的元素看作是一个矩形的盒子容器，每个矩形都是有元素的内容（content），内边距（padding），边框（border）和外边距（margin） 组成
 
 ![img](https://snag.gy/sfBe6c.jpg)
 
 > height 和weight 只对content区域有效果
-
-
 
 ### 清除样式（常用操作）
 
@@ -28,8 +22,6 @@ date: 2018-11-20 18:06
 ```
 body,button,code,dd,details,dl,dt,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,hr,input,legend,li,menu,nav,ol,p,pre,section,td,textarea,th,ul{margin:0;padding:0}
 ```
-
-
 
 行内元素不要给上下的margin和padding，默认是不起作用的
 
@@ -40,10 +32,6 @@ body, div {
 }
 ```
 
-
-
-
-
 ### border 边框
 
 推荐方式
@@ -51,8 +39,6 @@ body, div {
 ```
 border: 20px solid purple;
 ```
-
-
 
 border-style
 
@@ -64,8 +50,6 @@ dotted，边框为点线
 double，边框为双实线
 ```
 
-
-
 border-color
 
 ```
@@ -75,27 +59,17 @@ border-color: yellow black green red;
 
 > 多个参数顺序，为顺时针，上右下左
 
-
-
 border-radius
 
 圆角边框
-
-
 
 box-shadow
 
 边框阴影
 
-
-
 border-image
 
 边框图片
-
-
-
-
 
 ### padding 内边距
 
@@ -105,8 +79,6 @@ padding: 0;
 ```
 
 > 多个参数顺序，为顺时针，上右下左 
-
-
 
 ### margin 外边距
 
@@ -119,8 +91,6 @@ margin: 0 auto;
 ```
 
 > 确保元素内容包裹在container之中
-
-
 
 使用margin定义块元素的垂直外边距时，可能会出现外边距合并的现象
 
@@ -135,22 +105,16 @@ margin: 0 auto;
 ```
 
 > 两个container之间的间距是100，不是200
->
+> 
 > 若不一样，以边距大的数值为最终结果
-
-
 
 #### max-width
 
 使用max-width替换掉width，会帮助浏览器处理小窗口，常用于mobile 页面
 
-
-
 ### box-sizing
 
 设置`box-sizing: border-box`  会将padding和border元素相内增长
-
-
 
 也可以设置在真个页面之上
 
@@ -162,21 +126,17 @@ margin: 0 auto;
 }
 ```
 
-
-
 ### 水平垂直居中
 
 ```
 {
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	margin-left: -50%width; 
-	margin-top: -50%height;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -50%width; 
+    margin-top: -50%height;
 }
 ```
-
-
 
 ### 页面自适应
 
@@ -184,17 +144,13 @@ margin: 0 auto;
 width: 100%
 ```
 
-
-
 ### 上下为0， 左右居中
 
 ```
 margin: 0 auto;
 ```
 
-
-
-## 流式布局  
+## 流式布局
 
 ### 标准流
 
@@ -202,13 +158,9 @@ margin: 0 auto;
 
 若放不下盒子，换行存放
 
-
-
 ### 浮动流
 
 浮动的盒子可以向左或向右移动 
-
-
 
 #### 浮动定义 (解决div)
 
@@ -218,14 +170,6 @@ div {
 }
 ```
 
-
-
-
-
-
-
-
-
 ## inline-block
 
 可设置每一列的宽度
@@ -234,15 +178,9 @@ div {
 
 [http://learnlayout.com/inline-block-layout.html](http://learnlayout.com/inline-block-layout.html
 
-
-
-
-
 ## 常用布局案例
 
 ![img](https://snag.gy/od7icm.jpg)
-
-
 
 ```
 <!DOCTYPE html>
@@ -315,74 +253,70 @@ div {
 </html>
 ```
 
-
-
 ![img](https://snag.gy/kRrgib.jpg)
 
 ```
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Document</title>
-	<style>
-		body, div {
-			margin: 0;
-			padding: 0;
-		}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body, div {
+            margin: 0;
+            padding: 0;
+        }
 
-		div {
-			border: 1px solid saddlebrown;
-		}
+        div {
+            border: 1px solid saddlebrown;
+        }
 
-		.head {
-			height: 100px;
-			background-color: yellow;
-		}
-		
-		.left {
-			float: left;
-			width: 200px;
-			background-color: lightblue;
-			height: 400px;
-		}
+        .head {
+            height: 100px;
+            background-color: yellow;
+        }
 
-		.right {
-			margin-left: 203px;
-			height: 400px;
-			background-color: red;
-		}
+        .left {
+            float: left;
+            width: 200px;
+            background-color: lightblue;
+            height: 400px;
+        }
 
-		.footer {
-			background-color: pink;
-		}
+        .right {
+            margin-left: 203px;
+            height: 400px;
+            background-color: red;
+        }
 
-	</style>
+        .footer {
+            background-color: pink;
+        }
+
+    </style>
 </head>
 <body>
-	<div class="head">
-		head area
-	</div>
-	<div class="left">
-		left area
-	</div>
-	<div class="right">
-		right area
-	</div>
-	<div class="footer">
-		footer area
-	</div>
-	<div>
+    <div class="head">
+        head area
+    </div>
+    <div class="left">
+        left area
+    </div>
+    <div class="right">
+        right area
+    </div>
+    <div class="footer">
+        footer area
+    </div>
+    <div>
 
-	</div>
-	
+    </div>
+
 </body>
 </html>
 ```
-
-
 
 ![img](https://snag.gy/K9QTVd.jpg)
 
@@ -390,57 +324,55 @@ div {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Document</title>
-	<style>
-		body,div {
-			padding: 0;
-			margin: 0;
-		}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body,div {
+            padding: 0;
+            margin: 0;
+        }
 
-		div {
-			border: 1px solid saddlebrown;
-		}
-		
-		.head {
-			height: 100px;
-			background-color: lightgreen;
-		}
+        div {
+            border: 1px solid saddlebrown;
+        }
 
-		.left {
-			float: left;
-			width: 100px;
-			height: 300px;
-		}
+        .head {
+            height: 100px;
+            background-color: lightgreen;
+        }
 
-		.right {
-			float: right;
-			width: 100px;
-			height: 500px
-		}
+        .left {
+            float: left;
+            width: 100px;
+            height: 300px;
+        }
 
-		.main {
-			margin: 0 105px;
-		}
+        .right {
+            float: right;
+            width: 100px;
+            height: 500px
+        }
 
-		.footer {
-			clear: both;
-		}
-	</style>
+        .main {
+            margin: 0 105px;
+        }
+
+        .footer {
+            clear: both;
+        }
+    </style>
 </head>
 <body>
-	<div class="head">head area</div>	
-	<div class="left">left area</div>	
-	<div class="right">right area</div>	
-	<div class="main">main area</div>	
-	<div class="footer">footer area</div>	
+    <div class="head">head area</div>    
+    <div class="left">left area</div>    
+    <div class="right">right area</div>    
+    <div class="main">main area</div>    
+    <div class="footer">footer area</div>    
 </body>
 </html>
 ```
-
-
 
 ![img](https://snag.gy/nagURi.jpg)
 
@@ -448,57 +380,55 @@ div {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Document</title>
-	<style>
-		body,div {
-			padding: 0;
-			margin: 0;
-		}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body,div {
+            padding: 0;
+            margin: 0;
+        }
 
-		div {
-			border: 1px solid saddlebrown;
-		}
+        div {
+            border: 1px solid saddlebrown;
+        }
 
-		.head,.footer,.center {
-			margin: 0 auto;
-			width: 960;
-		}
+        .head,.footer,.center {
+            margin: 0 auto;
+            width: 960;
+        }
 
-		.left,.right,.main {
-			float: left;
-		}
+        .left,.right,.main {
+            float: left;
+        }
 
-		.center {
-			overflow: hidden;
-		}
+        .center {
+            overflow: hidden;
+        }
 
-		.left , .right{
-			width: 100px;
-			height: 400px;
-		}
+        .left , .right{
+            width: 100px;
+            height: 400px;
+        }
 
-		.main {
-			width: 960px;
-			margin: 0 2px;
-		}
-	</style>
+        .main {
+            width: 960px;
+            margin: 0 2px;
+        }
+    </style>
 </head>
 <body>
-	<div class="head">head area</div>	
-	<div class="center">
-	<div class="left">left area</div>	
-	<div class="main">main area</div>	
-	<div class="right">right area</div>	
-	</div>
-	<div class="footer">footer area</div>	
+    <div class="head">head area</div>    
+    <div class="center">
+    <div class="left">left area</div>    
+    <div class="main">main area</div>    
+    <div class="right">right area</div>    
+    </div>
+    <div class="footer">footer area</div>    
 </body>
 </html>
 ```
-
-
 
 ### 百分比width 布局
 
@@ -506,32 +436,26 @@ div {
 
 [http://learnlayout.com/media-queries.html](http://learnlayout.com/media-queries.html)
 
-
-
-
-
 ### 瀑布流
 
 ```
 <body>
-	<div class="container">
-		<div>
-			<img src="1.jpg">
-		</div>
-				<div>
-			<img src="2.jpg">
-		</div>
-				<div>
-			<img src="3.jpg">
-		</div>
-				<div>
-			<img src="4.jpg">
-		</div>
-	</div>
+    <div class="container">
+        <div>
+            <img src="1.jpg">
+        </div>
+                <div>
+            <img src="2.jpg">
+        </div>
+                <div>
+            <img src="3.jpg">
+        </div>
+                <div>
+            <img src="4.jpg">
+        </div>
+    </div>
 </body>
 ```
-
-
 
 ```
 .container{
@@ -547,13 +471,9 @@ div {
 }
 ```
 
-
-
 ### 三联布局
 
 ![img](https://snag.gy/yxZTbg.jpg)
-
-
 
 ```
 <!DOCTYPE html>
@@ -624,14 +544,10 @@ div {
     <div class="footer">
        <h4>footer area</h4> 
     </div>
-    
+
 </body>
 </html>
 ```
-
-
-
-
 
 ## z-index 元素叠加
 
@@ -642,10 +558,3 @@ z-index大的元素会覆盖小的元素
 z-index为auto 不参与层级比较
 
 z-index为负值，元素被普通流中的元素覆盖
-
-
-
-
-
-
-

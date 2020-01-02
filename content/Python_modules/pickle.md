@@ -7,11 +7,11 @@ date: 2018-08-24 12:39
 
 # pickle
 
-仅支持Python所有的数据类型
+仅支持Python所有的数据类型， 可以序列化任何数据
 
 
 
-## dump 
+## dump
 
 对象序列化为bytes对象
 
@@ -20,10 +20,6 @@ date: 2018-08-24 12:39
 等同于
 
 `f.write(pickle.dumps(info))`
-
-
-
-
 
 
 
@@ -45,10 +41,6 @@ summer = Bird()
 picklestring = pickle.dumps(summer)
 ```
 
-
-
-
-
 ## load
 
 对象反序列化，从文件中读取数据
@@ -58,8 +50,6 @@ picklestring = pickle.dumps(summer)
 等同于
 
 `pickle.loads(f.read())`
-
-
 
 要从文本中读取文本，存储到字符串(文本文件的输入输出)。然后使用pickle.loads(str)的方法，将字符串转换称为对象。
 
@@ -75,11 +65,6 @@ with open(fn, 'r') as f:
     summer = pickle.load(f)
 ```
 
-
-
 ## loads 反序列化
 
 从bytes对象反序列化
-
-
-

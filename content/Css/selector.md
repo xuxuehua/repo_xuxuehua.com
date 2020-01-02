@@ -3,20 +3,13 @@ title: "selector 选择器"
 date: 2018-11-13 14:31
 ---
 
-
 [TOC]
 
 # selector 选择器
 
-
-
 ## 选择器优先级
 
 ID > 类（伪类）> 标签 > 继承 > 默认
-
-
-
-
 
 ## 通配符选择器 （不常用）`*{}`
 
@@ -33,8 +26,6 @@ ID > 类（伪类）> 标签 > 继承 > 默认
 }
 ```
 
-
-
 ## 标签选择器 `a{}`
 
 ```
@@ -48,8 +39,6 @@ div {}
 p {color: red;}
 ```
 
-
-
 ## ID 选择器`#id{}`
 
 id命名必须以字符开头，包含数字，字母，下划线，连接符
@@ -57,8 +46,6 @@ id命名必须以字符开头，包含数字，字母，下划线，连接符
 ```
 #head {}
 ```
-
-
 
 相同标签的不同展现形式
 
@@ -81,8 +68,6 @@ id命名必须以字符开头，包含数字，字母，下划线，连接符
 </style>
 ```
 
-
-
 ## 类选择器 `.link{}`
 
 对class 属性进行选择
@@ -97,11 +82,7 @@ id命名必须以字符开头，包含数字，字母，下划线，连接符
 }
 ```
 
-
-
 标签可以包含多个类选择器，在class标签中用空格隔开
-
-
 
 ## 复合选择器 `[type=checkbox] + label{}`
 
@@ -121,8 +102,6 @@ p#one {
 }
 ```
 
-
-
 ### 后代选择器（包含选择器）（常用）
 
 用来选择元素或者元素组的后代，把外层标记写在前面，内容标记写在后面，中间用空格分隔
@@ -133,23 +112,17 @@ p#one {
 }
 ```
 
-
-
 ```
 #p1 em {
-	color: yellow;
+    color: yellow;
 }
 ```
-
-
 
 ```
 h1.special em {
-	color: orange;
+    color: orange;
 }
 ```
-
-
 
 ### 并集选择器 （常用 ）
 
@@ -161,8 +134,6 @@ h1.special em {
 }
 ```
 
-
-
 #### 常用的初始化设置
 
 ```
@@ -172,18 +143,16 @@ html, body, div, dt, dl, dd, ul, p {
 }
 ```
 
-
-
 ### 子元素选择器
 
 让CSS选择器智能选择子代的元素
 
 ```
 <p>
-	<span>test</span>
-	<span><strong>no change</strong></span>
-	<span>test</span>
-	<strong>will change to red</strong>
+    <span>test</span>
+    <span><strong>no change</strong></span>
+    <span>test</span>
+    <strong>will change to red</strong>
 </p>
 
 p > strong {
@@ -191,31 +160,31 @@ p > strong {
 }
 ```
 
-
-
 ## 否定选择器`:not(.link){}`
 
+## 目标选择器 `p:target{}`
 
+```
+p:target{
+    background-color: green;
+}
+```
 
+> 找到锚点p
 
+## 选中选择器 `p::selection{}`
 
-## 层级选择器
-
-
-
-## 分组选择器
-
-
+```
+p::selection{
+    background-color: yellow;
+}
+```
 
 ## 属性选择器`[type=radio]{}`
 
 属性和属性值必须完全匹配
 
-
-
 ![img](https://snag.gy/PCwbiW.jpg)
-
-
 
 ```
 [title] {
@@ -223,29 +192,45 @@ p > strong {
 }
 ```
 
-
-
 ```
 [href] {
     font-size: 30px;
 }
 ```
 
+```
+a[href^="E"] {
+    background-color: green;
+}
+```
 
+> 具有href 属性，并且属性以E开头的
 
+```
+a[href$="mp4"] {
+    background-color: green;
+}
+```
 
+> 具有href属性，并且属性以mp4结尾
 
+```
+a[href*="l"] {
+    background-color: green;
+}
+```
 
+> 具有href属性，并且属性含有l的
 
-## 相邻兄弟选择器
+## 相邻兄弟选择器 `li+li`
 
 可选择紧接在另一个元素后的元素，且二者有相同的父元素
 
 ```
 <ul>
-	<li>item1</li>
-	<li>item2</li>
-	<li>item3</li>
+    <li>item1</li>
+    <li>item2</li>
+    <li>item3</li>
 </ul>
 
 li+li {
@@ -255,11 +240,7 @@ li+li {
 
 > item2和item3会变大，后的概念
 
-
-
 ## 伪类选择器 `:hover{}`
-
-
 
 `:link`
 
@@ -279,17 +260,13 @@ li+li {
 
 `:focus`
 
-伪类将应用于拥有键盘输入焦点的元素， 获取到输入的焦点的时候	
-
-
+伪类将应用于拥有键盘输入焦点的元素， 获取到输入的焦点的时候    
 
 顺序遵循LVHA 原则
 
 ```
 :link > :visited > :hover > :active
 ```
-
-
 
 ```
     <style>
@@ -323,8 +300,6 @@ li+li {
 </body>
 ```
 
-
-
 ## 伪元素选择器 `::before{}`
 
 `:first-child` 伪类，选择属于第一个子元素的元素
@@ -353,19 +328,11 @@ li+li {
 
 > this is 1 和1会改变
 
-
-
-
-
 伪元素是控制内容V
 
 `:first-line` 伪元素 /* 文本的第一行 */
 `:first-letter` 伪元素 /* 文本的第一个字母 */
 上述只能用于块级元素
-
-
-
-
 
 指定标签的的前面和后面操作
 
@@ -382,4 +349,3 @@ li+li {
             content: "===";
         }
 ```
-

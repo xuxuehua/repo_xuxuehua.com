@@ -3,12 +3,11 @@ title: "tags 标签"
 date: 2018-11-06 20:08
 ---
 
-
 [TOC]
 
 # 标签
 
-## `<!DOCTYPE html> ` 
+## `<!DOCTYPE html> `
 
 html5版本
 
@@ -18,10 +17,6 @@ html5版本
 
 其与浏览器兼容性有关，若删除，将由浏览器决定展示权利
 
-
-
-
-
 ## `<html>`
 
 ### `<html lang="en">`
@@ -30,21 +25,13 @@ lang='zh-CN'
 
 Lang 设定语言，帮助搜素引擎解析页面
 
-
-
-
-
 ## `<head>`
 
 头部标签，用于封装其他标签内容
 
-
-
 ### `<title>`
 
 设置浏览器的标题文字
-
-
 
 ### `<meta>`
 
@@ -58,15 +45,11 @@ Lang 设定语言，帮助搜素引擎解析页面
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 ```
 
-
-
 ## `<body>`
 
 包括实际内容
 
 一个html中只能有一对body
-
-
 
 ### bgcolor
 
@@ -77,8 +60,6 @@ Lang 设定语言，帮助搜素引擎解析页面
 </body>
 ```
 
-
-
 ### background
 
 设置背景图片
@@ -87,73 +68,41 @@ Lang 设定语言，帮助搜素引擎解析页面
 <body background="cat.jpg">
 ```
 
+# 呈现标签
 
+## `<!-- -->`注释
 
-## 呈现标签
+## `<br>`换行
 
+## `<hr>`水平线
 
+# 文本编辑标签
 
-
-
-### `<!-- -->`注释
-
-
-
-
-
-### `<br>`换行
-
-
-
-### `<hr>`水平线
-
-
-
-## 文本编辑标签
-
-
-
-### `<b>` 粗体
+## `<b>` 粗体
 
 定义粗体文本
 
+## `<big>` 大号字
 
-
-### `<big>` 大号字
-
-
-
-
-
-### `<span>`文本节
+## `<span>`文本节
 
 行内标签， 可以一行显示
 
 内联元素，可以作为文本的容器，而且只是文本的容器
 
-
-
-
-
-### `<em>` 强调倾斜
+## `<em>` 强调倾斜
 
 行内标签， 可以一行显示
 
+## `<strong>`加粗
 
-
-### `<strong>`加粗
-
-
-
-### `<sup>`上标
+## `<sup>`上标
 
 2的3次方 
 
 `2<sup>3</sup>`
 
-
-
-### `<sub>`下标
+## `<sub>`下标
 
 水分子
 
@@ -161,17 +110,9 @@ Lang 设定语言，帮助搜素引擎解析页面
 H<sub>2</sub>O
 ```
 
+## `<ins>` 插入字
 
-
-### `<ins>` 插入字
-
-
-
-### `<del>`删除字
-
-
-
-
+## `<del>`删除字
 
 ## `<a>`  超链接
 
@@ -181,8 +122,6 @@ H<sub>2</sub>O
 <a href="http://www.xuxuehua.com">content</a>
 ```
 
-
-
 ### name
 
 文档内的的链接，可以用作跳转
@@ -190,8 +129,6 @@ H<sub>2</sub>O
 ```
 <a name="#h1"></a>
 ```
-
-
 
 ### href
 
@@ -201,15 +138,11 @@ H<sub>2</sub>O
 <a href="http://xuxuehua.com" >hello</a>
 ```
 
-
-
 发送邮件
 
 ```
 <a href="mailto:emailAddress"></a>
 ```
-
-
 
 ### target 属性
 
@@ -219,15 +152,11 @@ H<sub>2</sub>O
 <a target="_blank" href="http://xuxuehua.com">xuxuehua</a>
 ```
 
-
-
 `_self` 在当前页面打开
 
 ```
 <a target="_self" href="http://xuxuehua.com">xuxuehua</a>
 ```
-
-
 
 ### 锚点链接
 
@@ -311,27 +240,17 @@ href 为标签的id
 </html>
 ```
 
-
-
 不同页面的锚链接
 
 ```
 <a href="name#nameOfLocation"></a>
 ```
 
-
-
-
-
 ## `<img>` 图片标记
 
 ```
 <img src="" alt="">
 ```
-
-
-
-
 
 ### 属性
 
@@ -357,27 +276,17 @@ align middle：水平重点和文本的第一行文字对齐，其他文字居�
 
 align bottom：底部和文本的第一行文字对齐，其他文字居图像下方
 
-
-
-
-
 ## `<textarea>` 文本域
 
 需要输入大量的信息是来处理
 
 ```
-<textarea type="text" class="form-control" id="schedule_params" name="schedule_params" placeholder="JSON format parameter passed to schedule function: &quot;&#123;&quot;range_type&quot;&#58; &quot;WEEK&quot;&#125;&quot; "></textarea>                              
+<textarea type="text" class="form-control" id="schedule_params" name="schedule_params" placeholder="JSON format parameter passed to schedule function: "&#123;"range_type"&#58; "WEEK"&#125;" "></textarea>                              
 ```
 
 > placeholder 要求`<textarea>` 必须在一行，其间不能有空格
 
-
-
-
-
-
-
-###  属性
+### 属性
 
 rows -> rows="4"
 
@@ -386,10 +295,6 @@ cols -> cols="20"
 ```
 <textarea cols="30" rows="30">填写大量信息</textarea>
 ```
-
-
-
-
 
 ## `<select>` 下拉菜单
 
@@ -409,10 +314,6 @@ cols -> cols="20"
     </select>
 ```
 
-
-
-
-
 ## `<fieldset>` 组合表单
 
 将表单内容的一部分打包，生成一组相关表单的字段
@@ -431,13 +332,9 @@ cols -> cols="20"
     </fieldset>
 ```
 
-
-
 ## 表单练习
 
 ![img](https://cdn.pbrd.co/images/HMlCTG1.png)
-
-
 
 ```
 <!DOCTYPE html>
@@ -510,21 +407,13 @@ cols -> cols="20"
 </html>
 ```
 
-
-
 ## `<iframe>` 内联框架 （不常用）
 
 包含另一个页面的内容
 
-
-
-
-
 ## `<link>` 头部标签
 
 属于头部标签，需要放入到head标签中
-
-
 
 引入dns预解析 (网站优化的一种方式)
 
@@ -534,23 +423,17 @@ cols -> cols="20"
 <link rel="dns-prefetch" href="http://tce.taobao.com">
 ```
 
-
-
 引入网站icon 图标
 
 ```
 <link rel="shortcut icon" href="http://www.my.com/info.ico">
 ```
 
-
-
 引入css样式
 
 ```
 <link rel="stylesheet" href="css/bg.css">
 ```
-
-
 
 ## `<style>` 样式
 
@@ -560,15 +443,11 @@ cols -> cols="20"
 rel="stylesheet"
 ```
 
-
-
 引入文档的类型
 
 ```
 type="text/css"
 ```
-
-
 
 边距
 
@@ -576,9 +455,7 @@ type="text/css"
 margin-left
 ```
 
-
-
-## `<meta>` 
+## `<meta>`
 
 页面关键词
 
@@ -586,15 +463,11 @@ margin-left
 <meta name="keywords" content="SegmentFault,思否,javascript,php,python,java,mysql,ios,android,vue.js,node.js,html,css,ruby,git,docker,前端"/>
 ```
 
-
-
 页面描述
 
 ```
 <meta name="description" content="SegmentFault 思否 为开发者提供问答、学习与交流编程知识的平台，创造属于开发者的时代！"/>
 ```
-
-
 
 搜索方式
 
@@ -602,15 +475,11 @@ margin-left
 <meta name="robots" content="index,follow">
 ```
 
-
-
 页面刷新和重定向
 
 ```
 <meta http-equiv="refresh" content="1;url=">
 ```
-
-
 
 优先使用chrome
 
@@ -618,43 +487,98 @@ margin-left
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 ```
 
-
-
 禁用本地缓存
 
 ```
 <meta http-equiv="Pragma" content="no-cache">
 ```
 
+## `<audio>` 音频
 
+```
+<audio src="music/1.mp3" controls autoplay muted></audio>
+```
 
+## `<video>` 视频
 
+```
+<video src="video/1.mp4" muted controls autoplay loop></video>
+```
 
-## HTML 实体名称 特殊标记
+# HTML 实体名称 特殊标记
 
 html为特殊符号准备了专门的替代码
 
-### 空格 `&nbsp`
+## 空格 `&nbsp`
 
-### 小于 `&lt` 
+## 小于 `&lt`
 
-### 大于 `&gt`;
+## 大于 `&gt`;
 
 [https://ascii.cl/htmlcodes.htm](https://ascii.cl/htmlcodes.htm)
 
+# 通用属性
+
+id：唯一表识元素，在同一页面不能重复
+
+name：用于定义一组标签，可以重复
+
+style：定义标签的样式
+
+class：定义标签的样式类
+
+id，class，都是css选择器和js的dom都是开发的必备基础
+
+img标签和a标签一般都会有title属性
+
+## 行内元素
+
+不占有独立的区域，仅仅靠自身的字体大小和图像尺寸来支持结构。
+
+一般不可以设置宽度，高度，对齐等属性
+
+strong, b, em, i, del, s, ins, u, a, span
+
+span最典型
+
+## 块元素
+
+通常独自占据一整行或者多整行，可以对其设置高度，宽度，对齐等属性
+
+h1~h6, p, div, ul, ol, li
+
+
+
+## 自定义属性
+
+自定义dataset属性
+
+```
+<div id="dv" data-name="Rick" data-age="18" data-user-gender="male"></div>
+
+
+<script>
+    var dt=document.querySelector("#dv").dataset;
+    console.log(dt.name);
+    console.log(dt["age"]);
+    console.log(dt.userGender);
+
+    dt.height="180";
+    dt.userWeight="55";
+</script>
+```
 
 
 
 
 
 
-## HTML 5新的语义标签
 
-![img](https://cdn.pbrd.co/images/HMmFjz8.png)
+# HTML 5 语义化标签 （良好兼容）
 
+很多标签有兼容问题，还有自带样式无法设置
 
-
-常用 nav, header, footer, section, article, aside
+下面的标签兼容性问题不大
 
 ```
  <body>
@@ -675,113 +599,16 @@ html为特殊符号准备了专门的替代码
 </body>
 ```
 
+## `<article>` 定义文章
 
+## `<aside>` 定义侧边栏
 
-### 智能表单标签
+## `<footer>` 定义页脚
 
-![img](https://cdn.pbrd.co/images/HMmH0Z2.png)
+## `<header>` 定义页眉
 
+## `<nav>`  导航
 
+## `<section>`  区块
 
-* 隐藏域
-
-```
-<input type="hidden" name="" id="tmd" value="123">
-```
-
-
-
-### `<audio>` 音频
-
-```
-<audio controls>
-<source src="./music/see_you_again.mp3" controls autoplay>
-</audio>
-```
-
-
-
-### `<video>` 视频
-
-支持h.264 编码， 音频支持ACC
-
-```
-<video src="./assert/seeyou.mp4" width=400 controls autoplay>
-```
-
-
-
-# 通用属性
-
-id：唯一表识元素，在同一页面不能重复
-
-name：用于定义一组标签，可以重复
-
-style：定义标签的样式
-
-class：定义标签的样式类
-
-
-
-id，class，都是css选择器和js的dom都是开发的必备基础
-
-img标签和a标签一般都会有title属性
-
-
-
-## 行内元素
-
-不占有独立的区域，仅仅靠自身的字体大小和图像尺寸来支持结构。
-
-一般不可以设置宽度，高度，对齐等属性
-
-strong, b, em, i, del, s, ins, u, a, span
-
-span最典型
-
-
-
-### 块元素
-
-通常独自占据一整行或者多整行，可以对其设置高度，宽度，对齐等属性
-
-h1~h6, p, div, ul, ol, li
-
-
-
-# 不常用语义标签
-
-## `<code>` 
-
-标注计算机代码
-
-
-
-## `<var>`
-
-定义变量
-
-## `<pre>`
-
-定义预格式文本
-
-## `<abbr>`
-
-定义缩写
-
-## `<address>`
-
-定义地址
-
-## `<blockquote>`
-
-定义长引用
-
-## `<cite>`
-
-定义引用，引证
-
-## `<dfn>`
-
-定义一个定义项目
-
+定义文档中的节

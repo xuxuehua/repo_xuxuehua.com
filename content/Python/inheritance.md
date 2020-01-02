@@ -6,23 +6,17 @@ collection: 面向对象
 
 [TOC]
 
-
-
 # 继承
 
 面向对象的一个特征
 
 继承是共享的一种方式
 
-
-
 ## 继承用途
 
 继承基类的方法，并且做出自己的改变或者扩展（代码重用）
 
 声明某个子类兼容于某基类，定义一个接口类Interface，接口类中定义了一些接口名（就是函数名）且并未实现接口的功能，子类继承接口类，并且实现接口中的功能；
-
-
 
 C1.py
 
@@ -40,6 +34,7 @@ print(Student.sum)
 print(student1.name)
 print(student1.age)
 student1.get_name()
+
 >>>
 0
 0
@@ -47,8 +42,6 @@ Rick
 18
 Rick
 ```
-
-
 
 c2.py
 
@@ -63,10 +56,6 @@ class Human():
         print(self.name)
 ```
 
-
-
-
-
 ## super 方法
 
 父类，也可以称为超类，基类
@@ -74,13 +63,7 @@ class Human():
 子类中调用父类的方法，使用super对象
 super对象使用super方法生成
 
-不过使用super这种方法时，要求继承链的最顶层父类必须要继承 object
-
-
-
-
-
-通过子类调用父类的super方法
+使用super这种方法时，要求继承链的最顶层父类必须要继承 object
 
 c1.py
 
@@ -93,7 +76,7 @@ class Student(Human):
         super(Student, self).__init__(name, age)
 
     def do_homework(self):
-        super(Student, self).do_homework()	#调用父类的do_homework 方法
+        super(Student, self).do_homework()    #调用父类的do_homework 方法
         print('English homework')
 
 
@@ -105,10 +88,8 @@ English homework
 ```
 
 > 子类方法和父类重名，子类方法会覆盖父类方法
->
+> 
 > 但也可以通过super方法调用父类的方法·
-
-
 
 c2.py
 
@@ -124,12 +105,7 @@ class Human():
 
     def do_homework(self):
         print('This is parent method')
-    
 ```
-
-
-
-
 
 ## 类的继承
 
@@ -209,7 +185,7 @@ class UserLogin(Users):   #类Users的子类
 
     def DisplayLoginTime(self):
         print('Login time: '+self.LastLoginTime)
-        
+
 #获取当前时间
 now = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
 
@@ -235,10 +211,6 @@ Login time: 2016-09-10 16:20:45
 Sam
 Login time: 2016-09-10 16:20:45
 ```
-
-
-
-
 
 ### 继承与可见性
 
@@ -322,8 +294,6 @@ class private var
 class public var
 ```
 
-
-
 #### 自定义特殊方法 (继承list类)
 
 ```
@@ -341,13 +311,8 @@ In [60]: [1, 2, 3] + [4, 5, 6]
 Out[60]: [1, 2, 3, 4, 5, 6]
 ```
 
-
-
-
-
-
-
 继承list类，添加对 - 的定义
+
 ```
 class super_list(list):
     def __sub__(self, b): #内置函数__sub__()定义了-的操作
@@ -363,8 +328,6 @@ print(super_list([1, 2, 3]) - super_list([3, 4]))
 >>>
 [1, 2]
 ```
-
-
 
 ### 子类私有方法
 
@@ -418,15 +381,11 @@ Traceback (most recent call last):
 AttributeError: 'super' object has no attribute '_B__method'
 ```
 
-
-
 #### 接口
 
-接口就是一些方法特征的集合------接口是对抽象的抽象。
+接口就是一些方法特征的集合
 
 接口提取了一群类共同的函数，可以把接口当做一个函数的集合，然后让子类去实现接口中的函数。
-
-
 
 ### 强行继承 (私有变量重写)
 
@@ -455,8 +414,6 @@ method of A
 method of B
 ```
 
-
-
 ### 里式替换原则
 
 在实际开发中，我们经常会用子类对象去替换掉一个父类对象，这是面向对象编程中一个常见的行为，对应的原则称之为[里氏替换原则](https://zh.wikipedia.org/wiki/里氏替换原则)
@@ -469,7 +426,7 @@ class Person(object):
     def __init__(self, name, age):
         self._name = name
         self._age = age
-    
+
     @property
     def name(self):
         return self._name
@@ -477,7 +434,7 @@ class Person(object):
     @property
     def age(self):
         return self._age
-        
+
     @age.setter
     def age(self, age):
         self._age = age
@@ -542,21 +499,13 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
+
 >>>
 The Middle school grade 3 of Rick Xu is studying English
 Rick Xu is lower 18 ages.
 Jack Li with Professor is teaching Mathematics
 Jack Li is enjoy the av
 ```
-
-
-
-
-
-
-
-
 
 ## 多继承
 
@@ -585,8 +534,6 @@ Method of A
 Method of B
 ```
 
-
-
 ### 继承方法
 
 当类是经典类时，多继承情况下，会按照深度优先方式查找
@@ -597,11 +544,7 @@ Method of B
 
 ![img](https://cdn.pbrd.co/images/HCAU2kb.png)
 
-
-
 ### 多继承顺序
-
-
 
 经典类：首先去A类中查找，如果A类中没有，则继续去B类中找，如果B类中么有，则继续去D类中找，如果D类中么有，则继续去C类中找，如果还是未找到，则报错
 
@@ -630,11 +573,11 @@ class A(B, C):
         print('A.bar')
 
 a = A()
+print(a.__class__.mro())
+
+>>>
+[<class '__main__.A'>, <class '__main__.B'>, <class '__main__.C'>, <class '__main__.D'>, <class 'object'>]
 ```
-
-
-
-
 
 多继承，总是先调用前面的
 
@@ -659,25 +602,23 @@ c.method()
 Method of A
 ```
 
-
-
 ```
 class A:
     def __init__(self):
         print('A')
-        
+
 
 class B(A):
     print('B')
-    
+
 
 class C(A):
     print('C')
-    
+
 
 class D(B, C):
     print('D')
-    
+
 
 obj = D()
 >>>
@@ -686,8 +627,6 @@ C
 D
 A
 ```
-
-
 
 ```
 class A(object):
@@ -731,10 +670,6 @@ from D
 [<class '__main__.F'>, <class '__main__.D'>, <class '__main__.B'>, <class '__main__.E'>, <class '__main__.C'>, <class '__main__.A'>, <class 'object'>]
 ```
 
-
-
-
-
 ## 查询父类
 
 使用__base__属性来查询某个类的父类
@@ -744,10 +679,6 @@ cls.__base__
 
 print(list.__base__)
 ```
-
-
-
-
 
 ## 组合调用
 
@@ -794,13 +725,11 @@ print(p1.course.name, p1.course.price, p1.course.period)
 Python 20000 4 months
 ```
 
-
-
-
-
-# 多态 Polymorphism 
+# 多态 Polymorphism
 
 多态是面向对象的重要特性,简单点说:“一个接口，多种实现”，指一个基类中派生出了不同的子类，且每个子类在继承了同样的方法名的同时又对父类的方法做了不同的实现，这就是同一种事物表现出的多种形态。
+
+
 
 ```
 class Animal:
@@ -811,7 +740,7 @@ class Animal:
         pass
 
     @staticmethod
-    def animal_bark(obj):	#这里的方法可以放到类外面形成函数
+    def animal_bark(obj):    #这里的方法可以放到类外面形成函数
         obj.bark()
 
 
@@ -877,16 +806,11 @@ Draw Circle: (10, 10, 5)
 Draw Line: (10, 10, 20, 20)
 ```
 
-
-
-
-
 ## MRO (Method Resolution Order)
 
 MRO 通过C3算法计算出来的
 本地优先级: 根据声明的顺序从左往右查找
 单调性：所有子类中，也应满足其查找顺序
-
 
 ### C3算法
 
@@ -931,17 +855,14 @@ C(B, A), B(A) ->
 [C, B, A, O]
 ```
 
-
-
 #### merge步骤
 
- * 顺序遍历列表
- * 首元素满足以下条件，否则遍历下一个序列
-    * 在其他序列也是首元素
-    * 再其他序列里面不存在
- * 从所有序列中移除此元素，合并到MRO序列中
- * 重复执行，直到所有序列为空或无法执行下去
-
+* 顺序遍历列表
+* 首元素满足以下条件，否则遍历下一个序列
+  * 在其他序列也是首元素
+  * 再其他序列里面不存在
+* 从所有序列中移除此元素，合并到MRO序列中
+* 重复执行，直到所有序列为空或无法执行下去
 
 ### MIXIN
 

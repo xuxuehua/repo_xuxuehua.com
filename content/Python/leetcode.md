@@ -1,10 +1,11 @@
 ---
+
 title: "leetcode"
 date: 2019-12-06 07:17
+
 ---
+
 [toc]
-
-
 
 # [两数之和](https://leetcode-cn.com/problems/two-sum/)
 
@@ -21,8 +22,6 @@ date: 2019-12-06 07:17
 所以返回 [0, 1]
 ```
 
-
-
 ```
 class Solution:
     def twoSum(self, nums: List[int], target: int) -> List[int]:
@@ -30,7 +29,6 @@ class Solution:
             for j in range(len(nums)):
                 if nums[i] + nums[j] == target:
                     return [i, j]
-                   
 ```
 
 > 时间复杂度：O(n^2)O(n 
@@ -39,6 +37,5 @@ class Solution:
 > 对于每个元素，我们试图通过遍历数组的其余部分来寻找它所对应的目标元素，这将耗费 O(n)O(n) 的时间。因此时间复杂度为 O(n^2)O(n 
 > 2
 >  )。
->
+> 
 > 空间复杂度：O(1)O(1)。
->

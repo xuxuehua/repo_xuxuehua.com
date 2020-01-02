@@ -3,22 +3,13 @@ title: "io"
 date: 2019-02-01 12:39
 ---
 
-
 [TOC]
-
-
 
 # io
 
+## StringIO
 
-
-## stringIO
-
-内存中，开辟的一个文本模式的buffer，可以像文件对象一样操作他
-
-当close方法被调用的时候，这个buffer会被释放
-
-
+字符串写入内存
 
 一般来说， 磁盘的操作比内存的操作要慢得多，内存足够的情况下，一般优化的思路减少磁盘IO的过程，可以提高效率
 
@@ -42,13 +33,11 @@ Rick
  Xu
 ```
 
-
-
 ## BytesIO
 
-内存中，开辟的一个二进制模式的buffer，可以像文件对象一样操作他
+二进制写入内存
 
-当close方法被调用的时候，这个buffer会被释放
+
 
 ```
 from io import BytesIO
@@ -66,4 +55,3 @@ True True True
 b'Rick \n'
 b'Rick \n Xu'
 ```
-

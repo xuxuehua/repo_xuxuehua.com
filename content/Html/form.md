@@ -1,10 +1,10 @@
 ---
 title: "form"
 date: 2019-07-21 11:07
+
 ---
+
 [TOC]
-
-
 
 # `<form>` 表单
 
@@ -30,37 +30,60 @@ date: 2019-07-21 11:07
 </html>
 ```
 
-
-
 ## `<input>` 表单输入
+
+### autofocus 自动焦点
+
+```
+<form action="" method="get">
+<input type="submit" value="submit" autofocus />
+</form>
+```
+
+### 
+
+### placeholder 文本框提示
+
+
+
+### required 验证
+
+当前表单元素必须有验证
+
+
+
+
+
+### `<datalist>` 数据列表
+
+标签需要有自己的id值，然后配合list属性来使用，才可以有数据列表的效果
+
+```
+<input type="text" value="" name="txtList" list="url_list" />
+<datalist id="url_list">
+    <option value="https://www.xurick.com">Xu Rick</option>
+    <option value="https://www.xuxuehua.com">Xu Xuehua</option>
+    <option value="https://www.english.page">English Page</option>
+</datalist>
+```
 
 
 
 ## `<select>` 菜单和列表
 
-
-
 ## `<option>` 菜单和列表项目
 
-
-
-## `<textarea>` 文字域 
-
-
+## `<textarea>` 文字域
 
 ## `<optgroup>` 菜单和项目分组
-
-
-
-
 
 ## type 属性
 
 type: text 文本框
 
-​	password 密码框
+​    password 密码框
 
-​	radio 单选
+​    radio 单选
 
 ```
 <form action="">
@@ -71,7 +94,7 @@ type: text 文本框
 </form>
 ```
 
-​	checkbox 复选 
+​    checkbox 复选 
 
 ```
     <form action="">
@@ -82,23 +105,17 @@ type: text 文本框
     </form>
 ```
 
+​    submit
 
+​    reset
 
-​	submit
+​    image 图像式提交按钮
 
-​	reset
+​    hidden 隐藏域
 
-​	image 图像式提交按钮
+​    file 文件域
 
-​	hidden 隐藏域
-
-​	file 文件域
-
-
-
-
-
-## form 属性
+# form 属性
 
 name： 控件名称
 
@@ -114,17 +131,41 @@ checked：默认被选中项
 
 maxlength：控件允许的最多字符数
 
-
-
 action:  路径， #表示当前页面
 
 method： get， post
 
 target： _blank, _self, _parent, _top
 
-enctype: 	application/x-www-form-urlencoded multipart/form-data text/plain
+## autocomplete 智能提示
+
+```
+<form action="" method="get" autocomplete="off">
+<input type="submit" value="submit">
+```
+
+## novalidate 关闭验证
+
+```
+<form action="" method="get" autocomplete="off" novalidate>
+<input type="submit" value="submit">
+```
+
+enctype:     application/x-www-form-urlencoded multipart/form-data text/plain
 
 
 
 
 
+## form 用于表单提交
+
+在表单标签中写，值就是设置为form标签中id值，那么标签就可以提交了
+
+```
+<form action="" method="get" id="fm">
+<input type="text" value="" name="txt" autofocus placeholder="Input name" required />
+<input type="submit" value="submit" id="sm" />
+</form>
+
+<input type="text" value="" name="name" form="fm" />
+```
