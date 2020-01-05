@@ -37,8 +37,6 @@ Rick
 
 二进制写入内存
 
-
-
 ```
 from io import BytesIO
 bio = BytesIO()
