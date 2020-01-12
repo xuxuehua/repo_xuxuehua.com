@@ -16,7 +16,7 @@ date: 2019-07-05 11:35
 
 Hive能够直接处理我们输入的SQL语句（Hive的SQL语法和数据库标准SQL略有不同），调用MapReduce计算框架完成数据分析操作。
 
-![img](https://snag.gy/AO0a4W.jpg)
+![image-20200112211000294](image-20200112211000294.png)
 
 
 
@@ -38,7 +38,7 @@ Hive内部预置了很多函数，Hive的执行计划就是根据SQL语句生成
 
 ## Hive join操作
 
-![img](https://snag.gy/kQM9hl.jpg)
+![image-20200112211017950](image-20200112211017950.png)
 
 两张表都有一个相同的字段userid，根据这个字段可以将两张表连接起来，生成前面例子的pv_users表，SQL命令是
 
@@ -48,7 +48,7 @@ SELECT pv.pageid, u.age FROM page_view pv JOIN user u ON (pv.userid = u.userid);
 
 
 
-![img](https://snag.gy/uxVcYe.jpg)
+![image-20200112211037685](image-20200112211037685.png)
 
 
 

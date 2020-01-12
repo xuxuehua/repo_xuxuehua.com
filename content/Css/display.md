@@ -136,3 +136,71 @@ rgb的另一种写法
 ```
 #000000 - #FFFFFF 之间
 ```
+
+
+
+
+
+## `:before` `:after`
+
+`:before` and `:after` create pseudo elements as 'children' for the element they are applied to. They are often used for certain stylings, or error messages.
+
+```
+<p>some text</p>
+```
+
+
+
+```
+p:after {
+    content: 'hi! im after';
+    color: red;
+    padding: 0 10px;    
+}
+
+p:before {
+    content: 'hi! im before';
+    color: blue;
+    padding: 0 10px;
+}
+
+p {
+    color: orange;
+}
+```
+
+
+
+![image-20200112214216405](image-20200112214216405.png)
+
+
+
+
+
+### Hover 案例
+
+```
+div {
+    width: 300px;
+    height: 50px;
+    background: yellow
+}
+
+div:before {
+    content: "Before";
+    background: red;
+}
+
+div:hover:after {
+    content: "Hovered After";
+    background: blue;
+    color: white;
+}
+```
+
+http://jsfiddle.net/XjUM8/2/
+
+
+
+
+

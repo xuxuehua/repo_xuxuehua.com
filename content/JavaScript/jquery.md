@@ -77,3 +77,33 @@ jQuery; // jQuery(selector, context)
 ```
 
 这种黑魔法的原理是jQuery在占用`$`之前，先在内部保存了原来的`$`,调用`jQuery.noConflict()`时会把原来保存的变量还原
+
+
+
+
+
+## 添加属性
+
+
+
+### prop 添加属性
+
+```
+$("button").click(function(){
+    var $x = $("div");
+    $x.prop("color","FF0000");
+    $x.append("The color 属性： " + $x.prop("color"));
+    $x.removeProp("color");
+});
+```
+
+> 添加并移除名为 "color" 的属性：
+
+
+
+### removeProp 移除属性
+
+
+
+
+

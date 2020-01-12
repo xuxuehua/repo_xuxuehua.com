@@ -45,16 +45,18 @@ date: 2018-07-02 18:06
 
 ## os.environ
 
-查看环境变量
+设置/查看环境变量
 
 ```
-In [45]: os.environ
-Out[45]: environ({'TERM_PROGRAM': 'iTerm.app', 'PYENV_ROOT': '/Users/xhxu/.pyenv', 'NVM_CD_FLAGS': '', 'SHELL': '/bin/bash', 'TERM': 'xterm-256color', 'TMPDIR': '/var/folders/rz/7zd4wvf90070rc96bxfc_xf13wzxml/T/', 'Apple_PubSub_Socket_Render': '/private/tmp/com.apple.launchd.iV428QMhhK/Render', 'TERM_PROGRAM_VERSION': '3.0.14', 'TERM_SESSION_ID': 'w0t2p0:1094E04E-FF61-4FC1-A33E-6C31039D1431', 'SDKMAN_PLATFORM': 'Darwin', 'PYENV_VERSION': 'env3.6.3_simiki', 'SDKMAN_CURRENT_API': 'https://api.sdkman.io/2', 'USER': 'xhxu', 'NVM_DIR': '/Users/xhxu/.nvm', 'SDKMAN_LEGACY_API': 'https://api.sdkman.io/1', 'SSH_AUTH_SOCK': '/private/tmp/com.apple.launchd.huXZtZvXV6/Listeners', 'PYENV_DIR': '/Users/xhxu/simiki', '__CF_USER_TEXT_ENCODING': '0x47CFF693:0x0:0x0', 'PYENV_VIRTUALENV_INIT': '1', 'VIRTUAL_ENV': '/Users/xhxu/.pyenv/versions/3.6.3/envs/env3.6.3_simiki', 'PYENV_VIRTUAL_ENV': '/Users/xhxu/.pyenv/versions/3.6.3/envs/env3.6.3_simiki', 'PATH': '/Users/xhxu/.pyenv/versions/env3.6.3_simiki/bin:/usr/local/Cellar/pyenv/1.2.4/libexec:/Users/xhxu/.sdkman/candidates/groovy/current/bin:/Users/xhxu/apache-maven-3.5.3/bin:/Users/xhxu/.jenv/shims:/Users/xhxu/.jenv/bin:/Users/xhxu/.nvm/versions/node/v7.6.0/bin:/usr/local/Cellar/pyenv-virtualenv/1.0.0/shims:/Users/xhxu/.pyenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Wireshark.app/Contents/MacOS', 'PWD': '/Users/xhxu/simiki', 'JENV_LOADED': '1', 'LANG': 'en_US.UTF-8', 'ITERM_PROFILE': 'Default', 'SDKMAN_VERSION': '5.6.3+299', 'PYENV_HOOK_PATH': '/Users/xhxu/.pyenv/pyenv.d:/usr/local/Cellar/pyenv/1.2.4/pyenv.d:/usr/local/etc/pyenv.d:/etc/pyenv.d:/usr/lib/pyenv/hooks', 'XPC_FLAGS': '0x0', '_OLD_VIRTUAL_PS1': '\\h:\\W \\u\\$ ', 'XPC_SERVICE_NAME': '0', 'COLORFGBG': '7;0', 'HOME': '/Users/xhxu', 'SHLVL': '1', 'PYENV_SHELL': 'bash', 'ITERM_SESSION_ID': 'w0t2p0:1094E04E-FF61-4FC1-A33E-6C31039D1431', 'LOGNAME': 'xhxu', 'SDKMAN_DIR': '/Users/xhxu/.sdkman', 'GROOVY_HOME': '/Users/xhxu/.sdkman/candidates/groovy/current', 'NVM_BIN': '/Users/xhxu/.nvm/versions/node/v7.6.0/bin', 'SDKMAN_CANDIDATES_DIR': '/Users/xhxu/.sdkman/candidates', 'SECURITYSESSIONID': '186a7'})
+In [90]: os.environ['MY_ENV'] = 'my_env'                                                                                                                                     
+
+In [91]: os.environ['MY_ENV']                                                                                                                                                
+Out[91]: 'my_env'
 ```
 
 
 
-* 获取当前用户的主目录路径（家目录）
+获取当前用户的主目录路径（家目录）
 
 ```
 In [8]: os.environ['HOME']
