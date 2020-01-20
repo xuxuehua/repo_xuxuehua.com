@@ -78,13 +78,13 @@ b'call __bytes__ name is Rick'
 指定所导入的变量
 
 ```
-__all__ = [&#39;a&#39;, &#39;b&#39;]
+__all__ = ['a', 'b']
 ```
 
 指定可导入的模块
 
 ```
-__all__ = [&#39;Module1&#39;, &#39;Module2&#39;]
+__all__ = ['Module1', 'Module2']
 ```
 
 ## `__init__`

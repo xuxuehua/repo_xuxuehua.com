@@ -8,7 +8,7 @@ date: 2019-06-25 11:32
 
 # Elastic Container Service
 
-![img](https://snag.gy/F1MYG9.jpg)
+![image-20200116014636543](image-20200116014636543.png)
 
 
 
@@ -187,6 +187,30 @@ Send grow and shrink signals to ASGs
 ## Cluster
 
 Logical group of EC2 instances that you can place containers onto
+
+
+
+# Task Placement Engine
+
+支持多种容器任务调度策略
+
+![image-20200116014813291](image-20200116014813291.png)
+
+
+
+Binpacking：最少资源利用（根据 CPU 或者内存）的实例会优先被放置， 这种策略会先将任务放到可用资源最少的实例上，减少了启动过多的实例， 提高了资源利用率。 
+
+
+
+Spread：根据某个特定值进行平衡放置，这个特定值可以是一个键值对， 也可以是 instanceId 或者 host。一般可使用这种策略实现跨 AZ 的任务放 置。 
+
+
+
+Affinity：组合条件的放置策略，比如两个符合条件的 task 不能同时放到某 个实例中，或者两个符合条件的 task 必须同时放到某个实例中。 
+
+
+
+Distinct Instance：将每项任务放置在不同的容器实例中。
 
 
 
