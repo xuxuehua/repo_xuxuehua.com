@@ -223,9 +223,9 @@ public class Main {
 ```
 public class Main {
     public static void main(String[] args) {
-        for (int i=1; i<=10; i++) {
+        for (int i=1; i<=3; i++) {
             System.out.println("i = " + i);
-            for (int j=1; j<=10; j++) {
+            for (int j=1; j<=3; j++) {
                 System.out.println("j = " + j);
                 if (j >= i) {
                     break;
@@ -240,79 +240,16 @@ public class Main {
 >>>
 i = 1
 j = 1
-Breaked
+breaked
 i = 2
 j = 1
 j = 2
-Breaked
+breaked
 i = 3
 j = 1
 j = 2
 j = 3
-Breaked
-i = 4
-j = 1
-j = 2
-j = 3
-j = 4
-Breaked
-i = 5
-j = 1
-j = 2
-j = 3
-j = 4
-j = 5
-Breaked
-i = 6
-j = 1
-j = 2
-j = 3
-j = 4
-j = 5
-j = 6
-Breaked
-i = 7
-j = 1
-j = 2
-j = 3
-j = 4
-j = 5
-j = 6
-j = 7
-Breaked
-i = 8
-j = 1
-j = 2
-j = 3
-j = 4
-j = 5
-j = 6
-j = 7
-j = 8
-Breaked
-i = 9
-j = 1
-j = 2
-j = 3
-j = 4
-j = 5
-j = 6
-j = 7
-j = 8
-j = 9
-Breaked
-i = 10
-j = 1
-j = 2
-j = 3
-j = 4
-j = 5
-j = 6
-j = 7
-j = 8
-j = 9
-j = 10
-Breaked
+breaked
 ```
 
 

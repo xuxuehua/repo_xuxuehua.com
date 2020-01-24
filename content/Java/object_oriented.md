@@ -1,5 +1,4 @@
 ---
-
 title: "object_oriented"
 date: 2019-10-10 07:16
 collection: oop
@@ -34,7 +33,7 @@ Java语言本身提供的机制，包括：
 
 class是一种对象模版，它定义了如何创建实例，因此，class本身就是一种数据类型
 
-### 
+
 
 ## 定义class
 
@@ -68,6 +67,8 @@ class Person {
 		private int age;
 }
 ```
+
+
 
 
 
@@ -116,7 +117,7 @@ class Person {
 
 
 
-# method 方法
+# method 方法 
 
 操作数据的过程称为方法
 
@@ -178,7 +179,22 @@ Rick, 18
 
 
 
-## private方法
+## public 方法
+
+```
+class Book {
+		public String name;
+		public String author;
+		public String isbn;
+		public double price;
+}
+```
+
+
+
+
+
+## private 方法
 
 有`public`方法，自然就有`private`方法。和`private`字段一样，`private`方法不允许外部调用
 
@@ -343,6 +359,8 @@ g.setNames("Xiao Ming"); // 传入1个String
 g.setNames(); // 传入0个String
 ```
 
+
+
 完全可以把可变参数改写为`String[]`类型：
 
 ```
@@ -355,12 +373,16 @@ class Group {
 }
 ```
 
+
+
 但是，调用方需要自己先构造`String[]`，比较麻烦。例如：
 
 ```
 Group g = new Group();
 g.setNames(new String[] {"Xiao Ming", "Xiao Hong", "Xiao Jun"}); // 传入1个String[]
 ```
+
+
 
 另一个问题是，调用方可以传入`null`：
 
@@ -370,6 +392,8 @@ g.setNames(null);
 ```
 
 而可变参数可以保证无法传入`null`，因为传入0个参数时，接收到的实际值是一个空数组而不是`null`。
+
+
 
 
 
@@ -417,7 +441,7 @@ class Person {
 
 
 
-## 构造方法
+# 构造方法
 
 创建实例的时候，实际上是通过构造方法来初始化实例的
 
@@ -456,7 +480,7 @@ class Person {
 
 
 
-### 默认构造方法
+## 默认构造方法
 
 如果一个类没有定义构造方法，编译器会自动为我们生成一个默认构造方法，它没有参数，也没有执行语句，类似这样：
 
@@ -576,7 +600,7 @@ class Person {
 
 
 
-### 多构造方法
+## 多构造方法
 
 可以定义多个构造方法，在通过`new`操作符调用的时候，编译器通过构造方法的参数数量、位置和类型自动区分：
 
@@ -926,6 +950,11 @@ nstance是对象实例，instance是根据class创建的实例，可以创建多
 new操作符可以创建一个实例，然后，我们需要定义一个引用类型的变量来指向这个实例
 
 ```
+class Person {
+		public String name;
+		public int age;
+}
+
 Person rick = new Person();
 ```
 

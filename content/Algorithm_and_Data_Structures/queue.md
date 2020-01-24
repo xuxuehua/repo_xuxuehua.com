@@ -138,3 +138,63 @@ public boolean enqueue(String item) {
 
 
 
+## 循环队列
+
+```
+public class CircularQueue {
+		// 数组:items，数组大小:n
+		private String[] items;
+		private int n = 0;
+		
+		// head表示队头下标，tail表示队尾下标
+		private int head = 0; 
+		private int tail = 0;
+		
+		// 申请一个大小为capacity的数组
+		public CircularQueue(int capacity) {
+				items = new String[capacity];
+				n = capacity;
+		}
+		
+		// 入队
+		public boolean enqueue() {
+				// 队列满了
+				if ((tail + 1) % n == head) return false;
+				items[tail] = item;
+				tail = (tail + 1) % n;
+				return true;
+		}
+		
+		// 出队
+		public String dequeue() {
+				// 如果head == tail 表示队列为空
+				if (head == tail) return null;
+				String ret = items[head];
+				head = (head + 1) % n;
+				return ret;
+		}
+}
+```
+
+![image-20200120170304537](queue.assets/image-20200120170304537.png)
+
+> 这个队列的大小为8，当前head=4，tail=7。当有一个新的元素a入队时，我们放入下标为7的位置。但这个时候，我们并不把tail更新为8，而是 将其在环中后移一位，到下标为0的位置。当再有一个元素b入队时，我们将b放入下标为0的位置，然后tail加1更新为1。所以，在a，b依次入队之后，循环队列中 的元素就变成了下面的样子
+
+![image-20200120170350641](queue.assets/image-20200120170350641.png)
+
+> 通过这样的方法，我们成功避免了数据搬移操作。看起来不难理解，但是循环队列的代码实现难度要比前面讲的非循环队列难多了。要想写出没有bug的循环队列 的实现代码，最关键的是，确定好队空和队满的判定条件。
+
+
+
+![image-20200120170547031](queue.assets/image-20200120170547031.png)
+
+> 就像我图中画的队满的情况，tail=3，head=4，n=8，所以总结一下规律就是:(3+1)%8=4。多画几张队满的图，你就会发现，当队满时，**(tail+1)%n=head**。
+>
+> 你有没有发现，当队列满时，图中的tail指向的位置实际上是没有存储数据的。所以，循环队列会浪费一个数组的存储空间。
+
+
+
+
+
+## 阻塞队列和并发队列
+

@@ -1,5 +1,5 @@
 ---
-title: "boolean"
+title: "boolean 布尔"
 date: 2019-10-06 11:38
 collection: 基本变量类型
 ---
@@ -8,6 +8,8 @@ collection: 基本变量类型
 
 
 # boolean 
+
+永远只有`true`和`false`两个值。
 
 Java语言对布尔类型的存储并没有做规定，因为理论上存储布尔类型只需要1 bit，但是通常JVM内部会把`boolean`表示为4字节整数。
 
@@ -40,6 +42,19 @@ boolean isNonZero = !isZero; // true
 boolean isAdult = age >= 18; // false
 boolean isTeenager = age >6 && age <18; // true
 ```
+
+
+
+### 运算符优先级
+
+关系运算符的优先级从高到低依次是
+
+- `(` `)`
+- `!`
+- `>`，`>=`，`<`，`<=`
+- `==`，`!=`
+- `&&`
+- `||`
 
 
 

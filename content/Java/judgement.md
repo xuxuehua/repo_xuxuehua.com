@@ -1,5 +1,5 @@
 ---
-title: "judgement"
+title: "judgement 判断"
 date: 2019-10-07 00:45
 ---
 [TOC]
@@ -26,7 +26,7 @@ if (条件) {
 
 
 
-# 引用判断
+# 引用判断 equals
 
 在Java中，判断值类型的变量是否相等，可以使用`==`运算符。但是，判断引用类型的变量是否相等，`==`表示“引用是否相等”，或者说，是否指向同一个对象。例如，下面的两个String类型，它们的内容是相同的，但是，分别指向不同的对象，用`==`判断，结果为`false`
 
@@ -144,7 +144,7 @@ switch (input.toLowerCase()) {
 
 
 
-## switch 语法检查
+## switch 语法检查 （IDEA配置）
 
 在Idea中，选择`Preferences` - `Editor` - `Inspections` - `Java` - `Control flow issues`，将以下检查标记为Warning：
 
@@ -173,6 +173,7 @@ public class Main {
         System.out.println("opt = " + opt);
     }
 }
+
 >>>
 opt = 2
 ```
@@ -206,6 +207,22 @@ opt = 1951963900
 ```
 
 
+
+
+
+## switch 预览特性
+
+IDEA 开启preview 模式
+
+由于`switch`表达式是作为Java 13的预览特性（Preview Language Features）实现的，编译的时候，我们还需要给编译器加上参数：
+
+```
+javac --source 13 --enable-preview Main.java
+```
+
+这样才能正常编译。
+
+![img](judgement.assets/Switchexpr-IDEsettings.gif)
 
 
 
