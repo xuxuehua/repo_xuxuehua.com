@@ -189,6 +189,45 @@ docker start
 
 
 
+## stats 显示系统资源
+
+显示容器使用的系统资源
+
+
+
+### --no-stream 
+
+如果不想持续的监控容器使用资源的情况，可以通过 --no-stream 选项只输出当前的状态
+
+如果我们只想查看个别容器的资源使用情况，可以为 docker stats 命令显式的指定目标容器的名称或者是 ID
+
+```
+$ docker stats --no-stream registry 1493
+```
+
+
+
+### --format
+
+格式化输出的结果
+
+```
+docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}"
+```
+
+
+
+ json 格式
+
+```
+docker stats --no-stream --format \
+    "{\"container\":\"{{ .Container }}\",\"memory\":{\"raw\":\"{{ .MemUsage }}\",\"percent\":\"{{ .MemPerc }}\"},\"cpu\":\"{{ .CPUPerc }}\"}"
+```
+
+
+
+
+
 ## stop 终止容器
 
 docker stop container_id 来终止一个运行中的容器。

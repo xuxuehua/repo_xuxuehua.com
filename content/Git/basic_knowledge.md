@@ -22,13 +22,23 @@ date: 2019-03-21 18:42
 
 很容易定制工作流程
 
+分布式版本控制系统 DVCS
+
+基于内容寻址的存储系统
+
+
+
+## git 状态
+
+![image-20200202003714688](basic_knowledge.assets/image-20200202003714688.png)
+
 
 
 ## WorkFlow 流程
 
 
 
-![img](https://snag.gy/0KAW7k.jpg)
+![image-20200201170140805](basic_knowledge.assets/image-20200201170140805.png)
 
 
 
@@ -50,13 +60,21 @@ date: 2019-03-21 18:42
 
 
 
+## 发布线 分支模型 
+
+![image-20200201170441249](basic_knowledge.assets/image-20200201170441249.png)
+
+![image-20200201170510962](basic_knowledge.assets/image-20200201170510962.png)
 
 
 
+## Quick Start
 
-## Installation
+![image-20200202113042275](basic_knowledge.assets/image-20200202113042275.png)
 
-### CentOS
+# Installation
+
+## CentOS
 
 ```
 sudo yum -y install git
@@ -64,7 +82,7 @@ sudo yum -y install git
 
 
 
-### Ubuntu
+## Ubuntu
 
 ```
 sudo apt -y install git
@@ -74,11 +92,11 @@ sudo apt -y install git
 
 
 
-## 基本配置
+# 基本配置
 
 
 
-### 配置用户
+## 配置用户
 
 ```
 git config --global user.name "USERNAME"
@@ -127,17 +145,17 @@ git config --global user.email "USERNAME@DOMAIN.com"
 
 
 
-## git 对象
+# git 对象
 
-![img](https://snag.gy/6iJuLn.jpg)
-
-
+![image-20200201170234286](basic_knowledge.assets/image-20200201170234286.png)
 
 
 
 
 
-### commit
+
+
+## commit
 
 一个commit会对应一棵树
 
@@ -145,7 +163,7 @@ git config --global user.email "USERNAME@DOMAIN.com"
 
 
 
-### tree
+## tree
 
 树也是文件夹，或者文件
 
@@ -153,7 +171,7 @@ git config --global user.email "USERNAME@DOMAIN.com"
 
 
 
-### blob 
+## blob 
 
 只要文件的内容相同，那么就是唯一的blob
 
@@ -243,7 +261,9 @@ git仓库存放的对象，是commit的类型
 
 # .gitignore
 
-忽略加入git仓库中的文件
+在git add时忽略匹配的文件
+
+仅仅作用与未被追踪的文件
 
 
 

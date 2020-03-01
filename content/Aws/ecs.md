@@ -128,6 +128,34 @@ $ aws ecs list-task-definitions --region us-east-1
 
 
 
+### Memory Soft/Hard limit
+
+**memoryReservation** (a soft limit) and **memory** (a hard limit)
+
+如果二者均配置 **memory**(hard) must be greater than **memoryReservation**(soft)
+
+
+
+**memory** 即container实际使用的memory，超过会被kill
+
+**memoryReservation** 当系统内存处于争用状态时，Docker 会尝试将容器内存保持在此软限制内
+
+如果指定 **memoryReservation**，则将从容器所在的容器实例的可用内存资源中减去该值。否则，将使用 **memory** 的值。
+
+
+
+The soft memory limit feature is designed for CPU bound applications where you want to reserve a small minimum of memory (the soft limit) but allow occasional bursts up to the hard limit.
+
+If you are CPU bound then you can use the soft memory limit with an optional hard limit just as a failsafe. If you are memory bound then you will need to use just the hard limit with no soft limit.
+
+
+
+if your container normally uses 128 MiB of memory, but occasionally bursts to 256 MiB of memory for short periods of time, you can set a `memoryReservation` of 128 MiB, and a `memory` hard limit of 300 MiB. This configuration would allow the container to only reserve 128 MiB of memory from the remaining resources on the container instance, but also allow the container to consume more memory resources when needed.
+
+
+
+
+
 ## Services (管理Tasks)
 
 Supervisors of tasks

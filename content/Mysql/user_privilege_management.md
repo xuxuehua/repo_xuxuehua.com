@@ -183,7 +183,11 @@ $ mysqladmin password
 
 
 
-### 解决忘记管理员密码
+### 重制root密码
+
+
+
+#### 方法一
 
 启动mysqld进程时，为其使用 (在启动配置文件里面添加)
 
@@ -199,6 +203,7 @@ $bindir/mysqld_safe --skip-grant-tables --skip-networking --datadir="$datadir" -
 
 ```
 UPDATE mysql.user SET password=PASSWORD("mynewpassword") WHERE user='root';
+
 flush privileges;
 ```
 
@@ -206,7 +211,30 @@ flush privileges;
 
 
 
+#### 方法二
 
+```
+vim /etc/my.cnf
+
+# 追加到[mysqld]
+skip-grant-tables
+```
+
+
+
+```
+systemctl restart mysqld
+```
+
+
+
+```
+$ mysql
+
+mysql> use mysql;
+mysql> update user set password=password("myPassword") where user="root";
+mysql> flush privileges;
+```
 
 
 
@@ -228,6 +256,18 @@ GRANT OPTION
 ```
 
 
+
+```
+mysql> update user set host='%' where user='root';
+
+mysql>grant all privileges on  *.*  to root@'%'  identifies  by ' xxxx';
+```
+
+> 第一个`*`表示数据库名；第二个`*`表示该数据库的表名
+>
+> `*.*`的话表示所有到数据库下到所有表都允许访问
+>
+> `%`表示允许访问到mysql的ip地址,%表示所有ip均可以访问
 
 
 

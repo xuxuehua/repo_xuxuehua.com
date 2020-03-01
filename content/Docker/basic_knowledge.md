@@ -237,7 +237,9 @@ sudo rm -rf /var/run/docker.sock
 
 运行  Docker 守护进程时，可以用 -H 来改变绑定接口的方式，比如 sudo /usr/bin/docker -d -H  tcp://0.0.0.0:2375，如果不想每次都输入这么长的命令，需要加入以下环境变量 
 
+```
 export  DOCKER_HOST="tcp://0.0.0.0:2375"
+```
 
 
 
@@ -278,9 +280,33 @@ docker-ce
 
 /etc/docker/daemon.json
 
+### docker CN repo
+
+```
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+    "registry-mirrors": [
+        "https://1nj0zren.mirror.aliyuncs.com",
+        "https://docker.mirrors.ustc.edu.cn",
+        "http://f1361db2.m.daocloud.io",
+        "https://registry.docker-cn.com"
+    ]
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
 
 
 
+命令行执行 `docker info`，如果从结果中看到了如下内容，说明配置成功。
+
+```
+Registry Mirrors:
+ [...]
+ https://registry.docker-cn.com/
+```
 
 # 基本概念
 

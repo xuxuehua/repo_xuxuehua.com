@@ -29,7 +29,7 @@ python setup.py  install
 
 
 
-# Roster
+# Roster 获取服务器信息
 
 用于salt ssh 获取需要连接的服务器信息
 
@@ -88,8 +88,7 @@ will ask for approval
 
 ## -r/--raw/--raw-shell 直接使用shell命令
 
-Don't execute a salt routine on the targets, execute a
-raw shell command
+Don't execute a salt routine on the targets, execute a raw shell command
 
 
 

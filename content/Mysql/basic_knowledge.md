@@ -517,6 +517,17 @@ docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD='123456' -d mys
 
 
 
+```
+#!/bin/bash
+cur_dir=`pwd`
+docker stop example-mysql
+docker rm example-mysql
+docker run --name example-mysql -v ${cur_dir}/conf:/etc/mysql/conf.d -v ${cur_dir}/data:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=1
+234@abcd -d mysql:latest
+```
+
+
+
 #### 访问
 
 ```

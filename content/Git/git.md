@@ -16,7 +16,7 @@ date: 2019-03-21 19:10
 
 ## add 添加到暂存区
 
-把文件修改添加到暂存区
+把文件修改添加到暂存区，同时文件会被跟踪
 
 
 
@@ -144,6 +144,8 @@ git check-ignore -v App.class
 
 切换分支
 
+本质上是通过移动HEAD检出版本，可以用于分支切换
+
 
 
 ### -b 指定分支
@@ -166,7 +168,7 @@ git checkout -b BRANCH_NAME/INFO  origin/BRANCH_NAME/INFO
 
 
 
-### --  指定files  工作区变回暂存区
+### `--`  指定files  撤销工作区变更
 
 即丢弃工作区的修改
 
@@ -178,13 +180,21 @@ git checkout -- SOME_FILES
 
 
 
+### `-` 恢复上一个分支
+
+```
+git checkout -
+```
 
 
-## clone 备份
+
+## clone 克隆仓库
+
+克隆一个远程仓库作为本地仓库
 
 
 
-### --  bare 裸仓库
+### `--bare` 裸仓库
 
 不带工作区的裸仓库
 
@@ -200,6 +210,16 @@ git checkout -- SOME_FILES
 
 
 
+### -a 直接提交
+
+即工作目录到提交区
+
+```
+git commit -a -m "full commit"
+```
+
+
+
 ### --amend 修改最近一次comment
 
 ```
@@ -210,11 +230,34 @@ git commit --amend
 
 ## config
 
+
+
+标示提交信息，用户配置
+
+```
+git config --global user.name "Rick Xu"
+git config --global user.email "rickxu1989@gmail.com"
+```
+
+
+
+
+
 配置显示颜色
 
 ```
 git config --global color.ui true
 ```
+
+
+
+### alias 配置别名
+
+```
+git config alias.SHORTNAME <full_command>
+```
+
+
 
 
 
@@ -266,7 +309,9 @@ git diff -- FILE1 FILE2
 
 
 
-### --cached  暂存区与HEAD差异
+### --cached  暂存区与某次提交差异
+
+默认是与HEAD之间的差异
 
 ```
 git diff --cached
@@ -312,21 +357,40 @@ git diff HASH_VALUE1 HASH_VALUE2 -- file1
 
 
 
-## fetch 拉取到本地
+## fetch 获取远程仓库的提交历史
 
 但不会和本地的分支产生关联
 
+```
+git fetch origin master
+```
 
 
 
+所以需要进行merge操作
+
+```
+git merge origin/master
+git push origin master
+```
 
 
 
-## log
+## init 初始化
+
+```
+git init ~/git-server --bare
+```
+
+> 初始化一个本地的远程服务器
 
 
 
-### --graph 图形化
+## log 提交历史
+
+
+
+### --graph 图形化 
 
 开启图形化
 
@@ -355,7 +419,7 @@ git log --oneline
 ### --pretty 编辑输出信息
 
 ```
-git log --pretty=oneline
+git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%dCreset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit
 ```
 
 
@@ -402,6 +466,8 @@ git merge --no-ff -m "Merged with no-ff mode" dev
 
 ## pull 拉取远端
 
+等同于执行了git fetch + git merge
+
 
 
 ## push 推送到远端
@@ -434,7 +500,13 @@ git push -u origin master
 
 ## rebase 
 
-把分叉的提交历史“整理”成一条直线，看上去更直观。缺点是本地的分叉提交已经被修改过了。
+把分叉的提交历史“整理”成一条直线，看上去更直观。
+
+缺点是本地的分叉提交已经被修改过了。
+
+不要在共有的分支上使用rebase
+
+![image-20200202123602247](git.assets/image-20200202123602247.png)
 
 Rebases current branch onto origin/master
 
@@ -481,15 +553,33 @@ s
 
 
 
-## reflog 查看回退历史	
+### `--onto` 指定重演提交
+
+![image-20200202123800871](git.assets/image-20200202123800871.png)
+
+```
+git rebase --onto master 5751363
+```
+
+
+
+
+
+## reflog 查看commit历史	
 
 可查看reset --hard 之前的操作
 
+可以查看分支之间的从属关系
+
+```
+git reflog show <branch name>
+```
 
 
-## remote 远程提交
 
-### add
+## remote 远程操作
+
+### add 添加远程映射
 
 ```
 git remote add REPO_NAME LOCATION
@@ -501,15 +591,41 @@ git remote add REPO_NAME LOCATION
 git remote add origin https://github.com/YOUR_NAME/YOUR_REPO.git
 ```
 
-> 这里的origin指远程库的名称
+> 这里的origin指远程库的名称，默认共识用origin
 
 
 
-## reset
+### prune 清理旧分支
+
+清理和远程不同步的分支
+
+```
+git remote prune
+```
 
 
 
-### HEAD 清空暂存区
+### show 查看远程分支
+
+```
+git remote show origin
+```
+
+
+
+## reset 回退
+
+### `--mixed <commit_id>` 回退到前一个分支
+
+默认值，可以不传入--mixed参数
+
+同时将当前的内容复制到暂存区
+
+
+
+
+
+### HEAD 撤销暂存区
 
 取消暂存区所有的变更
 
@@ -519,7 +635,11 @@ git reset HEAD
 
 
 
-#### --filename 取消部分文件修改
+
+
+
+
+### --filename 取消部分文件全部的修改
 
 ```
 git reset HEAD -- FILENAME
@@ -541,9 +661,15 @@ git reset HEAD -- FILE1 FILE2 FILE3
 
 
 
+### `--soft <commit_id>` 
+
+仅仅是指针发生变化
+
+
+
 ### --hard 回退修改 (慎用)
 
-回退到指定的变更
+回退到指定的变更到工作区
 
 ```
 git reset --hard HASH_VALUE
@@ -585,15 +711,31 @@ git reset --hard HEAD~100
 
 ## rm 删除文件
 
-删除后续commit不需要的文件，即放置到暂存区里面
+从暂存区与工作目录同时删除
 
 ```
-git rm FILENAMES
+git rm FILENAME
 ```
 
 
 
-## tag
+```
+git rm --cached	
+```
+
+> 仅仅从暂存区删除
+
+
+
+```
+git rm $(git ls-files --deleted)
+```
+
+> 删除所有被跟踪，但是在工作目录被删除的文件
+
+
+
+## tag 标签别名
 
 
 
@@ -612,8 +754,6 @@ git tag <tagname>
 ```
 git tag
 ```
-
-
 
 
 
@@ -681,19 +821,27 @@ git push origin :refs/tags/v0.9
 
 ## stash 保存临时现场
 
-设A为游戏软件 
+```
+git stash
+# 等同于 
+git stash save 
+```
+
+
+
+最新的存储保存在`refs/stash`中.老的存储可以通过相关的参数获得,例如`stash@{0}`获取最新的存储,`stash@{1}`获取次新.`stash@{2.hour.ago}`获取两小时之前的.存储可以直接通过索引的位置来获得`stash@{n}`.
+
+
+
+
+
+### save 添加注解
 
 ```
-1、master 上面发布的是A的1.0版本 
-2、dev 上开发的是A的2.0版本 
-3、这时，用户反映 1.0版本存在漏洞，有人利用这个漏洞开外挂 
-4、需要从dev切换到master去填这个漏洞，正常必须先提交dev目前的工作，才能切换。 
-5、而dev的工作还未完成，不想提交，所以先把dev的工作stash一下。然后切换到master 
-6、在master建立分支issue101并切换. 
-7、在issue101上修复漏洞。 
-8、修复后，在master上合并issue101 
-9、切回dev，恢复原本工作，继续工作。
+git stash save "ANNOTATION"
 ```
+
+
 
 
 
@@ -705,7 +853,7 @@ git stash
 
 
 
-### --list 查看临时现场保存信息
+### `--list` 查看临时现场保存信息
 
 查看工作现场信息
 
@@ -745,7 +893,19 @@ git stash drop
 
 
 
+### show 校验
+
+```
+git stash show
+```
+
+
+
 ## status
+
+对状态进行跟踪
+
+![image-20200202003603169](git.assets/image-20200202003603169.png)
 
 
 
@@ -781,3 +941,15 @@ $ git status --porcelain
 
 
 
+
+
+
+# reset vs checkout
+
+![image-20200202122503975](git.assets/image-20200202122503975.png)
+
+
+
+# rebase vs merge
+
+![image-20200202123830861](git.assets/image-20200202123830861.png)

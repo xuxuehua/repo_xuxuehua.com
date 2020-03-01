@@ -1,5 +1,5 @@
 ---
-title: "object_oriented"
+title: "object_oriented 面向对象"
 date: 2019-10-10 07:16
 collection: oop
 ---
@@ -28,6 +28,14 @@ Java语言本身提供的机制，包括：
 - 常用工具类
 
 
+
+# 封装
+
+即把数据和对数据的操作放在一起
+
+内部的数据应该是有对象本身自己所保护的
+
+![image-20200124170324784](object_oriented.assets/image-20200124170324784.png)
 
 # class
 
@@ -78,7 +86,7 @@ class Person {
 
 
 
-## static 静态字段
+## static 静态字段 （类变量）
 
 实例字段在每个实例中都有自己的一个独立“空间”，但是静态字段只有一个共享“空间”，所有实例都会共享该字段
 
@@ -103,6 +111,18 @@ class Person {
 
 
 
+## static 类函数
+
+类函数不属于对象，属于所属的类
+
+```
+public static void main(String[] args) {
+		...
+}
+```
+
+
+
 
 
 # 对象
@@ -114,6 +134,76 @@ class Person {
 对象的标识(identity)： 如何辨别具有相同行为与状态的不同对象
 
 
+
+# public 类
+
+任何人都可以用这个类的定义来定义变量
+
+要求类的名称和对应java的名称一样
+
+一个编译单元内，最多只有一个类是public的
+
+没有public字段，只能在这个包里面起作用 
+
+```
+package clock;
+
+public class Display {
+    private int value = 0;
+    private int limit = 0;
+
+    public Display(int limit) {
+        this.limit = limit;
+    }
+
+    public void increase() {
+        value++;
+        if (value == limit) {
+            value =0;
+        }
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public static void main(String[] args) {
+        Display d = new Display(24);
+        for (;;) {
+            d.increase();
+            System.out.println(d.getValue());
+        }
+    }
+}
+
+```
+
+
+
+```
+package clock;
+
+public class Clock {
+    private clock.Display hour = new clock.Display(24);
+    private clock.Display minute = new clock.Display(60);
+
+    public void start() {
+        while (true) {
+            minute.increase();
+            if (minute.getValue() == 0) {
+                hour.increase();
+            }
+            System.out.printf("%02d:%02d\n", hour.getValue(), minute.getValue());
+        }
+    }
+
+    public static void main(String[] args) {
+        Clock clock = new Clock();
+        clock.start();
+    }
+}
+
+```
 
 
 
@@ -181,6 +271,8 @@ Rick, 18
 
 ## public 方法
 
+任何类的函数或事定义初始化中可以使用，即调用，访问，或定义变量
+
 ```
 class Book {
 		public String name;
@@ -196,9 +288,9 @@ class Book {
 
 ## private 方法
 
-有`public`方法，自然就有`private`方法。和`private`字段一样，`private`方法不允许外部调用
+`private`方法不允许外部调用, 只有类内部可以访问
 
-定义`private`方法的理由是内部方法是可以调用`private`方法的
+
 
 ```
 public class Main {
@@ -236,9 +328,7 @@ class Person {
 
 
 
-## 静态方法 
-
-有静态字段，就有静态方法。用`static`修饰的方法称为静态方法。
+## static 静态方法   
 
 因为静态方法属于`class`而不属于实例，因此，静态方法内部，无法访问`this`变量，也无法访问实例字段，它只能访问静态字段。
 
@@ -285,7 +375,7 @@ class Person {
 
 ## this变量
 
-在方法内部，可以使用一个隐含的变量`this`，它始终指向当前实例。因此，通过`this.field`就可以访问当前实例的字段
+在方法内部(成员函数内部)，可以使用一个隐含的变量`this`，它始终指向当前实例。因此，通过`this.field`就可以访问当前实例的字段
 
 如果没有命名冲突，可以省略`this`
 
@@ -443,9 +533,11 @@ class Person {
 
 # 构造方法
 
-创建实例的时候，实际上是通过构造方法来初始化实例的
+创建实例的时候，实际上是通过构造方法来初始化实例的，即构造实例的时候会调用构造方法
 
-由于构造方法是如此特殊，所以构造方法的名称就是类名。构造方法的参数没有限制，在方法内部，也可以编写任意语句。但是，和普通方法相比，构造方法没有返回值（也没有`void`），调用构造方法，必须用`new`操作符。
+由于构造方法是如此特殊，所以构造方法的名称就是类名。
+
+构造方法的参数没有限制，在方法内部，也可以编写任意语句。但是，和普通方法相比，构造方法没有返回值（也没有`void`），调用构造方法，必须用`new`操作符。
 
 
 

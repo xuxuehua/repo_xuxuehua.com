@@ -12,6 +12,8 @@ date: 2018-10-22 03:20
 
 ## /etc
 
+系统所需要的配置文件和子目录
+
 ### /etc/sysconfig
 
 修改hostname
@@ -35,11 +37,27 @@ GATEWAY=10.20.150.254
 
 
 
+## /boot
+
+启动Linux 的核心文件
+
+
+
+## /dev
+
+设备文件
+
+
+
+
+
 ## /bin 
 
 commands in this dir are all system installed user commands 
 
 bin为binary的简写主要放置一些系统的必备执行档例如:cat、cp、chmod df、dmesg、gzip、kill、ls、mkdir、more、mount、rm、su、tar等
+
+
 
 
 
@@ -51,9 +69,17 @@ commands in this dir are all system installed super user commands
 
 
 
+## /lib 
+
+系统开机所需要最基本的动态链接库，即程序所需要的共享库
+
+
+
 
 
 ## /usr
+
+用户的应用程序和文件
 
 
 
@@ -93,7 +119,9 @@ X application super user commands
 
 ## /proc
 
-proc文件系统是一个伪文件系统，它只存在内存当中，而不占用外存空间。它以文件系统的方式为访问系统内核数据的操作提供接口。用户和应用程序可以通过proc得到系统的信息，并可以改变内核的某些参数。由于系统的信息，如进程，是动态改变的，所以用户或应用程序读取proc文件时，proc文件系统是动态从系统内核读出所需信息并提交的。
+proc文件系统是一个伪文件系统，它只存在内存当中，而不占用外存空间。
+
+它以文件系统的方式为访问系统内核数据的操作提供接口。用户和应用程序可以通过proc得到系统的信息，并可以改变内核的某些参数。由于系统的信息，如进程，是动态改变的，所以用户或应用程序读取proc文件时，proc文件系统是动态从系统内核读出所需信息并提交的。
 
 
 
@@ -220,13 +248,39 @@ sudo echo [my_host_name] > /proc/sys/kernel/hostname
 
 
 
+## /sys
 
 
-## /var/log/
+
+## /srv
+
+service缩写，存放服务启动之后所需要提取的数据
+
+
+
+## /var
+
+存放扩充的文件，经常被修改的文件，如日志等
+
+
+
+
+
+### /var/log/
 
 日志相关信息
 
 
+
+## /mnt
+
+临时挂载的文件
+
+
+
+## /tmp
+
+临时文件处
 
 
 

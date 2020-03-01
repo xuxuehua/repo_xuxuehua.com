@@ -34,6 +34,8 @@ date: 2019-07-21 11:07
 
 ### autofocus 自动焦点
 
+在页面加载的时候，域自动获得焦点，即加载光标到输入框
+
 ```
 <form action="" method="get">
 <input type="submit" value="submit" autofocus />
@@ -41,6 +43,19 @@ date: 2019-07-21 11:07
 ```
 
 ### 
+
+### autocomplete 属性
+
+form或者input 域拥有自动完成功能
+
+浏览器会记录输入的内容
+
+```
+<form action="" method="get" autocomplete="off">
+<input type="submit" value="submit">
+```
+
+
 
 ### placeholder 文本框提示
 
@@ -52,7 +67,86 @@ date: 2019-07-21 11:07
 
 
 
+### multiple 多选
 
+```
+<input type="file" name="file" multiple="multiple">
+```
+
+## novalidate 关闭验证
+
+```
+<form action="" method="get" autocomplete="off" novalidate>
+<input type="submit" value="submit">
+```
+
+enctype:     application/x-www-form-urlencoded multipart/form-data text/plain
+
+
+
+
+
+
+
+## type 类型
+
+```
+<input type="email" name="email">
+
+<input type="date" name="date">
+
+<input type="month" name="month">
+
+<input type="week" name="week">
+
+<input type="time" name="time">
+
+<input type="datetime" name="datetime">
+
+<input type="datetime-local" name="datetime-local">
+
+<input type="range" name="range" min="1" max="10"> //拖拉条
+```
+
+
+
+type: text 文本框
+
+password 密码框
+
+radio 单选
+
+```
+<form action="">
+    <input type="radio" name="r" id="r1">
+    <label for="r1">r1</label>
+    <input type="radio" name="r" id="r2">
+    <label for="r2">r2</label>
+</form>
+```
+
+checkbox 复选 
+
+```
+    <form action="">
+        <input type="checkbox" name="ckk_lq" value="1", id="ck_lq_id">
+        <label for="ch_lq_id">myinfo1</label>
+        <input type="checkbox" name="ckk_lq" id="ck_zq_id">
+        <label for="ch_zq_id">myinfo2</label>
+    </form>
+```
+
+​    submit
+
+​    reset
+
+​    image 图像式提交按钮
+
+​    hidden 隐藏域
+
+​    file 文件域
+
+# 
 
 ### `<datalist>` 数据列表
 
@@ -77,47 +171,9 @@ date: 2019-07-21 11:07
 
 ## `<optgroup>` 菜单和项目分组
 
-## type 属性
-
-type: text 文本框
-
-​    password 密码框
-
-​    radio 单选
-
-```
-<form action="">
-    <input type="radio" name="r" id="r1">
-    <label for="r1">r1</label>
-    <input type="radio" name="r" id="r2">
-    <label for="r2">r2</label>
-</form>
-```
-
-​    checkbox 复选 
-
-```
-    <form action="">
-        <input type="checkbox" name="ckk_lq" value="1", id="ck_lq_id">
-        <label for="ch_lq_id">myinfo1</label>
-        <input type="checkbox" name="ckk_lq" id="ck_zq_id">
-        <label for="ch_zq_id">myinfo2</label>
-    </form>
-```
-
-​    submit
-
-​    reset
-
-​    image 图像式提交按钮
-
-​    hidden 隐藏域
-
-​    file 文件域
-
 # form 属性
 
-name： 控件名称
+name： 控件名称,在没有method的情况下，会把对应的key value 传入到URL中
 
 value： input控件中默认文本值
 
@@ -133,39 +189,15 @@ maxlength：控件允许的最多字符数
 
 action:  路径， #表示当前页面
 
-method： get， post
-
 target： _blank, _self, _parent, _top
 
-## autocomplete 智能提示
 
-```
-<form action="" method="get" autocomplete="off">
-<input type="submit" value="submit">
-```
 
-## novalidate 关闭验证
+## method
 
-```
-<form action="" method="get" autocomplete="off" novalidate>
-<input type="submit" value="submit">
-```
+### post
 
-enctype:     application/x-www-form-urlencoded multipart/form-data text/plain
+用户输入的数据通过请求体进行传输，即Form Data
 
 
 
-
-
-## form 用于表单提交
-
-在表单标签中写，值就是设置为form标签中id值，那么标签就可以提交了
-
-```
-<form action="" method="get" id="fm">
-<input type="text" value="" name="txt" autofocus placeholder="Input name" required />
-<input type="submit" value="submit" id="sm" />
-</form>
-
-<input type="text" value="" name="name" form="fm" />
-```

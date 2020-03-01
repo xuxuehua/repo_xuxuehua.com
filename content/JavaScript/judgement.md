@@ -71,7 +71,7 @@ if (age >= 18) {
 
 ### 默认判定
 
-* JavaScript把`null`、`undefined`、`0`、`NaN`和空字符串`''`视为`false`，其他值一概视为`true`
+JavaScript把`null`、`undefined`、`0`、`NaN`和空字符串`''`视为`false`，其他值一概视为`true`
 
 
 

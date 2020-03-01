@@ -54,3 +54,33 @@ ps -eo pid,comm,lstart,etimes,time,args
 
 
 
+
+
+## -ef
+
+显示父进程和子进程
+
+```
+# ps -ef 
+UID        PID  PPID  C STIME TTY          TIME CMD
+root         1     0  0  2018 ?        02:13:44 /usr/lib/systemd/systemd --switched-root --system --deserialize 21
+root         2     0  0  2018 ?        00:01:02 [kthreadd]
+root         4     2  0  2018 ?        00:00:00 [kworker/0:0H]
+```
+
+> C	即CPU用于计算执行优先级的因子，数值越大，表明进程是CPU密集型运算，执行优先级会降低；数值越小，表明进程是I/O密集型运算，执行优先级会提高
+>
+> STIME	进程启动的时间
+>
+> TTY	完整的终端名称
+>
+> TIME	CPU时间
+>
+> CMD	启动进程所用的命令和参数
+
+
+
+## aux
+
+可以查看CPU，内存占用率
+

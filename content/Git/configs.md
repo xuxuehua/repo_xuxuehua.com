@@ -42,9 +42,23 @@ cat .git/config
 
 
 
+### local
+
+默认，优先级别最高，只影响本地仓库
+
+```
+git config --local user.name "Rick Xu"
+```
+
+存储在`.git/config`
+
+
+
 ### global
 
- Global configs are available for all projects for the current user and stored in ~/.gitconfig.
+中优先级，影响所有当前用户的git仓库
+
+ Global configs are available for all projects for the current user and stored in `~/.gitconfig`.
 
 
 
@@ -79,9 +93,13 @@ name = John Smith
 email = js@companyb.com
 ```
 
+
+
 ### system
 
-System configs are available for all the users/projects and stored in /etc/gitconfig.
+低优先级，影响全系统的git 仓库
+
+System configs are available for all the users/projects and stored in `/etc/gitconfig`.
 
 
 

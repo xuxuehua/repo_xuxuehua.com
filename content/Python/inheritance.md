@@ -156,6 +156,7 @@ m1.sleep()
 
 w1 = Woman('Michelle', 18)
 w1.purchase()
+
 >>>
 Rick has 100000000 dollar
 Rick is eating...
@@ -172,7 +173,7 @@ class Users:
     username = ""
     def __init__(self, uname):      #构造函数
         self.username = uname
-        print('(Construct fucntion:'+self.username+')')
+        print('(Construct function:'+self.username+')')
 
     def DisplayUsername(self):      #类Users的成员函数DisplayUsername
         print(self.username)
@@ -201,9 +202,9 @@ MyUser3.DisplayUsername()
 MyUser3.DisplayLoginTime()
 
 >>>
-(Construct fucntion:Rick)
-(Construct fucntion:Michelle)
-(Construct fucntion:Sam)
+(Construct function:Rick)
+(Construct function:Michelle)
+(Construct function:Sam)
 Rick
 Login time: 2016-09-10 16:20:45
 Michelle

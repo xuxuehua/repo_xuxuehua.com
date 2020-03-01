@@ -88,19 +88,6 @@ String s = "abc\"xyz"; // 包含7个字符: a, b, c, ", x, y, z
 
 
 
-## null  
-
-引用类型的变量可以指向一个空值`null`，它表示不存在，即该变量不指向任何对象
-
-```
-String s1 = null; // s1是null
-String s2; // 没有赋初值值，s2也是null
-String s3 = s1; // s3也是null
-String s4 = ""; // s4指向空字符串，不是null
-```
-
-
-
 # 字符串操作
 
 ## `+` 连接

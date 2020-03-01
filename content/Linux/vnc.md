@@ -37,14 +37,16 @@ vncserver
 ## Ubuntu 
 
 ```
-sudo apt-get update 
+sudo apt-get update -y 
 
-sudo apt install  tightvncserver ubuntu-gnome-desktop lxde
+sudo apt install -y tightvncserver ubuntu-gnome-desktop lxde
 
 
-sudo apt install gnome-session gdm3
-sudo apt install tasksel
+sudo apt install -y gnome-session gdm3
+sudo apt install -y tasksel
 sudo tasksel install ubuntu-desktop
+
+sudo apt-get install gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal
 ```
 
 ```
@@ -53,7 +55,28 @@ passwd vnc
 
 echo "%vnc     ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers
 
-echo '/usr/bin/startlxde' >> ~/.vnc/xstartup
+sudo su - vnc
+mkdir .vnc
+tee  ~/.vnc/xstartup <<-'EOF'
+#!/bin/sh
+  
+export XKL_XMODMAP_DISABLE=1
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+xsetroot -solid grey
+vncconfig -iconic &
+
+gnome-panel &
+gnome-settings-daemon &
+metacity &
+nautilus &
+gnome-terminal &
+EOF
+
+sudo chmod +x  ~/.vnc/xstartup
 
 vncserver
 vncserver -kill :1

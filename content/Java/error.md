@@ -58,34 +58,7 @@ try {
 
 ## 继承关系
 
-```ascii
-                     ┌───────────┐
-                     │  Object   │
-                     └───────────┘
-                           ▲
-                           │
-                     ┌───────────┐
-                     │ Throwable │
-                     └───────────┘
-                           ▲
-                 ┌─────────┴─────────┐
-                 │                   │
-           ┌───────────┐       ┌───────────┐
-           │   Error   │       │ Exception │
-           └───────────┘       └───────────┘
-                 ▲                   ▲
-         ┌───────┘              ┌────┴──────────┐
-         │                      │               │
-┌─────────────────┐    ┌─────────────────┐┌───────────┐
-│OutOfMemoryError │... │RuntimeException ││IOException│...
-└─────────────────┘    └─────────────────┘└───────────┘
-                                ▲
-                    ┌───────────┴─────────────┐
-                    │                         │
-         ┌─────────────────────┐ ┌─────────────────────────┐
-         │NullPointerException │ │IllegalArgumentException │...
-         └─────────────────────┘ └─────────────────────────┘
-```
+![image-20200131112221146](error.assets/image-20200131112221146.png)
 
 
 
@@ -125,6 +98,12 @@ Java规定：
 - 不需要捕获的异常，包括`Error`及其子类，`RuntimeException`及其子类
 
 
+
+## 子类异常
+
+当覆盖一个函数的时候，子类不能声明抛出比父类的版本更多的异常
+
+在子类的构造函数中，必须声明父类可能抛出的全部异常
 
 
 
@@ -201,9 +180,7 @@ public static void main(String[] args) {
 
 ## finally语句
 
-无论是否有异常发生，如果我们都希望执行一些语句
-
-Java的`try ... catch`机制还提供了`finally`语句，`finally`语句块保证有无错误都会执行
+Java`finally`语句块保证有无错误都会执行
 
 ```
 public static void main(String[] args) {
@@ -277,7 +254,23 @@ public static void main(String[] args) {
 
 
 
-## printStackTrace() 异常调用栈
+# 输出异常方法
+
+## getMessage()
+
+```
+System.out.println(e.getMessage());
+```
+
+
+
+## toString()
+
+
+
+## printStackTrace() 异常调用堆栈
+
+即完整的异常位置和调用轨迹
 
 ```
 public class Main {
@@ -377,7 +370,7 @@ java.lang.IllegalArgumentException
 
 
 
-## 获知所有的异常
+## 获知所有的异常 
 
 在极少数的情况下，我们需要获知所有的异常
 
@@ -571,4 +564,31 @@ void sort(int[] arr) {
 ```
 
 
+
+
+
+# 异常example
+
+## 打开文件
+
+```java
+try {
+ 		// Business Logic
+		open the file;
+	 	determine its size;
+	  allocate that much memory;
+	 	read the file into memory;
+	 	close the file;
+} catch ( fileOpenFailed ) {
+  	doSomething;
+}	catch ( sizeDeterminationFailed ) {
+  	doSomething;
+} catch ( memoryAllocationFailed ) {
+  	doSomething;
+} catch ( readFailed ) {
+  	doSomething;
+} catch ( fileCloseFailed ) {
+  	doSomething;
+}
+```
 

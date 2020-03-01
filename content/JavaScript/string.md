@@ -165,6 +165,18 @@ txt.length
 
 
 
+### endsWith
+
+```
+var str = "Hello world, welcome to the universe.";
+var n = str.endsWith("universe.");
+
+>>>
+true
+```
+
+
+
 ### match
 
 ```

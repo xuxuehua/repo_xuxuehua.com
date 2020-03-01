@@ -458,11 +458,13 @@ Syndic运行在一个Master上，并连接到另外一个Master(比她更高级�
 
 # 系统组件
 
-## Grains
+## Grains 收集minion静态系统信息
 
 minion端的变量,静态的
 
-Grains是SaltStack记录Minion的一些静态信息的组件，我们可以简单地理解为Grains里面记录着每台Minion的一些常用属性，比如CPU、内存、磁盘、网络信息等，我们可以通过grains.items查看某台Minion的所有Grains信息，Minions的Grains信息是Minions启动的时候采集汇报给Master的，在实际应用环境中我们需要根据自己的业务需求去自定义一些Grains
+Grains是SaltStack记录Minion的一些静态信息的组件，我们可以简单地理解为Grains里面记录着每台Minion的一些常用属性，比如CPU、内存、磁盘、网络信息等，我们可以通过grains.items查看某台Minion的所有Grains信息
+
+Minions的Grains信息是Minions启动的时候采集汇报给Master的，在实际应用环境中我们需要根据自己的业务需求去自定义一些Grains
 
 
 
@@ -573,7 +575,7 @@ grains:
 
 
 
-## Pillar
+## Pillar 定义minion数据
 
 Pillar用于给**特定的 minion** 定义任何你需要的数据， 这些数据可以被Salt的其他组件使用
 
