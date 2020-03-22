@@ -86,7 +86,9 @@ log_output=TABLE|FILE|NONE
 
 ## 慢查询日志 slow query log
 
-查询操作超出指定时常的查询操作。一般是开启，查看查询语句过慢的原因
+用来记录MySQL中响应时间超过阈值的语句，即运行时间超过long_query_time的SQL会被记录
+
+查询操作超出指定时常的查询操作。一般开启，查看查询语句过慢的原因，如果不是调优需要，不建议开启
 
 
 
@@ -110,7 +112,11 @@ MariaDB [(none)]> SELECT @@GLOBAL.long_query_time;
 1 row in set (0.00 sec)
 ```
 
-设置时常
+
+
+
+
+### 设置时常
 
 ```
 SET GLOBAL long_query_time=
@@ -149,6 +155,48 @@ MariaDB [(none)]> SHOW GLOBAL VARIABLES LIKE '%log_slow_%';
 
 
 ```
+
+
+
+### mysqldumpslow
+
+日志分析工具
+
+-s: 是表示按照何种方式排序
+
+c: 访问次数
+
+l: 锁定时间
+
+r: 返回记录
+
+t: 查询时间
+
+al:平均锁定时间
+
+ar:平均返回记录数
+
+at:平均查询时间
+
+-t:即为返回前面多少条的数据；
+
+-g:后边搭配一个正则匹配模式，大小写不敏感的；
+
+```
+得到返回记录集最多的10个SQL 
+mysqldumpslow -s r -t 10 /var/lib/mysql/atguigu-slow.log 
+ 
+得到访问次数最多的10个SQL 
+mysqldumpslow -s c -t 10 /var/lib/mysql/atguigu-slow.log 
+ 
+得到按照时间排序的前10条里面含有左连接的查询语句 
+mysqldumpslow -s t -t 10 -g "left join" /var/lib/mysql/atguigu-slow.log 
+ 
+另外建议在使用这些命令时结合 | 和more 使用 ，否则有可能出现爆屏情况 
+mysqldumpslow -s r -t 10 /var/lib/mysql/atguigu-slow.log | more 
+```
+
+
 
 
 

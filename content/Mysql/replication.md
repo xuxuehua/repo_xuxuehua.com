@@ -14,9 +14,23 @@ date: 2019-01-16 12:18
 
 实现数据分布，负载均衡读，备份，高可用和故障切换
 
+slave会从master读取binlog来进行数据同步
+
+
+
+
+
 
 
 ## 主从复制
+
+1 master将改变记录到二进制日志（binary log）。这些记录过程叫做二进制日志事件，binary log events； 
+
+2 slave将master的binary log events拷贝到它的中继日志（relay log）； 
+
+3 slave重做中继日志中的事件，将改变应用到自己的数据库中。 MySQL复制是异步的且串行化的 
+
+
 
 ### 主节点
 
@@ -45,6 +59,8 @@ SQL Thread： 从中继日志中读取日志事件，在本地完成重放
 ### 一主多从
 
 从服务器还可以再有从服务器
+
+
 
 
 

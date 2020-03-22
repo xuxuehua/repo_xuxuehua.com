@@ -8,6 +8,26 @@ date: 2018-12-30 11:31
 
 
 
+
+
+# 查看引擎
+
+查看支持的引擎
+
+```
+show engines;
+```
+
+
+
+查看当前的引擎
+
+```
+show variables like '%storage_engine%';
+```
+
+
+
 # INNODB
 
 用于处理大量的短期事物，数据存储于表空间table space中

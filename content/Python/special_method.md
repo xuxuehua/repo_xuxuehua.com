@@ -815,11 +815,40 @@ TypeError: getattr(): attribute name must be string
 
 ### hasattr
 
+```
 hasattr(object,name)
+```
+
+
 
 ### setattr
 
-setattr(x, y, v)
+```
+setattr(object, name, value)
+```
+
+
+
+```
+In [2]: class A: 
+   ...:     bar = 1 
+   ...:                                                                             
+
+In [3]: a = A()                                                                     
+
+In [4]: setattr(a, 'bar', 5)                                                        
+
+In [5]: a.bar                                                                       
+Out[5]: 5
+
+# 若key不存在，会创建新的对象属性
+In [6]: setattr(a, 'Age', 31)                                                       
+
+In [7]: a.Age                                                                       
+Out[7]: 31
+```
+
+
 
 ### delattr
 

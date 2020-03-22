@@ -206,13 +206,19 @@ MySQL 8.0没有查询缓存功能了
 
 #### 分析器 （做什么）
 
+SQL命令传递到解析器的时候会被解析器验证和解析
+
 如果没有命中查询缓存，分析器会对语句做词法分析，根据语法规则做判断
 
 
 
 #### 优化器 （怎么做）
 
+SQL语句在查询之前会使用查询优化器对查询进行优化
+
 优化器是在表里面有多个索引的时候，决定使用哪个索引，或者在一个语句有多个关联（join）的时候，决定各个表的连接顺序
+
+
 
 
 
@@ -228,9 +234,15 @@ MySQL 8.0没有查询缓存功能了
 
 ### 存储引擎层
 
+存储引擎层，存储引擎真正的负责了MySQL中数据的存储和提取，服务器通过API与存储引擎进行通信。不同的存储引擎具有的功能不同，这样我们可以根据自己的实际需要进行选取。
+
 负责数据的存储和读取，其架构模式是插件式的，支持InnoDB，MyISAM，Memory等多个存储引擎
 
 
+
+
+
+# MySQL 安装部署
 
 ## 配置文件
 
@@ -430,39 +442,9 @@ mysql> SHOW [SESSION] STATUS;
 
 
 
-### 
+# UTF-8 模式
 
-
-
-
-
-## 基本授权
-
-### 授权用户
-
-```
-grant all on test.* to 'rick'@'localhost' identified by "rickpass";
-```
-
-> `grant`是Mysql一个专门控制权限的命令
-> `all` 指的是所有权限
-> `test.*` test是数据库名字，然后后边的 `.*`是指当前所有表
-> `'rick'@'localhost'` 其中前面的rick指的是用户名，而**localhost**指的是这个用户名能在哪里进行登录，这里的localhost是本地。
-> `identified by "rickpass"` 指的是设置密码
-
-
-
-
-
-
-
-
-
-## UTF-8 模式
-
-### 设置utf-8
-
-
+* 设置utf-8
 
 MySQL的配置文件默认存放在`/etc/my.cnf`或者`/etc/mysql/my.cnf`：
 
@@ -473,12 +455,13 @@ default-character-set = utf8
 [mysqld]
 default-storage-engine = INNODB
 character-set-server = utf8
+character-set-client = utf8
 collation-server = utf8_general_ci
 ```
 
 
 
-### 显示utf-8
+* 显示utf-8
 
 ```
 mysql> show variables like '%char%';
@@ -499,17 +482,35 @@ mysql> show variables like '%char%';
 
 
 
+* 查看源库字符集
+
+```
+show create database mydb;
+```
+
+
+
+* 修改已生成库表字符集
+
+```
+alter database mydb character set 'utf8';
+
+alter table mytbl convert to character set 'utf8';
+```
+
+> 若原有数据是非UTF8编码，数据本身不会发生改变
 
 
 
 
-## 安装
+
+# mysql安装
 
 
 
-### docker 方法
+## docker
 
-#### 启动
+* 启动
 
 ```
 docker run --name some-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD='123456' -d mysql:latest
@@ -528,7 +529,7 @@ docker run --name example-mysql -v ${cur_dir}/conf:/etc/mysql/conf.d -v ${cur_di
 
 
 
-#### 访问
+* 访问
 
 ```
 mysql -uroot -p123456 -h 127.0.0.1 -P3306
@@ -536,9 +537,91 @@ mysql -uroot -p123456 -h 127.0.0.1 -P3306
 
 
 
+# sql_mode 配置
+
+sql_mode这个变量默认是空值，在这种模式下是可以允许一些非法操作，如非法数据插入
+
+在生产环境需要设置为严格模式
+
+```
+show variables like 'sql_mode';
+
+set sql_mode='ONLY_FULL_GROUP_BY';
+```
 
 
 
+## ONLY_FULL_GROUP_BY
+
+对于group by 聚合操作，如果select中的列，没有在group by中出现，sql就是不合法的
+
+
+
+## STRICT_TRANS_TABLES
+
+如果一个值不能插入到一个事务表中，则中断当前的操作，对非事务表不做限制
+
+
+
+## NO_ZERO_IN_DATE
+
+在严格模式下，不允许日期和月份为0
+
+
+
+## NO_ZERO_DATE
+
+数据库中不允许插入零日期，插入零日期会抛出错误而不是警告
+
+
+
+## ERROR_FOR_DIVISION_BY_ZERO
+
+在insert和update过程中，如果数据被零除，则产生错误而非警报
+
+若不设定会返回NULL
+
+
+
+## NO_AUTO_CREATE_USER
+
+禁止GRANT 空密码用户
+
+
+
+## NO_ENGINE_SUBSTITION
+
+
+
+
+
+# sql执行周期
+
+
+
+## 开启功能
+
+```
+show variables like '%profiling%';
+
+set profiling=1;
+```
+
+
+
+显示最近的几次查询
+
+```
+show profiles;
+```
+
+
+
+查看程序执行步骤
+
+```
+show profile cpu,block io for query 5;
+```
 
 
 
@@ -639,4 +722,40 @@ FLUSH TABLES tb_name[,...] [WITH READ LOCK]
 ```
 SELECT class [FOR UPDATE] [WITH READ LOCK]
 ```
+
+
+
+# 优化 EXPLAIN
+
+## 数据过多
+
+分库分表
+
+
+
+## 关联了太多表，太多join
+
+sql 优化
+
+
+
+## 建立索引机制
+
+
+
+## 服务器调优
+
+调整my.cnf
+
+
+
+# 监控mysql状态
+
+
+
+## show processlist
+
+查询所有用户的操作
+
+出现异常就kill掉
 

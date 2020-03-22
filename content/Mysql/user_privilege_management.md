@@ -240,6 +240,32 @@ mysql> flush privileges;
 
 # 授权 与 收回授权
 
+* 查看当前用户权限
+
+```
+show grants;
+```
+
+
+
+* 查看某个用户的全局权限
+
+```
+select * from user;
+```
+
+
+
+* 查看某个用户的某张表权限
+
+```
+select * from table_priv;
+```
+
+
+
+
+
 ## 授权 GRANT
 
 ```
@@ -271,6 +297,30 @@ mysql>grant all privileges on  *.*  to root@'%'  identifies  by ' xxxx';
 
 
 
+## 
+
+```
+grant all on test.* to 'rick'@'localhost' identified by "rickpass";
+```
+
+> `grant`是Mysql一个专门控制权限的命令
+> `all` 指的是所有权限
+> `test.*` test是数据库名字，然后后边的 `.*`是指当前所有表
+> `'rick'@'localhost'` 其中前面的rick指的是用户名，而**localhost**指的是这个用户名能在哪里进行登录，这里的localhost是本地。
+> `identified by "rickpass"` 指的是设置密码
+
+```
+grant select,insert,delete,drop on testdb.* to rick@localhost;
+
+grant all privileges on *.* to rick@'%' identified by '123456';
+```
+
+
+
+
+
+
+
 ## 收回授权 REVOKE
 
 ```
@@ -279,5 +329,19 @@ REVOKE priv_type [(column_list)] [, priv_type [(column_list)]] ... ON [object_ty
 
 
 
+* 回收全库全表的所有权限
 
+```
+revoke all privileges on mysql.* from rick@localhost;
+```
+
+
+
+```
+revoke select,insert,update,delete on mysql.* from rick@localhost;
+```
+
+
+
+# 
 

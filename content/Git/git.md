@@ -829,7 +829,14 @@ git stash save
 
 
 
-最新的存储保存在`refs/stash`中.老的存储可以通过相关的参数获得,例如`stash@{0}`获取最新的存储,`stash@{1}`获取次新.`stash@{2.hour.ago}`获取两小时之前的.存储可以直接通过索引的位置来获得`stash@{n}`.
+最新的存储保存在`refs/stash`中.老的存储可以通过相关的参数获得
+
+```
+stash@{0}						#获取最新的存储
+stash@{1}						#获取次新
+stash@{2.hour.ago}	#获取两小时之前的
+stash@{n} 					#存储可以直接通过索引的位置来获得
+```
 
 
 
@@ -853,12 +860,12 @@ git stash
 
 
 
-### `--list` 查看临时现场保存信息
+### list 查看临时现场保存信息
 
 查看工作现场信息
 
 ```
-git stash --list
+git stash list
 ```
 
 
@@ -868,7 +875,10 @@ git stash --list
 比pop会保留stash的堆栈信息
 
 ```
-git stash apply
+git stash apply 
+
+#e.g.
+git stash apply stash@{0}
 ```
 
 

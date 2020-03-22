@@ -1174,12 +1174,14 @@ Out[7]: True
 
 ## STR 与 BYTES
 
-> Python3 中严格区分了文本和二进制数据
-> Python2 中并没有严格区分
-> 文本数据使用str类型，底层实现是unicode
-> 二进制数据使用bytes类型，底层是bytes
-> str使用encode 方法转化为bytes
-> bytes使用decode方法转化为str
+Python3 中严格区分了文本和二进制数据
+Python2 中并没有严格区分
+文本数据使用str类型，底层实现是unicode
+二进制数据使用bytes类型，底层是bytes
+str使用encode 方法转化为bytes
+bytes使用decode方法转化为str
+
+
 
 * python2
 

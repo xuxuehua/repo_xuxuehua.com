@@ -63,19 +63,19 @@ http://169.254.169.254/latest/meta-data/iam/security-credentials/rolename
 
 ## Instance Technologies
 
-![img](https://snag.gy/WReOKS.jpg)
+![image-20200313170002408](ec2.assets/image-20200313170002408.png)
 
 
 
 ## Current Generation Instances
 
-![img](https://snag.gy/yG2A6Y.jpg)
+![image-20200313170015940](ec2.assets/image-20200313170015940.png)
 
 
 
 ## Reboot vs Stop vs Terminate 
 
-![img](https://snag.gy/aubQM7.jpg)
+![image-20200313170029266](ec2.assets/image-20200313170029266.png)
 
 
 
@@ -100,13 +100,13 @@ User data
 
 
 
-![img](https://snag.gy/qIGpfX.jpg)
+![image-20200313170041422](ec2.assets/image-20200313170041422.png)
 
 
 
 ## Load Balancer Types
 
-![img](https://snag.gy/Z2RNzQ.jpg)
+![image-20200313170057040](ec2.assets/image-20200313170057040.png)
 
 
 

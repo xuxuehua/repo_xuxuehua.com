@@ -32,9 +32,7 @@ Only copy operation can change a task
 
 ### Life Cycle
 
-```
-Pending -> Running -> Stopped
-```
+![image-20200313141302522](ecs.assets/image-20200313141302522.png)
 
 
 
@@ -195,6 +193,12 @@ Start identical copies from a template
 Tries to maintain the proper number of healthy instances
 
 There are usually controlled by another service called ASG
+
+
+
+![image-20200313141648498](ecs.assets/image-20200313141648498.png)
+
+
 
 
 

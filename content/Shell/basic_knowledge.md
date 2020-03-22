@@ -65,6 +65,31 @@ echo "$name" "$NAME"      # extract the value
 
 
 
+
+
+### 系统内置变量
+
+```
+$HOME, $PWD, $SHELL, $USER 等
+```
+
+
+
+```
+$ echo $USER
+rxu
+```
+
+
+
+### 只读变量 readonly
+
+```
+
+```
+
+
+
 ## 脚本调试
 
 set -e 遇到执行非0时退出脚本，set-x 打印执行过程。

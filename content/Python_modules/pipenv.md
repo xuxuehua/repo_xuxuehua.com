@@ -13,12 +13,17 @@ Pipenv是一款旨在将所有包管理工具（如bundler, composer, npm, cargo
 
 ## 特点
 
-- 不用再单独使用`pip`和`virtualenv`, 现在它们合并在一起了
-- 不用再维护`requirements.txt`, 使用`Pipfile`和`Pipfile.lock`来代替
-- 可以使用多个python版本(`python2`和`python3`)
-- 通过查找*Pipfile*，递归的自动查找你的项目
-- 在安装了`pyenv`的条件下，可以自动安装需要的Python版本
-- 如果 .env 文件存在，则自动载入
+不用再单独使用`pip`和`virtualenv`, 现在它们合并在一起了
+
+不用再维护`requirements.txt`, 使用`Pipfile`和`Pipfile.lock`来代替
+
+可以使用多个python版本(`python2`和`python3`)
+
+通过查找*Pipfile*，递归的自动查找你的项目
+
+在安装了`pyenv`的条件下，可以自动安装需要的Python版本
+
+如果 .env 文件存在，则自动载入
 
 
 
@@ -32,13 +37,19 @@ Pipenv是一款旨在将所有包管理工具（如bundler, composer, npm, cargo
 
 ### Linux 
 
-`pip3 install --user pipenv`
+```
+pip3 install --user pipenv
+```
+
+
 
 > This does a [user installation](https://pip.pypa.io/en/stable/user_guide/#user-installs) to prevent breaking any system-wide packages. If `pipenv`isn’t available in your shell after installation, you’ll need to add the [user base](https://docs.python.org/3/library/site.html#site.USER_BASE)’s binary directory to your `PATH`.
 
-` pip install --user --upgrade pipenv` 
+```
+pip install --user --upgrade pipenv
 
-`export PATH="/Users/xhxu/Library/Python/3.6/bin:$PATH"`  # 把用户目录下bin放在最前面，这样可以直接使用pipenv了 
+export PATH="/Users/xhxu/Library/Python/3.6/bin:$PATH"  # 把用户目录下bin放在最前面，这样可以直接使用pipenv了 
+```
 
 
 

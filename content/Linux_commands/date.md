@@ -29,6 +29,15 @@ $ date +%N | cut -c 1-8
 
 
 
+##-Iseconds
+
+It works for amazon linux1 
+
+```
+# date -Isecond
+2020-03-17T14:09:46+0000
+```
+
 ## 
 
 ## 显示当前时间

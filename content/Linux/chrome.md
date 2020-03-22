@@ -85,7 +85,7 @@ wget -O ~/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_cur
 
 
 
-
+OR
 
 
 
@@ -107,10 +107,14 @@ sudo apt-key add linux_signing_key.pub
 Now update package list and install the stable version of Google Chrome.
 
 ```
-sudo apt update
+sudo apt update -y 
 
-sudo apt install google-chrome-stable
+sudo apt install -y google-chrome-stable
 ```
+
+
+
+
 
 If you want to install the beta or unstable version of Google Chrome, use the following commands:
 
@@ -168,7 +172,7 @@ echo $(hostname -I | cut -d\  -f1) $(hostname) | sudo tee -a /etc/hosts
 After installing the Debian package `chrome-remote-desktop_current_amd64.deb`, make sure the current user is part of the `chrome-remote-desktop` group:
 
 ```
-sudo usermod -a -G chrome-remote-desktop username
+sudo usermod -a -G chrome-remote-desktop vnc
 ```
 
 Stop Chrome Remote Desktop:

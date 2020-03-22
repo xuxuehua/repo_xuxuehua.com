@@ -191,9 +191,36 @@ sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
 
 Example
 
-![img](https://snag.gy/Rvb5Y6.jpg)
+![image-20200310181746852](basic_knowledge.assets/image-20200310181746852.png)
 
 
 
 
 
+# Tools
+
+
+
+## Amazon Web Services Simple Monthly Calculator
+
+https://calculator.s3.amazonaws.com/index.html
+
+
+
+## Amazon EC2 Instance Types - Amazon Web Services
+
+https://aws.amazon.com/ec2/instance-types/
+
+
+
+
+
+## Amazon EC2 Pricing - Amazon Web Services
+
+https://aws.amazon.com/ec2/pricing/
+
+
+
+## AWS EMR
+
+https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-release-5x.html#emr-5240-release

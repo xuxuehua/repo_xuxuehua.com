@@ -260,7 +260,7 @@ Out[130]: datetime.datetime(2018, 1, 30, 13, 45, 13, 504532)
 datetime.datetime.strftime()：由日期格式转化为字符串格式
 
 ```
-In [137]: datetime.datetime.now().strftime('%b-%d-%Y %H:%M:%S')
+In [137]: datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S')
 Out[137]: 'Jan-30-2019 13:48:15'
 ```
 
