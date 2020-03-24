@@ -1,5 +1,5 @@
 ---
-title: "Basic_Knowledge"
+title: "basic_knowledge"
 layout: page
 date: 2018-06-02 19:03
 ---
@@ -7,8 +7,6 @@ date: 2018-06-02 19:03
 [TOC]
 
 # 基础知识
-
-![alt](https://cdn.pbrd.co/images/HocvM1f.png)
 
 
 
@@ -77,27 +75,17 @@ Pods can be horizontally scaled via API
 
 
 
-![alt](https://cdn.pbrd.co/images/HocwGKR.png)
-
-![alt](https://snag.gy/xikmph.jpg)
+![image-20200324013239497](basic_knowledge.assets/image-20200324013239497.png)
 
 
 
-![img](https://snag.gy/XTBSJr.jpg)
+![image-20200324013402034](basic_knowledge.assets/image-20200324013402034.png)
 
 
 
-![img](https://snag.gy/FPMuN5.jpg)
+![image-20200324013412268](basic_knowledge.assets/image-20200324013412268.png)
 
-
-
-
-
-![img](https://snag.gy/Ht860F.jpg)
-
-
-
-
+![image-20200324013422881](basic_knowledge.assets/image-20200324013422881.png)
 
 ### Master node
 
@@ -322,11 +310,11 @@ Ingress可以开放某些Pod对象给外部用户访问
 
 
 
-### Horizontal Pod Autoscaler
+### Horizontal Pod Autoscaler HPA 
 
 对资源实现削峰填谷， 提高集群的整体资源利用率
 
-![alt](https://cdn.pbrd.co/images/HocsZti.png)
+
 
 #### Metrics 支持
 
@@ -363,8 +351,6 @@ Pod的抽象层，
 * Pod, RC, Service 关系
 
 
-
-![alt](https://cdn.pbrd.co/images/Hocxo86.png)
 
 
 
@@ -521,7 +507,7 @@ kubectl获取容器日志等streaming操作时，需要通过kube-apiserver向ku
 
 API 对象的组织方式，是层层传递的
 
-![img](https://snag.gy/KV5e6q.jpg)
+![image-20200324013453145](basic_knowledge.assets/image-20200324013453145.png)
 
 
 
@@ -608,7 +594,7 @@ Kubernetes 通过Add on 方式引入DNS，把服务名称作为DNS域名，这�
 
 #### 典型架构
 
-![img](https://snag.gy/fTuwEB.jpg)
+![image-20200324013512468](basic_knowledge.assets/image-20200324013512468.png)
 
 
 
@@ -638,7 +624,7 @@ Application health (and metrics)
 
 以pod形式运行在cluster
 
-![img](https://snag.gy/nvUobY.jpg)
+![image-20200324013529030](basic_knowledge.assets/image-20200324013529030.png)
 
 
 

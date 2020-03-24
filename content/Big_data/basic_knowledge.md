@@ -9,13 +9,21 @@ date: 2019-06-11 21:51
 
 ## 大数据平台
 
-![img](https://snag.gy/QMIUVC.jpg)
+![image-20200322203352320](basic_knowledge.assets/image-20200322203352320.png)
+
+
+
+![image-20200323230528324](basic_knowledge.assets/image-20200323230528324.png)
+
+
 
 ## 三驾马车
 
 分别是分布式文件系统GFS、大数据分布式计算框架MapReduce和NoSQL数据库系统BigTable
 
 即实现了一个文件系统、一个计算框架、一个数据库系统
+
+
 
 ## 新三驾马车
 
@@ -24,6 +32,8 @@ Dremel Google的交互式数据分析系统，处理时间缩短到秒级别，�
 Pregel 图计算法
 
 Caffeine 大规模实时增量算法
+
+
 
 ## HDFS
 
@@ -38,6 +48,8 @@ HDFS则是水平伸缩，通过添加更多的服务器实现数据更大、更�
 ## Hadoop
 
 2006年，Doug Cutting将这些大数据相关的功能从Nutch中分离了出来，然后启动了一个独立的项目专门开发维护大数据技术，这就是后来赫赫有名的Hadoop，主要包括Hadoop分布式文件系统HDFS和大数据计算引擎MapReduce。
+
+
 
 ## 发行版本
 

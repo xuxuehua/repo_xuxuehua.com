@@ -37,7 +37,8 @@ vncserver
 ## Ubuntu 
 
 ```
-sudo apt-get update -y 
+sudo apt update -y 
+sudo apt upgrade -y
 
 sudo apt install -y tightvncserver ubuntu-gnome-desktop lxde
 
@@ -46,7 +47,7 @@ sudo apt install -y gnome-session gdm3
 sudo apt install -y tasksel
 sudo tasksel install ubuntu-desktop
 
-sudo apt-get install gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal
+sudo apt install gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal
 ```
 
 ```

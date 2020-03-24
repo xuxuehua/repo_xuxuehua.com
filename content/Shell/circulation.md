@@ -50,7 +50,7 @@ fi
 
 ## case
 
-`case` 其实就是我们熟悉的那个 `swich` ，但语法形式上有很大的不同。
+`case` 其实就是我们熟悉的那个 `switch` ，但语法形式上有很大的不同。
 
 ```
 case "$variable" in

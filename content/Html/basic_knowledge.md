@@ -108,3 +108,8 @@ PNG-8和真色彩PNG-24，PNG-32
 半透明只能使用PNG-24
 
 # 
+
+# 设计稿标注、测量工具
+
+http://www.getmarkman.com/
+

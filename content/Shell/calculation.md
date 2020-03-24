@@ -13,6 +13,8 @@ date: 2018-11-10 21:18
 
 ## 四则运算 + - * /
 
+expr 运算符之间要有空格
+
 ```
 #!/bin/bash
 
@@ -199,7 +201,7 @@ fi
 
 # 文件运算
 
-## -e 
+## -e 存在
 
 filename or file path 测试文件是否存在，包括目录
 
@@ -217,9 +219,11 @@ fi
 
 
 
-## -f 
+## -f 文件
 
 filename or file path 测试是否为普通文件
+
+
 
 ## -s
 
@@ -227,7 +231,7 @@ file existence along with file size greater than 0
 
 
 
-## -d 
+## -d 目录
 
 filename or file path 测试指定路径是否／为目录
 

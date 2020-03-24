@@ -31,6 +31,12 @@ echo_color red "test_red"
 
 
 
+## return
+
+可以通过return定义返回值
+
+
+
 
 
 ## 封装

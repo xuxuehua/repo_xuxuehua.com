@@ -10,11 +10,47 @@ date: 2019-01-20 17:43
 
 # awk
 
+```
+Usage: awk [POSIX or GNU style options] -f progfile [--] file ...
+Usage: awk [POSIX or GNU style options] [--] 'program' file ...
+```
+
+
+
+## -F 分隔符
+
+```
+# cat /etc/passwd | awk -F : '/^ubuntu/{print $1}'
+ubuntu
+```
+
+
+
+## -v 变量
+
+赋值一个用户定义的变量
+
+
+
+## NF 浏览域个数
+
+浏览记录的域的个数，即切割后列的个数
+
+```
+$ echo $a
+1, 2, 3, 4
+
+$ echo $a | awk '{print $NF}'
+4
+```
 
 
 
 
-## NR==1 第一行
+
+
+
+## NR 已读的记录数
 
 NF = Number of Fields
 
@@ -32,6 +68,10 @@ awk 'NR!=1' file_name
 
 
 
+## BEGIN 开头行
+
+
+
 
 
 ## END 最后一行
@@ -43,16 +83,6 @@ awk "END{print $0}" file_name
 
 
 
-
-## NF 最后一列
-
-```
-$ echo $a
-1, 2, 3, 4
-
-$ echo $a | awk '{print $NF}'
-4
-```
 
 
 
