@@ -69,3 +69,58 @@ done
 
 
 
+# 异常关机
+
+```
+sudo last -x shutdown
+```
+
+> if you do not disable the history logs
+
+or
+
+```
+sudo grep -E -i -r 'error|warning|panic' /var/log/
+```
+
+or
+
+```
+grep -iv ': starting\|kernel: .*: Power Button\|watching system buttons\|Stopped Cleaning Up\|Started Crash recovery kernel' \
+  /var/log/messages /var/log/syslog /var/log/apcupsd* \
+  | grep -iw 'recover[a-z]*\|power[a-z]*\|shut[a-z ]*down\|rsyslogd\|ups'
+```
+
+
+
+When an unexpected power off or hardware failure occurs the filesystems will not be properly unmounted so in the next boot you may get logs like this:
+
+```
+EXT4-fs ... INFO: recovery required ... 
+Starting XFS recovery filesystem ...
+systemd-fsck: ... recovering journal
+systemd-journald: File /var/log/journal/.../system.journal corrupted or uncleanly shut down, renaming and replacing.
+```
+
+When the system powers off because user pressed the power button you get logs like this:
+
+```
+systemd-logind: Power key pressed.
+systemd-logind: Powering Off...
+systemd-logind: System is powering down.
+```
+
+Only when the system shuts down orderly you get logs like this:
+
+```
+rsyslogd: ... exiting on signal 15
+```
+
+When the system shuts down due to overheating you get logs like this:
+
+```
+critical temperature reached...,shutting down
+```
+
+If you have a UPS and running a daemon to monitor power and shutdown you should obviously check its logs (NUT logs on /var/log/messages but apcupsd logs on /var/log/apcupsd*)
+

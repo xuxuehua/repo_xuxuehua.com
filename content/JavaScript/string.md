@@ -254,3 +254,35 @@ function trim (str,type) {
 
 
 
+
+
+## string to number 
+
+```
+<html>
+<body>
+<script>
+   var a = "10";
+   var b = parseInt(a);
+   document.write("value is " + b);
+   var c = parseInt("423-0-567");
+   document.write("</br>");
+   document.write('value is ' + c);
+   document.write("</br>");
+   var d = "string";
+   var e = parseInt(d);
+   document.write("value is " + e);
+   document.write("</br>");
+   var f = parseInt("2string");
+   document.write("value is " + f);
+</script>
+</body>
+</html>
+
+>>>
+value is 10
+value is 423
+value is NaN
+value is 2
+```
+

@@ -404,6 +404,29 @@ Out[4]:
 
 
 
+### jsonp 格式
+
+```
+import re
+import json
+
+spot_instance_prices_url = "https://website.spot.ec2.aws.a2z.com/spot.js"
+
+r.text = _jsonp
+
+def loads_jsonp(_jsonp):
+    try:
+        return json.loads(re.match(".*?({.*}).*",_jsonp,re.S).group(1))
+    except:
+	raise ValueError('Invalid Input')
+```
+
+
+
+
+
+
+
 
 
 ### text

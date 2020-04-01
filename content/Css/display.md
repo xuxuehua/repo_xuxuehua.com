@@ -139,9 +139,26 @@ rgb的另一种写法
 
 
 
+## 伪元素
+
+伪元素是一个附加至选择器末的关键词，允许你对被选择元素的特定部分修改样式。伪元素主要有：
+
+```
+::first-letter 第一个字母的样式
+::first-line   首行文字的样式
+::before  元素头部添加的修饰
+::after   元素尾部添加的修饰
+::placeholder input的占位符样式
+::selection 被选中元素的样式
+```
+
+​    伪元素可以解释为元素的修饰，可以为元素带来额外的附加样式，属于额外的文档结构。
+
 
 
 ## `:before` `:after`
+
+伪类的样式渲染
 
 `:before` and `:after` create pseudo elements as 'children' for the element they are applied to. They are often used for certain stylings, or error messages.
 
@@ -175,6 +192,38 @@ p {
 
 
 
+## 伪类
+
+用来表示无法在CSS中轻松或者可靠检测到的某个元素的状态或属性，比如a标签的hover表示鼠标经过的样式，visited表示访问过的链接的样式，更多的用来描述元素状态变化时的样式，伪类主要有：
+
+```
+:link
+:visited
+:hover
+:active
+:focus
+:lang(fr)
+:not(s)
+:root
+:first-child
+:last-child
+:only-child
+:nth-child(n)
+:nth-last-child(n)
+:first-of-type
+:last-of-type
+:only-of-type
+:nth-of-type(n)
+:nth-last-of-type(n)
+:empty
+:checked
+:enabled
+:disabled
+:target
+```
+
+​    
+
 
 
 ### Hover 案例
@@ -199,6 +248,176 @@ div:hover:after {
 ```
 
 http://jsfiddle.net/XjUM8/2/
+
+
+
+### hover 提示弹窗
+
+```
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body {
+            text-align: center;
+        }
+
+        p {
+            margin: 100px;
+        }
+
+        .tip {
+            display: inline-block;
+            position: relative;
+        }
+
+        .tip:before, .tip:after {
+            opacity: 0; /*透明度为完全透明*/
+            position: absolute;
+            z-index: 1000; /*设为最上层*/
+            /*鼠标放上元素上时的动画，鼠标放上后效果在.tip-*:hover:before, .tip-*:hover:after中设置;
+            0.3s:规定完成过渡效果需要多少秒或毫秒,ease:规定慢速开始，然后变快，然后慢速结束的过渡效果*/
+            transition: 0.3s ease;
+            -webkit-transition: 0.3s ease;
+            -moz-transition: 0.3s ease;
+        }
+
+        .tip:before {
+            content: '';
+            border: 6px solid transparent;
+        }
+
+        .tip:after {
+            content: attr(data-tip); /*后去要提示的文本*/
+            padding: 5px;
+            white-space: nowrap; /*强制不换行*/
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        .tip:hover:before, .tip:hover:after {
+            opacity: 1; /*鼠标放上时透明度为完全显示*/
+            z-index: 1000;
+        }
+
+        /*top*/
+        .tip-top:before {
+            bottom: 100%;
+            left: 50%;
+            border-top-color: rgba(0, 0, 0, 0.8); /*小三角效果*/
+            margin-left: -3px;
+            margin-bottom: -12px;
+        }
+
+        .tip-top:after {
+            bottom: 100%;
+            left: 50%;
+            margin-left: -6px;
+        }
+
+        .tip-top:hover:before {
+            margin-bottom: -6px;
+        }
+
+        .tip-top:hover:after {
+            margin-bottom: 6px;
+        }
+
+        /*bottom*/
+        .tip-bottom:before {
+            top: 100%;
+            left: 50%;
+            border-bottom-color: rgba(0, 0, 0, 0.8);
+            margin-left: -3px;
+            margin-top: -9px;
+        }
+
+        .tip-bottom:after {
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            margin-top: 3px;
+        }
+
+        .tip-bottom:hover:before {
+            margin-top: -3px;
+        }
+
+        .tip-bottom:hover:after {
+            margin-top: 9px;
+        }
+
+        /*right*/
+        .tip-right:before {
+            top: 50%;
+            left: 100%;
+            border-right-color: rgba(0, 0, 0, 0.8);
+            margin-left: -9px;
+            margin-top: -3px;
+        }
+
+        .tip-right:after {
+            top: 50%;
+            left: 100%;
+            margin-left: 3px;
+            margin-top: -6px;
+        }
+
+        .tip-right:hover:before {
+            margin-left: -3px;
+        }
+
+        .tip-right:hover:after {
+            margin-left: 9px;
+        }
+
+        /*left*/
+        .tip-left:before {
+            top: 50%;
+            left: 0%;
+            border-left-color: rgba(0, 0, 0, 0.8);
+            margin-left: 0px;
+            margin-top: -3px;
+        }
+
+        .tip-left:after {
+            top: 50%;
+            right: 100%;
+            margin-right: 0px;
+            margin-top: -6px;
+        }
+
+        .tip-left:hover:before {
+            margin-left: -6px;
+        }
+
+        .tip-left:hover:after {
+            margin-right: 6px;
+        }
+    </style>
+</head>
+<body>
+<p>
+    <button class="tip tip-top" data-tip="我是上边提示">上边提示</button>
+</p>
+<p>
+    <button class="tip tip-bottom" data-tip="我是下边提示">下边提示</button>
+</p>
+<p>
+    <button class="tip tip-right" data-tip="我是右边提示">右边提示</button>
+</p>
+<p>
+    <button class="tip tip-left" data-tip="我是左边提示">左边提示</button>
+</p>
+</body>
+</html>
+```
 
 
 

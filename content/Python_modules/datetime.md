@@ -255,9 +255,7 @@ Out[130]: datetime.datetime(2018, 1, 30, 13, 45, 13, 504532)
 
 
 
-### strftime()
-
-datetime.datetime.strftime()：由日期格式转化为字符串格式
+### strftime() 日期格式转化为字符串格式
 
 ```
 In [137]: datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S')
@@ -266,9 +264,9 @@ Out[137]: 'Jan-30-2019 13:48:15'
 
 
 
-### strptime()
 
-datetime.datetime.strptime():由字符串格式转化为日期格式
+
+### strptime() 字符串格式转化为日期格式
 
 ```
 from datetime import datetime
@@ -292,6 +290,28 @@ print(t)
 In [119]: datetime.datetime.timestamp(datetime.datetime.now())
 Out[119]: 1548826785.390896
 ```
+
+
+
+```python
+>>> import time
+>>> from datetime import datetime
+
+# 获取当前当地时间，返回一个 datetime 对象
+>>> now = datetime.now()
+>>> now
+datetime.datetime(2016, 12, 9, 11, 56, 47, 632778)
+
+# 13 位的毫秒时间戳
+>>> long(time.mktime(now.timetuple()) * 1000.0 + now.microsecond / 1000.0)
+1481255807632L
+
+# 10 位的时间戳
+>>> int(time.mktime(now.timetuple()))
+1481255807
+```
+
+
 
 
 

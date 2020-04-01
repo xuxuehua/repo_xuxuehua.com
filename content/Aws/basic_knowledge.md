@@ -223,4 +223,10 @@ https://aws.amazon.com/ec2/pricing/
 
 ## AWS EMR
 
-https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-release-5x.html#emr-5240-release
+https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-release-5x.html
+
+
+
+## AWS S3 Policy generator
+
+http://awspolicygen.s3.amazonaws.com/policygen.html

@@ -306,6 +306,8 @@ if __name__ == '__main__':
 
 ## Database 
 
+For security reasons the original password will not be stored
+
 ```
 class User(db.Model):
     __tablename__ = 'users'
@@ -316,5 +318,231 @@ class User(db.Model):
 
 
 
+
+
 ## Password Hashing
+
+PassLib provides several hashing algorithms to choose from. The `custom_app_context` object is an easy to use option based on the sha256_crypt hashing algorithm
+
+```
+from passlib.apps import custom_app_context as pwd_context
+
+class User(db.Model):
+    # ...
+
+    def hash_password(self, password):
+        self.password_hash = pwd_context.encrypt(password)
+
+    def verify_password(self, password):
+        return pwd_context.verify(password, self.password_hash)
+```
+
+> The `verify_password()` method takes a plain password as argument and returns `True` if the password is correct or `False` if not. 
+
+
+
+
+
+### User Registration
+
+```
+@app.route('/api/users', methods = ['POST'])
+def new_user():
+    username = request.json.get('username')
+    password = request.json.get('password')
+    if username is None or password is None:
+        abort(400) # missing arguments
+    if User.query.filter_by(username = username).first() is not None:
+        abort(400) # existing user
+    user = User(username = username)
+    user.hash_password(password)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({ 'username': user.username }), 201, {'Location': url_for('get_user', id = user.id, _external = True)}
+```
+
+> The `username` and `password` arguments are obtained from the JSON input coming with the request and then validated.
+
+
+
+```
+$ curl -i -X POST -H "Content-Type: application/json" -d '{"username":"rick","password":"python"}' http://127.0.0.1:5000/api/users
+HTTP/1.0 201 CREATED
+Content-Type: application/json
+Content-Length: 27
+Location: http://127.0.0.1:5000/api/users/1
+Server: Werkzeug/0.9.4 Python/2.7.3
+Date: Thu, 28 Nov 2013 19:56:39 GMT
+
+{
+  "username": "miguel"
+}
+```
+
+
+
+## Password Based Authentication
+
+Using Flask-HTTPAuth an endpoint is protected by adding the `login_required` decorator to it
+
+```
+from flask_httpauth import HTTPBasicAuth
+auth = HTTPBasicAuth()
+
+@app.route('/api/resource')
+@auth.login_required
+def get_resource():
+    return jsonify({ 'data': 'Hello, %s!' % g.user.username })
+```
+
+
+
+### Verify password
+
+```
+@auth.verify_password
+def verify_password(username, password):
+    user = User.query.filter_by(username = username).first()
+    if not user or not user.verify_password(password):
+        return False
+    g.user = user
+    return True
+```
+
+
+
+```
+$ curl -u miguel:python -i -X GET http://127.0.0.1:5000/api/resource
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 30
+Server: Werkzeug/0.9.4 Python/2.7.3
+Date: Thu, 28 Nov 2013 20:02:25 GMT
+
+{
+  "data": "Hello, miguel!"
+}
+
+
+$ curl -u miguel:ruby -i -X GET http://127.0.0.1:5000/api/resource
+HTTP/1.0 401 UNAUTHORIZED
+Content-Type: text/html; charset=utf-8
+Content-Length: 19
+WWW-Authenticate: Basic realm="Authentication Required"
+Server: Werkzeug/0.9.4 Python/2.7.3
+Date: Thu, 28 Nov 2013 20:03:18 GMT
+
+Unauthorized Access
+```
+
+
+
+## Token Based Authentication
+
+Tokens are usually given out with an expiration time, after which they become invalid and a new token needs to be obtained. 
+
+A more elaborated implementation that requires no server side storage is to use a cryptographically signed message as a token. This has the advantage that the information related to the token, namely the user for which the token was generated, is encoded in the token itself and protected against tampering with a strong cryptographic signature.
+
+
+
+The token generation and verification can be implemented as additional methods in the `User` model
+
+```
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                          as Serializer, BadSignature, SignatureExpired)
+
+class User(db.Model):
+    # ...
+
+    def generate_auth_token(self, expiration = 600):
+        s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
+        return s.dumps({ 'id': self.id })
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None # valid token, but expired
+        except BadSignature:
+            return None # invalid token
+        user = User.query.get(data['id'])
+        return user
+```
+
+> In the `generate_auth_token()` method the token is an encrypted version of a dictionary that has the `id` of the user.
+>
+> a `verify_auth_token()` static method. A static method is used because the user will only be known once the token is decoded. If the token can be decoded then the `id` encoded in it is used to load the user, and that user is returned.
+
+
+
+```
+@app.route('/api/token')
+@auth.login_required
+def get_auth_token():
+    token = g.user.generate_auth_token()
+    return jsonify({ 'token': token.decode('ascii') })
+```
+
+
+
+The `verify_password` callback needs to support both authentication styles
+
+```
+@auth.verify_password
+def verify_password(username_or_token, password):
+    # first try to authenticate by token
+    user = User.verify_auth_token(username_or_token)
+    if not user:
+        # try to authenticate with username/password
+        user = User.query.filter_by(username = username_or_token).first()
+        if not user or not user.verify_password(password):
+            return False
+    g.user = user
+    return True
+```
+
+
+
+```
+$ curl -u miguel:python -i -X GET http://127.0.0.1:5000/api/token
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 139
+Server: Werkzeug/0.9.4 Python/2.7.3
+Date: Thu, 28 Nov 2013 20:04:15 GMT
+
+{
+  "token": "eyJhbGciOiJIUzI1NiIsImV4cCI6MTM4NTY2OTY1NSwiaWF0IjoxMzg1NjY5MDU1fQ.eyJpZCI6MX0.XbOEFJkhjHJ5uRINh2JA1BPzXjSohKYDRT472wGOvjc"
+  
+$ curl -u eyJhbGciOiJIUzI1NiIsImV4cCI6MTM4NTY2OTY1NSwiaWF0IjoxMzg1NjY5MDU1fQ.eyJpZCI6MX0.XbOEFJkhjHJ5uRINh2JA1BPzXjSohKYDRT472wGOvjc:unused -i -X GET http://127.0.0.1:5000/api/resource
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 30
+Server: Werkzeug/0.9.4 Python/2.7.3
+Date: Thu, 28 Nov 2013 20:05:08 GMT
+
+{
+  "data": "Hello, miguel!"
+}
+```
+
+
+
+
+
+## OAuth Authentication
+
+OAuth is most commonly used to allow an application (the *consumer*) to access data or services that the user (the *resource owner*) has with another service (the *provider*), and this is done in a way that prevents the consumer from knowing the login credentials that the user has with the provider
+
+For example, consider a website or application that asks you for permission to access your Facebook account and post something to your timeline. In this example you are the resource holder (you own your Facebook timeline), the third party application is the consumer and Facebook is the provider. Even if you grant access and the consumer application writes to your timeline, it never sees your Facebook login information.
+
+
+
+https://oauth.net/code/
+
+
+
+
 

@@ -26,7 +26,7 @@ ORM 把底层的SQL数据实体转化成高层的Python对象
 
 Uniform Resource Identifier 统一资源标识符，包含各种属性的字符串，用于连接数据库的信息
 
-![img](https://snipboard.io/uLvzNk.jpg)
+![image-20200329201022493](sqlalchemy.assets/image-20200329201022493.png)
 
 
 
@@ -51,19 +51,23 @@ class Note(db.Model):
 
 ## 数据类型
 
-![img](https://snipboard.io/aZ6JC2.jpg)
+![image-20200329201038707](sqlalchemy.assets/image-20200329201038707.png)
+
+
 
 
 
 ### 字段参数
 
-![img](https://snipboard.io/3CDmYM.jpg)
+![image-20200329201053097](sqlalchemy.assets/image-20200329201053097.png)
+
+
 
 
 
 ## 查询方法
 
-![img](https://snipboard.io/N38pxq.jpg)
+![image-20200329201110428](sqlalchemy.assets/image-20200329201110428.png)
 
 
 
@@ -75,7 +79,7 @@ Note.query.all()
 
 ### 查询过滤器
 
-![img](https://snipboard.io/wsgA1h.jpg)
+![image-20200329201124366](sqlalchemy.assets/image-20200329201124366.png)
 
 
 
@@ -83,13 +87,13 @@ Note.query.all()
 
 ### 关系属性
 
-![img](https://snipboard.io/eL2v3y.jpg)
+![image-20200329201139407](sqlalchemy.assets/image-20200329201139407.png)
 
 
 
 ### 关系记录加载方式
 
-![img](https://snipboard.io/lGz6Mr.jpg)
+![image-20200329201151780](sqlalchemy.assets/image-20200329201151780.png)
 
 dynamic 选项仅用于集合关系属性，不可用于多对一，一对一或是在关系函数中将uselist参数设置为False的情况，避免使用dynamic动态加载所有集合的关系属性对应记录，意味着每次操作关系都会执行一次SQL查询，会有潜在的性能问题。
 

@@ -30,7 +30,5 @@ Encrypted VPN connection
 
 ## VPN Connections
 
-![img](https://snag.gy/sMZprU.jpg)
-
-
+![image-20200330210007111](vpc.assets/image-20200330210007111.png)
 

@@ -272,6 +272,8 @@ service缩写，存放服务启动之后所需要提取的数据
 
 
 
+
+
 ## /mnt
 
 临时挂载的文件
@@ -335,6 +337,10 @@ Cron 日志信息
 ## /var/log/message
 
 记录系统日志或当前活动日志
+
+```
+/var/log/messages 在ubuntu中被/var/log/syslog 替代
+```
 
 
 

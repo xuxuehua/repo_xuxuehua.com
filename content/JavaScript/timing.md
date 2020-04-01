@@ -19,11 +19,15 @@ date: 2018-07-27 23:20
 
 ### 语法
 
-`setTimeout(code,millisec) `　
+```
+setTimeout(function, milliseconds)
+```
 
-**参数：** code （必需）：要调用的函数后要执行的 JavaScript 代码串。millisec（必需）：在执行代码前需等待的毫秒数。 　
+> function （必需）：要调用的函数后要执行的 JavaScript 代码串。
+>
+> millisec（必需）：在执行代码前需等待的毫秒数。 　
 
-**提示：** setTimeout() 只执行 code 一次。如果要多次调用，请使用 setInterval() 或者让 code 自身再次调用 setTimeout()。
+setTimeout() 只执行 code 一次。如果要多次调用，请使用 setInterval() 或者让 code 自身再次调用 setTimeout()。
 
 
 

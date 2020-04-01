@@ -219,6 +219,21 @@ while (n > 0) {
 x; // 2500
 ```
 
+```
+var myFunc01 = function() {
+  var i = 0;
+  while (i < 100) {
+    (function(i) {
+      setTimeout(function() {
+        document.getElementById('d01').innerHTML += 100 - i + "<br>";
+      }, 1000 * i)
+    })(i++)
+  }
+};
+
+myFunc01();
+```
+
 
 
 ## do while 循环

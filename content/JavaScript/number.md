@@ -203,9 +203,7 @@ document.write("<br />");
 
 
 
-### round()
-
-四舍五入
+### round() 四舍五入
 
 ```
 <html>

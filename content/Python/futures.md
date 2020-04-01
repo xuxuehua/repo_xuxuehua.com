@@ -191,13 +191,37 @@ with futures.ProcessPoolExecutor() as executor:
 
 Futures 中的 Executor 类，当我们执行 executor.submit(func) 时，它便会安排里面的 func() 函数执行，并返回创建好的 future 实例，以便你之后查询调用。
 
+
+
 ## done() 方法
 
 Futures 中的方法 done()，表示相对应的操作是否完成——True 表示完成，False 表示没有完成。不过，要注意，done() 是 non-blocking 的，会立即返回结果。相对应的 add_done_callback(fn)，则表示 Futures 完成后，相对应的参数函数 fn，会被通知并执行调用。
 
 ## result() 函数
 
-Futures 中还有一个重要的函数 result()，它表示当 future 完成后，返回其对应的结果或异常。而 as_completed(fs)，则是针对给定的 future 迭代器 fs，在其完成后，返回完成后的迭代器。
+Futures 中还有一个重要的函数 result()，它表示当 future 完成后，返回其对应的结果或异常。
+
+```
+In [2]: from concurrent.futures import ThreadPoolExecutor                           
+
+In [3]: def myTest(): 
+   ...:     return True, 'yes' 
+   ...:                                                                             
+
+In [4]: executor = ThreadPoolExecutor(2)                                            
+
+In [5]: ret = executor.submit(myTest) 
+
+In [7]: ret                                                                         
+Out[7]: <Future at 0x10f4abc50 state=finished returned tuple>
+
+In [8]: ret.result()                                                                
+Out[8]: (True, 'yes')
+```
+
+
+
+而 as_completed(fs)，则是针对给定的 future 迭代器 fs，在其完成后，返回完成后的迭代器。
 
 ## 操作代码
 

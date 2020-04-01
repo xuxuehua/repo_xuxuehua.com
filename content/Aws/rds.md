@@ -18,9 +18,11 @@ date: 2019-06-20 17:43
 
 ## SQL vs NoSQL
 
-![img](https://snag.gy/mTv50t.jpg)
+![image-20200327144332107](rds.assets/image-20200327144332107.png)
 
-![img](https://snag.gy/2apWHm.jpg)
+
+
+![image-20200327144348257](rds.assets/image-20200327144348257.png)
 
 
 
@@ -54,5 +56,11 @@ Use SSL connection
 
 
 
+# Aurora
 
+
+
+
+
+## Multi-master
 

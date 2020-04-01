@@ -1932,3 +1932,83 @@ $primary: red;
 
 
 
+# `data-*` 属性
+
+ 属性用于存储页面或应用程序的私有自定义数据。
+data-* 属性赋予我们在所有 HTML 元素上嵌入自定义 data 属性的能力。
+存储的（自定义）数据能够被页面的 JavaScript 中利用，以创建更好的用户体验（不进行 Ajax 调用或服务器端数据库查询）
+
+
+
+data-*属性包括两部分：
+属性名不应该包含任何大写字母，并且在前缀“data-”之后必须有至少一个字符。
+属性值可以是任意字符串
+所以说，这里的data属性不属于Bootstrap的，是属于HTML5中的，这里只是Bootstrap开发者自定义的一个自定义属性，方便于用户调用。
+
+
+
+## modal 模态框
+
+ 在控制器元素（比如按钮或者链接）上设置属性 data-toggle="modal"，同时设置**data-target="#identifier"**或**href="#identifier"**来指定要切换的特定的模态框（带有 id="identifier"）
+
+
+
+### data-toggle
+
+data-toggle主要用于标签选择器，参见其于bootstrap.css中的部分源码：
+
+```
+[data-toggle="buttons"] > .btn input[type="radio"],
+[data-toggle="buttons"] > .btn-group > .btn input[type="radio"],
+[data-toggle="buttons"] > .btn input[type="checkbox"],
+[data-toggle="buttons"] > .btn-group > .btn input[type="checkbox"] {
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+  pointer-events: none;
+}
+```
+
+
+
+```
+<div class=”dropdown”>
+  <a href=”#” class="dropdown-toggle" data-toggle="dropdown"></a>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+    ...
+  </ul>
+</div>
+```
+
+这里data-toggle=”dropdown”设置为a的属性，用于切换下拉菜单。
+
+data-toggle非常常用，常见的有下拉菜单，配合data-target一起使用。data-toggle，用于告诉 JavaScript 需要对按钮做什么。data-target，指示要切换到哪一个元素。
+
+
+
+### data-target
+
+data-target主要用于配合data-toggle使用，常用于模态窗口、轮播图，作用是指定加载以及切换的目标。
+
+在控制器元素（比如按钮或者链接）上设置属性 data-toggle="modal"，同时设置**data-target="#identifier"**或**href="#identifier"**来指定要切换的特定的模态框（带有 id="identifier"）
+
+```
+var Collapse = function (element, options) {
+    this.$element      = $(element)
+    this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                           '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+this.transitioning = null
+```
+
+
+
+
+
+### data-dismiss
+
+常见的是在模态窗口中用于关闭模态窗口 ***\*data-dismiss="modal"\****
+
+
+
+
+

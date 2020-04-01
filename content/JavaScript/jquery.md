@@ -105,5 +105,29 @@ $("button").click(function(){
 
 
 
+### addClass
 
+追加属性
+
+```
+$('#offset').addClass('disabled');
+```
+
+
+
+### removeClass
+
+
+
+
+
+## remove 删除元素
+
+```
+    let offset_value = $('#offset').val();
+    if (offset_value === '0') {
+        $('#table-my_previous').remove();
+        $('#table-my_first').remove();
+    }
+```
 

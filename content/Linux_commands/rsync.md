@@ -9,7 +9,21 @@ date: 2018-09-21 21:08
 
 # rsync
 
-Rsync命令是一个远程同步程序，与scp相比，它可以以最小的代价备份文件，只备份有差异的文件，这样每次备份就少了很多时间
+rsync命令是一个远程同步程序，与scp相比，它可以以最小的代价备份文件，只备份有差异的文件，这样每次备份就少了很多时间
+
+rsync 是归档的拷贝，会复制所有的文件信息，包括权限时间戳等
+
+
+
+
+
+## -a 归档拷贝
+
+
+
+## -v verbose
+
+
 
 
 
@@ -17,6 +31,10 @@ Rsync命令是一个远程同步程序，与scp相比，它可以以最小的代
 
 ```
 rsync -avH [ssh] /path/to/source user@des:/path/to/local  
+```
+
+```
+rsync -av /opt/software/ hadoop102:/opt/software
 ```
 
 
