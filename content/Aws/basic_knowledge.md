@@ -197,6 +197,39 @@ Example
 
 
 
+## Profile 
+
+```
+$ cat ~/.aws/credentials
+[dp]
+aws_access_key_id = xx
+aws_secret_access_key = xx
+[dp-stg]
+aws_access_key_id = xx
+aws_secret_access_key = xx
+[custom_dp_da_sts]
+aws_access_key_id = xx
+aws_secret_access_key = xx
+```
+
+
+
+```
+$ aws configure --profile custom_bdp_da_sts
+AWS Access Key ID [None]: xx
+AWS Secret Access Key [None]: xx
+Default region name [None]: us-east-1
+Default output format [None]: json
+```
+
+
+
+```
+$ aws sts get-caller-identity --profile custom_bdp_da_sts
+```
+
+
+
 # Tools
 
 

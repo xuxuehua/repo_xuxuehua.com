@@ -792,7 +792,7 @@ MariaDB [hellodb]> SELECT * FROM students;
 
 解决了不可重复读的问题，但是依旧有幻读的问题。即一方自己的事务修改提交后，另一方读到的数据还是自己本身的
 
-InnoDB 默认服务器参数, 可以在SESSION级别修改
+
 
 ```
 MariaDB [hellodb]> SHOW GLOBAL VARIABLES LIKE '%isolation%';

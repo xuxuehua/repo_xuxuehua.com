@@ -39,27 +39,25 @@ const timeoutObj = setTimeout(() => {
 
 
 
+### 倒计时
+
 
 
 ```
-<html>
-<head>
-<script type="text/javascript">
-function timedMsg()
-{
-var t=setTimeout("alert('5 秒！')",5000)
-}
-</script>
-</head>
-
-<body>
-<form>
-<input type="button" value="显示定时的警告框" onClick = "timedMsg()">
-</form>
-<p>请点击上面的按钮。警告框会在 5 秒后显示。</p>
-</body>
-
-</html>
+    let value = parseInt(document.getElementById("launched_in_seconds").value);
+    let i = 0;
+    console.log(typeof(i) + 'i: '+ i);
+    console.log(typeof(value)+ 'value: ' + value);
+    let counting = setInterval(function () {
+        if (value >= 500) {
+            clearInterval(counting);
+        }
+        let p = (1 - value / 500) * (2*Math.PI*40);
+        value = value + 1;
+        console.log(value);
+        pctIndicator.style=`stroke-dashoffset:${p};`
+        pct.textContent = Math.round(value/5)+'%';
+    }, 1000);
 ```
 
 

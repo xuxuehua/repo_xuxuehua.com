@@ -84,6 +84,8 @@ NameNode高可用容错能力非常重要。NameNode采用主从热备的方式�
 
 
 
+
+
 ## NameNode
 
 NameNode负责整个分布式文件系统的元数据（MetaData）管理，也就是文件名，文件路径名，文件属性(生成时间，副本数，文件权限) 数据块的ID以及存储位置等信息
@@ -97,6 +99,10 @@ HDFS为了保证数据的高可用，会将一个数据块复制为多份（缺�
 并非NameNode热备，在其挂掉的时候接管并提供服务
 
 主要是分担NameNode工作，如定期合并Fsimage和Edits，并推送给NameNode
+
+![image-20200412204320842](hdfs.assets/image-20200412204320842.png)
+
+
 
 
 
@@ -121,6 +127,16 @@ DataNode负责文件数据的存储和读写操作，HDFS将文件数据分割�
 块太大，从磁盘传输数据的时间会明显大于定位这个块开始位置所需的时间，导致程序在处理数据块会非常慢
 
 所以HDFS的块大小设置取决于磁盘的传输速率
+
+
+
+
+
+## hdfs读写流程
+
+![image-20200404235604234](hdfs.assets/image-20200404235604234.png)
+
+
 
 # Installation 分布式
 
@@ -368,7 +384,13 @@ copyFromLocal
 
 moveFromLocal
 
+
+
 appendToFile
+
+```
+hadoop fs -appendToFile 2.txt /test/1.txt
+```
 
 
 
@@ -398,6 +420,40 @@ cat
 
 get
 
+```
+hadoop fs -get /wcoutput ./
+```
+
 getmerge
 
 copyToLocal
+
+
+
+
+
+
+
+## API 操作
+
+```
+import org.apache.hadoop.fs.Path;
+import org.junit.Test;
+import java.io.IOException;
+import java.net.URI;
+
+public class HDFSClient {
+    
+    @Test
+    public void put() throws Exception, InterruptedException {
+        Configuration configuration = new ObjectInputFilter.Config();
+        FileSystem fileSystem = FileSystem.get(URL.create("hdfs://hadoop102:9000"),
+                configuration, "rick");
+        
+        fileSystem.copyToLocalFile(new Path("/test"), new Path("/home/rick/"));
+        
+        fileSystem.close();
+    }
+}
+```
+

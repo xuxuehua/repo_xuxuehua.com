@@ -56,3 +56,13 @@ fields @timestamp, @message
 | limit 10
 ```
 
+
+
+## like or
+
+```
+fields @timestamp, @message
+| filter (@message like 'error' or @message like 'exception')
+| sort @timestamp desc
+```
+

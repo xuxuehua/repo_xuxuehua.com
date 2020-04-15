@@ -27,7 +27,11 @@ Docker 最初是 dotCloud 公司创始人 Solomon Hykes 在法国期间发起的
 
 
 
-## Cgroups 
+大数据所关注的计算密集型离线业务，其实并不像常规的 Web 服务那样适合用容器进行 托管和扩容，也没有对应用打包的强烈需求，所以 Hadoop、Spark 等项目到现在也没在容器 技术上投下更大的赌注
+
+
+
+## Cgroups 限制作用
 
 Linux Control Group
 
@@ -41,9 +45,57 @@ Cgroups 还能够对进程进行优先级设置，审计，以及将进程挂起
 
 
 
+在 Linux 中，Cgroups 给用户暴露出来的操作接口是文件系统，即它以文件和目录的方式组织 在操作系统的 /sys/fs/cgroup 路径下。在 Ubuntu 16.04 机器里，我可以用 mount 指令把它 们展示出来
+
+```
+$ mount -t cgroup
+cpuset on /sys/fs/cgroup/cpuset type cgroup (rw,nosuid,nodev,noexec,relatime,cpuset) cpu on /sys/fs/cgroup/cpu type cgroup (rw,nosuid,nodev,noexec,relatime,cpu)
+cpuacct on /sys/fs/cgroup/cpuacct type cgroup (rw,nosuid,nodev,noexec,relatime,cpuacct) blkio on /sys/fs/cgroup/blkio type cgroup (rw,nosuid,nodev,noexec,relatime,blkio) memory on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,memory) 
+```
+
+> 在 /sys/fs/cgroup 下面有很多诸如 cpuset、cpu、 memory 这样的子目录，叫子系统
 
 
-## Namespace 
+
+在对应的子系统下面创建一个目录
+
+```
+root@ubuntu:/sys/fs/cgroup/cpu$ mkdir container
+root@ubuntu:/sys/fs/cgroup/cpu$ ls container/
+cgroup.clone_children cpu.cfs_period_us cpu.rt_period_us cpu.shares notify_on_release cgroup.procs cpu.cfs_quota_us cpu.rt_runtime_us cpu.stat tasks
+```
+
+> 会自动生成该子系统对应的资源限制文件
+
+我们在后台执行这样一条脚本，可以把计算机的 CPU 吃到 100%
+
+```
+$ while : ; do : ; done &
+[1] 226
+```
+
+
+
+向 container 组里的 cfs_quota 文件写入 20 ms(20000 us)， 即每 100 ms 的时间里，被该控制组 限制的进程只能使用 20 ms 的 CPU 时间，也就是说这个进程只能使用到 20% 的 CPU 带宽。
+
+```
+$ echo 226 > /sys/fs/cgroup/cpu/container/tasks
+
+$ top
+%Cpu0 : 20.3 us, 0.0 sy, 0.0 ni, 79.7 id, 0.0 wa, 0.0 hi, 0.0 si, 0.0 st
+```
+
+cpu使用率降下来了
+
+
+
+Linux Cgroups 的设计还是比较易用的，简单粗暴地理解呢，它就是一个子系统目录加上一组 资源限制文件的组合。而对于 Docker 等 Linux 容器项目来说，它们只需要在每个子系统下，为每个容器创建一个控制组(即创建一个新目录)，然后在启动容器进程之后，把这个进程 的 PID 填写到对应控制组的 tasks 文件中就可以了。
+
+
+
+
+
+## Namespace 隔离作用
 
 用来修改进程视图的主要方法，即对被隔离应用的进程空间做了手脚，使其自认为是pid=1的进程，而在宿主机上，是原来的其他进程
 
@@ -79,7 +131,33 @@ PID   USER     TIME  COMMAND
 
 
 
-## 本质
+## rootfs 根文件系统 （容器镜像）
+
+Mount Namespace 正是基于对 chroot 的不断改良才被发明出来的，它也是 Linux 操作系统里的第一个 Namespace。
+
+当然，为了能够让容器的这个根目录看起来更“真实”，我们一般会在这个容器的根目录下挂载 一个完整操作系统的文件系统，比如 Ubuntu16.04 的 ISO。这样，在容器启动之后，我们在容 器里通过执行 "ls /" 查看根目录下的内容，就是 Ubuntu 16.04 的所有目录和文件。
+
+而这个挂载在容器根目录上、用来为容器进程提供隔离后执行环境的文件系统，就是所谓的“容器镜像”
+
+rootfs 只是一个操作系统所包含的文件、配置和目录，并不包括操作系 统内核。在 Linux 操作系统中，这两部分是分开存放的，操作系统只有在开机启动时才会加载 指定版本的内核镜像。
+
+
+
+由于 rootfs 里打包的不只是应用，而是整个操作系统的文件和目录，也就意味着，应用以及它 运行所需要的所有依赖，都被封装在了一起。有了容器镜像“打包操作系统”的能力，这个最基础的依赖环境也终于变成了应用沙盒的一部 分。这就赋予了容器所谓的一致性:无论在本地、云端，还是在一台任何地方的机器上，用户只 需要解压打包好的容器镜像，那么这个应用运行所需要的完整的执行环境就被重现出来了
+
+
+
+Docker 镜像使用的 rootfs，往往由多个“层”组成
+
+通过“分层镜像”的设计，以 Docker 镜像为核心，来自不同公司、不同团队的技术人员被紧密 地联系在了一起。而且，由于容器镜像的操作是增量式的，这样每次镜像拉取、推送的内容，比 原本多个完整的操作系统的大小要小得多;而共享层的存在，可以使得所有这些容器镜像需要的 总空间，也比每个镜像的总和要小。这样就使得基于容器镜像的团队协作，要比基于动则几个 GB 的虚拟机磁盘镜像的协作要敏捷得多。
+
+更重要的是，一旦这个镜像被发布，那么你在全世界的任何一个地方下载这个镜像，得到的内容 都完全一致，可以完全复现这个镜像制作者当初的完整环境。这，就是容器技术“强一致性”的 重要体现。
+
+
+
+
+
+## 容器本质
 
 容器的本质就是一个进程，用户的应用进程实际上就是容器里 PID=1 的进程，也是其他后续创建的所有进程的父进程。这就意味着，在一个容器中，你没办法同时运行两个不同的应用，除非你能事先找到一个公共的 PID=1 的程序来充当两个不同应用的父进程，这也是为什么很多人都会用 systemd 或者 supervisord 这样的软件来代替应用本身作为容器的启动进程。
 
@@ -94,6 +172,8 @@ PID   USER     TIME  COMMAND
 在Linux内核中，很多资源时不可以被Namespace化的，比如时间
 
 如果容器中的程序使用settimeofday(2) 系统调用修改了时间，整个宿主机的时间就会被更改
+
+对比KVM这种，由Hypervisor来负责对宿主机的调用处理，Linux Namespace隔离机制并不彻底
 
 
 
@@ -121,7 +201,7 @@ Linux下的/proc 目录存储的是记录当前内核运行状态的一组特殊
 
 ## 虚拟化方式比较
 
-![img](https://cdn.pbrd.co/images/HJA0XhB.png)
+![image-20200408130513298](basic_knowledge.assets/image-20200408130513298.png)
 
 > 容器除了运行其中应用外，基本不消耗额外的系统资源，使得应用的性能很高，同时系统的开销尽量小。传统虚拟机方式运行 10 个不同的应用就要起 10 个虚拟机，而Docker 只需要启动 10 个隔离的应用即可。
 
@@ -391,7 +471,7 @@ Docker 镜像是怎么实现增量的修改和维护的？ 每个镜像都由很
 
 
 
-![img](https://snag.gy/96p30S.jpg)
+![image-20200409003015301](basic_knowledge.assets/image-20200409003015301.png)
 
 init 层，用来存放临时修改过的/etc/hosts等文件
 
@@ -461,18 +541,6 @@ ubuntu               14.04               1e0c3dd64ccd        4 weeks ago        
 如centos等镜像的FROM处
 
 
-
-### Volume 
-
-允许将宿主机指定的目录或者文件，挂载到容器里面进行读取和修改操作
-
-
-
-容器volume里面的信息，并不会被docker commit 提交掉
-
-
-
-Volume 的本质是宿主机上的一个独立目录，不属于rootfs的一部分
 
 
 

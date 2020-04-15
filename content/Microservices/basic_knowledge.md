@@ -273,3 +273,41 @@ AWS CloudTrail 是一个非常有用的在微服务中追踪更改的工具，�
 
 
 
+
+
+# 微服务的策略
+
+服务上下线
+
+路由策略调整
+
+并发动态数调整
+
+功能开关
+
+访问ACL控制
+
+异常熔断和旁路
+
+调用关系
+
+服务质量日志输出
+
+
+
+## 应用拆分
+
+**微服务架构模式下的运维思路一定要转变，一定要将视角转换到应用这个维度，从一开始就要统一规划，从一开始就要将架构、开发和运维的工作拉通了去看，这一点是与传统运维的思路完全不同的**。
+
+![image-20200407021005689](basic_knowledge.assets/image-20200407021005689.png)
+
+
+
+
+
+# Netflix的技术网站
+
+
+Netflix的Tech Blog：https://medium.com/netflix-techblog
+
+Netflix公开分享的PPT合集：https://www.slideshare.net/netflix

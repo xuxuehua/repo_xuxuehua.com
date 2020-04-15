@@ -1,7 +1,8 @@
----
 title: "kubectl"
 date: 2019-02-22 22:32
+
 ---
+
 
 
 [TOC]
@@ -66,9 +67,9 @@ brew install kubernetes-cli
 
 
 
-## 基础命令
+# 基础命令
 
-### create 创建资源
+## create 创建资源
 
 通过文件或标准输入创建资源
 
@@ -78,7 +79,15 @@ kubectl create -f nignx-deploy.yaml -f nginx-svc.yaml
 
 
 
-### delete 删除
+### `--record`
+
+记录下你每次操作所执行的命令， 以方便后面查看
+
+
+
+
+
+## delete 删除
 
 基于文件名，stdin，资源或名字，以及资源和选择器删除资源
 
@@ -100,7 +109,7 @@ kubectl delete deployment --all
 
 
 
-#### --all
+### --all
 
 删除kube-public 名称空间中的所有pod对象
 
@@ -118,7 +127,7 @@ kubectl delete all --all
 
 
 
-#### -f 指定配置
+### -f 指定配置
 
 ```
 kubectl delete -f pod-example.yaml
@@ -126,7 +135,7 @@ kubectl delete -f pod-example.yaml
 
 
 
-#### --grace-period
+### --grace-period
 
 默认删除操作为30s，使用此参数自定义其时常
 
@@ -134,11 +143,26 @@ kubectl delete -f pod-example.yaml
 
 
 
-### edit 编辑资源
+## edit 编辑资源
+
+kubectl edit 并不神秘，它不过是把 API 对象的内容下载到了本地文件， 让你修改完成后再提交上去
+
+```
+$ kubectl edit deployment/nginx-deployment ...
+...
+	spec: 
+		containers:
+		- name: nginx
+			image: nginx:1.9.1 # 1.7.9 -> 1.9.1 
+			ports:
+			- containerPort: 80
+
+deployment.extensions/nginx-deployment edited
+```
 
 
 
-### explain 资源文档
+## explain 资源文档
 
 获取相关帮助
 
@@ -162,7 +186,7 @@ kubectl explain pods.spec
 
 
 
-### expose 暴露服务
+## expose 暴露服务
 
 基于rc，service，deployment或pod创建Service资源
 
@@ -193,13 +217,13 @@ nginx        ClusterIP   10.96.216.63   <none>        80/TCP    10s
 
 
 
-### get 显示资源
+## get 显示资源
 
 即从Kubernetes里面获取指定的API对象
 
 
 
-#### controllerrevision 记录Controller版本
+### controllerrevision 记录Controller版本
 
 用于记录某种Controller对象的版本
 
@@ -210,6 +234,12 @@ fluentd-elasticsearch-64dc6799c9   daemonset.apps/fluentd-elasticsearch   2     
 ```
 
 > 查看fluentd-elasticsearch对应的ControllerRevision
+
+这个 ControllerRevision 对象，实际上是在 Data 字段保存了该版本对应的完整的 DaemonSet 的 API 对象。并且，在 Annotation 字段保存了创建这个对象所使用的 kubectl 命令
+
+```
+kubectl describe controllerrevision fluentd-elasticsearch-64dc6799c9 -n kube-system
+```
 
 
 
@@ -229,7 +259,7 @@ kubectl get pods,services -o wide
 
 
 
-#### -l 标签选择器
+### -l 标签选择器
 
 列出名称空间中拥有k8s-app标签名称的所有Pod 对象
 
@@ -239,7 +269,7 @@ kubectl get pods -l k8s-app -n kube-system
 
 
 
-##### 等值关系
+#### 等值关系
 
 ```
 =, !=, ==
@@ -247,7 +277,7 @@ kubectl get pods -l k8s-app -n kube-system
 
 
 
-##### 集合关系
+#### 集合关系
 
 ```
 KEY in (VALUE1, VALUE2,...)
@@ -263,7 +293,7 @@ KEY notin (VALUE1, VALUE2,...)
 
 
 
-#### -L 标签列表
+### -L 标签列表
 
 显示每一个对象的标签值
 
@@ -273,9 +303,9 @@ kubectl get pods -l 'env in (production,dev),!tier' -L env,tier
 
 
 
-#### -o 输出
+### -o 输出
 
-##### yaml 
+#### yaml 
 
 ```
 kubectl get pods -l component=kube=apiserver -o yaml -n kube-system
@@ -283,11 +313,11 @@ kubectl get pods -l component=kube=apiserver -o yaml -n kube-system
 
 
 
-##### json 
+#### json 
 
 
 
-##### wide 额外信息
+#### wide 额外信息
 
 显示资源的额外信息
 
@@ -297,25 +327,25 @@ kubectl get pods -o wide
 
 
 
-##### name 名称
+#### name 名称
 
 仅仅打印资源名称
 
 
 
-##### go-template go 模版
+#### go-template go 模版
 
 以自定义的go模版格式化输出API对象信息
 
 
 
-##### custom-columns 自定义输出
+#### custom-columns 自定义输出
 
 自定义要输出的字段
 
 
 
-#### nodes
+### nodes
 
 查看键名为SSD标签的node资源
 
@@ -344,6 +374,8 @@ kubectl run nginx-deploy --image=nginx:1.12 --replicas=2
 ### set 设置属性
 
 设置指定资源的特定属性
+
+这个命令的好处就是，你可以不用像 kubectl edit 那样需要打开编辑器
 
 ```
 apiVersion: apps/v1
@@ -381,7 +413,28 @@ deployment.apps/myapp-deploy paused
 
 
 
-
+```
+root@master:~# kubectl set image deployment/nginx-deployment nginx=nginx:1.91
+deployment.apps/nginx-deployment image updated
+root@master:~# kubectl get rs
+NAME                          DESIRED   CURRENT   READY   AGE
+nginx-deployment-5bf87f5f59   4         4         4       60m
+nginx-deployment-7789688b8f   3         3         0       6s
+root@master:~# kubectl get rs
+NAME                          DESIRED   CURRENT   READY   AGE
+nginx-deployment-5bf87f5f59   4         4         4       61m
+nginx-deployment-7789688b8f   3         3         0       12s
+root@master:~# kubectl rollout undo deployment/nginx-deployment
+deployment.apps/nginx-deployment rolled back
+root@master:~# kubectl get rs
+NAME                          DESIRED   CURRENT   READY   AGE
+nginx-deployment-5bf87f5f59   5         5         4       61m
+nginx-deployment-7789688b8f   0         0         0       51s
+root@master:~# kubectl get rs
+NAME                          DESIRED   CURRENT   READY   AGE
+nginx-deployment-5bf87f5f59   5         5         5       61m
+nginx-deployment-7789688b8f   0         0         0       53s
+```
 
 
 
@@ -868,7 +921,7 @@ deployment.apps/myapp-deploy patched
 
 基于文件或者stdin替换一个资源
 
-
+推荐使用apply 命令
 
 
 

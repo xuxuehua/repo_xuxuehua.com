@@ -57,7 +57,7 @@ v1
 
 如Pod，Replicas， deployment， StatefulSet
 
-## PodPreset
+## Pod
 
 Pod预先设置
 
@@ -142,6 +142,23 @@ spec:
 
 > 这个时候，我们就可以清楚地看到，这个 Pod 里多了新添加的 labels、env、volumes 和 volumeMount 的定义，它们的配置跟 PodPreset 的内容一样。此外，这个 Pod 还被自动加上了一个 annotation 表示这个 Pod 对象被 PodPreset 改动过。
 
+
+
+## Secret
+
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: Opaque
+data:
+  user: YWRtaW4=
+  pass: MWYyZDFlMmU2N2Rm
+
+
+```
+
 # Metadata
 
 API对象的“标识”，即元数据，也是从Kubernetes里找到这个对象的主要依据，对所有API对象来说，这一部分的格式和字段基本是一致的
@@ -150,19 +167,19 @@ API对象的“标识”，即元数据，也是从Kubernetes里找到这个对�
 
 嵌套字段
 
-### name
+## name
 
 在同一类别中，name必须是唯一的
 
 实例化对象的名称
 
-### namespace
+## namespace
 
 实例化对象资源的名称空间
 
 name是受限于namespace的
 
-### labels (重要)
+## labels (重要)
 
 key-value 数据
 
@@ -186,11 +203,11 @@ spec:
     image: ikubernetes/myapp:v1
 ```
 
-### annotation
+## annotation
 
 资源注解
 
-### ownerReference
+## ownerReference
 
 用于保存当前这个API对象的拥有者(Owner) 的信息
 
@@ -200,7 +217,7 @@ spec:
 /api/GROUP/VERSION/namespaces/NAMESPACE/RESOURCE_TYPE/NAME
 ```
 
-### annotations
+## annotations
 
 不能用于挑选资源对象，仅用于对象提供元数据
 
@@ -221,7 +238,7 @@ spec:
 ....
 ```
 
-# Spec 用户期待状态
+# Spec 对象独有定义
 
 specification 规格
 
@@ -236,6 +253,35 @@ specification 规格
 ## Kubectl explain spec.[Object]
 
 返回为对象，可以一直向下嵌套
+
+
+
+## initContainers
+
+所有 Init Container 定义的容器，都会比 spec.containers 定义的用户容器先启动。并 且，Init Container 容器会按顺序逐一启动，而直到它们都启动并且退出了，用户容器才会启动。
+
+可以解决在一个pod中，多个容器间的启动顺序
+
+实际上，这个所谓的“组合”操作，正是容器设计模式里最常用的一种模式，它的名字叫: sidecar。
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod 
+  labels:
+    app: myapp
+spec: 
+  containers:
+  - name: myapp-container
+    image: ikubernetes/myapp:v1
+  initContainers:
+  - name: init-something
+    image: busybox
+    command: ['sh', '-c', 'sleep 10']
+```
+
+
 
 ## containers 容器列表
 
@@ -347,7 +393,9 @@ Here are some examples:
 | `[/ep-1]`        | `[foo bar]` | <not set>         | `[zoo boo]`    | `[ep-1 zoo boo]` |
 | `[/ep-1]`        | `[foo bar]` | `[/ep-2]`         | `[zoo boo]`    | `[ep-2 zoo boo]` |
 
-#### Lifecycle
+
+
+### Lifecycle
 
 定义了Container Lifecycle Hooks，即容器状态发生变化时触发的一系列钩子
 
@@ -369,17 +417,103 @@ spec:
           command: ["/usr/sbin/nginx","-s","quit"]
 ```
 
-> postStart 指在容器启动后，立刻执行一个指定的操作
-> 
-> 若postStart执行超时或者错误，Kubernetes会在该Pod的Events中报出该容器启动失败的错误信息，导致Pod也处于失败的状态
-> 
-> postStop 指容器被杀死之前，执行的操作
-> 
-> 由于是同步的，会阻塞之前的容器杀死流程，直到这个Hook定义的操作完成之后，才允许容器被杀死
 
-#### livenessProbe
 
-* exec
+
+
+#### postStart   ` <Object>` 
+
+指在容器启动后，立刻执行一个指定的操作
+
+若postStart执行超时或者错误，Kubernetes会在该Pod的Events中报出该容器启动失败的错误信息，导致Pod也处于失败的状态
+
+
+
+##### exec `<Object>` 用户指定命令
+
+根据指令返回码判断
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: poststart-pod
+  namespace: default
+spec:
+  containers:
+  - name: busybox-httpd
+    image: busybox:latest
+    imagePullPolicy: IfNotPresent
+    lifecycle:
+      postStart:
+        exec:
+          command: ['mkdir', '-p', '/data/web/html']
+    command: ['/bin/sh', '-c', 'sleep 3600']
+```
+
+
+
+
+
+##### httpGet      `<Object>`
+
+Pod 其实可以暴露一个健康检查 URL(比如 /healthz)，或者直接让健康检查去检测 应用的监听端口
+
+```
+
+```
+
+
+
+
+
+##### tcpSocket    `<Object>`
+
+Pod 其实可以暴露一个健康检查 URL(比如 /healthz)，或者直接让健康检查去检测 应用的监听端口
+
+
+
+
+
+#### preStop     `<Object>` 终止前
+
+指容器被杀死之前，执行的操作
+
+由于是同步的，会阻塞之前的容器杀死流程，直到这个Hook定义的操作完成之后，才允许容器被杀死
+
+##### exec `<Object>` 用户指定命令
+
+根据指令返回码判断
+
+
+
+
+
+
+
+##### httpGet      `<Object>`
+
+Pod 其实可以暴露一个健康检查 URL(比如 /healthz)，或者直接让健康检查去检测 应用的监听端口
+
+
+
+
+
+
+
+##### tcpSocket    `<Object>`
+
+Pod 其实可以暴露一个健康检查 URL(比如 /healthz)，或者直接让健康检查去检测 应用的监听端口
+
+
+
+
+
+
+
+### livenessProbe
+
+#### exec
 
 exec类型探针通过在目标容器中执行由用户自定义的命令来判断容器的健康状态
 
@@ -402,7 +536,9 @@ spec:
         command: ["test", "-e", "/tmp/healthy"]
 ```
 
-* httpGet
+
+
+#### httpGet
 
 向目标容器发起一个http请求，根据响应状态码进行结果盘点
 
@@ -433,7 +569,9 @@ spec:
           scheme: HTTP
 ```
 
-* tcpSocket
+
+
+#### tcpSocket
 
 基于TCP的存活性探测(TCPSocketAction) 向容器的特定端口发起TCP请求并尝试建立连接进行判定
 
@@ -456,27 +594,17 @@ spec:
           port: http
 ```
 
-#### node
 
-指明Pod与节点Node 的绑定字段
 
-#### readinessProbe
+### readinessProbe
 
-检查结果的成功与否，决定这个Pod是不是能被通过Service的方式访问到，而不影响Pod的声明周期
+虽然它的用法与 livenessProbe 类似，但作用却大不一样。readinessProbe 检查结果的成功与否，决定的这个 Pod 是不是能被通 过 Service 的方式访问到，而并不影响 Pod 的生命周期
 
-#### restartPolicy
 
-pod的恢复机制，默认为Always，即任何时候容器发生已成，会被重建
-
-```
-Always:    在任何情况下，只要容器不在运行状态，就需要重启容器
-OnFailure: 只在容器，异常时才自动重启容器
-Never: 从来不重启容器
-```
 
 ## selector
 
-### matchLabels
+### matchLabels （Label Selector）
 
 通过直接给定键值来指定标签选择器
 
@@ -485,6 +613,8 @@ selector:
   matchLabels:
     component: redis
 ```
+
+
 
 ### matchExpressions
 
@@ -502,6 +632,8 @@ selector:
 ```
 
 ## nodeSelector (Deprecated by nodeAffinity)
+
+nodeSelector 其实已经是一个将要被废弃的字段了
 
 供用户将Pod与Node进行绑定的字段
 
@@ -538,6 +670,8 @@ spec:
 一旦 Pod 的这个字段被赋值，Kubernetes 项目就会被认为这个 Pod 已经经过了调度，调度的结果就是赋值的节点名字。所以，这个字段一般由调度器负责设置，但用户也可以设置它来“骗过”调度器，当然这个做法一般是在测试或者调试的时候才会用到。
 
 即直接运行在指定节点上
+
+
 
 ## nodeAffinity
 
@@ -617,6 +751,130 @@ spec:
 status:
   loadBalancer: {}
 ```
+
+
+
+## hostAliases
+
+定义了 Pod 的 hosts 文件（比如 /etc/hosts）里的内容
+
+```
+apiVersion: v1
+kind: Pod
+...
+spec:
+  hostAliases:
+  - ip: "10.1.2.3"
+    hostnames:
+    - "foo.remote"
+    - "bar.remote"
+...
+```
+
+以上面的配置，Pod启动后，/etc/hosts文件会如下
+
+```
+cat /etc/hosts
+# Kubernetes-managed hosts file.
+127.0.0.1 localhost
+...
+10.244.135.10 hostaliases-pod
+10.1.2.3 foo.remote
+10.1.2.3 bar.remote
+```
+
+在 Kubernetes 项目中，如果要设置 hosts 文件里的内容，一定要通过这种方法。否则，如果直接修改了 hosts 文件的话，在 Pod 被删除重建之后，kubelet 会自动覆盖掉被修改的内容。
+
+
+
+## hostNetwork/hostIPC/hostPID
+
+在Pod中的容器要共享宿主机的Namespace，也一定是pod级别定义的
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  hostNetwork: true
+  hostIPC: true
+  hostPID: true
+  containers:
+  - name: nginx
+    image: nginx
+  - name: shell
+    image: busybox
+    stdin: true
+    tty: true
+```
+
+> 这个Pod里面的所有容器，都会直接使用宿主机的网络，直接与IPC进行通信，以及看到宿主机正在运行的所有进程
+
+## shareProcessNamespace
+
+Pod 里面的容器要共享PID Namespace
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  shareProcessNamespace: true
+  containers:
+  - name: nginx
+    image: nginx
+  - name: shell
+    image: busybox
+    stdin: true
+    tty: true
+```
+
+> 这个 Pod 被创建后，可以使用 shell 容器的 tty 跟这个容器进行交互了
+
+可以直接认为 tty 就是 Linux 给用户提供的一个常驻小程 序，用于接收用户的标准输入，返回操作系统的标准输出。当然，为了能够在 tty 中输入信息, 还需要同时开启 stdin(标准输入流)。
+
+```
+$ kubectl create -f nginx.yaml
+$ kubectl attach -it nginx -c shell
+/ # ps ef
+PID   USER     TIME  COMMAND
+    1 root      0:00 /pause
+    6 root      0:00 nginx: master process nginx -g daemon off;
+   12 101       0:00 nginx: worker process
+   13 root      0:00 sh
+   18 root      0:00 ps ef
+```
+
+
+
+## restartPolicy
+
+Kubernetes 里的Pod 恢复机制，默认值是 Always，即:任何时候这个容器发生了异常，它 一定会被重新创建。
+
+Pod 的恢复过程，永远都是发生在当前节点上，而不会跑到别的节点上去。事 实上，一旦一个 Pod 与一个节点(Node)绑定，除非这个绑定发生了变化(pod.spec.node 字段 被修改)，否则它永远都不会离开这个节点。
+
+
+
+### 恢复策略
+
+Always:在任何情况下，只要容器不在运行状态，就自动重启容器
+
+OnFailure: 只在容器 异常时才自动重启容器
+
+Never: 从来不重启容器
+
+
+
+如果你要关心这个容器退出后的上下文环境，比如容器退出后的日志、文件和目录，就需要将 restartPolicy 设置为 Never。因为一旦容器被自动重新创建，这些内容就有可能丢失掉了(被垃圾 回收了)。
+
+
+
+### 恢复原理
+
+1. 只要 Pod 的 restartPolicy 指定的策略允许重启异常的容器(比如:Always)，那么这个 Pod 就会保持 Running 状态，并进行容器重启。否则，Pod 就会进入 Failed 状态 。
+2. 对于包含多个容器的 Pod，只有它里面所有的容器都进入异常状态后，Pod 才会进入 Failed 状 态。在此之前，Pod 都是 Running 状态。此时，Pod 的 READY 字段会显示正常容器的个数
 
 # status 当前状态 (read-only)
 
@@ -718,127 +976,5 @@ spec:
           storage: 1Gi
 ```
 
-## hostAliases
 
-定义了 Pod 的 hosts 文件（比如 /etc/hosts）里的内容
 
-```
-apiVersion: v1
-kind: Pod
-...
-spec:
-  hostAliases:
-  - ip: "10.1.2.3"
-    hostnames:
-    - "foo.remote"
-    - "bar.remote"
-...
-```
-
-以上面的配置，Pod启动后，/etc/hosts文件会如下
-
-```
-cat /etc/hosts
-# Kubernetes-managed hosts file.
-127.0.0.1 localhost
-...
-10.244.135.10 hostaliases-pod
-10.1.2.3 foo.remote
-10.1.2.3 bar.remote
-```
-
-在 Kubernetes 项目中，如果要设置 hosts 文件里的内容，一定要通过这种方法。否则，如果直接修改了 hosts 文件的话，在 Pod 被删除重建之后，kubelet 会自动覆盖掉被修改的内容。
-
-### hostNetwork/hostIPC/hostPID
-
-在Pod中的容器要共享宿主机的Namespace，也一定是pod级别定义的
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx
-spec:
-  hostNetwork: true
-  hostIPC: true
-  hostPID: true
-  containers:
-  - name: nginx
-    image: nginx
-  - name: shell
-    image: busybox
-    stdin: true
-    tty: true
-```
-
-> 这个Pod里面的所有容器，都会直接使用宿主机的网络，直接与IPC进行通信，以及看到宿主机正在运行的所有进程
-
-## shareProcessNamespace
-
-Pod 里面的容器要共享PID Namespace
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx
-spec:
-  shareProcessNamespace: true
-  containers:
-  - name: nginx
-    image: nginx
-  - name: shell
-    image: busybox
-    stdin: true
-    tty: true
-```
-
-这个 Pod 被创建后，可以使用 shell 容器的 tty 跟这个容器进行交互了。
-
-## initContainers
-
-以列表的形式定义可用的初始容器
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: myapp-pod 
-  labels:
-    app: myapp
-spec: 
-  containers:
-  - name: myapp-container
-    image: ikubernetes/myapp:v1
-  initContainers:
-  - name: init-something
-    image: busybox
-    command: ['sh', '-c', 'sleep 10']
-```
-
-## lifecycle
-
-### postStart
-
-于容器创建完成之后立即运行钩子处理器handler
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: lifecycle-demo
-spec: 
-  containers:
-  - name: lifecycle-demo-containers
-    image: ikubernetes/myapp:v1
-    lifecycle:
-      postStart:
-        exec:
-          command: ["/bin/sh", "-c", "echo 'lifecycle hooks handler' > /usr/share/nginx/html/test.html"]
-```
-
-### preStop
-
-于容器终止操作之前立即运行的钩子处理器，以同步的方式调用
-
-在其完成之前会阻塞删除容器的操作的调用

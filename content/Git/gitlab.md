@@ -62,3 +62,14 @@ letsencrypt['auto_renew_day_of_month'] = "*/7"
 gitlab-ctl reconfigure
 ```
 
+
+
+
+
+
+
+# example
+
+gitlab ci/cd 
+
+https://gitlab.com/kargo-ci/kubernetes-sigs-kubespray

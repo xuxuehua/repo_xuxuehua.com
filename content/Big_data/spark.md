@@ -14,9 +14,7 @@ Hadoop MapReduce虽然已经可以满足大数据的应用场景，但是UC Berk
 
 ## 特点
 
-Spark支持Yarn和HDFS，公司迁移到Spark上的成本很小，于是很快，越来越多的公司用Spark代替MapReduce
-
-
+Spark支持Yarn和HDFS，公司迁移到Spark上的成本很小，越来越多的公司用Spark代替MapReduce
 
 spark优势在于迭代式的内存运算，适合于做大数据分析，机器学习之类的，flink是流式计算框架，对于实时性任务也许更好，对于机器学习内任务，spark还是要好点
 
@@ -44,10 +42,6 @@ counts.saveAsTextFile("hdfs://...")
 
 
 
-### 惰性计算
-
-Spark并不是按照代码写的操作顺序去生成RDD，比如`rdd2 = rdd1.map(func)`这样的代码并不会在物理上生成一个新的RDD。物理上，Spark只有在产生新的RDD分片时候，才会真的生成一个RDD，Spark的这种特性也被称作**惰性计算**。
-
 # RDD 弹性数据集
 
 RDD是Spark的核心概念，是弹性数据集（Resilient Distributed Datasets）的缩写。RDD既是Spark面向开发者的编程模型，又是Spark自身架构的核心元素。
@@ -73,6 +67,10 @@ val rdd3 = rdd2.reduceByKey(_ + _)
 Spark也是对大数据进行分片计算，Spark分布式计算的数据分片、任务调度都是以RDD为单位展开的，每个RDD分片都会分配到一个执行进程去处理。
 
 
+
+## 惰性计算
+
+Spark并不是按照代码写的操作顺序去生成RDD，比如`rdd2 = rdd1.map(func)`这样的代码并不会在物理上生成一个新的RDD。物理上，Spark只有在产生新的RDD分片时候，才会真的生成一个RDD，Spark的这种特性也被称作**惰性计算**。
 
 
 
@@ -174,7 +172,9 @@ DAG也就是有向无环图，就是说不同阶段的依赖关系是有向的�
 
 整个应用被切分成3个阶段，阶段3需要依赖阶段1和阶段2，阶段1和阶段2互不依赖。Spark在执行调度的时候，先执行阶段1和阶段2，完成以后，再执行阶段3。如果有更多的阶段，Spark的策略也是一样的。只要根据程序初始化好DAG，就建立了依赖关系，然后根据依赖关系顺序执行各个计算阶段，Spark大数据应用的计算就完成了。
 
-![image-20200112211130993](image-20200112211130993.png)
+![image-20200405114927810](spark.assets/image-20200405114927810.png)
+
+
 
 
 
@@ -194,11 +194,15 @@ Spark作业调度执行的核心是DAG，有了DAG，整个应用就被切分成
 
 ### shuffle 依赖
 
-![image-20200112211152487](image-20200112211152487.png)
+![image-20200405114811023](spark.assets/image-20200405114811023.png)
+
+
 
 Spark也需要通过shuffle将数据进行重新组合，相同Key的数据放在一起，进行聚合、关联等操作，因而每次shuffle都产生新的计算阶段。这也是为什么计算阶段会有依赖关系，它需要的数据来源于前面一个或多个计算阶段产生的数据，必须等待前面的阶段执行完毕才能进行shuffle，并得到数据。
 
-不需要进行shuffle的依赖，在Spark里被称作窄依赖；相反的，需要进行shuffle的依赖，被称作宽依赖。跟MapReduce一样，shuffle也是Spark最重要的一个环节，只有通过shuffle，相关数据才能互相计算，构建起复杂的应用逻辑。
+不需要进行shuffle的依赖，在Spark里被称作窄依赖；相反的，需要进行shuffle的依赖，被称作宽依赖。
+
+跟MapReduce一样，shuffle也是Spark最重要的一个环节，只有通过shuffle，相关数据才能互相计算，构建起复杂的应用逻辑。
 
 从本质上看，Spark可以算作是一种MapReduce计算模型的不同实现。Hadoop MapReduce简单粗暴地根据shuffle将大数据计算分成Map和Reduce两个阶段，然后就算完事了。而Spark更细腻一点，将前一个的Reduce和后一个的Map连接起来，当作一个阶段持续计算，形成一个更加优雅、高效地计算模型，虽然其本质依然是Map和Reduce。但是这种多个计算阶段依赖执行的方案可以有效减少对HDFS的访问，减少作业的调度执行次数，因此执行速度也更快。
 
@@ -218,9 +222,7 @@ Hadoop MapReduce主要使用磁盘存储shuffle过程中的数据不同，Spark�
 
 Spark支持Standalone、Yarn、Mesos、Kubernetes等多种部署方案，几种部署方案原理也都一样，只是不同组件角色命名不同，但是核心功能和运行流程都差不多。
 
-
-
-![image-20200112211208548](image-20200112211208548.png)
+![image-20200405111123424](spark.assets/image-20200405111123424.png)
 
 
 
@@ -238,19 +240,19 @@ Worker收到任务后，启动Executor进程开始执行任务。Executor先检�
 
 # Spark 生态
 
-
-
 Spark也有自己的生态体系，以Spark为基础，有支持SQL语句的Spark SQL，有支持流计算的Spark Streaming，有支持机器学习的MLlib，还有支持图计算的GraphX。利用这些产品，Spark技术栈支撑起大数据分析、大数据机器学习等各种大数据应用场景。
 
 
 
 
 
-# Spark Streaming
+## Spark Streaming
 
 Spark Streaming巧妙地利用了Spark的**分片**和**快速计算**的特性，将实时传输进来的数据按照时间进行分段，把一段时间传输进来的数据合并在一起，当作一批数据，再去交给Spark去处理。
 
-![image-20200112211222364](image-20200112211222364.png)
+![image-20200405111052426](spark.assets/image-20200405111052426.png)
+
+
 
 
 
@@ -285,6 +287,18 @@ Spark性能优化可以分解为下面几步。
 5.性能测试，观察系统性能特性，是否达到优化目的，以及寻找下一个瓶颈点。
 
 
+
+
+
+# Spark on yarn vs Spark on k8s
+
+```
+spark-submit ---- ResourceManager ----- ApplicaitonMaster（Container） ---- Driver（Container）----Executor（Container）
+```
+
+```
+spark-submit ---- Kube-api-server（Pod） ---- Kube-scheduler（Pod） ---- Driver（Pod） ---- Executor（Pod）
+```
 
 
 

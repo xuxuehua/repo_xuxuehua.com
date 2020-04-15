@@ -1,5 +1,5 @@
 ---
-title: "k8s_in_digital_ocean"
+title: "k8s_in_ubuntu"
 date: 2019-03-10 21:15
 ---
 
@@ -14,28 +14,88 @@ date: 2019-03-10 21:15
 
 16.04, 2 CPU, 7.5G mem, 30G HDD
 
-
-
-先部署docker
+### Letting iptables see bridged traffic
 
 ```
-export VERSION=17.03 && curl -sSL get.docker.com | sh
+cat <<EOF > /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+sysctl --system
+sysctl -p
+
 ```
 
 
 
 ```
-apt-get update && apt-get install -y apt-transport-https curl
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+apt -y update && apt -y upgrade 
+```
+
+
+
+### docker
+
+```
+
+# Install Docker CE
+## Set up the repository:
+### Install packages to allow apt to use a repository over HTTPS
+apt-get update && apt-get install -y \
+  apt-transport-https ca-certificates curl software-properties-common gnupg2
+
+### Add Docker’s official GPG key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+
+### Add Docker apt repository.
+add-apt-repository \
+  "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) \
+  stable"
+
+## Install Docker CE.
+apt-get update && apt-get install -y \
+  containerd.io=1.2.13-1 \
+  docker-ce=5:19.03.8~3-0~ubuntu-$(lsb_release -cs) \
+  docker-ce-cli=5:19.03.8~3-0~ubuntu-$(lsb_release -cs)
+
+
+
+
+# Setup daemon.
+cat > /etc/docker/daemon.json <<EOF
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}
+EOF
+
+
+mkdir -p /etc/systemd/system/docker.service.d
+
+# Restart docker.
+systemctl daemon-reload
+systemctl restart docker
+docker version
+
+
+```
+
+
+
+```
+sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
 deb https://apt.kubernetes.io/ kubernetes-xenial main
 EOF
-apt-get update
-
-apt -y install kubelet=1.11.3-00
-apt -y install kubectl=1.11.3-00
-apt -y install kubeadm=1.11.3-00
-
+sudo apt-get update -y
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
 
 ```
 
@@ -79,6 +139,24 @@ controllerManager:
 apiServer:
   runtime-config: "api/all=true"
 kubernetesVersion: "v1.13.0"
+```
+
+
+
+
+
+#### v1.18.1
+
+```
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: InitConfiguration
+controllerManager:
+  horizontal-pod-autoscaler-use-rest-clients: "true"
+  horizontal-pod-autoscaler-sync-period: "10s"
+  node-monitor-grace-period: "10s"
+apiServer:
+  runtime-config: "api/all=true"
+kubernetesVersion: "v1.18.1"
 ```
 
 
@@ -177,13 +255,8 @@ kube-scheduler-111            1/1       Running   0          42m
 部署weave插件
 
 ```
-root@111:~# kubectl apply -f https://git.io/weave-kube-1.6
-serviceaccount/weave-net created
-clusterrole.rbac.authorization.k8s.io/weave-net created
-clusterrolebinding.rbac.authorization.k8s.io/weave-net created
-role.rbac.authorization.k8s.io/weave-net created
-rolebinding.rbac.authorization.k8s.io/weave-net created
-daemonset.extensions/weave-net created
+kubectl apply -f https://raw.githubusercontent.com/weaveworks/weave/master/prog/weave-kube/weave-daemonset-k8s-1.11.yaml
+
 ```
 
 
@@ -205,107 +278,17 @@ weave-net-mkhhs               2/2       Running   0          25s
 
 
 
-# Worker 节点
-
-Worker 节点和Master节点几乎是相同的， 运行着都是一个kubelet 组件
-
-
-
-唯一区别在kubeadm init的过程中，kubelet 启动后，Master节点上还会自动运行kube-apiserver，kube-scheduler， kube-controller-manager 着三个系统Pod
-
-
-
-## Ubuntu
-
-```
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-
-cat <<EOF > /etc/apt/sources.list.d/kubernetes.list
-deb http://apt.kubernetes.io/ kubernetes-xenial main
-EOF
-
-apt-get -y update
-
-apt -y install kubelet=1.11.3-00
-apt -y install kubectl=1.11.3-00
-apt -y install kubeadm=1.11.3-00
-```
-
-
-
-## Kubeadm join
-
-运行master node init之后生成的token指令即可
 
 
 
 
 
-# Worker 节点（与Master在一台主机）
-
-默认Master节点是不允许运行用户的Pod，但可以Kubernetes的Taint/Toleration机制就可以
-
-
-
-即某节点被加上一个Taint，那么所有的Pod就不能在这个节点上运行
-
-除非有个别的Pod声明可以容忍这个污点，显式声明Toleration
-
-```
-kubectl taint nodes node1 foo=bar:NoSchedule
-```
-
-> NoScheduler 意味着Taint只会在调度新Pod时产生作用，不会影响已经在node1上运行的Pod
-
-
-
-## 声明Pod
-
-为了实现Toleration，需要在Pod的yaml文件中 spec加入tolerations字段即可
-
-```
-apiVersion: v1
-kind: Pod
-...
-spec:
-  tolerations:
-  - key: "foo"
-    operator: "Equal"
-    value: "bar"
-    effect: "NoSchedule"
-```
-
-> 这个 Toleration 的含义是，这个 Pod 能“容忍”所有键值对为 foo=bar 的 Taint（ operator: “Equal”，“等于”操作）。
-
-
-
-
-
-## master节点的Taint
-
-```
-root@111:~# kubectl  describe node 111 | grep Taints
-Taints:             node-role.kubernetes.io/master:NoSchedule
-```
-
-> 可以看到，Master 节点默认被加上了node-role.kubernetes.io/master:NoSchedule
->
-> 这样一个“污点”，其中“键”是node-role.kubernetes.io/master，而没有提供“值”。
-
-
-
-若想要一个单节点的Kubernetes，删除这个Taint即可
-
-```
-root@111:~# kubectl taint nodes --all node-role.kubernetes.io/master-
-node/111 untainted
-```
-
-> 结尾的短线dash表示，移除所有以node-role.kubernetes.io/master为键的taint
 
 
 
 ## Dashboard 可视化插件
+
+https://github.com/kubernetes/dashboard
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
@@ -351,7 +334,7 @@ weave-net-mkhhs                         2/2       Running   0          44m
 
 
 
-由于 Kubernetes 本身的松耦合设计，绝大多数存储项目，比如 Ceph、GlusterFS、NFS 等，都可以为 Kubernetes 提供持久化存储能力。在这次选择部署一个很重要的 Kubernetes 存储插件项目：Rook。
+由于 Kubernetes 本身的松耦合设计，绝大多数存储项目，比如 Ceph、GlusterFS、NFS 等，都可以为 Kubernetes 提供持久化存储能力。
 
 
 
@@ -368,6 +351,9 @@ Rook 项目是一个基于 Ceph 的 Kubernetes 存储插件（它后期也在加
 得益于容器化技术，用两条指令，Rook 就可以把复杂的 Ceph 存储后端部署起来：
 
 ```
+kubectl apply -f https://raw.githubusercontent.com/rook/rook/master/cluster/examples/kubernetes/ceph/common.yaml
+
+
 kubectl apply -f https://raw.githubusercontent.com/rook/rook/master/cluster/examples/kubernetes/ceph/operator.yaml
 
 kubectl apply -f https://raw.githubusercontent.com/rook/rook/master/cluster/examples/kubernetes/ceph/cluster.yaml
@@ -377,16 +363,22 @@ kubectl apply -f https://raw.githubusercontent.com/rook/rook/master/cluster/exam
 
 
 ```
-root@111:~# kubectl  get pods -n rook-ceph
-NAME                               READY     STATUS    RESTARTS   AGE
-rook-ceph-mon-a-6c66975-5kgxt      1/1       Running   0          22s
-rook-ceph-mon-b-b955c6b59-9r9kk    1/1       Running   0          16s
-rook-ceph-mon-c-585b9dbff9-h92wq   1/1       Running   0          6s
-root@111:~# kubectl  get pods -n rook-ceph-system
-NAME                                  READY     STATUS    RESTARTS   AGE
-rook-ceph-agent-njf9n                 1/1       Running   0          1m
-rook-ceph-operator-5496d44d7c-mgplk   1/1       Running   0          1m
-rook-discover-66m7x                   1/1       Running   0          1m
+root@master1:~# kubectl get pods -n rook-ceph
+NAME                                           READY   STATUS    RESTARTS   AGE
+csi-cephfsplugin-jlvfr                         3/3     Running   0          2m30s
+csi-cephfsplugin-provisioner-fd87698db-gfz2d   5/5     Running   0          2m30s
+csi-cephfsplugin-provisioner-fd87698db-wg625   5/5     Running   0          2m30s
+csi-cephfsplugin-wlm8j                         3/3     Running   0          2m30s
+csi-rbdplugin-cxl6z                            3/3     Running   0          2m30s
+csi-rbdplugin-provisioner-7c9c6578b-v4bjp      6/6     Running   0          2m30s
+csi-rbdplugin-provisioner-7c9c6578b-zsknz      6/6     Running   0          2m30s
+csi-rbdplugin-w4lct                            3/3     Running   0          2m30s
+rook-ceph-mon-a-canary-54b8fbdfcb-l8s2d        1/1     Running   0          2m12s
+rook-ceph-mon-b-canary-667f566d99-mf4gw        1/1     Running   0          2m11s
+rook-ceph-mon-c-canary-67c948794-2pd4w         0/1     Pending   0          2m11s
+rook-ceph-operator-567d7945d6-2rzq9            1/1     Running   0          3m44s
+rook-discover-7l4cf                            1/1     Running   0          3m3s
+rook-discover-srr4r                            1/1     Running   0          3m3s
 ```
 
 
@@ -729,7 +721,113 @@ sidecar不断的从自己的/var/log目录中读取日志文件，转发到mongo
 
 
 
-# MySQL 主从同步
+# Worker 节点
+
+Worker 节点和Master节点几乎是相同的， 运行着都是一个kubelet 组件
+
+
+
+唯一区别在kubeadm init的过程中，kubelet 启动后，Master节点上还会自动运行kube-apiserver，kube-scheduler， kube-controller-manager 着三个系统Pod
+
+
+
+## Ubuntu
+
+```
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+cat <<EOF > /etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+
+apt-get -y update
+
+apt -y install kubelet=1.11.3-00
+apt -y install kubectl=1.11.3-00
+apt -y install kubeadm=1.11.3-00
+```
+
+
+
+## Kubeadm join
+
+运行master node init之后生成的token指令即可
+
+
+
+
+
+# Worker 节点（与Master在一台主机）
+
+默认Master节点是不允许运行用户的Pod，但可以Kubernetes的Taint/Toleration机制就可以
+
+
+
+即某节点被加上一个Taint，那么所有的Pod就不能在这个节点上运行
+
+除非有个别的Pod声明可以容忍这个污点，显式声明Toleration
+
+```
+kubectl taint nodes node1 foo=bar:NoSchedule
+```
+
+> NoScheduler 意味着Taint只会在调度新Pod时产生作用，不会影响已经在node1上运行的Pod
+
+
+
+## 声明Pod
+
+为了实现Toleration，需要在Pod的yaml文件中 spec加入tolerations字段即可
+
+```
+apiVersion: v1
+kind: Pod
+...
+spec:
+  tolerations:
+  - key: "foo"
+    operator: "Equal"
+    value: "bar"
+    effect: "NoSchedule"
+```
+
+> 这个 Toleration 的含义是，这个 Pod 能“容忍”所有键值对为 foo=bar 的 Taint（ operator: “Equal”，“等于”操作）。
+
+
+
+
+
+## master节点的Taint
+
+```
+root@111:~# kubectl  describe node 111 | grep Taints
+Taints:             node-role.kubernetes.io/master:NoSchedule
+```
+
+> 可以看到，Master 节点默认被加上了node-role.kubernetes.io/master:NoSchedule
+>
+> 这样一个“污点”，其中“键”是node-role.kubernetes.io/master，而没有提供“值”。
+
+
+
+若想要一个单节点的Kubernetes，删除这个Taint即可
+
+```
+root@111:~# kubectl taint nodes --all node-role.kubernetes.io/master-
+node/111 untainted
+```
+
+> 结尾的短线dash表示，移除所有以node-role.kubernetes.io/master为键的taint
+
+
+
+
+
+# example
+
+
+
+## MySQL 主从同步
 
 Master 节点和 Slave 节点需要有不同的配置文件
 

@@ -6,6 +6,10 @@ date: 2018-06-02 19:03
 
 [TOC]
 
+
+
+
+
 # 基础知识
 
 
@@ -17,6 +21,10 @@ date: 2018-06-02 19:03
 对与容器而已，一个容器永远只能管理一个进程，
 
 而一个容器就是一个进程
+
+一个运行在虚拟机里的应用，哪怕再简单，也是被管理在 systemd 或者 supervisord 之下 的一组进程，而不是一个进程。这跟本地物理机上应用的运行方式其实是一样的。这也是为什么， 从物理机到虚拟机之间的应用迁移，往往并不困难。
+
+可是对于容器来说，一个容器永远只能管理一个进程。更确切地说，一个容器，就是一个进程。这 是容器技术的“天性”，不可能被修改。所以，将一个原本运行在虚拟机里的应用，“无缝迁 移”到容器中的想法，实际上跟容器的本质是相悖的。
 
 
 
@@ -71,7 +79,7 @@ Pods can be horizontally scaled via API
 
 
 
-## Kubernetes 架构
+# Kubernetes 架构
 
 
 
@@ -87,7 +95,7 @@ Pods can be horizontally scaled via API
 
 ![image-20200324013422881](basic_knowledge.assets/image-20200324013422881.png)
 
-### Master node
+## Master node
 
 集群的网关和中枢，负责为用户和客户端暴露API，跟踪其他服务器的健康状态，以最优的方式调度工作负载，已经编排其他组件之间的通信等任务。
 
@@ -95,7 +103,7 @@ Pods can be horizontally scaled via API
 
 包含3个进程
 
-#### API Server
+### API Server
 
 提供资源统一的入口
 
@@ -103,7 +111,7 @@ Pods can be horizontally scaled via API
 
 
 
-#### Controller manager
+### Controller manager
 
 资源的管理和调度（pod调度），即容器编排
 
@@ -111,7 +119,7 @@ Pods can be horizontally scaled via API
 
 
 
-#### Scheduler
+### Scheduler
 
 调度的队列，观察node的列表
 
@@ -123,41 +131,53 @@ Pods can be horizontally scaled via API
 
 
 
-### Worker node
+## Worker node
 
-#### Kubelet
+### Kubelet
 
 与Master node通信的集群代理
 
-负责pod对应的容器创建，启动停止等任务，  与Master node协同工作, 实现集群管理，实现容器运行时的交互，称CRI (Container  Runtime Interface)
+
+
+#### CRI
+
+负责pod对应的容器创建，启动停止等任务，  与Master node协同工作, 实现集群管理，实现容器运行时的交互，称CRI (Container  Runtime Interface)，这个接口定义了 容器运行时的各项核心操作，比如:启动一个容器需要的所有参数。
 
 
 
-还通过gRPC协议，同Device Plugin的插件进行交互，这个插件时kubernetes用来管理GPU等宿主机物理设备的主要组件
+#### gRPC
+
+通过gRPC协议，同Device Plugin的插件进行交互，这个插件时kubernetes用来管理GPU等宿主机物理设备的主要组件
 
 也是基于Kubernetes项目进行机器学习训练，高性能作业支持等工作必须关注的功能
 
+#### CRI
 
-
-另是调用网络插件和存储插件为容器配置网络和数据持久化，即CNI (Container Networking Interface), CSI (Container Storage Interface)
-
-
+具体的容器运行时，比如 Docker 项目，则一般通过 OCI 这个容器运行时规范同底层的 Linux 操 作系统进行交互，即:把 CRI 请求翻译成对 Linux 操作系统的调用(操作 Linux Namespace 和 Cgroups 等)。
 
 
 
-#### Kube proxy
+#### CNI/CSI
+
+调用网络插件和存储插件为容器配置网络和数据持久化，即CNI (Container Networking Interface), CSI (Container Storage Interface)
+
+
+
+
+
+## Kube proxy
 
 实现kubernetes service 的通信和负载均衡机制的重要组件，缓存代理，通过iptables的nat表实现
 
 
 
-#### Docker Engine
+### Docker Engine
 
 Docker 引擎，负责本机的容器创建和管理工作
 
 
 
-### etcd
+## etcd
 
 Master节点使用etcd进行存储, 简单的key-value 存储，即整个集群的持久化数据
 
@@ -169,11 +189,21 @@ Master节点使用etcd进行存储, 简单的key-value 存储，即整个集群�
 
 
 
-### kubectl
+# installation
+
+## kubespray (In prod)
+
+https://github.com/kubernetes-sigs/kubespray
+
+
+
+
+
+# kubectl
 
 与master node交互
 
-#### kubeconfig
+## kubeconfig
 
 包含服务器信息，接入API Server的认证信息
 
@@ -181,7 +211,7 @@ Master节点使用etcd进行存储, 简单的key-value 存储，即整个集群�
 
 
 
-## Kubernetes 功能
+# Kubernetes 功能
 
 ### Pod 容器集
 
@@ -378,6 +408,14 @@ Pod的抽象层，
 #### Endpoint
 
 Endpoint: Pod IP + Container Port 
+
+
+
+# secret对象
+
+如果现在两个不同 Pod 之间不仅有“访问关系”，还要求在发起时加上授权信息。最典型的 例子就是 Web 应用对数据库访问时需要 Credential(数据库的用户名和密码)信息
+
+Kubernetes 项目提供了一种叫作 Secret 的对象，它其实是一个保存在 Etcd 里的键值对数据。这 样，你把 Credential 信息以 Secret 的方式存在 Etcd 里，Kubernetes 就会在你指定的 Pod(比 如，Web 应用的 Pod)启动时，自动把 Secret 里的数据以 Volume 的方式挂载到容器里。这样， 这个 Web 应用就可以访问数据库了。
 
 
 

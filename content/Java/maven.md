@@ -203,6 +203,30 @@ vim /root/java_web/apache-maven-3.6.3/conf/setting.xml
 
 
 
+
+
+# Maven 文件类型
+
+配置pom文件的类型
+
+
+
+## jar
+
+java的包
+
+## war
+
+web的包
+
+## pom
+
+父程序都是pom包
+
+下面可以继续打jar，war 或pom
+
+
+
 # 基本命令
 
 ```

@@ -30,7 +30,7 @@ show variables like '%storage_engine%';
 
 # INNODB
 
-用于处理大量的短期事物，数据存储于表空间table space中
+用于处理大量的短期事务，数据存储于表空间table space中
 
 MyISAM 不能保证系统奔溃后可以恢复
 

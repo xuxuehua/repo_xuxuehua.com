@@ -26,6 +26,8 @@ date: 2019-03-14 16:12
 
 #### 存放Credential
 
+存放数据库的 Credential 信息场景
+
 ```
 apiVersion: v1
 kind: Pod
@@ -81,7 +83,7 @@ pass          Opaque                                1         51s
 
 
 
-#### 创建Secret
+#### 创建Secret by yaml
 
 Secret对象要求数据必须经过Base64转码操作
 
@@ -91,6 +93,8 @@ YWRtaW4=
 $ echo -n '1f2d1e2e67df' | base64
 MWYyZDFlMmU2N2Rm
 ```
+
+> 像这样创建的 Secret 对象，它里面的内容仅仅是经过了转码，而并没有被加 密。在真正的生产环境中，你需要在 Kubernetes 中开启 Secret 的加密插件，增强数据的安全性。
 
 
 
@@ -143,7 +147,7 @@ $ cat /projected-volume/pass
 
 ### ConfigMap
 
-保存的是不需要加密的信息，如配置信息
+与 Secret 类似, 但保存的是不需要加密的信息，如配置信息
 
 
 
@@ -288,9 +292,9 @@ Service Account 对象的作用，就是 Kubernetes 系统内置的一种“服�
 
 #### 实现原理
 
-靠 Projected Volume 机制
+利用Projected Volume 机制
 
-如果你查看一下任意一个运行在 Kubernetes 集群里的 Pod，就会发现，每一个 Pod，都已经自动声明一个类型是 Secret、名为 default-token-xxxx 的 Volume，然后 自动挂载在每个容器的一个固定目录上。比如：
+如果你查看一下任意一个运行在 Kubernetes 集群里的 Pod，就会发现，每一个 Pod，都已经自动声明一个类型是 Secret、名为 default-token-xxxx 的 Volume，然后 自动挂载在每个容器的一个固定目录上
 
 ```
 $ kubectl describe pod nginx-deployment-5c678cfb6d-lg9lw
@@ -324,71 +328,111 @@ ca.crt namespace  token
 
 这种把 Kubernetes 客户端以容器的方式运行在集群里，然后使用 default Service Account 自动授权的方式，被称作“InClusterConfig”，也是我最推荐的进行 Kubernetes API 编程的授权方式。
 
+考虑到自动挂载默认 ServiceAccountToken 的潜在风险，Kubernetes 允许你设置默认不为 Pod 里的容器自动挂载这个 Volume。
 
 
 
-
-## Persistent Volume Claim (PVC) (常用)
+# Persistent Volume Claim (PVC) (常用)
 
 降低了用户声明和使用持久化 Volume 的门槛。
 
 PVC是一种特殊的Volume，但PVC所指定的volume类型，是和PV绑定之后才知道
 
+Kubernetes 中 PVC 和 PV 的设计，实际上类似于“接口”和“实现”的思想。开发者 只要知道并会使用“接口”，即:PVC;而运维人员则负责给“接口”绑定具体的实现，即: PV。
 
 
-### 定义使用
 
-声明PVC
+## 原理
+
+有了 PVC 之后，一个开发人员想要使用一个 Volume，只需要简单的两步即可
+
+第一步:定义一个 PVC，声明想要的 Volume 的属性
 
 ```
-kind: PersistentVolumeClaim
 apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
-  name: pv-claim
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
+	name: pv-claim spec:
+accessModes:
+- ReadWriteOnce resources:
     requests:
       storage: 1Gi
 ```
 
-> storage: 1Gi	Volume大小至少是1GiB
->
-> accessModes 	Volume 挂载的方式是可读写的，并且只能被挂载在一个节点上，而非被多个节点共享
+> 可以看到，在这个 PVC 对象里，不需要任何关于 Volume 细节的字段，只有描述性的属性和定 义。比如，storage: 1Gi，表示我想要的 Volume 大小至少是 1 GB;accessModes: ReadWriteOnce，表示这个 Volume 的挂载方式是可读写，并且只能被挂载在一个节点上而非 被多个节点共享
 
 
 
-声明使用这个PVC
+第二步:在应用的 Pod 中，声明使用这个 PVC
 
 ```
 apiVersion: v1
 kind: Pod
 metadata:
-  name: pv-pod
+	name: pv-pod 
 spec:
-  containers:
-    - name: pv-container
-      image: nginx
-      ports:
-        - containerPort: 80
-          name: "http-server"
-      volumeMounts:
-        - mountPath: "/usr/share/nginx/html"
-          name: pv-storage
-  volumes:
-    - name: pv-storage
-      persistentVolumeClaim:
-        claimName: pv-claim
+	containers:
+	- name: pv-container
+    image: nginx
+    ports:
+		- containerPort: 80 
+			name: "http-server"
+		volumeMounts:
+			- mountPath: "/usr/share/nginx/html"
+				name: pv-storage 
+	volumes:
+		- name: pv-storage 
+			persistentVolumeClaim:
+				claimName: pv-claim
 ```
 
-> 需要声明它的类型是 persistentVolumeClaim, 然后指定PVC名称即可
 
 
 
 
+## volumeClaimTemplates
 
-## Persistent Volume (PV)
+```
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+spec:
+  serviceName: "nginx" 
+  replicas: 2 
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec: 
+      containers:
+      - name: nginx
+        image: nginx:1.9.1 
+        ports:
+        - containerPort: 80
+          name: web 
+        volumeMounts: 
+        - name: www
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata: 
+      name: www
+    spec: 
+      accessModes: 
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+```
+
+> volumeClaimTemplates和Deployment 里 Pod 模板(PodTemplate)的作用类似。也就是说，凡是被这 个 StatefulSet 管理的 Pod，都会声明一个对应的 PVC;而这个 PVC 的定义，就来自于 volumeClaimTemplates 这个模板字段。更重要的是，这个 PVC 的名字，会被分配一个与这个 Pod 完全一致的编号。
+
+
+
+# Persistent Volume (PV)
 
 创建PVC之后，Kubernetes会自动为其绑定一个符合条件的Volume
 

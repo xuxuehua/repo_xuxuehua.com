@@ -43,6 +43,22 @@ python setup.py  install
 
 Roster系统编译了一个内部数据结构，称为Targets。Targets是一个目标系统和关于如何连接到系统属性的列表。
 
+```
+# target的信息
+    host:        # 远端主机的ip地址或者dns域名
+    user:        # 登录的用户
+    passwd:      # 用户密码,如果不使用此选项，则默认使用秘钥方式
+# 可选的部分
+    port:        #ssh端口
+    sudo:        #可以通过sudo
+    tty:         # 如果设置了sudo，设置这个参数为true
+    priv:        # ssh秘钥的文件路径
+    timeout:     # 当建立链接时等待响应时间的秒数
+    minion_opts: # minion的位置路径
+    thin_dir:    # target系统的存储目录，默认是/tmp/salt-<hash>
+    cmd_umask:   # 使用salt-call命令的umask值
+```
+
 
 
 # usage
@@ -197,5 +213,19 @@ Salt-roster-template.yaml
   user: salt
   sudo: True
 {% endfor -%}
+```
+
+
+
+
+
+获取 grains 信息
+
+```
+# salt-ssh 'squid1' grains.item cpu_model
+squid1:
+    ----------
+    cpu_model:
+        Intel(R) Xeon(R) CPU           X3440  @ 2.53GHz
 ```
 

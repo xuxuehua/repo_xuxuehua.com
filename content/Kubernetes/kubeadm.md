@@ -8,19 +8,15 @@ date: 2019-02-22 22:20
 
 
 
-# kubeadm （不可上PROD）
+# kubeadm 
 
 Kubernetes 项目自带的集群构建工具
 
 负责构建一个最小化的可用集群
 
-
-
 使用kubeadm 第一步，是要在机器上手动安装好kubeadm，kubelet和kubectl 这三个二进制文件
 
 
-
-kubeadm不可以上生产环境，无法一键部署Kubernetes集群，因为Etcd和Master等组件都应该是多节点集群，而不是单点
 
 
 
@@ -50,7 +46,7 @@ apt-get install -y docker.io kubeadm
 
 
 
-## kubeadm init
+# kubeadm init
 
 集群快速初始化，部署master 节点组件
 
@@ -58,7 +54,7 @@ apt-get install -y docker.io kubeadm
 
 
 
-### Preflight Checks
+## Preflight Checks
 
 执行kubeadm init之后，需要来检查当前主机是否可以部署kubernetes
 
@@ -80,9 +76,30 @@ Preflight Checks之后，kubeadm会生成Kubernetes对外提供服务所需的�
 
 
 
-### 配置文件
+## 生成证书
+
+kubeadm 为 Kubernetes 项目生成的证书文件都放在 Master 节点的 /etc/kubernetes/pki 目录 下。在这个目录下，最主要的证书文件是 ca.crt 和对应的私钥 ca.key。
+
+用户使用 kubectl 获取容器日志等 streaming 操作时，需要通过 kube-apiserver 向 kubelet 发起请求，这个连接也必须是安全的。kubeadm 为这一步生成的是 apiserver-kubelet- client.crt 文件，对应的私钥是 apiserver-kubelet-client.key
+
+Kubernetes 集群中还有 Aggregate APIServer 等特性，也需要用到专门的证书
+
+也可以不让 kubeadm 为你生成这些证书，而是拷贝现 有的证书到如下证书的目录里
+
+```
+/etc/kubernetes/pki/ca.{crt,key}
+```
+
+
+
+## 配置文件
 
 证书生成之后，kubeadm会为其他组件生成访问kube-apiserver所需的配置文件 `/etc/kubernetes/xxx.conf`
+
+```
+$ ls /etc/kubernetes/
+admin.conf controller-manager.conf kubelet.conf scheduler.conf
+```
 
 这些配置文件记录的是，当前这个Master节点的服务器地址，监听端口，证书目录等信息，对应的客户端如scheduler，kubelet可以直接加载相应文件，使用厘米的信息于kube-apiserver建立安全连接
 
@@ -145,6 +162,8 @@ spec:
 
 kubeadm还会再生成一个Etcd的Pod YAML文件，用来通过同样的Static Pod的方式启动Etcd
 
+最后 Master 组件的 Pod YAML 文件如下
+
 ```
 $ ls /etc/kubernetes/manifests/
 etcd.yaml  kube-apiserver.yaml  kube-controller-manager.yaml  kube-scheduler.yaml
@@ -152,19 +171,19 @@ etcd.yaml  kube-apiserver.yaml  kube-controller-manager.yaml  kube-scheduler.yam
 
 
 
-### kubeadm 监听
+## kubeadm 监听
 
-在`/etc/kubernetes/manifests` 目录下，kubelet会自动创建这些YAML文件定义的Pod，即Master组件容器
+一旦上述 YAML 文件出现在被 kubelet 监视的 `/etc/kubernetes/manifests` 目录下，kubelet会自动创建这些YAML文件定义的Pod，即Master组件容器
 
 
 
-### Master 容器启动
+## Master 容器启动
 
 启动之后，kubeadm会检查`localhost:6443/healthz` ， 这个Master组件的健康检查URL，等Master组件完全运行起来
 
 
 
-### 生成token
+## 生成bootstrap token
 
 kubeadm会为整个集群生成一个bootstrap token，通过这个token，任何一个安装了kubelet和kubeadm的节点都可以通过kubeadm join 加入到集群中
 
@@ -174,7 +193,7 @@ kubeadm会为整个集群生成一个bootstrap token，通过这个token，任�
 
 
 
-### 安装默认插件
+## 安装默认插件
 
 kube-proxy 和 DNS 这两个插件是必须安装的。
 
@@ -182,7 +201,11 @@ kube-proxy 和 DNS 这两个插件是必须安装的。
 
 
 
-### --config kubeadm.yaml
+# 配置 kubeadm 的部署参数
+
+## --config kubeadm.yaml
+
+给 kubeadm 提供一个 YAML 文件
 
 指定kube-apiserver的启动参数，如
 
@@ -214,12 +237,16 @@ networking:
 nodeRegistration:
   criSocket: /var/run/dockershim.sock
   ...
-
+apiServerExtraArgs:
+	advertise-address: 192.168.0.103
+	anonymous-auth: false
+	enable-admission-plugins: AlwaysPullImages,DefaultStorageClass 
+	audit-log-path: /home/johndoe/audit.log
 ```
 
+> YAML 文件提供的可配置项远不止这些。比如，你还可以修改 kubelet 和 kube-proxy 的配 置，修改 Kubernetes 使用的基础镜像的 URL(默认的k8s.gcr.io/xxx镜像 URL 在国内访问是 有困难的)，指定自己的证书文件，指定特殊的容器运行时等等
 
-
-## kubeadm join
+# kubeadm join
 
 使用join token将节点快速加入到指定集群中，即work node中，随后就会加入到集群中
 
@@ -231,17 +258,43 @@ kubeadm发起一次非https的访问到kube-apiserver中，拿到保存在Config
 
 
 
-
-
-## kubeadm token
+# kubeadm token
 
 集群构建后管理用于加入集群时使用的认证令牌
 
-
-
-## kubeadm reset
+# kubeadm reset
 
 删除集群构建过程中生成的文件，回到初始状态
 
 
+
+
+
+
+
+# example
+
+## kubeadm.yaml
+
+```
+apiVersion: kubeadm.k8s.io/v1alpha1 
+kind: MasterConfiguration 
+controllerManagerExtraArgs:
+	horizontal-pod-autoscaler-use-rest-clients: "true"
+	horizontal-pod-autoscaler-sync-period: "10s"
+	node-monitor-grace-period: "10s" 
+apiServerExtraArgs:
+	runtime-config: "api/all=true" 
+kubernetesVersion: "stable-1.11"
+```
+
+> horizontal-pod-autoscaler-use-rest-clients: "true"
+>
+> kube-controller-manager 能够使用自定义资源(Custom Metrics)进行 自动水平扩展
+
+
+
+```
+$ kubeadm init --config kubeadm.yaml
+```
 

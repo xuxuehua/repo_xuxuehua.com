@@ -113,3 +113,62 @@ PNG-8和真色彩PNG-24，PNG-32
 
 http://www.getmarkman.com/
 
+
+
+
+
+# No script 控制
+
+To detect if JavaScript is disabled in a web browser, use the <noscript> tag. The HTML <noscript> tag is used to handle the browsers, which do recognize <script> tag but do not support scripting. This tag is used to display an alternate text message.
+
+Here’s an example,
+
+```
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>HTML noscript Tag</title>
+   </head>
+
+   <body>
+      <script>
+         <!--
+            document.write("Hello JavaScript!")
+         -->
+      </script>
+     
+      <noscript>
+         Your browser does not support JavaScript!
+      </noscript>
+   </body>
+</html>
+```
+
+
+
+```
+<div class="jswarning"> 
+<div class="jswarning_c"> 
+<h4><span class="label label-warning">Warning !</span></h4> 
+<span>Javascript is enabled. To continue, disable Javascript!</span> 
+<p><small>- Type "about:config" in your address bar.<br> 
+- Search for "javascript".<br> 
+- Set "javscript.enabled" to "false".</small></p> 
+</div> 
+</div>
+
+<noscript> 
+<style> 
+.jswarning { display: none !important; } 
+</style> 
+</noscript>
+```
+
+
+
+## disable javascript
+
+1. In Firefox, type “**about:config**” in the address bar, then press “**Enter**“.
+2. Select the “**I accept the risk!**” button.
+3. Type “**javascript**” in the “**Search**” box.
+4. Double-click the “**javascript.enabled**” line to toggle the setting between “**true**” and “**false**” as desired.
