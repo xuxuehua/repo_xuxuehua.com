@@ -436,6 +436,27 @@ setuptools的[文档](https://pythonhosted.org/setuptools/setuptools.html#develo
 
 
 
+usage
+
+https://packaging.python.org/tutorials/packaging-projects/
+
+```
+python3 setup.py sdist bdist_wheel
+python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+Enter your username: __token__
+Enter your password: TOKEN_FROM_WEBSITE
+```
+
+
+
+```
+pip install -i https://test.pypi.org/simple/ smn
+```
+
+
+
+
+
 #### requirements.txt
 
 这个文件存在的目的是:

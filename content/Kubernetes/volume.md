@@ -352,9 +352,11 @@ Kubernetes 中 PVC 和 PV 的设计，实际上类似于“接口”和“实现
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-	name: pv-claim spec:
-accessModes:
-- ReadWriteOnce resources:
+	name: pv-claim 
+spec:
+  accessModes:
+  - ReadWriteOnce 
+  resources:
     requests:
       storage: 1Gi
 ```
@@ -392,6 +394,8 @@ spec:
 
 ## volumeClaimTemplates
 
+volumeClaimTemplates和Deployment 里 Pod 模板(PodTemplate)的作用类似。也就是说，凡是被这 个 StatefulSet 管理的 Pod，都会声明一个对应的 PVC;而这个 PVC 的定义，就来自于 volumeClaimTemplates 这个模板字段。更重要的是，这个 PVC 的名字，会被分配一个与这个 Pod 完全一致的编号。
+
 ```
 apiVersion: apps/v1
 kind: StatefulSet
@@ -428,7 +432,7 @@ spec:
           storage: 1Gi
 ```
 
-> volumeClaimTemplates和Deployment 里 Pod 模板(PodTemplate)的作用类似。也就是说，凡是被这 个 StatefulSet 管理的 Pod，都会声明一个对应的 PVC;而这个 PVC 的定义，就来自于 volumeClaimTemplates 这个模板字段。更重要的是，这个 PVC 的名字，会被分配一个与这个 Pod 完全一致的编号。
+
 
 
 

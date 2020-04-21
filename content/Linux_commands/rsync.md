@@ -25,6 +25,16 @@ rsync 是归档的拷贝，会复制所有的文件信息，包括权限时间�
 
 
 
+## -e ssh tunnel
+
+
+
+```
+rsync -avz -e "ssh -i ./1 -p 54321 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --progress localmedia ubuntu@destination_ip:/tmp 
+```
+
+
+
 
 
 ## 本地到远程  PUSH

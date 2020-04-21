@@ -254,6 +254,12 @@ https://aws.amazon.com/ec2/pricing/
 
 
 
+## Spot Fleet
+
+https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/using-spot-limits.html#spot-fleet-limitations
+
+
+
 ## AWS EMR
 
 https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-release-5x.html

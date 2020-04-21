@@ -18,7 +18,9 @@ date: 2020-01-12 16:17
 
 
 
-开源许可证分成两大类。
+## Tool
+
+https://choosealicense.com/
 
 
 

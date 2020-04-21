@@ -94,13 +94,19 @@ HDFS为了保证数据的高可用，会将一个数据块复制为多份（缺�
 
 
 
+![image-20200412204320842](hdfs.assets/image-20200412204320842.png)
+
+
+
+
+
 ### Secondary NameNode (非热备)
 
 并非NameNode热备，在其挂掉的时候接管并提供服务
 
 主要是分担NameNode工作，如定期合并Fsimage和Edits，并推送给NameNode
 
-![image-20200412204320842](hdfs.assets/image-20200412204320842.png)
+
 
 
 
@@ -115,6 +121,14 @@ DataNode负责文件数据的存储和读写操作，HDFS将文件数据分割�
 
 
 在实践中，HDFS集群的DataNode服务器会有很多台，一般在几百台到几千台这样的规模，每台服务器配有数块磁盘，整个集群的存储容量大概在几PB到数百PB。
+
+
+
+DataNode不单单存储块的数据，还有块的元数据
+
+![image-20200418132322153](hdfs.assets/image-20200418132322153.png)
+
+
 
 
 

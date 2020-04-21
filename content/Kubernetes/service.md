@@ -1,12 +1,9 @@
 ---
-title: "services"
-date: 2019-04-07 17:14
+title: "Service"
+date: 2020-04-18 16:19
+collection: 应用配置
 ---
-
-
-[TOC]
-
-
+[toc]
 
 
 
@@ -30,7 +27,7 @@ kube-proxy会watch apiServer中etcd的变化，然后转换为相应的规则
 
 ## user space 模型
 
-![img](https://snipboard.io/0kHw5e.jpg)
+![img](service.assets/0kHw5e.jpg)
 
 
 
@@ -42,7 +39,7 @@ kube-proxy会watch apiServer中etcd的变化，然后转换为相应的规则
 
 ## iptables 模型
 
-![img](https://snag.gy/wMid4m.jpg)
+![img](service.assets/wMid4m.jpg)
 
 
 
@@ -54,7 +51,7 @@ kube-proxy会watch apiServer中etcd的变化，然后转换为相应的规则
 
 ## ipvs 模型
 
-![img](https://snag.gy/ad5SnY.jpg)
+![img](service.assets/ad5SnY.jpg)
 
 
 
