@@ -440,3 +440,24 @@ quit	-> 	QUIT
 ## epoll
 
 select和poll最大的问题是，每次都需要传递全部并发fd，而实际只有少量fd有数据需要处理，所以效率低下。而epoll通过epoll_ctl和epoll_wait分解了这个问题，效率大幅提高。
+
+
+
+
+
+# 跨域错误
+
+当出现403跨域错误的时候 `No 'Access-Control-Allow-Origin' header is present on the requested resource`，需要给Nginx服务器配置响应的header参数
+
+```
+location / {  
+    add_header Access-Control-Allow-Origin *;
+    add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS';
+    add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization';
+
+    if ($request_method = 'OPTIONS') {
+        return 204;
+    }
+} 
+```
+

@@ -26,11 +26,11 @@ Yarn作为一个大数据资源调度框架，调度的是大数据计算引擎�
 
 # Yarn架构
 
-一个是资源管理器（Resource Manager），一个是节点管理器（Node Manager）。这也是Yarn的两种主要进程
+一个是资源管理器（Resource Manager），一个是节点管理器（Node Manager）
 
-![image-20200303173117415](yarn.assets/image-20200303173117415.png)
+![image-20200504130322069](yarn.assets/image-20200504130322069.png)
 
-
+ 
 
 ## 注意点
 
@@ -52,21 +52,31 @@ ResourceManager进程负责整个集群的资源调度管理，通常部署在�
 
 
 
+### Application Master 非常驻，有任务才出现
+
+每个应用程序对应一个， 如MapReduce，Spark，对应的是调度执行的任务
+
+任务的监控和容错，数据的切分，为应用程序申请资源
+
+负责应用程序的管理，为应用程序向Resource Manager申请资源，分配给内部的Task
+
+需要与Node Manager通信，启动/停止container中的task， Application Mater也是运行在container中
 
 
 
+#### Driver
 
-### 调度器
+通过Application Master 接藕 Resource Manager
+
+调度真正在NodeManager中container里面的运行的task
+
+
+
+### scheduler 调度器
 
 其实就是一个资源分配算法，根据应用程序（Client）提交的资源申请和当前服务器集群的资源状况进行资源分配。Yarn内置了几种资源调度算法，包括Fair Scheduler、Capacity Scheduler等，你也可以开发自己的资源调度算法供Yarn调用。
 
 
-
-### 应用程序管理器
-
-Yarn进行资源分配的单位是容器（Container），每个容器包含了一定量的内存、CPU等计算资源，默认配置下，每个容器包含一个CPU核心。容器由NodeManager进程启动和管理，NodeManger进程会监控本节点上容器的运行状况并向ResourceManger进程汇报。
-
-应用程序管理器负责应用程序的提交、监控应用程序运行状态等。应用程序启动后需要在集群中运行一个ApplicationMaster，ApplicationMaster也需要运行在容器里面。每个应用程序启动后都会先启动自己的ApplicationMaster，由ApplicationMaster根据应用程序的资源需求进一步向ResourceManager进程申请容器资源，得到容器以后就会分发自己的应用程序代码到容器上启动，进而开始分布式计算。
 
 
 
@@ -82,33 +92,25 @@ NodeManager进程负责具体服务器上的资源和任务管理，在集群的
 
 
 
+### Container 非常驻，有任务才出现
+
+Yarn进行资源分配的单位是容器（Container），每个容器包含了一定量的内存、CPU等计算资源，默认配置下，每个容器包含一个CPU核心。容器由NodeManager进程启动和管理，NodeManger进程会监控本节点上容器的运行状况并向ResourceManger进程汇报。
+
+应用程序管理器负责应用程序的提交、监控应用程序运行状态等。应用程序启动后需要在集群中运行一个ApplicationMaster，ApplicationMaster也需要运行在容器里面。每个应用程序启动后都会先启动自己的ApplicationMaster，由ApplicationMaster根据应用程序的资源需求进一步向ResourceManager进程申请容器资源，得到容器以后就会分发自己的应用程序代码到容器上启动，进而开始分布式计算。
 
 
-## Application Master 非常驻，有任务才出现
 
-每个应用程序对应一个， 如MapReduce，Spark
-
-任务的监控和容错，数据的切分，为应用程序申请资源
-
-负责应用程序的管理，为应用程序向Resource Manager申请资源，分配给内部的Task
-
-需要与Node Manager通信，启动/停止container中的task， Application Mater也是运行在container中
-
+解耦合NodeManager和Task
 
 
 
 
-## Container 非常驻，有任务才出现
-
-yarn中资源的抽象，封装了CPU，Memory等资源的容器
 
 
 
-## Client
+#### task
 
-提交作业
-
-查询作业的运行进度
+Container 中的运算任务
 
 
 

@@ -68,6 +68,37 @@ gitlab-ctl reconfigure
 
 
 
+# gitlab.yml
+
+```
+variables:
+  S3_BUCKET: "s3://xx"
+
+
+before_script:
+  - echo "Job-${CI_JOB_ID} ${CI_JOB_NAME} of ${CI_JOB_STAGE} is starting"
+
+after_script:
+  - echo "Job-${CI_JOB_ID} ${CI_JOB_NAME} of ${CI_JOB_STAGE} is finished"
+
+stages:
+  - deploy_stg_v1
+
+stg_v1_5.21.0:
+  stage: deploy_stg_v1
+  when: manual
+  only:
+    - branches@repo
+  variables:
+    BDP_VERSION: "1.0"
+    IMAGE_VERSION: "5.21.0"
+  script:
+    - echo "Deploying ${CI_COMMIT_REF_NAME}/${CI_COMMIT_SHA} to ${S3_STG_CODE_PATH}"
+    - rm -rf ${CI_PROJECT_DIR}/configs/${BDP_VERSION}/${IMAGE_VERSION}/build/
+```
+
+
+
 # example
 
 gitlab ci/cd 

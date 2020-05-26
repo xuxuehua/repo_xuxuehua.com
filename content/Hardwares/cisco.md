@@ -51,3 +51,23 @@ More softkey will appear press it
 You will see Erase softkey, press it
 ```
 
+
+
+
+
+
+
+## 交换机面板指示灯
+
+Catalyst 2950/3550系列交换机前面板LED指示灯标注
+
+交换机LED指示灯标注
+SYSTEM LED指示灯用于显示系统加电情况，各指示灯含义如表1所示。
+
+| 颜色   | 系统状态                   |
+| ------ | -------------------------- |
+| 灭     | 系统未加电                 |
+| 绿色   | 系统正常运行               |
+| 琥珀色 | 系统虽然加电，但电源有问题 |
+
+![image-20200515143547702](cisco.assets/image-20200515143547702.png)

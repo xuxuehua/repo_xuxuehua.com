@@ -250,6 +250,35 @@ except MyInputError as err:
     print('error: {}'.format(err))
 ```
 
+
+
+## raise  (re-raise exception)
+
+```
+
+In [6]: try: 
+   ...:     1/0 
+   ...: except Exception as e: 
+   ...:     if not e: 
+   ...:         print('OK') 
+   ...:     else: 
+   ...:         raise 
+   ...:  
+   ...:          
+   ...:                                                                                                                                                   ---------------------------------------------------------------------------
+ZeroDivisionError                         Traceback (most recent call last)
+<ipython-input-6-b7d9bfb2c27b> in <module>
+      1 try:
+----> 2     1/0
+      3 except Exception as e:
+      4     if not e:
+      5         print('OK')
+
+ZeroDivisionError: division by zero
+```
+
+
+
 # assert
 
 Python 的 assert 语句，可以说是一个 debug 的好工具，主要用于测试一个条件是否满足。如果测试的条件满足，则什么也不做，相当于执行了 pass 语句；如果测试条件不满足，便会抛出异常 AssertionError，并返回具体的错误信息（optional）。

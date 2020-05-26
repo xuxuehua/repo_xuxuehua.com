@@ -30,6 +30,8 @@ OLAP技术是面向主题的多维数据分析技术。
 
 
 
+
+
 ## OLAP 常用操作
 
 ### 普通钻取 	roll up、drill down
@@ -117,4 +119,104 @@ ROLAP查询性能较MOLAP慢，存储却较MOLAP节省。这两种方式的OLAP�
 ClickHouse 是由号称“俄罗斯 Google”的 Yandex 开发而来，在 2016 年开源，在计算引擎里算是一个后起之秀，在内存数据库领域号称是最快的。
 
 ClickHouse 是一个列导向数据库，是原生的向量化执行引擎。它在大数据领域没有走 Hadoop 生态，而是采用 Local attached storage 作为存储，这样整个 IO 可能就没有 Hadoop 那一套的局限。
+
+
+
+
+
+# OLAP vs OLTP
+
+![image-20200522200908022](olap.assets/image-20200522200908022.png)
+
+
+
+OLTP: go and get one row or a few rows from all columns
+
+
+
+OLAP: scan through all kind of data sets every time and look at particular columns
+
+ 
+
+
+
+## Row store vs Column store
+
+![image-20200522225722088](olap.assets/image-20200522225722088.png)
+
+
+
+Row Store: MySQL, Postgresql , transaction Database use this 
+
+
+
+Column Store: OLAP character like Redshift, Snowflake, BigQuery
+
+
+
+
+
+
+
+# Data Warehouse
+
+
+
+## Data Warehouse Query Challenges
+
+**Maximising Query Performance**: Which means minimising the time taken for SQL queries to complete.
+
+**Maximising Throughput**: Batch ETL or ELT tasks must complete as quickly as possible which means running multiple processes in parallel to make best use of machine resources.
+
+**Maximising Machine Usage**: To make efficient use of machine resources, the warehouse should ideally be run at 100% CPU capacity. Clearly this often conflicts with the two priorities above, but running at any less is a waste of multi-million-dollar CPU resources. Unlike a car, a computer system won’t last any longer if it’s sitting idle most of the time.
+
+**Micro-Batch ETL and ELT Processes:** Which typically run on a repeating cycle. The machine tends to be overloaded during this time, either at or above 100% capacity in an attempt to process and deliver new data as quickly as possible.
+
+**Business Intelligence Reporting:** Which tends to be erratic, with load varying between zero and maximum capacity throughout the day.
+
+**Dashboard Queries:** Which need very fast (sub-second) performance. Machine load in these cases is extremely unpredictable, but when the capacity is needed, results must be available immediately.
+
+
+
+
+
+
+
+
+
+## Potential Performance Tuning Options
+
+
+
+**Limit Resource Usage**: Use increasingly aggressive workload management to control the number of concurrent online queries and batch tasks.
+
+**Database and Application Tuning**: Often the most effective way to improve SQL throughput, this requires deep understanding of database design principles. Even with highly skilled engineers, it can take months to deliver meaningful results. In my case it took a team of three experts almost a year to completely resolve the performance issues.
+
+**Scale Up Hardware**: Which involves additional memory, CPUs or faster disk storage or even migrating the entire application to a new, larger machine. And this can take months to complete. A typical data warehouse system can have a huge number of incoming and outgoing data feeds, many undocumented, and the preparation, testing and migration process can take considerable time. Clearly, this is not a sustainable long term strategy.
+
+
+
+**Scale Out Hardware**: Which is an option for Massively Parallel Processing (MPP) architectures, which involves adding nodes to the existing system.
+
+
+
+
+
+
+
+## The Ideal Cloud Data Warehouse Platform
+
+**Fast to Deploy**: As the solution is provided as a cloud based service, a data warehouse can be deployed within minutes without installing new hardware or even a long term financial commitment.
+
+**Complete Flexibility**: Additional nodes can be scaled up or down as needed. You can even suspend the service when it isn’t used, with compute resources charged on a per-second basis. You can automatically start up additional clusters immediately without any data reorganisation. The entire operation can run without DBA involvement.
+
+**Pay Separately for Storage**: As storage is charged separately from compute resources, it is possible to scale up to petabyte sizes, but pay only for the storage and processing power on an as-needed basis. This differs greatly from MPP solutions like Teradata or Vertica where adding nodes adds to both compute and storage at the same time.
+
+**Zero Contention**: With the ability to allocate multiple clusters of varying sized virtual warehouses to different tasks, there is no contention for compute resources. This would allow ETL/ELT processes to run completely separately from end user queries while also being shielded from the massively unpredictable analytic query demands of data scientists.
+
+**Absolute Simplicity**: Unlike the legacy database solutions, there is no indexing, partitioning or data sharding go manage. There are also no query plan statistics to capture, and almost no options to tune the system. It just works.
+
+
+
+
 

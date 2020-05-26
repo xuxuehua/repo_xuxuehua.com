@@ -268,3 +268,12 @@ bin/workloads/micro/terasort/spark/run.sh
 1.批量发送数据
 2.压缩传输数据
 3.增加带宽
+
+
+
+
+
+# Analytics Solution Choices Matrix
+
+![image-20200430163011985](basic_knowledge.assets/image-20200430163011985.png)
+

@@ -31,7 +31,17 @@ ECMAScript的一个子集
 
 
 
-## 序列化
+## stringify 序列化
+
+```
+JSON.stringify(value[, replacer[, space]])
+```
+
+> Replacer(option) :  A function that alters the behavior of the stringification process
+>
+> space(option) : A String or Number object that's used to insert white space into the output JSON string for readability purposes
+
+
 
 把任何JavaScript对象变成JSON，就是把这个对象序列化成一个JSON格式的字符串，这样才能够通过网络传递给其他计算机
 
@@ -59,9 +69,7 @@ console.log(s)
 
 
 
-### 缩进输出
-
-
+### space 缩进输出
 
 要输出得好看一些，可以加上参数，按缩进输出
 
@@ -98,7 +106,7 @@ console.log(s)
 
 
 
-### 筛选对象的键值
+### replacer 筛选对象的键值
 
 第二个参数用于控制如何筛选对象的键值，如果我们只想输出指定的属性，可以传入`Array`：
 
@@ -190,7 +198,7 @@ JSON.stringify(xiaoming); // '{"Name":"小明","Age":14}'
 
 
 
-## 反序列化
+## parse 反序列化
 
 拿到一个JSON格式的字符串，我们直接用`JSON.parse()`把它变成一个JavaScript对象：
 
@@ -219,4 +227,8 @@ console.log(JSON.stringify(obj));
 >>>
 {name: '小明同学', age: 14}
 ```
+
+
+
+
 

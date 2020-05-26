@@ -30,6 +30,43 @@ date: 2018-10-22 12:12
 
 
 
+### || 或
+
+```sh
+$ cat /tmp/1.sh
+particular_script()
+{
+    false
+}
+
+set -e
+
+echo one
+particular_script || true
+echo two
+particular_script
+echo three
+
+$ bash /tmp/1.sh
+one
+two
+```
+
+`three` will be never printed.
+
+Also, I want to add that when `pipefail` is on, it is enough for shell to think that the entire pipe has non-zero exit code when one of commands in the pipe has non-zero exit code (with `pipefail` off it must the last one).
+
+```shell
+$ set -o pipefail
+$ false | true ; echo $?
+1
+$ set +o pipefail
+$ false | true ; echo $?
+0
+```
+
+
+
 
 
 ## 转义符

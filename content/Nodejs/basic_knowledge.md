@@ -21,13 +21,21 @@ MVC：为了解决直接用脚本语言嵌入HTML导致的可维护性差的问�
 
 
 
+可以用来部署构建工具webpack的环境依赖
+
+
+
+
+
 ### Node.js开发优势
 
 一是后端语言也是JavaScript，以前掌握了前端JavaScript的开发人员，现在可以同时编写后端代码；
 
 二是前后端统一使用JavaScript，就没有切换语言的障碍了；
 
-三是速度快，非常快！这得益于Node.js天生是异步的。
+三是速度快，非常快！这得益于Node.js天生是异步的
+
+
 
 
 
@@ -44,6 +52,8 @@ MVC：为了解决直接用脚本语言嵌入HTML导致的可维护性差的问�
 
 
 ## 安装
+
+偶数为稳定版本
 
 https://nodejs.org/en/
 
@@ -83,7 +93,7 @@ export NVM_DIR="$HOME/.nvm"
 
 
 
-### npm
+### npm 包管理工具
 
 Node Package Management
 

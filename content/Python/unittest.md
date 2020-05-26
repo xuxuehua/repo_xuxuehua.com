@@ -31,7 +31,7 @@ import unittest
                   arr[j] = tmp
 # 编写子类继承unittest.TestCase 
 class TestSort(unittest.TestCase):
-# 以test开头的函数将会被测试 
+# 以test开头的函数将会被测试, 即只有test开头才会被测试
 		def test_sort(self):
 				arr = [3, 4, 1, 5, 6]
 				sort(arr)
@@ -66,6 +66,10 @@ OK
 ## 集成测试
 
 集成测试则要把好几个单元组装到一起才能测试，测试通过的前提条件是，所有这些单元都写好了，这个周期就明显比单元测试要长；系统测试则要把整个系统的各个模块都连在一起，各种数据都准备好，才可能通过。
+
+
+
+
 
 
 

@@ -93,6 +93,8 @@ date: 2018-12-26 01:10
 
 　　}　close brace, close curly　右花括号
 
+   {}	curly brackets 大括号
+
 　　(　open parenthesis, open paren　左圆括号
 
 　　)　close parenthesis, close paren　右圆括号
@@ -104,6 +106,8 @@ date: 2018-12-26 01:10
 　　]　close bracket 右方括号
 
 　　[] square brackets　方括号
+　　
+　　<> angle brackets 角括号
 
 　　.　period, dot　句号，点
 

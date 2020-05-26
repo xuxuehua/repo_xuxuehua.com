@@ -74,6 +74,10 @@ Allow network traffic between instances
 
 
 
+## Region 
+
+Independent Geographic Area
+
 
 
 

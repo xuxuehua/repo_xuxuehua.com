@@ -96,7 +96,7 @@ parent process
 
 
 
-### subprocess.PIPE
+### øsubprocess.PIPE
 
 subprocess.PIPE 实际上为文本流提供一个缓存区。child1的stdout将文本输出到缓存区，随后child2的stdin从该PIPE中将文本读取走。child2的输出文本也被存放在PIPE中，直到communicate() 方法从PIPE中读取PIPE中的文本
 

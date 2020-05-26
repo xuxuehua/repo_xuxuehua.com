@@ -14,3 +14,5 @@ Physically isolated
 
 Conceptually like logical data centers
 
+Miltiple isolated locations / data centers within a region 
+

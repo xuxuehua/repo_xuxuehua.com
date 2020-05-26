@@ -10,13 +10,17 @@ date: 2019-06-24 14:47
 
 Control of the access and permissions
 
+Top control for AWS 
+
+![image-20200425202649794](iam.assets/image-20200425202649794.png)
+
 
 
 
 
 ## Policy Elements
 
-![img](https://snag.gy/LPcUHZ.jpg)
+![image-20200425202634292](iam.assets/image-20200425202634292.png)
 
 
 
@@ -51,4 +55,10 @@ Use case: Third-party vendor account access
 AWS resource can be launched into roles
 
 
+
+
+
+# policy generator
+
+https://awspolicygen.s3.amazonaws.com/policygen.html
 

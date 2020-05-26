@@ -22,8 +22,9 @@ function functionName() {
 
 
 
-* 函数体内部的语句在执行时，一旦执行到`return`时，函数就执行完毕
-* 如果没有`return`语句，函数执行完毕后也会返回结果，只是结果为`undefined`
+函数体内部的语句在执行时，一旦执行到`return`时，函数就执行完毕
+
+如果没有`return`语句，函数执行完毕后也会返回结果，只是结果为`undefined`
 
 ```
 function abs(x) {
@@ -37,9 +38,11 @@ function abs(x) {
 
 
 
-### 将函数作为函数对象
 
-* `function (x) { ... }`是一个匿名函数，它没有函数名。但是，这个匿名函数赋值给了变量`abs`，所以，通过变量`abs`就可以调用该函数
+
+### 将函数作为函数对象 (ES5)
+
+`function (x) { ... }`是一个匿名函数，它没有函数名。但是，这个匿名函数赋值给了变量`abs`，所以，通过变量`abs`就可以调用该函数
 
 ```
 var abs = function (x) {
@@ -53,10 +56,29 @@ var abs = function (x) {
 
 
 
+### 箭头函数 (ES6)
+
+```
+let sq = (x) => {return x*x;};
+or
+let sq = (x) => x*x;
+```
+
+
+
+```
+sq = (x) => x*x;
+(x) => x*x
+sq(5)
+25
+```
+
+
+
 
 ## 调用函数
 
-* 调用函数时，按顺序传入参数即可
+调用函数时，按顺序传入参数即可
 
 ```
 function abs(x) {
@@ -71,8 +93,7 @@ abs(10); // 返回10
 abs(-9); // 返回9
 ```
 
-
-* 允许传入任意个参数而不影响调用，因此传入的参数比定义的参数多也没有问题
+允许传入任意个参数而不影响调用，因此传入的参数比定义的参数多也没有问题
 
 ```
 abs(10, 'blablabla'); // 返回10
@@ -122,7 +143,7 @@ function myFunction(arg1, arg2,...) {
 
 
 
-* 关键字`arguments`，它只在函数内部起作用，并且永远指向当前函数的调用者传入的所有参数。`arguments`类似`Array`但它不是一个`Array`
+关键字`arguments`，它只在函数内部起作用，并且永远指向当前函数的调用者传入的所有参数。`arguments`类似`Array`但它不是一个`Array`
 
 ```
 'use strict';
@@ -766,6 +787,12 @@ Math.max.call(null, 3, 5, 4); // 5
 
 
 
+
+
+
+
+
+
 ## 装饰器
 
 * 利用`apply()`，我们还可以动态改变函数的行为。
@@ -790,4 +817,30 @@ console.log('count = ' + count); // 3
 
 
 
+
+
+# 迭代 Recursive
+
+```
+function power(base, exponent) {
+		if (exponent == 0) {
+				return 1;
+		} else {
+				return base * power(base, exponent - 1)
+		}
+}
+
+> power(2, 3)
+8
+```
+
+```
+const factorial = n => 
+		n === 0
+			? 1
+			:	n * factorial(n - 1);
+
+> factorial(4)
+24
+```
 

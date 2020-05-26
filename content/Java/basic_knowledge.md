@@ -31,35 +31,30 @@ export PATH=$JAVA_HOME/bin:$PATH
 
 
 
+### linux
+
+```
+wget https://mirrors.huaweicloud.com/java/jdk/8u201-b09/jdk-8u201-linux-x64.tar.gz
+
+vim /etc/profile
+export JRE_HOME=/root/java_web/jdk1.8.0_201/jre
+export JAVA_HOME=/root/java_web/jdk1.8.0_201
+export JAVA_BIN=/root/java_web/jdk1.8.0_201/bin
+PATH=$PATH:$JAVA_BIN
+```
+
 
 
 # Java基本数据类型占用的字节数
 
-```ascii
-       ┌───┐
-  byte │   │ # 一个字节
-       └───┘
-       ┌───┬───┐
- short │   │   │
-       └───┴───┘
-       ┌───┬───┬───┬───┐
-   int │   │   │   │   │
-       └───┴───┴───┴───┘
-       ┌───┬───┬───┬───┬───┬───┬───┬───┐
-  long │   │   │   │   │   │   │   │   │
-       └───┴───┴───┴───┴───┴───┴───┴───┘
-       ┌───┬───┬───┬───┐
- float │   │   │   │   │
-       └───┴───┴───┴───┘
-       ┌───┬───┬───┬───┬───┬───┬───┬───┐
-double │   │   │   │   │   │   │   │   │
-       └───┴───┴───┴───┴───┴───┴───┴───┘
-       ┌───┬───┐
-  char │   │   │
-       └───┴───┘
-```
-
-
+| byte   | 1    |
+| ------ | ---- |
+| short  | 2    |
+| int    | 4    |
+| long   | 8    |
+| float  | 4    |
+| double | 8    |
+| char   | 2    |
 
 
 

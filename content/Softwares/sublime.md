@@ -43,7 +43,7 @@ Ctrl+Shift+P  install package
 
 
 
-## Vintage Mode (Enable VIM) (Not too  recommended)
+## Vintage Mode (Enable VIM) (Not  recommended)
 
 Preferences -> Settings	
 
@@ -72,6 +72,20 @@ install package 选项， 然后输入ConvertToUTF8
 
 
 
+
+## Initialization
+
+Prefernces -> Setting-User
+
+```
+{
+	"font_size": 16,
+	"tab_size": 4,
+	"translate_tabs_to_spaces": true,
+	"update_check": false,
+}
+
+```
 
 
 

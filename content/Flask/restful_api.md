@@ -40,6 +40,27 @@ date: 2019-08-03 16:32
 
 
 
+## 方法
+
+### get
+
+
+
+### post
+
+
+
+### put
+
+
+
+### delete
+
+
+
+### patch
+
+PATCH was only officially adopted as part of HTTP in 2010. The goal is to provide a standardized way to express partial updates. A PATCH request in a standard format allows an interaction to be more explicit about the intent. This is the reason one would use PATCH over POST, even though POST can be used for anything.
 
 
 
@@ -161,11 +182,11 @@ class UserAPI(Resource):
 }
 ```
 
-> 
 
 
 
-## example
+
+# example
 
 ```
 #!flask/bin/python

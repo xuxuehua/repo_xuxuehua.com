@@ -7,7 +7,15 @@ date: 2020-01-31 11:35
 
 
 
+# Java IO
 
+体现了一种装饰者设计模式，即原来没有这个功能，修饰一下之后就有了，可以动态的扩展功能
+
+```
+InputStream bufferIn = new BufferedInputStream(new FileInputStream("xxx.txt"))
+```
+
+> 真正读取文件还是内部的FileInputStream，而BufferedInputStream装饰了这个方法，加速了文件的读取，体现了装饰者设计模式
 
 # Stream/Reader/Scanner
 
@@ -15,9 +23,11 @@ date: 2020-01-31 11:35
 
 非二进制的，表达是文本的，用Reader，否则用Scanner
 
+
+
 # System.in 标准输入
 
-## 输入 Scanner
+## Scanner 输入
 
 从控制台读取一个字符串和一个整数的
 
@@ -211,6 +221,22 @@ public class DataStream {
 
 ## BufferedReader 读文本
 
+![image-20200504164015940](input_output.assets/image-20200504164015940.png)
+
+```
+// 文件输入流，一个字节一个字节读取
+InputStream in = new FileInputStream("xxx.txt")
+
+// InputStreamReader 目的是为了转换，将字节按照字符的规则进行转换变成字符
+// 通过BufferedReader放到缓冲区里面，形成一行一行的数据
+// 实现了读取一行数据的效果，但只有最后面真正用到数据的时候，才会读文件 
+Reader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"))
+```
+
+
+
+
+
 ```
 package input_output;
 
@@ -279,6 +305,8 @@ InputStreamReader 类的子类，所有方法都是从父类中继承而来
 
 
 ## FileInputStream
+
+效率不高
 
 
 

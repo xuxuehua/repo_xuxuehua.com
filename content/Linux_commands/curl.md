@@ -475,6 +475,29 @@ curl -x socks5://127.0.0.1:1080 ip-api.com
 
 
 
+#### OPTIONS
+
+```
+curl -i -X OPTIONS -H "Origin: http://127.0.0.1:3000" \
+    -H 'Access-Control-Request-Method: POST' \
+    -H 'Access-Control-Request-Headers: Content-Type, Authorization' \
+    "https://the.sign_in.url"
+```
+
+…with `https://the.sign_in.url` replaced by whatever your actual `sign_in` URL is.
+
+The response the browser needs to see from that `OPTIONS` request must include headers like this:
+
+```none
+Access-Control-Allow-Origin:  http://127.0.0.1:3000
+Access-Control-Allow-Methods: POST
+Access-Control-Allow-Headers: Content-Type, Authorization
+```
+
+If the `OPTIONS` response doesn’t include those headers, then the browser will stop right there and never even attempt to send the `POST` request. Also, the HTTP status code for the response must be a 2xx—typically 200 or 204. If it’s any other status code, the browser will stop right there.
+
+
+
 #### POST
 
 * POST application/x-www-form-urlencoded

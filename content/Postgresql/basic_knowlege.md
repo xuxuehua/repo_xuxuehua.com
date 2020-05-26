@@ -237,3 +237,25 @@ After version 8.1 Any role can act as a user, a group, or both.
 
 
 
+
+
+
+
+# login without input password
+
+```
+# chmod 600 ~/.pgpass^C
+# cat ~/.pgpass
+#hostname:port:database:username:password
+192.168.1.1:5432:meta:readOnly:xx
+192.168.1.2:5432:admin:readWrite:xx
+
+# psql -U readWrite -d admin -h 192.168.1.2 -p 5432
+psql (9.2.24, server 11.5)
+WARNING: psql version 9.2, server version 11.0.
+         Some psql features might not work.
+SSL connection (cipher: ECDHE-RSA-AES256-GCM-SHA384, bits: 256)
+Type "help" for help.
+admin=> \q
+```
+

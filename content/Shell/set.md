@@ -45,11 +45,11 @@ disable a command history system wide
 
 
 
-## -o
 
 
 
 
+## -o 
 
 ### -o errexit
 
@@ -102,15 +102,34 @@ $
 
 
 
-## -o verbose
+### -o verbose
 
 永久指定输出调试信息
 
 
 
-## -o xtrace
+### -o xtrace
 
 永久指定输出调试信息
+
+
+
+## -u
+
+不存在的变量会报错，并立即停止
+
+```
+$ cat 1.sh 
+#!/bin/bash
+set -u
+
+cd $a/*
+echo "hello world"
+
+
+$ bash 1.sh 
+1.sh: line 4: a: unbound variable
+```
 
 
 

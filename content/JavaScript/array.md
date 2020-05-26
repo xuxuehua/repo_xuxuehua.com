@@ -33,6 +33,12 @@ x
 
 
 
+```
+let myArray = [{name: "Rick"}, {age: 18}]
+```
+
+
+
 通过`Array()`函数实现
 
 ```
@@ -47,11 +53,95 @@ var cars = new Array("Audi", "BMW", "Benz");
 
 
 
-## 操作数组
+# 操作数组
+
+## 增
+
+### push
+
+`push()`向`Array`的末尾添加若干元素
+
+```
+let myArray = [{name: "Rick"}, {age: 18}];
+myArray.push({job: "Engineer"});
+myArray
+
+>>>
+(3) [{…}, {…}, {…}]
+0: {name: "Rick"}
+1: {age: 18}
+2: {job: "Engineer"}
+length: 3
+__proto__: Array(0)
+```
 
 
 
-### 循环访问数组元素
+### unshift 头部添加元素
+
+如果要往`Array`的头部添加若干元素，使用`unshift()`方法
+
+```
+var arr = [1, 2];
+arr.unshift('A', 'B'); // 返回Array新的长度: 4
+arr; // ['A', 'B', 1, 2]
+arr.shift(); // 'A'
+arr; // ['B', 1, 2]
+arr.shift(); arr.shift(); arr.shift(); // 连续shift 3次
+arr; // []
+arr.shift(); // 空数组继续shift不会报错，而是返回undefined
+arr; // []
+```
+
+
+
+
+
+## 删
+
+### pop 尾部删除
+
+`pop()`则把`Array`的最后一个元素删除掉：
+
+```
+var arr = [1, 2];
+arr.push('A', 'B'); // 返回Array新的长度: 4
+arr; // [1, 2, 'A', 'B']
+arr.pop(); // pop()返回'B'
+arr; // [1, 2, 'A']
+arr.pop(); arr.pop(); arr.pop(); // 连续pop 3次
+arr; // []
+arr.pop(); // 空数组继续pop不会报错，而是返回undefined
+arr; // []
+```
+
+
+
+### shift 头部删除元素
+
+`shift()`方法则把`Array`的第一个元素删掉
+
+```
+let myArray = [{name: "Rick"}, {age: 18}]
+myArray.shift();
+{name: "Rick"}
+myArray
+
+>>>
+(2) [{…}, {…}]
+0: {age: 18}
+1: {job: "Engineer"}
+length: 2
+__proto__: Array(0)
+```
+
+
+
+## 查
+
+
+
+### for i
 
 ```
 var a = new Array();
@@ -72,6 +162,18 @@ for (i in a) {console.log(a[i])};
 
 
 
+### forEach
+
+```
+var myArray = [{name: "Rick"}, {age: 18}, {name: "Michelle"}, {age:18}];
+const myInfo = info => {console.log(info.name)};
+myArray.forEach(myInfo);
+
+>>>
+Rick
+Michelle
+```
+
 
 
 ### 索引访问数组元素
@@ -87,7 +189,7 @@ arr[6]; // 索引超出了范围，返回undefined
 
 
 
-### 获取数组长度
+### length 获取数组长度
 
 要取得`Array`的长度，直接访问`length`属性：
 
@@ -95,6 +197,27 @@ arr[6]; // 索引超出了范围，返回undefined
 var arr = [1, 2, 3.14, 'Hello', null, true];
 arr.length; // 6
 ```
+
+
+
+### indexOf
+
+与String类似，`Array`也可以通过`indexOf()`来搜索一个指定的元素的位置：
+
+```
+var arr = [10, 20, '30', 'xyz'];
+arr.indexOf(10); // 元素10的索引为0
+arr.indexOf(20); // 元素20的索引为1
+arr.indexOf(30); // 元素30没有找到，返回-1
+arr.indexOf('30'); // 元素'30'的索引为2
+```
+
+> 注意了，数字`30`和字符串`'30'`是不同的元素。
+
+
+
+## 改
+
 
 
 ### 数组索引赋值
@@ -153,23 +276,11 @@ arr1.concat(arr2)
 
 
 
-### indexOf
-
-与String类似，`Array`也可以通过`indexOf()`来搜索一个指定的元素的位置：
-
-```
-var arr = [10, 20, '30', 'xyz'];
-arr.indexOf(10); // 元素10的索引为0
-arr.indexOf(20); // 元素20的索引为1
-arr.indexOf(30); // 元素30没有找到，返回-1
-arr.indexOf('30'); // 元素'30'的索引为2
-```
-
-> 注意了，数字`30`和字符串`'30'`是不同的元素。
 
 
 
-### slice
+
+### slice 截取
 
 `slice()`就是对应String的`substring()`版本，它截取`Array`的部分元素，然后返回一个新的`Array`：
 
@@ -196,47 +307,15 @@ aCopy === arr; // false
 
 
 
-### push和pop
-
-`push()`向`Array`的末尾添加若干元素，`pop()`则把`Array`的最后一个元素删除掉：
-
-```
-var arr = [1, 2];
-arr.push('A', 'B'); // 返回Array新的长度: 4
-arr; // [1, 2, 'A', 'B']
-arr.pop(); // pop()返回'B'
-arr; // [1, 2, 'A']
-arr.pop(); arr.pop(); arr.pop(); // 连续pop 3次
-arr; // []
-arr.pop(); // 空数组继续pop不会报错，而是返回undefined
-arr; // []
-```
 
 
 
-### unshift和shift
-
-如果要往`Array`的头部添加若干元素，使用`unshift()`方法，`shift()`方法则把`Array`的第一个元素删掉：
-
-```
-var arr = [1, 2];
-arr.unshift('A', 'B'); // 返回Array新的长度: 4
-arr; // ['A', 'B', 1, 2]
-arr.shift(); // 'A'
-arr; // ['B', 1, 2]
-arr.shift(); arr.shift(); arr.shift(); // 连续shift 3次
-arr; // []
-arr.shift(); // 空数组继续shift不会报错，而是返回undefined
-arr; // []
-```
 
 
 
-### sort
+### sort 
 
-
-
-#### sort 字符
+* 字符
 
 `sort()`可以对当前`Array`进行排序，它会直接修改当前`Array`的元素位置，直接调用时，按照默认顺序排序：
 
@@ -248,7 +327,7 @@ arr; // ['A', 'B', 'C']
 
 
 
-#### sort 数字
+* 数字
 
 ```
 var arr =  new Array(5);
@@ -276,7 +355,7 @@ arr.sort(sortNumber);
 
 ### reverse
 
-`reverse()`把整个`Array`的元素给掉个个，也就是反转：
+`reverse()`把整个`Array`的元素给掉个方向，也就是反转：
 
 ```
 var arr = ['one', 'two', 'three'];
@@ -286,7 +365,7 @@ arr; // ['three', 'two', 'one']
 
 
 
-### splice
+### splice 分割
 
 `splice()`方法是修改`Array`的“万能方法”，它可以从指定的索引开始删除若干元素，然后再从该位置添加若干元素：
 
@@ -305,7 +384,7 @@ arr; // ['Microsoft', 'Apple', 'Google', 'Facebook', 'Oracle']
 
 
 
-### concat
+### concat 连接
 
 `concat()`方法把当前的`Array`和另一个`Array`连接起来，并返回一个新的`Array`：
 
@@ -329,7 +408,7 @@ arr.concat(1, 2, [3, 4]); // ['A', 'B', 'C', 1, 2, 3, 4]
 
 
 
-### join
+### join 连接
 
 `join()`方法是一个非常实用的方法，它把当前`Array`的每个元素都用指定的字符串连接起来，然后返回连接后的字符串：
 
@@ -340,7 +419,7 @@ arr.join('-'); // 'A-B-C-1-2-3'
 
 
 
-### 多维数组
+## 多维数组
 
 如果数组的某个元素又是一个`Array`，则可以形成多维数组，例如：
 

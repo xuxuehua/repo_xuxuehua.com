@@ -238,6 +238,69 @@ spec:
 ....
 ```
 
+
+
+
+
+## initializers
+
+Kubernetes 还允许你通过配置，来指定要对什么样的资源进行这个 Initialize 操作
+
+```
+apiVersion: admissionregistration.k8s.io/v1alpha1 
+kind: InitializerConfiguration
+metadata:
+  name: envoy-config 
+  initializers:
+  // 这个名字必须至少包括两个 "."
+    - name: envoy.initializer.kubernetes.io
+      rules:
+        - apiGroups:
+          - "" // 前面说过， "" 就是 core API Group 的意思 
+        apiVersions:
+          - v1 
+        resources:
+          - pods
+```
+
+这个配置，就意味着 Kubernetes 要对所有的 Pod 进行这个 Initialize 操作，并且，我们指定了 负责这个操作的 Initializer，名叫:envoy-initializer。
+
+一旦这个 InitializerConfiguration 被创建，Kubernetes 就会把这个 Initializer 的名字，加 在所有新创建的 Pod 的 Metadata 上
+
+```
+apiVersion: admissionregistration.k8s.io/v1alpha1 
+kind: InitializerConfiguration
+metadata:
+  name: envoy-config 
+  initializers:
+    pending:
+      - name: envoy.initializer.kubernetes.io
+  name: myapp-pod 
+  labels: 
+    app: myapp
+```
+
+可以看到，每一个新创建的 Pod，都会自动携带了 metadata.initializers.pending 的 Metadata 信息。
+
+这个 Metadata，正是接下来 Initializer 的控制器判断这个 Pod 有没有执行过自己所负责的初 始化操作的重要依据(也就是前面伪代码中 isInitialized() 方法的含义)。
+
+这也就意味着，当你在 Initializer 里完成了要做的操作后，一定要记得将这个 metadata.initializers.pending 标志清除掉。这一点，你在编写 Initializer 代码的时候一定要非常注意。
+
+
+
+此外，除了上面的配置方法，你还可以在具体的 Pod 的 Annotation 里添加一个如下所示的字 段，从而声明要使用某个 Initializer
+
+```
+apiVersion: v1
+kind: Pod
+metadata
+  annotations: 
+    "initializer.kubernetes.io/envoy": "true" 
+    ...
+```
+
+在这个 Pod 里，我们添加了一个 Annotation，写明: initializer.kubernetes.io/envoy=true。这样，就会使用到我们前面所定义的 envoy-initializer 了
+
 # Spec 对象独有定义
 
 specification 规格

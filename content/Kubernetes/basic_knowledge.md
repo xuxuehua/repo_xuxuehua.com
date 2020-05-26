@@ -75,7 +75,15 @@ Pods can be horizontally scaled via API
 
 
 
+## 声明式 API (项目编排 核心)
 
+首先，所谓“声明式”，指的就是我只需要提交一个定义好的 API 对象来“声明”，我所期 望的状态是什么样子
+
+其次，“声明式 API”允许有多个 API 写端，以 PATCH 的方式对 API 对象进行修改，而无 需关心本地原始 YAML 文件的内容
+
+最后，也是最重要的，有了上述两个能力，Kubernetes 项目才可以基于对 API 对象的增、 删、改、查，在完全无需外界干预的情况下，完成对“实际状态”和“期望状态”的调谐 (Reconcile)过程。
+
+声明式 API，才是 Kubernetes 项目编排能力“赖以生存”的核心所在
 
 
 
@@ -174,16 +182,6 @@ Pods can be horizontally scaled via API
 ### Docker Engine
 
 Docker 引擎，负责本机的容器创建和管理工作
-
-
-
-## etcd
-
-Master节点使用etcd进行存储, 简单的key-value 存储，即整个集群的持久化数据
-
-整个集群所有的对象状态信息，都存储与etcd中，需要高可用，至少3个
-
-但都是通过kube-apiserver实现，因为需要APIServer进行授权工作
 
 
 
@@ -675,6 +673,8 @@ Application health (and metrics)
 #### Grafana
 
 将上述三种系统数据组合成显示图表
+
+
 
 
 

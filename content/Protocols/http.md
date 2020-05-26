@@ -222,17 +222,29 @@ Web服务器端使用什么程序响应的
 
 请求被正常处理
 
+OK. The request has successfully executed. Response depends upon the verb invoked.
+
 
 
 ### 201
 
 请求被正常处理，并创建一个新的资源
 
+Created. The request has successfully executed and a new resource has been created in the process. The response body is either empty or contains a representation containing URIs for the resource created. The Location header in the response should point to the URI as well.
+
+
+
+### 202
+
+Accepted. The request was valid and has been accepted but has not yet been processed. The response should include a URI to poll for status updates on the request. This allows asynchronous REST requests
+
 
 
 ### 204
 
 请求处理成功，无内容返回
+
+No Content. The request was successfully processed but the server did not have any response. The client should not update its display.
 
 
 
@@ -246,9 +258,9 @@ partial content 客户发送了一个带有Range头的GET请求，服务器完�
 
 ### 301
 
-永久重定向
+永久重定向，所请求的页面已经转移至新的url
 
-Moved Permanently 所请求的页面已经转移至新的url
+Moved Permanently. The requested resource is no longer located at the specified URL. The new Location should be returned in the response header. Only GET or HEAD requests should redirect to the new location. The client should update its bookmark if possible.
 
 
 
@@ -258,15 +270,15 @@ Moved Permanently 所请求的页面已经转移至新的url
 
 如访问一个需要登录页面，没有登录，会重定向到登录页面
 
-
+Found. The requested resource has temporarily been found somewhere else. The temporary Location should be returned in the response header. Only GET or HEAD requests should redirect to the new location. The client need not update its bookmark as the resource may return to this URL.
 
 
 
 ### 303
 
-See Other 所请求的页面可在别的url下被找到。
+所请求的页面可在别的url下被找到。
 
-
+See Other. This response code has been reinterpreted by the W3C Technical Architecture Group (TAG) as a way of responding to a valid request for a non-network addressable resource. This is an important concept in the Semantic Web when we give URIs to people, concepts, organizations, etc. There is a distinction between resources that can be found on the Web and those that cannot. Clients can tell this difference if they get a 303 instead of 200. The redirected location will be reflected in the Location header of the response. This header will contain a reference to a document about the resource or perhaps some metadata about it.
 
 
 
@@ -320,6 +332,54 @@ Not Found 服务器无法找到被请求的页面。
 
 
 
+### 406
+
+Not Acceptable
+
+
+
+### 410
+
+Gone.
+
+
+
+### 411
+
+Length Required.
+
+
+
+### 412
+
+Precondition Failed.
+
+
+
+### 413
+
+Entity Too Large.
+
+
+
+### 414
+
+URI Too Long.
+
+
+
+### 415
+
+Unsupported Media Type.
+
+
+
+### 417
+
+Expectation Failed.
+
+
+
 
 
 ## 5XX 服务器端错误类
@@ -359,4 +419,8 @@ Not Implemented 请求未完成。服务器不支持所请求的功能。
 4.数据库的数据读取造成前端服务器 ，响应用户的请求变慢，那么必须提高数据库的处理能力，若是只读业务可以增加数据缓存的模式 或者增加数据库备机，分散读压力；
 
 
+
+### 503
+
+Service Unavailable.
 

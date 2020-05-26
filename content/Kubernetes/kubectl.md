@@ -145,6 +145,8 @@ kubectl delete -f pod-example.yaml
 
 ## edit 编辑资源
 
+kubernetes 声明式API的一种
+
 kubectl edit 并不神秘，它不过是把 API 对象的内容下载到了本地文件， 让你修改完成后再提交上去
 
 ```
@@ -374,6 +376,8 @@ kubectl run nginx-deploy --image=nginx:1.12 --replicas=2
 ### set 设置属性
 
 设置指定资源的特定属性
+
+kubernetes 声明式API的一种
 
 这个命令的好处就是，你可以不用像 kubectl edit 那样需要打开编辑器
 
@@ -863,6 +867,14 @@ kubectl logs kube-apiserver-master.xuxuehua.com -n kube-system
 ### apply 实现声明
 
 既可以创建，也可以更新
+
+是一种声明式API，对比kubectl replace 的执行过程，是使用新的 YAML 文件中的 API 对象，替换原有的 API 对象;而 kubectl apply，则是执行了一个对原有 API 对象的 PATCH 操作
+
+类似地，kubectl set image 和 kubectl edit 也是对已有 API 对象的修改。
+
+更进一步地，这意味着 kube-apiserver 在响应命令式请求(比如，kubectl replace)的时候， 一次只能处理一个写请求，否则会有产生冲突的可能。而对于声明式请求(比如，kubectl apply)，一次能处理多个写操作，并且具备 Merge 能力。
+
+
 
 基于文件或者stdin 将配置应用于资源
 

@@ -508,6 +508,29 @@ Out[19]: [(1, 4), (1, 5), (1, 6), (2, 4), (2, 5), (2, 6), (3, 4), (3, 5), (3, 6)
 
 # example
 
+
+
+## list to dict
+
+```
+
+In [59]: results = {}                                                                                                                                                                                           
+In [60]: a                                                                                                                                                                                                      Out[60]: ['application_name', 'duration_minutes']
+
+In [61]: for cluster in clusters: 
+    ...:     results[cluster] = {a[i]: a[i] for i in range(len(a))}  
+    ...:                                                                                                                                                                                                        
+In [62]: results                                                                                                                                                                                                Out[62]: 
+{'1': {'application_name': 'application_name',
+  'duration_minutes': 'duration_minutes'},
+ '2': {'application_name': 'application_name',
+  'duration_minutes': 'duration_minutes'},
+ '3': {'application_name': 'application_name',
+  'duration_minutes': 'duration_minutes'}}
+```
+
+
+
 ## 冒泡排序
 
 冒泡排序（英语：Bubble Sort）是一种简单的排序算法。它重复地遍历要排序的数列，一次比较两个元素，如果他们的顺序错误就把他们交换过来。遍历数列的工作是重复地进行直到没有再需要交换，也就是说该数列已经排序完成。这个算法的名字由来是因为越小的元素会经由交换慢慢“浮”到数列的顶端

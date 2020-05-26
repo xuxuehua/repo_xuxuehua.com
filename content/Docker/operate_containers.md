@@ -39,6 +39,35 @@ docker container prune
 
 
 
+## cp 复制文件
+
+The `cp` command can be used to copy files.
+
+One specific file can be copied TO the container like:
+
+```
+docker cp foo.txt mycontainer:/foo.txt
+```
+
+One specific file can be copied FROM the container like:
+
+```
+docker cp mycontainer:/foo.txt foo.txt
+```
+
+For emphasis, `mycontainer` is a *container* ID, **not** an *image* ID.
+
+Multiple files contained by the folder `src` can be copied into the `target` folder using:
+
+```
+docker cp src/. mycontainer:/target
+docker cp mycontainer:/src/. target
+```
+
+
+
+
+
 ## run 运行容器
 
 docker run 就是运行容器的命令
