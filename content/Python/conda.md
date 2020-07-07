@@ -24,6 +24,16 @@ conda config --set auto_activate_base false
 
 ## env
 
+
+
+### create 
+
+```
+conda create --name ENV_NAME python=3.7 -y 
+```
+
+
+
 ### remove 
 
 ```
@@ -31,6 +41,12 @@ conda env remove -n ENV_NAME
 ```
 
 
+
+## activate 
+
+```
+conda activate ENV_NAME
+```
 
 
 

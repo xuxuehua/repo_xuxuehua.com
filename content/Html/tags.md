@@ -135,7 +135,7 @@ H<sub>2</sub>O
 指向另一个文档链接
 
 ```
-<a href="http://xuxuehua.com" >hello</a>
+<a href="http://xuxuehua.com">hello</a>
 ```
 
 发送邮件
@@ -143,6 +143,30 @@ H<sub>2</sub>O
 ```
 <a href="mailto:emailAddress"></a>
 ```
+
+
+
+#### 指定event
+
+```
+<a              href="javascript:;"
+                class="btn btn-white btn-default btn-block"
+                onclick="JSalert('{{ app['application_name'] }}')"
+```
+
+
+
+```
+Add if condition
+
+<button onclick="if(confirm('Are you sure?')) saveandsubmit(event);"></button>
+
+OR
+
+<button onclick="return confirm('Are you sure?')?saveandsubmit(event):'';"></button>
+```
+
+
 
 ### target 属性
 

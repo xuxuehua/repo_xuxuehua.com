@@ -426,6 +426,27 @@ print(sorted(d.item(), key=lambda item: item[1], reverse=True))
 
 
 
+### 超大文件处理
+
+ read 函数，其实 Python 会将文件的内容一次性的全部载入内存中，如果文件有 10 个G甚至更多，那么你的电脑就要消耗的内存非常巨大。
+
+若使用 readline 去做一个生成器来逐行返回，可如果这个文件内容就一行呢，一行就 10个G，其实你还是会一次性读取全部内容。
+
+最优雅的解决方法是，在使用 read 方法时，指定每次只读取固定大小的内容，比如下面的代码中，每次只读取 8kb 返回
+
+
+
+```
+from functools import partial 
+ 
+def read_from_file(filename, block_size = 1024 * 8): 
+    with open(filename, "r") as fp: 
+        for chunk in iter(partial(fp.read, block_size), ""): 
+            yield chunk 
+```
+
+
+
 ## 基于类的上下文管理器
 
 基于类的上下文管理器更加 flexible，适用于大型的系统开发

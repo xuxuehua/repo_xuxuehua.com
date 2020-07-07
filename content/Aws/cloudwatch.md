@@ -78,3 +78,13 @@ fields @timestamp, @message
 | sort @timestamp desc
 ```
 
+
+
+## not like
+
+```
+fields @timestamp, @message
+| filter (@message not like 'error')
+| sort @timestamp desc
+```
+

@@ -59,7 +59,59 @@ In [12]: foo(5)
 Out[12]: 9
 ```
 
-# 
+
+
+
+
+# lru_cache
+
+Python**自带的缓存**
+
+实现于 functool 模块中的 lru_cache 装饰器。
+
+```
+@functools.lru_cache(maxsize=None, typed=False) 
+```
+
+> - maxsize：最多可以缓存多少个此函数的调用结果，如果为None，则无限制，设置为 2 的幂时，性能最佳
+> - typed：若为 True，则不同参数类型的调用将分别缓存。
+
+
+
+* 斐波那契数列
+
+```
+
+In [9]: import timeit  
+   ...:   
+   ...: def fib(n):  
+   ...:     if n < 2:  
+   ...:         return n  
+   ...:     return fib(n - 2) + fib(n - 1)  
+   ...:   
+   ...:   
+   ...:   
+   ...: print(timeit.timeit(lambda :fib(40), number=1))                                                                                                                              
+37.009518885000034
+
+In [10]:                                                                                                                                                                             
+In [10]: import timeit  
+    ...: from functools import lru_cache  
+    ...:   
+    ...: @lru_cache(None)  
+    ...: def fib(n):  
+    ...:     if n < 2:  
+    ...:         return n  
+    ...:     return fib(n - 2) + fib(n - 1)  
+    ...:   
+    ...: print(timeit.timeit(lambda :fib(500), number=1))                                                                                                                            0.000514715000463184
+```
+
+
+
+
+
+
 
 # OrderedDict
 

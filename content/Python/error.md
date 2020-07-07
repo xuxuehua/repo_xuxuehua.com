@@ -222,6 +222,8 @@ StopIteration
 test
 ```
 
+
+
 ## 自定义异常
 
 ```
@@ -279,6 +281,42 @@ ZeroDivisionError: division by zero
 
 
 
+## 关闭异常自动关联上下文
+
+使用 raise...from None
+
+```
+>>> try: 
+...     print(1 / 0) 
+... except Exception as exc: 
+...     raise RuntimeError("Something bad happened") from None 
+... 
+Traceback (most recent call last):
+  File "<stdin>", line 4, in <module>
+RuntimeError: Something bad happened
+```
+
+
+
+```
+>>> try: 
+...     print(1 / 0) 
+... except Exception as exc: 
+...     raise RuntimeError("Something bad happened") 
+... 
+Traceback (most recent call last):
+  File "<stdin>", line 2, in <module>
+ZeroDivisionError: division by zero
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<stdin>", line 4, in <module>
+RuntimeError: Something bad happened
+```
+
+
+
 # assert
 
 Python 的 assert 语句，可以说是一个 debug 的好工具，主要用于测试一个条件是否满足。如果测试的条件满足，则什么也不做，相当于执行了 pass 语句；如果测试条件不满足，便会抛出异常 AssertionError，并返回具体的错误信息（optional）。
@@ -314,3 +352,29 @@ assert 1 == 2,  'assertion is wrong'
 if __debug__:
     if not expression1: raise AssertionError(expression2)
 ```
+
+
+
+
+
+
+
+# FAQ
+
+
+
+## Too broad exception clause
+
+1. 关闭编译器中代码检测中有关检测 Exception 的选项
+2. 在 try 语句前加入 # noinspection PyBroadException
+
+```python
+ # noinspection PyBroadException
+try:
+    literal_value = (
+        self.spark_sql(select_sql).collect()[0][variable]
+    )
+except Exception:
+    pass
+```
+

@@ -264,6 +264,42 @@ Out[137]: 'Jan-30-2019 13:48:15'
 
 
 
+* 指定zero padding 
+
+```py
+In [1]: import datetime
+
+In [2]: d = datetime.date.today()
+
+In [3]: type(d.month)
+Out[3]: <type 'int'>
+
+In [4]: type(d.day)
+Out[4]: <type 'int'>
+```
+
+Both are integers. So there is no *automatic* way to do what you want. So in the narrow sense, the answer to your question is **no**.
+
+If you want leading zeroes, you'll have to format them one way or another. For that you have several options:
+
+```py
+In [5]: '{:02d}'.format(d.month)
+Out[5]: '03'
+
+In [6]: '%02d' % d.month
+Out[6]: '03'
+
+In [7]: d.strftime('%m')
+Out[7]: '03'
+
+In [8]: f'{d.month:02d}'
+Out[8]: '03'
+```
+
+
+
+
+
 
 
 ### strptime() 字符串格式转化为日期格式

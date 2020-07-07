@@ -8,15 +8,13 @@ date: 2018-12-20 21:49
 
 
 
-# DDL & DML
+
+
+# DDL 数据定义语言
 
 
 
-## DDL 数据定义语言
-
-
-
-### CREATE
+## CREATE
 
 DB 组件：数据库，表，索引，视图，用户，存储过程，存储函数，触发器，事件调度器等
 
@@ -53,7 +51,17 @@ topics:
 
 
 
-### ALTER
+### copy table 
+
+```
+CREATE TABLE new_table_name ( like old_table_name including all)
+```
+
+
+
+
+
+## ALTER
 
 组件同CREATE
 
@@ -61,7 +69,7 @@ topics:
 
 
 
-### DROP
+## DROP
 
 组件同CREATE
 
@@ -69,11 +77,11 @@ topics:
 
 
 
-## DML 数据操作语言
+# DML 数据操作语言
 
 
 
-### INSERT
+## INSERT
 
 一次插入一行或多行数据
 
@@ -127,7 +135,15 @@ INSERT [LOW_PRIORITY | HIGH_PRIORITY] [IGNORE]
 
 
 
-### DELETE
+### insert from select response
+
+```
+insert into NEW_TABLE (select * from OLD_TABLE where id=1);
+```
+
+
+
+## DELETE
 
 一定要加上的限制条件，否则将清空表中的所有数据。
 
@@ -150,7 +166,7 @@ DELETE [LOW_PRIORITY] [QUICK] [IGNORE] FROM tbl_name
 
 
 
-### UPDATE
+## UPDATE
 
 一定要加上的限制条件，否则将修改表中所有行的字段。
 
@@ -170,21 +186,25 @@ UPDATE [LOW_PRIORITY] [IGNORE] table_reference
 
 
 
-### SELECT
+## SELECT
 
 查询执行路径中的组件：查询缓存，解析器，预处理器，优化器，查询执行引擎，存储引擎
 
 
 
+关键字的顺序是不能颠倒
+
+```
+SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ...
+```
+
 SELECT执行流程
 
 ```
-FROM Clause -> WHERE Clause -> GROUP BY -> HAVING Clause -> ORDER BY -> SELECT -> 
+FROM Clause -> WHERE Clause -> GROUP BY -> HAVING Clause -> SELECT的字段 -> DISTINCT -> ORDER BY -> LIMIT -> 
 ```
 
 
-
-#### 单表查询
 
 ```
 SELECT
@@ -235,7 +255,7 @@ SQL_NO_CACHE 显式查询结果不予缓存
 
 
 
-##### query_cache_type
+### query_cache_type
 
 ```
 query_cache_type 的值为ON时，查询缓存功能打开
@@ -250,27 +270,33 @@ query_cache_type 的值为DEMAND时，查询缓存功能按需进行，
 
 
 
-##### 别名使用
+### AS 别名
+
+一般来说起别名的作用是对原有名称进行简化，从而让 SQL 语句看起来更精简
 
 ```
 col1 AS alias1, col2 AS alias2, ....
 ```
 
+```
+SELECT name AS n, hp_max AS hm, mp_max AS mm, attack_max AS am, defense_max AS dm FROM heros;
+```
 
 
-##### WHERE 子句
+
+### WHERE 子句
 
 指明过滤条件以实现“选择” 功能
 
 
 
-###### 过滤条件
+#### 过滤条件
 
 布尔表达式
 
 
 
-###### 算数操作符
+#### 算数操作符
 
 ```
 +， -， *， /， %
@@ -278,7 +304,7 @@ col1 AS alias1, col2 AS alias2, ....
 
 
 
-###### 比较操作符
+#### 比较操作符
 
 ```
 =, !=, <>, <=>, >, >=, <, <=
@@ -287,16 +313,36 @@ col1 AS alias1, col2 AS alias2, ....
 ```
 BETWEEN min_num AND max_num
 IN (element1, element2, ...)
-IS NULL
+
 IS NOT NULL
-LIKE:
-	% 任意长度的任意字符
-	_ 任意单个字符
+
 RLIKE
 REGEXP 匹配字符串可以用正则表达式书写模式
 ```
 
 
+
+#### LIKE 
+
+```
+LIKE:
+	% 任意长度的任意字符
+	_ 任意单个字符
+```
+
+
+
+```
+SELECT name FROM heros WHERE name LIKE '%太%'
+```
+
+
+
+实际操作尽量少用通配符，因为它需要消耗数据库更长的时间来进行匹配。即使你对 LIKE 检索的字段进行了索引，索引的价值也可能会失效。如果要让索引生效，那么 LIKE 后面就不能以（%）开头，比如使用LIKE '%太%'或LIKE '%太'的时候就会对全表进行扫描。
+
+
+
+#### IS NULL
 
 ```
 mysql> SELECT Name, ClassID FROM students WHERE ClassID IS NULL;
@@ -312,7 +358,7 @@ mysql> SELECT Name, ClassID FROM students WHERE ClassID IS NULL;
 
 
 
-###### 逻辑运算符
+#### 逻辑运算符
 
 ```
 NOT, AND, OR, XOR（异或）
@@ -320,7 +366,13 @@ NOT, AND, OR, XOR（异或）
 
 
 
-##### GROUP 子句
+```
+SELECT name, hp_max, mp_max FROM heros WHERE (hp_max+mp_max) > 8000 OR hp_max > 6000 AND mp_max > 1700 ORDER BY (hp_max+mp_max) DESC
+```
+
+
+
+### GROUP BY 子句
 
 根据指定的条件把查询结果进行分组，以用于做聚合运算
 
@@ -341,9 +393,11 @@ mysql> SELECT avg(Age),Gender FROM students GROUP BY Gender;
 
 
 
-###### HAVING
+### HAVING
 
 对分组聚合运算后的结果指定过滤条件
+
+HAVING 的作用和 WHERE 一样，都是起到过滤的作用，只不过 WHERE 是用于数据行，而 HAVING 则作用于分组
 
 ```
 mysql> SELECT avg(Age) as AAge,Gender FROM students GROUP BY Gender HAVING AAge >20;
@@ -373,13 +427,15 @@ mysql> SELECT count(StuID) AS NumOfStu, ClassID FROM students GROUP BY ClassID H
 
 
 
-##### ORDER BY
+### ORDER BY
 
-根据指定字段对查询结果进行排序
+ORDER BY 后面可以有一个或多个列名，如果是多个列名进行排序，会按照后面第一个列先进行排序，当第一列的值相同的时候，再按照第二列进行排序，以此类推
 
-升序 ASC
+ORDER BY 可以使用非选择列进行排序，所以即使在 SELECT 后面没有这个列名，你同样可以放到 ORDER BY 后面进行排序
 
-降序 DESC
+ORDER BY 通常位于 SELECT 语句的最后一条子句，否则会报错
+
+ASC 升序， DESC 降序 
 
 ```
 mysql> SELECT Name, Age FROM students ORDER BY Age DESC
@@ -420,7 +476,7 @@ mysql> SELECT Name, Age FROM students ORDER BY Age DESC
 
 
 
-##### LIMIT 
+### LIMIT 
 
 ```
 LIMIT [[offset,] row_count] 对查询
@@ -504,7 +560,7 @@ mysql> SELECT Name, Age FROM students ORDER BY Age DESC LIMIT 10, 10;
 
 
 
-##### 查询结果加锁
+#### 查询结果加锁
 
 ```
 FROM UPDATE 写锁，排他锁
@@ -513,17 +569,35 @@ LOCK IN SHARE MODE 读锁，共享锁
 
 
 
-## 多表查询
+### DISTINCT 去重
 
-### 交叉连接
+从结果中去掉重复的行
 
-即笛卡尔积
+```
+SELECT DISTINCT attack_range FROM heros
+```
+
+> 只对attack_range去重
 
 
 
-### 内连接
+# 多表查询
 
-#### 等值连接
+## 交叉连接 （笛卡尔积）CROSS JOIN
+
+笛卡尔乘积是一个数学运算。假设我有两个集合 X 和 Y，那么 X 和 Y 的笛卡尔积就是 X 和 Y 的所有可能组合，也就是第一个对象来自于 X，第二个对象来自于 Y 的所有可能。
+
+作用就是可以把任意表进行连接，即使这两张表不相关。但我们通常进行连接还是需要筛选的，因此你需要在连接后面加上 WHERE 子句，也就是作为过滤条件对连接数据进行筛选。
+
+
+
+```
+ SELECT * FROM player CROSS JOIN team;
+```
+
+
+
+## 等值连接
 
 让表之间的字段以等值建立连接关系
 
@@ -561,13 +635,7 @@ mysql> SELECT s.Name , c.Class  FROM students as s, classes as c WHERE s.ClassID
 
 
 
-#### 不等值连接
 
-#### 自然连接
-
-
-
-#### 自连接
 
 ```
 mysql> SELECT s.Name , t.Name FROM students as s, students as t WHERE s.TeacherID = t.StuID;
@@ -589,13 +657,39 @@ mysql> SELECT s.Name , t.Name FROM students as s, students as t WHERE s.TeacherI
 
 
 
-### 外连接
+## 非等值连接
 
-#### 左外连接
+```
+SELECT p.player_name, p.height, h.height_level
+FROM player AS p, height_grades AS h
+WHERE p.height BETWEEN h.height_lowest AND h.height_highest
+```
+
+
+
+
+
+## 外连接
+
+除了查询满足条件的记录以外，外连接还可以查询某一方不满足条件的记录。两张表的外连接，会有一张是主表，另一张是从表。如果是多张表的外连接，那么第一张表是主表，即显示全部的行，而第剩下的表则显示对应连接的信息。
+
+
+
+### 左外连接
+
+指左边的表是主表，需要显示左边表的全部行，而右侧的表是从表
 
 ```
 FROM tb1 LEFT JOIN tb2 ON tb1.col=tb2.col;
 ```
+
+
+
+```
+SELECT * FROM player LEFT JOIN team on player.team_id = team.team_id;
+```
+
+
 
 ```
 mysql> SELECT s.Name , c.Class FROM students as s LEFT JOIN classes AS c ON s.ClassID = c.ClassID;
@@ -635,10 +729,18 @@ mysql> SELECT s.Name , c.Class FROM students as s LEFT JOIN classes AS c ON s.Cl
 
 
 
-#### 右外连接
+### 右外连接
+
+右边的表是主表，需要显示右边表的全部行，而左侧的表是从表。
 
 ```
 FROM tb1 RIGHT JOIN tb2 ON tb1.col=tb2.col;
+```
+
+
+
+```
+SELECT * FROM player RIGHT JOIN team on player.team_id = team.team_id;
 ```
 
 
@@ -678,7 +780,25 @@ mysql> SELECT s.Name , c.Class FROM students as s RIGHT JOIN classes AS c ON s.C
 
 
 
-## 子查询
+
+
+## 自连接
+
+可以对多个表进行操作，也可以对同一个表进行操作。也就是说查询条件使用了当前表的字段
+
+```
+SELECT b.player_name, b.height FROM player as a, player as b WHERE a.player_name = '布雷克-格里芬' and a.height < b.height;
+```
+
+
+
+
+
+
+
+
+
+# 子查询
 
 在查询语句嵌套查询语句
 
@@ -686,7 +806,7 @@ mysql> SELECT s.Name , c.Class FROM students as s RIGHT JOIN classes AS c ON s.C
 
 
 
-### WHERE 子句子查询
+## WHERE 
 
 * 基于比较表达式中的子查询，子查询仅能返回单个值
 
@@ -750,7 +870,7 @@ Empty set (0.01 sec)
 
 
 
-### FROM 子句子查询
+## FROM 
 
 ```
 SELECT tb_alias.col1,... FROM (SELECT clause) AS tb_alias WHERE Clause;
@@ -771,7 +891,32 @@ mysql> SELECT aage,ClassID FROM ( SELECT avg(Age) AS aage, ClassID FROM students
 
 
 
-## 联合查询 UNION
+## EXISTS 
+
+EXISTS 子查询用来判断条件是否满足，满足的话为 True，不满足为 False。
+
+```
+SELECT player_id, team_id, player_name FROM player WHERE EXISTS (SELECT player_id FROM player_score WHERE player.player_id = player_score.player_id)
+```
+
+
+
+## IN 
+
+IN表是外边和内表进行hash连接，是先执行子查询。
+EXISTS是对外表进行循环，然后在内表进行查询。
+因此如果外表数据量大，则用IN，如果外表数据量小，也用EXISTS。
+IN有一个缺陷是不能判断NULL，因此如果字段存在NULL值，则会出现返回，因为最好使用NOT EXISTS
+
+```
+SELECT * FROM A WHERE cc IN (SELECT cc FROM B)
+```
+
+
+
+
+
+## UNION 联合查询 
 
 ```
 mysql> SELECT Name,Age FROM students UNION SELECT Name,Age FROM teachers;
@@ -861,241 +1006,36 @@ possible_keys: NULL
 
 
 
-# 数据库操作
+# example
 
 
 
-## CREATE	ALTER	DROP
+## 重复记录
 
-[IF EXISTS]
+查找全部重复记录
 
-[IF NOT EXISTS]
-
-
-
-
-
-# 表
-
-
-
-## 设计表
-
-### 字符集
-
-主要是为了保存emoji表情，例如: 微信昵称，就有很多带有emoji表情的，这里我们使用utf8mb4字符集，千万不要使用blob类型来存储
-
-
-
-### 主/外键类型
-
-主键的设定是非常重要的，在主键的选择上，应该满足以下几个条件:
-
-```
-1. 唯一性 (必要条件)
-2. 非空性
-3. 有序性
-4. 可读性
-5. 可扩展性
-```
-
->  有序性就有不少好处。例如: 查询时，为有序IO，就可提高查询效率，存储的顺序也是有序的，往远了看，分库分表也是有好处的。因此，我建议使8字节无符号的bigint(20)作为主键的数据类型  
->
-> 主外键的数据类型一定要一致！
->
-> 每个表中的主键命名保持一致！
-
-```
-create table t_base_user(
-id bigint(20) unsigned not null primary key auto_increment;
-....
-)
-```
-
-
-
-无符号与有符号的区别
-
-```
-有符号允许存储负数，无符号只允许从正数开始，无符号最小值为0，最大值根据类型不同而不同。
-```
-
-
-
-外键约束用来保证数据完整性的。但不建议在数据库表中加外键约束，因为在数据表中添加外键约束，会影响性能，例如: 每一次修改数据时，都要在另外的一张表中执行查询。应该是：在应用层，也就是代码层面，来维持外键关系。
-
-
-
-### 添加注释
-
-添加注释，这是非常重要的，其中包括表注释，字段注释。主要是为了后期表结构的维护，我相信你对着数据表中那么多字段，如果没有注释的话，你是很难一下子明白是什么意思的，即使你是该表结构的设计者，十天半个月过去后，你还记得吗？
-
-```
-create table t_base_user(
- id bigint(20) UNSIGNED not null primary key auto_increment comment "主键",
- name varchar(50) character set utf8mb4 comment "",
- created_time datetime null default now() comment "创建时间",
- updated_time datetime null default now() comment "修改时间",
- deleted tinyint not null default 1 comment "逻辑删除 0正常数据 1删除数据"
-)engine=InnoDB charset=utf8 comment "用户表";
-
-//添加索引
-alter table t_base_user idx_created_time(created_time);
+```sql
+Select * From 表 Where 重复字段 In (Select 重复字段 From 表 Group By 重复字段 Having Count(*)>1)
 ```
 
 
 
 
 
-## 定义
+过滤重复记录(只显示一条)
 
-### 字段
-
-```
-字段：字段名， 字段数据类型，修饰符
+```sql
+Select * From HZT Where ID In (Select Max(ID) From HZT Group By Title)
 ```
 
 
 
-### 索引
-
-应该创建在经常用作查询条件的字段上
-
-实现级别在存储引擎
 
 
+删除全部重复记录（慎用）
 
-#### 稠密索引
-
-#### B+索引， hash索引， R树索引， FULLTEXT索引
-
-
-
-#### 稀疏索引
-
-#### 聚合索引， 非聚合索引
-
-
-
-#### 简单索引，组合索引
-
-
-
-## 创建表
-
-* 直接创建
-
-```
-mysql> help create table
-CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
-    (create_definition,...)
-    [table_options]
-    [partition_options]
-```
-
-
-
-* 通过现存的表创建，新表会被直接插入查询而来的数据
-
-```
-CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
-    [(create_definition,...)]
-    [table_options]
-    [partition_options]
-    [IGNORE | REPLACE]
-    [AS] query_expression
-```
-
-
-
-* 通过复制现存表结构创建，只复制表不复制数据
-
-```
-CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
-    { LIKE old_tbl_name | (LIKE old_tbl_name) }
-```
-
-
-
-### 表类型
-
-Storage Engine 是指表类型，也就是在表创建时指明其使用的存储引擎
-
-同一个库中表要使用同一种存储引擎类型
-
-```
-mysql> SHOW GLOBAL VARIABLES LIKE '%default%engine%';
-+----------------------------+--------+
-| Variable_name              | Value  |
-+----------------------------+--------+
-| default_storage_engine     | InnoDB |
-| default_tmp_storage_engine | InnoDB |
-+----------------------------+--------+
-2 rows in set (0.00 sec)
-```
-
-
-
-### 表结构
-
-```
-DESCRIBE tbl_name;
-```
-
-
-
-### 表状态信息
-
-```
-SHOW [FULL] TABLES [{FROM | IN } db_name] [LIKE 'pattern' | WHERE expr]
-```
-
-
-
-```
-mysql> SHOW TABLE STATUS LIKE 't1'\G;
-*************************** 1. row ***************************
-           Name: t1
-         Engine: InnoDB
-        Version: 10
-     Row_format: Dynamic
-           Rows: 0
- Avg_row_length: 0
-    Data_length: 16384
-Max_data_length: 0
-   Index_length: 0
-      Data_free: 0
- Auto_increment: 5
-    Create_time: 2018-12-20 13:43:39
-    Update_time: NULL
-     Check_time: NULL
-      Collation: utf8mb4_0900_ai_ci
-       Checksum: NULL
- Create_options:
-        Comment:
-1 row in set (0.00 sec)
-```
-
-
-
-## 修改表
-
-```
-ALTER TABLE
-```
-
-
-
-```
-mysql> ALTER TABLE movie CHANGE `start` star smallint(6);
-```
-
-
-
-### 删除表
-
-```
-DROP TABLE
+```sql
+Delete 表 Where 重复字段 In (Select 重复字段 From 表 Group By 重复字段 Having Count(*)>1)
 ```
 
 
@@ -1104,209 +1044,13 @@ DROP TABLE
 
 
 
-# 索引管理
+保留一条（这个应该是大多数人所需要的）
 
-索引是按照特定数据结构存储的数据
-
-索引并不会是我们需要的数据本身，而是类似指针指向所需要的数据
-
-
-
-## 索引类型
-
-### 聚集索引，非聚集索引
-
-数据是否与索引存储在一起
-
-
-
-
-
-### 主键索引，辅助索引
-
-
-
-### 稠密索引，稀疏索引
-
-是否索引了每一个数据项
-
-
-
-### B+ Tree，HASH索引（键值索引），R Tree
-
-
-
-### 简单索引，组合索引
-
-
-
-### 左前缀索引
-
-```
-like ‘abc%’
+```sql
+Delete HZT Where ID Not In (Select Max(ID) From HZT Group By Title)
 ```
 
 
-
-### 覆盖索引
-
-
-
-
-
-## 管理索引方法
-
-### 创建索引
-
-创建表时指定 CREATE INDEX
-
-
-
-### 创建或删除索引
-
-修改表的命令
-
-
-
-### 删除索引
-
-DROP INDEX
-
-
-
-### 查看表索引
-
-```
-Syntax:
-SHOW [EXTENDED] {INDEX | INDEXES | KEYS}
-    {FROM | IN} tbl_name
-    [{FROM | IN} db_name]
-    [WHERE expr]
-```
-
-
-
-```
-mysql> SHOW INDEXES FROM students;
-+----------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
-| Table    | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible | Expression |
-+----------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
-| students |          0 | PRIMARY  |            1 | StuID       | A         |          25 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
-+----------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
-1 row in set (0.12 sec)
-```
-
-
-
-
-
-### EXPLAIN 表索引对比操作 
-
-```
-mysql> explain select * from students WHERE StuID=3;
-+----+-------------+----------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
-| id | select_type | table    | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
-+----+-------------+----------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
-|  1 | SIMPLE      | students | NULL       | const | PRIMARY       | PRIMARY | 4       | const |    1 |   100.00 | NULL  |
-+----+-------------+----------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
-1 row in set, 1 warning (0.00 sec)
-
-mysql> explain select * from students WHERE Age=53;;
-+----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------------+
-| id | select_type | table    | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
-+----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------------+
-|  1 | SIMPLE      | students | NULL       | ALL  | NULL          | NULL | NULL    | NULL |   25 |    10.00 | Using where |
-+----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------------+
-1 row in set, 1 warning (0.01 sec)
-```
-
-> Type 类型显示拥有索引的查询只会查询一条rows记录
-
-
-
-
-
-# 视图 VIEW
-
-视图是一张虚表，是存储下来的select 语句
-
-
-
-视图中的数据事实上存储于“基表”中，其修改操作也会针对基表实现，其修改操作受基表限制
-
-
-
-## 创建view
-
-```
-CREATE
-    [OR REPLACE]
-    [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}]
-    [DEFINER = { user | CURRENT_USER }]
-    [SQL SECURITY { DEFINER | INVOKER }]
-    VIEW view_name [(column_list)]
-    AS select_statement
-    [WITH [CASCADED | LOCAL] CHECK OPTION]
-```
-
-
-
-```
-mysql> CREATE VIEW test AS SELECT StuID,Name,Age FROM students;
-Query OK, 0 rows affected (0.02 sec)
-
-mysql> SHOW TABLES;
-+-------------------+
-| Tables_in_hellodb |
-+-------------------+
-| classes           |
-| coc               |
-| courses           |
-| scores            |
-| students          |
-| teachers          |
-| test              |
-| toc               |
-+-------------------+
-8 rows in set (0.01 sec)
-
-```
-
-
-
-```
-mysql> SHOW TABLE STATUS LIKE 'test'\G;
-*************************** 1. row ***************************
-           Name: test
-         Engine: NULL
-        Version: NULL
-     Row_format: NULL
-           Rows: 0
- Avg_row_length: 0
-    Data_length: 0
-Max_data_length: 0
-   Index_length: 0
-      Data_free: 0
- Auto_increment: NULL
-    Create_time: 2018-12-21 12:44:43
-    Update_time: NULL
-     Check_time: NULL
-      Collation: NULL
-       Checksum: NULL
- Create_options: NULL
-        Comment: VIEW
-1 row in set (0.01 sec)
-```
-
-
-
-### 删除view
-
-```
-DROP VIEW [IF EXISTS]
-    view_name [, view_name] ...
-    [RESTRICT | CASCADE]
-```
 
 
 

@@ -60,6 +60,41 @@ SQL Thread： 从中继日志中读取日志事件，在本地完成重放
 
 从服务器还可以再有从服务器
 
+MySQL之间数据复制的基础是二进制日志文件（binary log file）。一台MySQL数据库一旦启用二进制日志后，其作为master，它的数据库中所有操作都会以“事件”的方式记录在二进制日志中，其他数据库作为slave通过一个I/O线程与主服务器保持通信，并监控master的二进制日志文件的变化，如果发现master二进制日志文件发生变化，则会把变化复制到自己的中继日志中，然后slave的一个SQL线程会把相关的“事件”执行到自己的数据库中，以此实现从数据库和主数据库的一致性，也就实现了主从复制。
+
+mysql实现主从复制的方案主要有两种：基于二进制日志的主从复制和基于GTID的主从复制。传统复制是基于主库的二进制日志进行复制，在主站和从站之间同步二进制日志文件和日志文件中的位置标识。
+
+
+
+三个工作线程
+
+- 主服务器提供了一个工作线程I/O dump thread
+- 从服务器有两个工作线程，I/O thread和SQL thread
+
+
+
+执行过程
+
+- 主库把接收到的SQL请求记录到自己的binlog日志文件
+- 从库的I/O thread请求主库I/O dump thread，获得binglog日志，并追加到relay log日志文件
+- 从库的SQL thread执行relay log中的SQL语句
+
+
+
+
+
+
+
+#### binlog
+
+
+
+#### GTID
+
+基于GTID（全局事务标识符）复制是事务性的，因此不需要指定二进制日志文件和文件中的位置，这大大简化了许多常见的复制任务。只要在主站上提交的所有事务也都应用于从站，使用gtids进行复制可确保主站和从站之间的数据一致性。
+
+
+
 
 
 
@@ -70,11 +105,15 @@ SQL Thread： 从中继日志中读取日志事件，在本地完成重放
 
 ### 半同步复制
 
-通过插件进行
+master及slave都需要安装插件支持 
 
-即一个主节点同步到一个从节点，同步完成之后，再与其他的从节点异步同步数据
+MySQL默认的复制即是异步的，主库在执行完客户端提交的事务后会立即将结果返给给客户端，并不关心从库是否已经接收并处理，这样就会有一个问题，主如果crash掉了，此时主上已经提交的事务可能并没有传到从上，如果此时，强行将从提升为主，可能导致新主上的数据不完整。半同步复制情况下，主库在执行完客户端提交的事务后不是立刻返回给客户端，而是等待至少一个从库接收到并写到relay log中才返回给客户端。相对于异步复制，半同步复制提高了数据的安全性，同时它也造成了一定程度的延迟，这个延迟最少是一个TCP/IP往返的时间。所以，半同步复制最好在低延时的网络中使用。
 
 
+
+确保slave库I/O thread接收完master库的binlog，已经写入到relay log，才通知master库的等待线程该操作已正常结束；
+
+等待超时，会关闭半同步复制，自动切换至异步复制，直到至少有一台slave库通知master库已经接收到binlog信息再恢复     提升了主从之间的数据一致性
 
 
 
@@ -262,6 +301,238 @@ percona-tools
 ```
 
 
+
+
+
+# 基于二进制日志的主从复制
+
+**2.1 配置要求**
+
+1）主库开启二进制日志
+
+2）主库和各个从库配置唯一的server_id
+
+**2.2 主库创建复制用户**
+
+从库需要使用一个用户来连接主库，可以使用添加复制权限的生产应用用户。为了减少对应用用户的影响，建议单独创建一个仅有复制权限的用户。
+
+CREATE USER 'repl'@'%' IDENTIFIED BY 'password';
+
+GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
+
+**2.3 获取主库的二进制日志位置**
+
+1）在主库打开一个连接，执行下列命令清除所有表并阻止写入语句：
+
+mysql> FLUSH TABLES WITH READ LOCK;
+
+2）重新打开一个连接，执行下列命令获取二进制日志的位置：
+
+mysql > SHOW MASTER STATUS;
+
++--------------------+----------+--------------+------------------+-------------------+|
+
+File | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
+
++--------------------+----------+--------------+------------------+-------------------+|
+
+mysql_bin.000003 | 154 | | | |
+
++--------------------+----------+--------------+------------------+-------------------+
+
+3）对于配置一个新的主从复制环境，主库没有初始数据需要同步到从库，则在第一个连接中释放锁：
+
+mysql> UNLOCK TABLES;
+
+**2.4 配置从库**
+
+配置前先需要确认是否为从库设置了唯一的server_id。然后在从库上执行下面语句，请将参数值替换为实际值：
+
+mysql> CHANGE MASTER TO MASTER_HOST='master_host_name', MASTER_USER='replication_user_name', MASTER_PASSWORD='replication_password', MASTER_LOG_FILE='recorded_log_file_name', MASTER_LOG_POS=recorded_log_position;
+
+如果需要配置多源的复制，需要为每一个主库指定一个通道:
+
+mysql> CHANGE MASTER TO MASTER_HOST='master_host_name', MASTER_USER='replication_user_name', MASTER_PASSWORD='replication_password', MASTER_LOG_FILE='recorded_log_file_name', MASTER_LOG_POS=recorded_log_position FOR CHANNEL 'master-1';
+
+**2.5 启动主从复制**
+
+在从库上执行：
+
+mysql> START SLAVE;
+
+**2.6 查看复制状态**
+
+在从库上执行：
+
+mysql> SHOW SLAVE STATUSG;
+
+当Slave_IO_Running和Slave_SQL_Running都为YES的时候就表示主从同步设置成功了。接下来就可以进行一些验证了，比如在主master数据库的test数据库的一张表中插入一条数据，在slave的test库的相同数据表中查看是否有新增的数据即可验证主从复制功能是否有效，还可以关闭slave（mysql>stop slave;）,然后再修改master，看slave是否也相应修改（停止slave后，master的修改不会同步到slave），就可以完成主从复制功能的验证了。
+
+
+
+
+
+
+
+**2.基于二进制日志的主从复制**
+
+**2.1 配置要求**
+
+1）主库开启二进制日志
+
+2）主库和各个从库配置唯一的server_id
+
+**2.2 主库创建复制用户**
+
+从库需要使用一个用户来连接主库，可以使用添加复制权限的生产应用用户。为了减少对应用用户的影响，建议单独创建一个仅有复制权限的用户。
+
+CREATE USER 'repl'@'%' IDENTIFIED BY 'password';
+
+GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
+
+**2.3 获取主库的二进制日志位置**
+
+1）在主库打开一个连接，执行下列命令清除所有表并阻止写入语句：
+
+mysql> FLUSH TABLES WITH READ LOCK;
+
+2）重新打开一个连接，执行下列命令获取二进制日志的位置：
+
+mysql > SHOW MASTER STATUS;
+
++--------------------+----------+--------------+------------------+-------------------+|
+
+File | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
+
++--------------------+----------+--------------+------------------+-------------------+|
+
+mysql_bin.000003 | 154 | | | |
+
++--------------------+----------+--------------+------------------+-------------------+
+
+3）对于配置一个新的主从复制环境，主库没有初始数据需要同步到从库，则在第一个连接中释放锁：
+
+mysql> UNLOCK TABLES;
+
+**2.4 配置从库**
+
+配置前先需要确认是否为从库设置了唯一的server_id。然后在从库上执行下面语句，请将参数值替换为实际值：
+
+mysql> CHANGE MASTER TO MASTER_HOST='master_host_name', MASTER_USER='replication_user_name', MASTER_PASSWORD='replication_password', MASTER_LOG_FILE='recorded_log_file_name', MASTER_LOG_POS=recorded_log_position;
+
+如果需要配置多源的复制，需要为每一个主库指定一个通道:
+
+mysql> CHANGE MASTER TO MASTER_HOST='master_host_name', MASTER_USER='replication_user_name', MASTER_PASSWORD='replication_password', MASTER_LOG_FILE='recorded_log_file_name', MASTER_LOG_POS=recorded_log_position FOR CHANNEL 'master-1';
+
+**2.5 启动主从复制**
+
+在从库上执行：
+
+mysql> START SLAVE;
+
+**2.6 查看复制状态**
+
+在从库上执行：
+
+mysql> SHOW SLAVE STATUSG;
+
+当Slave_IO_Running和Slave_SQL_Running都为YES的时候就表示主从同步设置成功了。接下来就可以进行一些验证了，比如在主master数据库的test数据库的一张表中插入一条数据，在slave的test库的相同数据表中查看是否有新增的数据即可验证主从复制功能是否有效，还可以关闭slave（mysql>stop slave;）,然后再修改master，看slave是否也相应修改（停止slave后，master的修改不会同步到slave），就可以完成主从复制功能的验证了。
+
+
+
+
+
+# 基于GTID的主从复制
+
+**3.1 配置要求**
+
+\1. 主库开启二进制日志
+
+\2. 主库和各个从库配置唯一的server_id
+
+**3.2 主库创建复制用户**
+
+从库需要使用一个用户来连接主库，可以使用添加复制权限的生产应用用户。为了减少对应用用户的影响，建议单独创建一个仅有复制权限的用户。
+
+CREATE USER 'repl'@'%' IDENTIFIED BY 'password';
+
+GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
+
+**3.3 在主库和从库的/etc/my.cnf文件中[mysqld]添加启用GTID的变量：**
+
+gtid_mode=ON
+
+enforce-gtid-consistency=true
+
+配置完成后重启mysql。
+
+systemctl restart mysqld
+
+**3.4 配置从库**
+
+配置前先需要确认是否为从库设置了唯一的server_id。然后在从库上执行下面语句，请将参数值替换为实际值：
+
+mysql>CHANGE MASTER TO MASTER_HOST = '128.*.*.*',MASTER_PORT = 3306,MASTER_USER = 'repl',MASTER_PASSWORD = 'password',MASTER_AUTO_POSITION = 1;
+
+如果需要配置多源的复制，需要为每一个主库指定一个通道:
+
+mysql>CHANGE MASTER TO MASTER_HOST = '128.*.*.*',MASTER_PORT = 3306,MASTER_USER = 'repl',MASTER_PASSWORD = 'password',MASTER_AUTO_POSITION = 1 FOR CHANNEL 'master-1';
+
+**3.5 启动主从复制**
+
+在从库上执行：
+
+mysql> START SLAVE;
+
+
+
+
+
+# 半同步复制
+
+**安装插件**
+
+在主库上执行：
+
+INSTALL PLUGIN rpl_semi_sync_master SONAME 'semisync_master.so';
+
+在从库上执行：
+
+INSTALL PLUGIN rpl_semi_sync_slave SONAME 'semisync_slave.so';
+
+查看插件状态：
+
+SELECT PLUGIN_NAME,PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME LIKE '%semi%';
+
+**4.2 配置参数**
+
+主库参数：
+
+rpl_semi_sync_master_enabled=1 #主库启用半同步复制
+
+rpl_semi_sync_master_timeout=1000 #主库等待从库的超时时间，超时切换回异步复制，默认值10000（10s）
+
+rpl_semi_sync_master_wait_point=AFTER_SYNC #等待点模式（AFTER_SYNC表示主库等待从库接收到binlog写到本地的relay-log里，才提交到存储引擎层，然后把请求返回给客户端；
+
+AFTER_COMMIT表示主库写入binlog，边提交，边等待从库收到binlog写到本地的relay-log）
+
+rpl_semi_sync_master_wait_for_slave_count=1 #主库等待从库的个数
+
+从库参数：
+
+rpl_semi_sync_slave_enabled=1 #从库启用半同步复制
+
+**4.3 半同步复制状态监控**
+
+Rpl_semi_sync_master_status #主库是否运行在半同步模式
+
+Rpl_semi_sync_master_clients #半同步从库的个数
+
+Rpl_semi_sync_master_yes_tx #从库确认成功的提交事务数
+
+Rpl_semi_sync_master_no_tx #从库未确认成功的提交事务数
+
+Rpl_semi_sync_slave_status #从库是否可运行半同步复制
 
 
 

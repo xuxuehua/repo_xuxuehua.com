@@ -10,6 +10,8 @@ date: 2019-06-28 10:03
 
 Just specific coded functions are running only when are needed and without any knowledge of the servers or OS or the language runtime configuration
 
+AWS Lambda enables developers to write code functions that only contain what their logic requires and have their code be deployed, invoked, made highly reliable, and scaled without having to manage infrastructure whatsoever. 
+
 
 
 ## Components

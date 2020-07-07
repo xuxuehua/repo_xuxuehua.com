@@ -225,6 +225,75 @@ psql  -d  postgis  -f  c:\ dump.sql postgres
 
 
 
+
+
+## pg_stat_activity
+
+```
+select * from pg_stat_activity;
+```
+
+
+
+### idle transaction 
+
+```
+SELECT usename,state,count(1)
+FROM pg_stat_activity
+where xact_start is not null
+group by usename,state;
+```
+
+
+
+
+
+```
+SELECT datname, pid, state, query, age(clock_timestamp(), query_start) AS age 
+FROM pg_stat_activity
+WHERE state <> 'idle' 
+    AND query NOT LIKE '% FROM pg_stat_activity %' 
+ORDER BY age;
+```
+
+
+
+
+
+## pg_cancel_backend() 
+
+取消后台操作，回滚未提交事物
+
+```
+user_data=> select pg_cancel_backend(1264);
+ pg_terminate_backend
+----------------------
+ t
+(1 row)
+
+user_data=>  select * from pg_stat_activity where pid=1264;
+(No rows)
+```
+
+
+
+## pg_terminate_backend() 
+
+中断session，回滚未提交事物
+
+```
+user_data=> select pg_terminate_backend(1264);
+ pg_terminate_backend
+----------------------
+ t
+(1 row)
+
+user_data=>  select * from pg_stat_activity where pid=1264;
+(No rows)
+```
+
+
+
 # Concept
 
 
@@ -258,4 +327,8 @@ SSL connection (cipher: ECDHE-RSA-AES256-GCM-SHA384, bits: 256)
 Type "help" for help.
 admin=> \q
 ```
+
+
+
+
 

@@ -222,9 +222,42 @@ def fucn():
 
  
 
- 
 
+
+
+
+# example
+
+## 查看函数运行时间
+
+```
+import time 
  
+start = time.time() 
+ 
+# run the function 
+ 
+end = time.time() 
+print(end-start) 
+```
+
+ OR
+
+```
+import time 
+import timeit 
+ 
+def run_sleep(second): 
+    print(second) 
+    time.sleep(second) 
+ 
+# 只用这一行 
+print(timeit.timeit(lambda :run_sleep(2), number=5)) 
+```
+
+
+
+## 
 
 
 

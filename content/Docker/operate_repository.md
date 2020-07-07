@@ -13,8 +13,7 @@ date: 2018-10-24 16:35
 
 ## registry 注册服务器
 
-一个容易混淆的概念是注册服务器（Registry）。实际上注册服务器是管理仓库的具体服务器，每个服务器上可以有多个仓库，而每个仓库下面有多个镜像。从这方面来说，仓库可以被认为是一个具体的项目或目录。例如对于仓库地址dl.dockerpool.com/ubuntu
-来说，dl.dockerpool.com 是注册服务器地址，ubuntu是仓库名。
+一个容易混淆的概念是注册服务器（Registry）。实际上注册服务器是管理仓库的具体服务器，每个服务器上可以有多个仓库，而每个仓库下面有多个镜像。从这方面来说，仓库可以被认为是一个具体的项目或目录。例如对于仓库地址dl.dockerpool.com/ubuntu来说，dl.dockerpool.com 是注册服务器地址，ubuntu是仓库名。
 
 
 
@@ -178,3 +177,16 @@ dig @114.114.114.114 registry-1.docker.io
 52.87.94.70 registry-1.docker.io
 ```
 
+
+
+
+
+## 国内docker hub
+
+/etc/docker/daemon.json
+
+```
+{ 
+"registry-mirrors": ["https://registry.docker-cn.com", "http://hub-mirror.c.163.com","https://docker.mirrors.ustc.edu.cn"] 
+}
+```

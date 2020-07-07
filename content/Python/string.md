@@ -196,6 +196,16 @@ Print Styple Format Conversation
 
 
 
+
+
+### %s 推荐的方法
+
+```
+In [31]: 'Hello %(name)s!' % {'name': 'Rick'}                                                                                                                              Out[31]: 'Hello Rick!'
+```
+
+
+
 ### %d
 
 ```python

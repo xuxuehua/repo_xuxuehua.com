@@ -132,6 +132,22 @@ Integrations are named, first-class Snowflake objects that avoid the need for pa
 
 
 
+## Role management
+
+All Snowflake users are automatically assigned the predefined PUBLIC role, which enables login to Snowflake and basic object access.
+
+Roles can be assigned at user creation or afterwards.
+
+The account administrator (ACCOUNTADMIN) role is the most powerful role in the system.
+Assign this role to at least two users. We follow strict security procedures for resetting a forgotten or lost password for users with the ACCOUNTADMIN role.
+
+
+The security administrator (SECURITYADMIN) role includes the privileges to create and manage users and roles.
+
+The system administrator (SYSADMIN) role includes the privileges to create warehouses, databases, and all database objects (schemas, tables, etc.).
+
+
+
 # Snowflake Architecture 
 
 ![image-20200525143307565](snowflake.assets/image-20200525143307565.png)

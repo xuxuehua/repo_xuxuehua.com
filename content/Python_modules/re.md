@@ -156,6 +156,8 @@ re.VERBOSE
 
 ### re.compile 编译
 
+使用 compile 函数将正则表达式的字符串形式编译为一个 Pattern 对象
+
 ```
 re.compile(pattern, flags=0)
 ```
@@ -163,6 +165,10 @@ re.compile(pattern, flags=0)
 设定flags，编译模式，返回正则对象regex
 
 正则被编译后，保存下来，下次使用同样的pattern时候，不需再次编译
+
+
+
+
 
 
 

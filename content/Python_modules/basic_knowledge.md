@@ -13,6 +13,36 @@ date: 2018-08-25 00:39
 
 独立项目，所有模块从项目根目录开始追溯，称相对的绝对路径
 
+
+
+### 查看包路径
+
+```
+$ python -c "print('\n'.join(__import__('sys').path))" 
+
+/Users/rxu/.pyenv/versions/3.7.0/lib/python37.zip
+/Users/rxu/.pyenv/versions/3.7.0/lib/python3.7
+/Users/rxu/.pyenv/versions/3.7.0/lib/python3.7/lib-dynload
+/Users/rxu/.pyenv/versions/test_only_3.7.0/lib/python3.7/site-packages
+```
+
+OR
+
+```
+In [1]: import sys                                                                                                                                                                   
+In [2]: from pprint import pprint                                                                                                                                                    
+In [3]: pprint(sys.path)                                                                                                                                                             ['/Users/rxu/.pyenv/versions/3.7.0/envs/test_only_3.7.0/bin',
+ '/Users/rxu/.pyenv/versions/3.7.0/lib/python37.zip',
+ '/Users/rxu/.pyenv/versions/3.7.0/lib/python3.7',
+ '/Users/rxu/.pyenv/versions/3.7.0/lib/python3.7/lib-dynload',
+ '',
+ '/Users/rxu/.pyenv/versions/3.7.0/envs/test_only_3.7.0/lib/python3.7/site-packages',
+ '/Users/rxu/.pyenv/versions/3.7.0/envs/test_only_3.7.0/lib/python3.7/site-packages/IPython/extensions',
+ '/Users/rxu/.ipython']
+```
+
+
+
 ## 定义
 
  .py 文件组成的代码集合就称为模块
@@ -105,3 +135,8 @@ print('__name__:', __name__)
 111
 __name__: __main__
 ```
+
+
+
+
+

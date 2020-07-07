@@ -54,9 +54,37 @@ MySQL 事务主要用于处理操作量大，复杂度高的数据。比如说�
 
 
 
-## 使用事务
+# 使用事务
 
-### 启动事务
+### 关闭自动提交
+
+在 MySQL 命令行的默认设置下，事务都是自动提交的，即执行 SQL 语句后就会马上执行 COMMIT 操作。因此要显式地开启一个事务务须使用命令 BEGIN 或 START TRANSACTION，或者执行命令 SET AUTOCOMMIT=0，用来禁止使用当前会话的自动提交。
+
+* 临时关闭
+
+```
+MariaDB [(none)]> SET SESSION autocommit=0;
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [(none)]> SHOW VARIABLES LIKE '%auto%';
++-----------------------------+-------+
+| Variable_name               | Value |
++-----------------------------+-------+
+| auto_increment_increment    | 1     |
+| auto_increment_offset       | 1     |
+| autocommit                  | OFF   |
+| automatic_sp_privileges     | ON    |
+| innodb_autoextend_increment | 8     |
+| innodb_autoinc_lock_mode    | 1     |
+| innodb_stats_auto_update    | 1     |
+| sql_auto_is_null            | OFF   |
++-----------------------------+-------+
+8 rows in set (0.00 sec)
+```
+
+
+
+## 启动事务
 
 ```
 START TRANSACTION
@@ -64,11 +92,12 @@ START TRANSACTION
 
 
 
-### 结束事务
+## 结束事务
 
 ```
 COMMIT 提交
 ROLLBACK 回滚
+ROLLBACK TO [SAVEPOINT]
 ```
 
 
@@ -151,42 +180,16 @@ MariaDB [hellodb]> SELECT * FROM students;
 
 
 
-### 关闭自动提交
-
-在 MySQL 命令行的默认设置下，事务都是自动提交的，即执行 SQL 语句后就会马上执行 COMMIT 操作。因此要显式地开启一个事务务须使用命令 BEGIN 或 START TRANSACTION，或者执行命令 SET AUTOCOMMIT=0，用来禁止使用当前会话的自动提交。
-
-* 临时关闭
-
-```
-MariaDB [(none)]> SET SESSION autocommit=0;
-Query OK, 0 rows affected (0.00 sec)
-
-MariaDB [(none)]> SHOW VARIABLES LIKE '%auto%';
-+-----------------------------+-------+
-| Variable_name               | Value |
-+-----------------------------+-------+
-| auto_increment_increment    | 1     |
-| auto_increment_offset       | 1     |
-| autocommit                  | OFF   |
-| automatic_sp_privileges     | ON    |
-| innodb_autoextend_increment | 8     |
-| innodb_autoinc_lock_mode    | 1     |
-| innodb_stats_auto_update    | 1     |
-| sql_auto_is_null            | OFF   |
-+-----------------------------+-------+
-8 rows in set (0.00 sec)
-```
-
 
 
 ## savepoint
 
-### usage
+在事务中创建保存点，方便后续针对保存点进行回滚。一个事务中可以存在多个保存点。
 
 ```
 SAVEPOINT identifier
 ROLLBACK [WORK] TO SAVEPOINT identifier
-RELEASE SAVEPOINT identifier
+RELEASE SAVEPOINT identifier 
 ```
 
 
@@ -382,15 +385,19 @@ MariaDB [hellodb]> SELECT * FROM students;
 
 
 
+# 死锁
+
+两个或者多个事物在一组资源上相互占用，并请求锁定对方占用的资源的状态。
 
 
-## 事务隔离级别
+
+# 事务隔离级别
 
 使用`SET tx_isolation=""` 方式设置，临时会话加上`SESSION`参数
 
  
 
-### READ UNCOMMITTED 读未提交
+## READ UNCOMMITTED 读未提交
 
 即一个事务还没有提交的时候，他做的变更就被其他事务看到
 
@@ -529,7 +536,7 @@ MariaDB [hellodb]> SELECT * FROM students WHERE StuID=13;
 
 
 
-### READ COMMITTED 读提交
+## READ COMMITTED 读提交
 
 即一个事务提交之后，他做的变更才会被其他事务看到
 
@@ -784,13 +791,11 @@ MariaDB [hellodb]> SELECT * FROM students;
 
 
 
-### REPEATABLE READ 可重读
+## REPEATABLE READ 可重读
 
 即一个事务执行过程中看到的数据，总是跟这个事务在启动时看到的数据是一致的，未提交的变更对其他事务是不可见的
 
-
-
-解决了不可重复读的问题，但是依旧有幻读的问题。即一方自己的事务修改提交后，另一方读到的数据还是自己本身的
+解决了不可重复读的问题，但是依旧有幻读的问题。
 
 
 
@@ -810,7 +815,7 @@ MariaDB [hellodb]> SHOW GLOBAL VARIABLES LIKE '%isolation%';
 
 
 
-### SERIALIZABLE 可串行化
+## SERIALIZABLE 可串行化
 
 即对同一行数据，写时会加写锁，读时会加读锁。出现读写冲突的时候，后访问的事务必须等前一个事务执行完成之后才能继续执行
 
@@ -895,10 +900,6 @@ MariaDB [hellodb]> SELECT * FROM students WHERE StuID=14;
 
 
 
-
-## 死锁
-
-两个或者多个事物在一组资源上相互占用，并请求锁定对方占用的资源的状态。
 
 
 

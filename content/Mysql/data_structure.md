@@ -277,11 +277,23 @@ year	1	1901 ~ 2155
 
 
 
-## SQL mode
+# sql_mode 配置
 
 定义mysqld对约束等的响应行为
 
-### 修改方式
+sql_mode这个变量默认是空值，在这种模式下是可以允许一些非法操作，如非法数据插入
+
+在生产环境需要设置为严格模式
+
+```
+show variables like 'sql_mode';
+
+set sql_mode='ONLY_FULL_GROUP_BY';
+```
+
+
+
+## 修改方式
 
 需要修改权限，仅对修改后新建会话有效，对已经建立的会话无效
 
@@ -292,18 +304,51 @@ mysql> SET @@global.sql_mode='MODE';
 
 
 
-### 常用mode
+## ONLY_FULL_GROUP_BY
 
-```
-TRADITIONAL
-STRICT_TRANS_TABLES
-STRICT_ALL_TABLES
-etc
-```
+对于group by 聚合操作，如果select中的列，没有在group by中出现，sql就是不合法的
 
 
 
+## STRICT_TRANS_TABLES
 
+如果一个值不能插入到一个事务表中，则中断当前的操作，对非事务表不做限制
+
+
+
+## NO_ZERO_IN_DATE
+
+在严格模式下，不允许日期和月份为0
+
+
+
+## NO_ZERO_DATE
+
+数据库中不允许插入零日期，插入零日期会抛出错误而不是警告
+
+
+
+## ERROR_FOR_DIVISION_BY_ZERO
+
+在insert和update过程中，如果数据被零除，则产生错误而非警报
+
+若不设定会返回NULL
+
+
+
+## NO_AUTO_CREATE_USER
+
+禁止GRANT 空密码用户
+
+
+
+## NO_ENGINE_SUBSTITION
+
+
+
+
+
+## TRADITIONAL
 
 ```
 mysql> set sql_mode='TRADITIONAL';
@@ -329,7 +374,7 @@ mysql> SHOW VARIABLES LIKE 'sql_mo%';
 
 
 
-## Mysql 数据文件类型
+# Mysql 数据文件类型
 
 数据文件
 

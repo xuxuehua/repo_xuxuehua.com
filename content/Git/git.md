@@ -202,8 +202,6 @@ git checkout -
 
 
 
-
-
 ## commit 提交更改
 
 把暂存区的所有内容提交到当前分支（若是多分支，就不一定是master分支）
@@ -963,3 +961,12 @@ $ git status --porcelain
 # rebase vs merge
 
 ![image-20200202123830861](git.assets/image-20200202123830861.png)
+
+
+
+
+
+
+
+
+

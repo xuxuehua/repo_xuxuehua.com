@@ -133,13 +133,13 @@ VBScript是弱类型定义语言， PHP， Javascript， Perl
 
 ## 编译
 
-* 编译是将源程序翻译成可执行的目标代码，翻译与执行是分开的；而解释是对源程序的翻译与执行一次性完成，不生成可存储的目标代码。这只是表象，二者背后的最大区别是：对解释执行而言，程序运行时的控制权在解释器而不在用户程序；对编译执行而言，运行时的控制权在用户程序。
+编译是将源程序翻译成可执行的目标代码，翻译与执行是分开的；而解释是对源程序的翻译与执行一次性完成，不生成可存储的目标代码。这只是表象，二者背后的最大区别是：对解释执行而言，程序运行时的控制权在解释器而不在用户程序；对编译执行而言，运行时的控制权在用户程序。
 
 
 
 ## 解释
 
-* 解释具有良好的动态特性和可移植性，比如在解释执行时可以动态改变变量的类型、对程序进行修改以及在程序中插入良好的调试诊断信息等，而将解释器移植到不同的系统上，则程序不用改动就可以在移植了解释器的系统上运行。同时解释器也有很大的缺点，比如执行效率低，占用空间大，因为不仅要给用户程序分配空间，解释器本身也占用了宝贵的系统资源。
+解释具有良好的动态特性和可移植性，比如在解释执行时可以动态改变变量的类型、对程序进行修改以及在程序中插入良好的调试诊断信息等，而将解释器移植到不同的系统上，则程序不用改动就可以在移植了解释器的系统上运行。同时解释器也有很大的缺点，比如执行效率低，占用空间大，因为不仅要给用户程序分配空间，解释器本身也占用了宝贵的系统资源。
 
 
 
@@ -565,6 +565,171 @@ $ python -i script.py
 
 
 # 编码规范
+
+
+
+## docstring
+
+**parameters**, **types**, **return** and **return types**:
+
+```
+:param arg1: description
+:param arg2: description
+:type arg1: type description
+:type arg1: type description
+:return: return description
+:rtype: the return type description
+```
+
+
+
+
+
+template.py
+
+```
+"""This module illustrates how to write your docstring in OpenAlea
+and other projects related to OpenAlea."""
+
+__license__ = "Cecill-C"
+__revision__ = " $Id: actor.py 1586 2009-01-30 15:56:25Z cokelaer $ "
+__docformat__ = 'reStructuredText'
+
+
+class MainClass1(object):
+    """This class docstring shows how to use sphinx and rst syntax
+
+    The first line is brief explanation, which may be completed with 
+    a longer one. For instance to discuss about its methods. The only
+    method here is :func:`function1`'s. The main idea is to document
+    the class and methods's arguments with 
+
+    - **parameters**, **types**, **return** and **return types**::
+
+          :param arg1: description
+          :param arg2: description
+          :type arg1: type description
+          :type arg1: type description
+          :return: return description
+          :rtype: the return type description
+
+    - and to provide sections such as **Example** using the double commas syntax::
+
+          :Example:
+
+          followed by a blank line !
+
+      which appears as follow:
+
+      :Example:
+
+      followed by a blank line
+
+    - Finally special sections such as **See Also**, **Warnings**, **Notes**
+      use the sphinx syntax (*paragraph directives*)::
+
+          .. seealso:: blabla
+          .. warnings also:: blabla
+          .. note:: blabla
+          .. todo:: blabla
+
+    .. note::
+        There are many other Info fields but they may be redundant:
+            * param, parameter, arg, argument, key, keyword: Description of a
+              parameter.
+            * type: Type of a parameter.
+            * raises, raise, except, exception: That (and when) a specific
+              exception is raised.
+            * var, ivar, cvar: Description of a variable.
+            * returns, return: Description of the return value.
+            * rtype: Return type.
+
+    .. note::
+        There are many other directives such as versionadded, versionchanged,
+        rubric, centered, ... See the sphinx documentation for more details.
+
+    Here below is the results of the :func:`function1` docstring.
+
+    """
+
+    def function1(self, arg1, arg2, arg3):
+        """returns (arg1 / arg2) + arg3
+
+        This is a longer explanation, which may include math with latex syntax
+        :math:`\\alpha`.
+        Then, you need to provide optional subsection in this order (just to be
+        consistent and have a uniform documentation. Nothing prevent you to
+        switch the order):
+
+          - parameters using ``:param <name>: <description>``
+          - type of the parameters ``:type <name>: <description>``
+          - returns using ``:returns: <description>``
+          - examples (doctest)
+          - seealso using ``.. seealso:: text``
+          - notes using ``.. note:: text``
+          - warning using ``.. warning:: text``
+          - todo ``.. todo:: text``
+
+        **Advantages**:
+         - Uses sphinx markups, which will certainly be improved in future
+           version
+         - Nice HTML output with the See Also, Note, Warnings directives
+
+
+        **Drawbacks**:
+         - Just looking at the docstring, the parameter, type and  return
+           sections do not appear nicely
+
+        :param arg1: the first value
+        :param arg2: the first value
+        :param arg3: the first value
+        :type arg1: int, float,...
+        :type arg2: int, float,...
+        :type arg3: int, float,...
+        :returns: arg1/arg2 +arg3
+        :rtype: int, float
+
+        :Example:
+
+        >>> import template
+        >>> a = template.MainClass1()
+        >>> a.function1(1,1,1)
+        2
+
+        .. note:: can be useful to emphasize
+            important feature
+        .. seealso:: :class:`MainClass2`
+        .. warning:: arg2 must be non-zero.
+        .. todo:: check that arg2 is non zero.
+        """
+        return arg1/arg2 + arg3
+
+
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+```
+
+
+
+```
+>>>
+$ python template.py 
+**********************************************************************
+File "template.py", line 106, in __main__.MainClass1.function1
+Failed example:
+    a.function1(1,1,1)
+Expected:
+    2
+Got:
+    2.0
+**********************************************************************
+1 items had failures:
+   1 of   3 in __main__.MainClass1.function1
+***Test Failed*** 1 failures.
+```
 
 
 
