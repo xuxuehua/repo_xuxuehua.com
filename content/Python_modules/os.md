@@ -71,6 +71,8 @@ Out[8]: '/Users/xhxu'
 
 得到当前工作目录，即当前python脚本工作的目录路径。
 
+
+
 ## os.getenv()和os.putenv
 
 分别用来读取和设置环境变量

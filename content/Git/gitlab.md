@@ -66,6 +66,279 @@ gitlab-ctl reconfigure
 
 
 
+### docker
+
+```bash
+sudo docker run --detach \
+  --hostname gitlab.xurick.com \
+  --publish 127.0.0.1:4443:443 --publish 127.0.0.1:4000:80 \
+  --name gitlab \
+  --restart always \
+  --volume /srv/gitlab/config:/etc/gitlab \
+  --volume /srv/gitlab/logs:/var/log/gitlab \
+  --volume /srv/gitlab/data:/var/opt/gitlab \
+  gitlab/gitlab-ce:latest
+```
+
+
+
+- /srv/gitlab/config will hold GitLab's configuration
+- /srv/gitlab/logs will hold the GitLab's logs
+- /srv/gitlab/data will hold the actual git repo's data.
+
+```
+apt update
+apt install nginx -y 
+```
+
+
+
+vim /etc/nginx/sites-enabled/default
+
+```
+map $http_upgrade $connection_upgrade {
+        default upgrade;
+        '' close;
+}
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+
+        root /var/www/html;
+
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+
+        location / {
+                                proxy_pass http://localhost:4000;
+
+                proxy_read_timeout 3600s;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection $connection_upgrade;
+        }
+
+
+}
+```
+
+
+
+Go to web UI to complete Gitlab initilization
+
+
+
+### Gitlab-runner
+
+```
+docker run -d --name gitlab-runner --restart always \
+  -v /srv/gitlab-runner/config:/etc/gitlab-runner \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  gitlab/gitlab-runner:latest
+```
+
+> mount the host’s `/srv/gitlab-runner/config` folder to the `/etc/gitlab-runner` location of the container
+
+
+
+
+
+Go to http://your_domain.com/admin/runners
+
+```
+docker exec -ti gitlab-runner bash
+```
+
+```
+root@55d9aff26c4d:/# gitlab-runner register
+Runtime platform                                    arch=amd64 os=linux pid=65 revision=6fbc7474 version=13.1.1
+Running in system-mode.                            
+                                                   
+Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com/):
+http://public_ip
+Please enter the gitlab-ci token for this runner:
+ukcmybsDQxxzsom3RB6CN
+Please enter the gitlab-ci description for this runner:
+[55d9aff26c4d]: sample-docker-runner
+Please enter the gitlab-ci tags for this runner (comma separated):
+
+Registering runner... succeeded                     runner=ukcmybsD
+Please enter the executor: kubernetes, custom, docker, docker-ssh, parallels, shell, ssh, docker+machine, virtualbox, docker-ssh+machine:
+docker
+Please enter the default Docker image (e.g. ruby:2.6):
+alpine:latest
+Runner registered successfully. Feel free to start it, but if it's running already the config should be automatically reloaded! 
+```
+
+
+
+docker network
+
+```
+docker network create gitlabnet
+docker network connect gitlabnet gitlab
+docker network connect gitlabnet gitlab-runner
+```
+
+
+
+Avoiding Docker-In-Docker and resolve public domain
+
+This will give your Dockerfile full control, there is another option. You can configure your runner to use the host's docker when executing the Dockerfile commands. You can do that by configuring the `gitlab-runner` configuration to use the host docker. In our example, the configuration is located at `/srv/gitlab-runner/config/config.toml`. edit the file
+
+```
+concurrent = 1
+check_interval = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = "sample-docker-runner"
+  url = "http://45.77.13.173"
+  token = "Liqf4STtEBdsasUZjqWD"
+  executor = "docker"
+  clone_url = "http://45.77.13.173"
+  [runners.custom_build_dir]
+  [runners.cache]
+    [runners.cache.s3]
+    [runners.cache.gcs]
+  [runners.docker]
+    tls_verify = false
+    image = "alpine:latest"
+    privileged = false
+    disable_entrypoint_overwrite = false
+    oom_kill_disable = false
+    disable_cache = false
+    volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
+    shm_size = 0
+    extra_hosts = ["localhost:45.77.13.173"]
+```
+
+
+
+
+
+
+
+#### gitlab-ci.yml
+
+```
+image: docker:latest
+
+build_job:
+  stage: build
+  script:
+    - ls
+    - echo "starting job..."
+    - docker build -t "${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}-0.1.${CI_JOB_ID}" .
+    - echo job finished
+  only:
+    - develop
+    - master
+```
+
+
+
+### note
+
+to do after completing the steps in this post.
+
+- Configure SSH checkouts. With this configuration, you should be able to use HTTPS for pulls and pushes. If you want to enable SSL, you will need to expose port 22 from the GitLab container and perform some more advanced configuration to avoid mixing GitLab’s SSL with your host machine’s SSL (which would run in the same port by default).
+- Use external Docker Container Registries. You can use a free service like [canister.io](https://git.oramind.net/unicorn/unicorn-api/pipelines) to host your docker images.
+- Use an image/container management tool like https://www.portainer.io/ to manage your containers/images on your host machine. That includes your GitLab installation and GitLab runners.
+
+
+
+#### https (failed)
+
+```
+sudo apt-get install software-properties-common
+sudo add-apt-repository universe
+sudo add-apt-repository ppa:certbot/certbotsudo 
+apt-get update && apt install certbot -y && sudo apt install python-certbot-nginx -y 
+```
+
+Setup certification
+
+```
+certbot --nginx
+```
+
+set up your server inside the Nginx configuration. Certbot has already created a configuration for you inside `/etc/nginx/sites-enabled`. Alter the configuration for the host and the port that it points to like this
+
+```
+# make sure this map append into the config
+map $http_upgrade $connection_upgrade {
+        default upgrade;
+        '' close;
+}
+
+server {
+	server_name git.domain.com;
+	client_max_body_size 256M;
+
+	location / {
+		proxy_pass http://localhost:4000;
+
+		proxy_read_timeout 3600s;
+		proxy_http_version 1.1;
+		# Websocket connection
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection $connection_upgrade;
+	}
+
+	listen [::]:443;
+
+	listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/git.domain.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/git.domain.com/privkey.pem; # managed by Certbot
+	include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+```
+
+
+
+
+
+# backup 
+
+
+
+
+
+## create backup
+
+```
+docker exec -it gitlab gitlab-rake gitlab:backup:create
+```
+
+or
+
+```
+tar zcvf gitlab.tar.gz gitlab
+```
+
+
+
+## restore backup
+
+```
+docker exec -it gitlab gitlab-rake gitlab:backup:restore --trace
+```
+
+
+
+## verify backup 
+
+```
+docker exec -it gitlab gitlab-rake gitlab:check SANITIZE=true
+```
+
 
 
 # gitlab.yml
@@ -94,13 +367,13 @@ stg_v1_5.21.0:
     IMAGE_VERSION: "5.21.0"
   script:
     - echo "Deploying ${CI_COMMIT_REF_NAME}/${CI_COMMIT_SHA} to ${S3_STG_CODE_PATH}"
-    - rm -rf ${CI_PROJECT_DIR}/configs/${BDP_VERSION}/${IMAGE_VERSION}/build/
+    - rm -rf ${CI_PROJECT_DIR}/configs/${BD_VERSION}/${IMAGE_VERSION}/build/
 ```
 
 
 
 # example
 
-gitlab ci/cd 
+## gitlab ci/cd 
 
 https://gitlab.com/kargo-ci/kubernetes-sigs-kubespray

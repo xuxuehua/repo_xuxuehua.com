@@ -61,7 +61,11 @@ EOF
 ```
 $ cat a.py
 a=2
-a == None20:24 $ git add a.py20:24 $ git commit -m "you shall not pass"a.py:1:2: E225 missing whitespace around operator
+a == None
+
+$ git add a.py
+$ git commit -m "you shall not pass"
+a.py:1:2: E225 missing whitespace around operator
 a.py:2:3: E711 comparison to None should be 'if cond is None:'
 ```
 

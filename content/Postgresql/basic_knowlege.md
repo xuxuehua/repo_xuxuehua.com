@@ -294,6 +294,57 @@ user_data=>  select * from pg_stat_activity where pid=1264;
 
 
 
+
+
+# Type
+
+## json vs jsonb
+
+The key difference between them is that `JSON` stores data in a raw format and `JSONB` stores data in a custom binary format. Our focus here is going to be on the `JSONB` data type because it allows the contents to be indexed and queried with ease.
+
+The JSON data type is basically a blob that stores JSON data in raw format, preserving even insignificant things such as whitespace, the order of keys in objects, or even duplicate keys in objects. It offers limited querying capabilities, and it's slow because it needs to load and parse the entire JSON blob each time.
+
+JSONB on the other hand stores JSON data in a custom format that is optimized for querying and will not reparse the JSON blob each time.
+
+If you know before hand that you will not be performing JSON querying operations, then use the `JSON`data type. For all other cases, use `JSONB`
+
+
+
+The following example demonstrates the difference:
+
+```
+select '{"user_id":1,    "paying":true}'::json, '{"user_id":1, "paying":true}'::jsonb;
+
+            json                |             jsonb              
+--------------------------------+--------------------------------
+{"user_id":1,    "paying":true} | {"paying": true, "user_id": 1}
+(1 row)
+```
+
+(the whitespace and the order of the keys are preserved in the JSONB column.)
+
+
+
+
+
+```
+create table amsterdam
+(
+   id       integer primary key, 
+   payload  jsonb not null default '{}'::jsonb
+);
+```
+
+
+
+If you are altering an already existing table, then the syntax is as follows:
+
+```sql
+alter table TABLE add column COLUMN jsonb not null default '{}'::jsonb;
+```
+
+
+
 # Concept
 
 

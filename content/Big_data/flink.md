@@ -44,7 +44,7 @@ Flink的架构和Hadoop 1或者Yarn看起来也很像，JobManager是Flink集群
 
 
 
-![img](https://snag.gy/laAxIb.jpg)
+![image-20200708084052436](flink.assets/image-20200708084052436.png)
 
 
 

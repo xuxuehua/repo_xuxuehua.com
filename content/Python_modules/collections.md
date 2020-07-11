@@ -79,15 +79,13 @@ defaultdict属于内建函数dict的一个子类, 提供一个default_factory �
 比如*default(int)*则创建一个类似dictionary对象，里面任何的*values*都是*int*的实例，而且就算是一个不存在的`key, d[key] `也有一个默认值，这个默认值是*int()*的默认值0.
 
 ```
-In [29]: from collections import defaultdict
 
-In [30]: dd = defaultdict(list)
+In [41]: from collections import defaultdict                                                                                                                               
+In [42]: d = defaultdict(list)                                                                                                                                             
+In [43]: d['a']                                                                                                                                                            Out[43]: []
 
-In [31]: dd
-Out[31]: defaultdict(list, {})
-
-In [32]: print(dd)
-defaultdict(<class 'list'>, {})
+In [44]: d = defaultdict(int)                                                                                                                                              
+In [45]: d['a']                                                                                                                                                            Out[45]: 0
 ```
 
  
@@ -136,3 +134,6 @@ for line in f:
 print(d)
 ```
 
+
+
+# OrderedDict
