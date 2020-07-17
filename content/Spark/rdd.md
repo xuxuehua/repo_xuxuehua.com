@@ -30,7 +30,7 @@ val rdd3 = rdd2.reduceByKey(_ + _)
 
 Spark也是对大数据进行分片计算，Spark分布式计算的数据分片、任务调度都是以RDD为单位展开的，每个RDD分片都会分配到一个执行进程去处理。
 
-
+在 Spark 中，对数据的所有操作不外乎创 建 RDD、转化已有 RDD 以及调用 RDD 操作进行求值。而在这一切背后，Spark 会自动将 RDD 中的数据分发到集群上，并将操作并行化执行。
 
 
 
@@ -354,6 +354,16 @@ rdd2 = rdd.filter(lambda x: x % 2 == 0)
 
 
 
+### mapValues 
+
+计算每个键的对应值的均值
+
+![image-20200712110336978](rdd.assets/image-20200712110336978.png)
+
+
+
+
+
 
 
 ### reduceByKey 聚合 
@@ -362,7 +372,12 @@ reduceByKey(func, [numPartitions])
 
 来自不同分片的相同Key必须聚合在一起进行操作，这样就会产生新的RDD分片。实际执行过程中，是否会产生新的RDD分片，并不是根据转换函数名就能判断出来的
 
+```
+rdd.reduceByKey((x, y) => x + y)
 
+>>>
+{(1, 2), (3, 10)}
+```
 
 
 
@@ -370,7 +385,7 @@ reduceByKey(func, [numPartitions])
 
 groupByKey([numPartitions])
 
-groupByKey 和 SQL 中的 groupBy 类似，是把对象的集合按某个 Key 来归类，返回的 RDD 中每个 Key 对应一个序列。
+groupByKey 和 SQL 中的 groupBy 类似，是把对象的集合按某个 Key 来归类，返回的 RDD 中每个 Key 对应一个序列。即对具有相同键的值进行分组
 
 ```
 

@@ -369,12 +369,43 @@ if __debug__:
 2. 在 try 语句前加入 # noinspection PyBroadException
 
 ```python
- # noinspection PyBroadException
+# noinspection PyBroadException
 try:
     literal_value = (
         self.spark_sql(select_sql).collect()[0][variable]
     )
 except Exception:
     pass
+```
+
+
+
+## xxx is too complex
+
+flake8 offers an extra option: –max-complexity, which will emit a warning if the McCabe complexity of a function is higher than the value. By default it’s deactivated:
+
+```
+$ flake8 --max-complexity 12 coolproject
+coolproject/mod.py:97:1: F401 'shutil' imported but unused
+coolproject/mod.py:625:17: E225 missing whitespace around operator
+coolproject/mod.py:729:1: F811 redefinition of unused 'readlines' from line 723
+coolproject/mod.py:939:1: C901 'Checker.check_all' is too complex (12)
+coolproject/mod.py:1028:1: F841 local variable 'errors' is assigned to but never used
+coolproject/mod.py:1204:1: C901 'selftest' is too complex (14)
+```
+
+This feature is quite useful to detect over-complex code. According to McCabe, anything that goes beyond 10 is too complex
+
+See https://en.wikipedia.org/wiki/Cyclomatic_complexity
+
+
+
+
+
+For disable temporarily
+
+```
+# flake8: noqa: C901
+def somefn(...): ...
 ```
 

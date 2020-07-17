@@ -482,7 +482,9 @@ Out[15]: [5, 7, 9]
 
 ### 基本语法
 
-`ret = [expression for x in X for y in Y]`
+```
+[expression for x in X for y in Y]
+```
 
 等价于
 ```python

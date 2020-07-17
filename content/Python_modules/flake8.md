@@ -10,6 +10,8 @@ date: 2020-06-24 16:40
 
 # flake8
 
+flake8 是将 PEP 8、Pyflakes（类似 Pylint）、McCabe（代码复杂性检查器）和第三方插件整合到一起，以检查 Python 代码风格和质量的一个 Python 工具”。
+
 
 
 ## setup on local env

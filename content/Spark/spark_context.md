@@ -8,6 +8,8 @@ date: 2020-06-15 01:38
 
 # SparkContext (Deprecated by SparkSession)
 
+![image-20200712013603038](spark_context.assets/image-20200712013603038.png)
+
 
 
 ## 初始化SparkContext

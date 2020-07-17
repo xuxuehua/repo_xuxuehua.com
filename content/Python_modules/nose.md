@@ -8,8 +8,6 @@ date: 2020-06-16 11:46
 
 # nose
 
-
-
 nose可以自动识别继承于unittest.TestCase的测试单元，并执行测试，而且，nose也可以测试非继承于unittest.TestCase的测试单元。nose提供了丰富的API便于编写测试代码。
 
 只要遵循一些简单的规则去组织你的类库和测试代码，nose是可以自动识别单元测试的。执行测试是非常耗资源的，但是，一段第一个测试模块被加载后，nose就开始执行测试。
@@ -20,13 +18,19 @@ nose 是一个比 unittest 更加先进的测试框架
 
 ## 特点
 
-1. 不用动不动就写个类，而只是写测试函数；
-2. 自动查找和搜集测试，不需要自己手动搭建测试集；
-3. 支持插件，可以搭配其他非常实用的标准化插件（coverage, output capture, drop into debugger on errors, doctests support, profiler）
-4. 为测试打标签，并且可以根据标签非常灵活的选择测试集；
-5. 并行测试；
-6. 更好的支持fixtures；
-7. 产生器测试。
+不需要编写继承unittest.TestCase方法的测试类。你甚至可以将测试作为独立的函数来编写
+
+自动查找和搜集测试，不需要自己手动搭建测试集；
+
+支持插件，可以搭配其他非常实用的标准化插件（coverage, output capture, drop into debugger on errors, doctests support, profiler）
+
+为测试打标签，并且可以根据标签非常灵活的选择测试集；
+
+并行测试；
+
+更好的支持fixtures；
+
+产生器测试。
 
 
 

@@ -13,11 +13,93 @@ date: 2019-09-24 08:43
 
 
 
+## 测试用例
+
+TestCase是创建不同的测试用例的父类
+
+
+
+## 测试套件
+
+测试套件也可以表示其他测试套件的集合。unittest.TestSuite 为创建测试套件提供了一个父类。TestSuite没有定义任何的单元测试，它只将单元测试或其他测试套件聚集起来。
+
+
+
+### TestSuite
+
+```
+import unittest
+
+class MyUnitTestA(unittest.TestCase):
+    def test_a2(self):
+        print('This is test_a2')
+        self.assertNotEqual(4*4, 19)
+
+    def test_a1(self):
+        print('This is test_a1')
+        self.assertTrue(4+4 == 8)
+
+    def will_not_be_called_by_default(self):
+        print('This method will not be called by default')
+
+
+class MyUnitTestB(unittest.TestCase):
+    def test_b2(self):
+        print('This is test_b2')
+        self.assertNotEqual(4*4, 19)
+
+    def test_b1(self):
+        print('This is test_b1')
+        self.assertTrue(4+4 == 8)
+
+    def not_be_called_by_default(self):
+        print('This method will not be called by default')
+
+
+def suite():
+    print("Inside suite()")
+
+    suite_a = unittest.makeSuite(MyUnitTestA)
+
+    suite_b = unittest.makeSuite(MyUnitTestB)
+
+    suite_b.addTest(MyUnitTestB("not_be_called_by_default"))
+
+    return unittest.TestSuite((suite_a, suite_b))
+
+
+if __name__ == "__main__":
+    unittest.main(defaultTest='suite')
+    
+>>>
+Inside suite()
+This is test_a1
+.This is test_a2
+.This is test_b1
+.This is test_b2
+.This method will not be called by default
+.
+----------------------------------------------------------------------
+Ran 5 tests in 0.000s
+
+OK
+```
+
+
+
+## 测试固件
+
+单元测试顺利运行的预备方法。
+
+例如，TestCase.setUp仅仅在执行测试用例之前被调用。它可以用来为测试用例提供所需要的数据。
+
+类似的，TestCase.tearDown方法会在测试执行之后立即被调用。这些方法可以进行组合使用，例如启动和停止由单元测试所使用的服务。
 
 
 
 
-## Hello World
+
+# Hello World
 
 ```
 import unittest
@@ -51,9 +133,49 @@ OK
 
 
 
+```
+import unittest
+
+class MyUnitTests(unittest.TestCase):
+    def setUp(self):
+        print('This is setUp')
+        return super().setUp()
+
+    def tearDown(self):
+        print('This is tearDown')
+        return super().tearDown()
+
+    def test_2(self):
+        print('In the test_2')
+        self.assertEqual(1+1, 2)
+
+    def test_1(self):
+        print('In the test_1')
+        self.assertTrue(1+1 == 2)
+
+    def will_not_be_called(self):
+        print('This method will not be called automatically')
+
+if __name__ == "__main__":
+    unittest.main()
+    
+>>>
+This is setup 		#第一个测试用例
+In the test_1
+This is tearDown
+.This is setup 		#第二个测试用例
+In the test_2
+This is tearDown
+.
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+OK
+```
 
 
-## 分类及特点
+
+# 分类及特点
 
 小型测试，针对单个函数的测试，关注其内部逻辑，mock所有需要的服务。小型测试带来优秀的代码质量、良好的异常处理、优雅的错误报告
 
@@ -71,6 +193,66 @@ OK
 
 
 
+# 控制执行
+
+## 跳过 skip
+
+```
+    @unittest.skip("Skip test_1")
+    def test_1(self):
+        print('In the test_1')
+        self.assertTrue(1+1 == 2)
+```
+
+
+
+## 执行失败 expectedFailure
+
+期望一些测试用例执行失败。例如，测试可能由于开发环境与生产环境的差异而失败，或者是由于预期的数据库内容的存在或不存在而导致失败
+
+```
+    @unittest.expectedFailure
+    def test_2(self):
+        print('In the test_2')
+        self.assertEqual(1+1, 2)
+```
+
+
+
+
+
+## 补丁 patch
+
+补丁可以使用不同的方式来调用，即patch、patch.object、patch.dict以及patch.multiple等4种方式
+
+patch装饰器函数将target作为一个必需的参数，后面是可选参数的长列表。这里只有（new）一个是可选参数。其他可选参数信息可以参照unittest文档
+
+```
+patch(target, new=DEFAULT)
+```
+
+> 在前面的函数中，参数target是你想打补丁的目标。它可以是任何函数、类方法或者对象。
+>
+>  target是被导入的，应该由字符串表示，类似于典型的导入语句（但是没有import关键字）。
+
+
+
+```
+    def test_compute_with_patch(self):
+        with unittest.mock.patch('__main__.MyClassA.foo', new = Mock(return_value=500)):
+            a = MyClassA()
+            result = a.compute()
+            self.assertEqual(result, 400
+```
+
+
+
+
+
+
+
+
+
 
 
 # 内置方法
@@ -81,13 +263,78 @@ OK
 
 ## mock 
 
-mock是单元测试中最核心重要的一环。mock的意思，便是通过一个虚假对象，来代替被测试函数或模块需 要的对象。 
+mock是单元测试中最核心重要的一环。mock的意思，便是通过一个虚假对象，来代替被测试函数或模块需要的对象。 
+
+Mock库提供了一种灵活的方法来创建空对象，这些对象可以用来替换正在测试的程序中的某些部分。
 
 举个例子，比如你要测一个后端API逻辑的功能性，但一般后端API都依赖于数据库、文件系统、网络等。这 样，你就需要通过mock，来创建一些虚假的数据库层、文件系统层、网络层对象，以便可以简单地对核心 后端逻辑单元进行测试。
 
 
 
-Python mock则主要使用mock或者MagicMock对象
+Python mock则主要使用mock
+
+```
+import unittest
+from unittest.mock import Mock, call
+
+
+class MyClassA:
+    def foo(self):
+        return 100
+
+    def foo2(self, num):
+        return num + 200
+
+    def compute(self):
+        x1 = self.foo()
+        x2 = self.foo2(x1)
+        print('x1 = %d, x2 = %d' % (x1, x2))
+        result = x1 + x2
+        print('Result: ', result)
+        return result
+
+
+class TestA(unittest.TestCase):
+
+    def test_compute(self):
+        a = MyClassA()
+
+        mockObj = Mock()
+        a.foo = mockObj.foo
+        a.foo2 = mockObj.foo2
+
+        a.foo.return_value = 100
+        a.foo2.return_value = 300
+
+        result = a.compute()
+        print('mock result', result)
+
+        self.assertEqual(result, 400)
+
+        test_call_list = mockObj.mock_calls
+        print('test_call_list =', test_call_list)
+
+        reference_call_list = [call.foo(), call.foo2(100)]
+        self.assertEqual(test_call_list, reference_call_list)
+
+if __name__ == "__main__":
+    unittest.main()
+    
+>>>
+x1 = 100, x2 = 300
+Result:  400
+mock result 400
+test_call_list = [call.foo(), call.foo2(100)]
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+OK
+```
+
+
+
+MagicMock对象
 
 ```
 import unittest
@@ -111,8 +358,8 @@ class A(unittest.TestCase):
         a.m2 = MagicMock(return_value='custom_val')
         a.m3 = MagicMock()
         a.m1()
-        self.assertTrue(a.m2.called) #验证m2被call过
-        a.m3.assert_called_with("custom_val") #验证m3被指定参数call过
+        self.assertTrue(a.m2.called)  # 验证m2被call过
+        a.m3.assert_called_with("custom_val")  # 验证m3被指定参数call过
 
 if __name__ == "__main__":
     unittest.main(argv=['first-arg-is-ignored'], exit=False)
@@ -126,6 +373,12 @@ OK
 > 我们需要对m1()进行单元测试，但是m1()取决于m2()和m3()。如果m2()和m3()的内部比较复杂, 你就不能只是简单地调用m1()函数来进行测试，可能需要解决很多依赖项的问题。
 >
 > 有了mock其实就很好办了。我们可以把m2()替换为一个返回具体数值的value，把m3()替换为另一个mock(空函数)。这样，测试m1()就很容易了，我们可以测试m1()调用m2()，并且用m2()的返回值调用m3()。
+
+
+
+### MagicMock
+
+MagicMock类是Mock类的一个子类。它本质上提供了你期望从Mock类中所能得到的一切功能。另外，它还为很多Python中的魔法方法提供默认的实现。魔法方法是这样一种特殊的方法：其名称都以双下划线为前缀和后缀。一些魔法方法的例子包括_ _init_ _、_ _iter_ _、__len_ _等。
 
 
 
@@ -263,4 +516,6 @@ from unittest.mock import patch
       self.assertTrue(mock_sort.called)
       self.assertTrue(mock_preprocess.called)
 ```
+
+
 

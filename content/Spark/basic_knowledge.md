@@ -6,6 +6,16 @@ date: 2020-05-04 01:09
 
 
 
+# 函数式编程
+
+Spark的开发语言是Scala，这是Scala在并行和并发计算方面优势的体现，此外，Spark在很多宏观设计层面都借鉴了函数式编程思想，如接口、惰性求值和容错等。
+
+* 函数式编程接口。函数式编程思想的一大特点是低阶函数与核心数据结构，在Spark API中，这一点得到了很好的继承。Spark API同样提供了map、reduce、filter等算子（operator）来构建数据处理管道，用户的业务逻辑以高阶函数的形式定义，用户通过高阶函数与算子之间的组合，像搭积木一样，构建了整个作业的执行计划。此外，从根本上来说，Spark最核心的数据结构只有一种：RDD（Resilient Distributed Dataset，弹性分布式数据集），从API上来说，它和普通集合几乎完全相同，但是它却抽象了分布式文件系统中的文件，对于用户来说，这是透明的，从这个角度上来说，RDD是一个分布式的集合。
+
+* 惰性求值。Spark的算子分为两类，转换（transform）算子和行动（action）算子，只有行动算子才会真正触发整个作业提交并运行。这样一来，无论用户采用了多少个转换算子来构建一个无比复杂的数据处理管道，只有最后的行动算子才能触发整个作业开始执行。
+
+* 容错。在Spark的抽象中，处理的每一份数据都是不可变的，它们都是由它所依赖的上游数据集生成出来的，依赖关系由算子定义，在一个Spark作业中，这被称为血统。在考虑容错时，与其考虑如何持久化每一份数据，不如保存血统依赖和上游数据集，从而在下游数据集出现可用性问题时，利用血统依赖和上游数据集重算进行恢复。这是利用了函数（血统依赖）在给定参数（上游数据集）情况下，一定能够得到既定输出（下游数据集）的特性。
+
 # Spark
 
 Hadoop MapReduce虽然已经可以满足大数据的应用场景，但是UC Berkeley的AMP Lab推出的Spark应运而生，Spark拥有更快的执行速度和更友好的编程接口，在推出后短短两年就迅速抢占MapReduce的市场份额，成为主流的大数据计算框架。
@@ -64,7 +74,9 @@ Spark 支持的 Hadoop 输入格式包括文本文件、SequenceFile、 Avro、P
 
 降低了耦合性
 
-![image-20200502194256280](basic_knowledge.assets/image-20200502194256280.png)
+![image-20200717075939893](basic_knowledge.assets/image-20200717075939893.png)
+
+
 
 
 
@@ -74,15 +86,21 @@ Spark 支持的 Hadoop 输入格式包括文本文件、SequenceFile、 Avro、P
 
 ### Application Master
 
+Driver 节点和所有的executor节点一起被 称为一个 Spark 应用(application)
+
 
 
 #### Driver
 
 和Executor 做关联的，跟踪其运行状况，为执行器节点调度任务
 
-执行开发程序中main 方法的进程，即程序入口。
+执行开发程序中main() 方法的进程，即程序入口。它执行用户编写的用来创建 SparkContext、创建 RDD，以及进行 RDD 的转化操作和行动操作的代码
 
-用于创建SparkContext，创建RDD以及进行RDD转化操作和行动
+Spark程序的入口是Driver中的SparkContext。与Spark 1.x相比，在Spark 2.0中，有一个变化是用SparkSession统一了与用户交互的接口，曾经熟悉的SparkContext、SqlContext、HiveContext都是SparkSession的成员变量，这样更加简洁。SparkContext的作用是连接用户编写的代码与运行作业调度和任务分发的代码
+
+Driver 程序一旦终止，Spark 应用也就 结束了
+
+
 
 
 
@@ -92,13 +110,23 @@ Spark 支持的 Hadoop 输入格式包括文本文件、SequenceFile、 Avro、P
 
 ### Executor 
 
-一个工作进程，负责在Spark 作业中运行任务，任务之间相互独立
+一个工作进程，负责在Spark 作业中运行任务，任务之间相互独立, 并将结果返回给驱动器进程
+
+Executor 通过自身的块管理器(Block Manager)为用户程序中要求缓存的 RDD 提供内存式存储。RDD 是直接缓存在执行器进程内的，因此任务可以在运行时充分利用缓存数据加速运算
 
 Spark应用启动时，Executor节点同时被启动，并始终伴随着整个Spark 应用的生命周期而存在
 
 若有Executor节点故障，Spark应用可以继续执行，会将出错的节点上的任务调度到其他的executor节点上继续运行
 
 
+
+#### 内存分配
+
+有一个 20 个物理节点的集群，每个物理节点是一个四核的机器
+
+然后你使用 --executor-memory 1G 和 --total-executor-cores 8 提交应用。这样 Spark 就会在不同机 器上启动 8 个执行器进程，每个 1 GB 内存
+
+通过 --executor-cores 设置每个执行器进程从 YARN 中占用的核心数目
 
 
 
@@ -121,7 +149,7 @@ DAG也就是有向无环图，就是说不同阶段的依赖关系是有向的�
 
 整个应用被切分成3个阶段，阶段3需要依赖阶段1和阶段2，阶段1和阶段2互不依赖。Spark在执行调度的时候，先执行阶段1和阶段2，完成以后，再执行阶段3。如果有更多的阶段，Spark的策略也是一样的。只要根据程序初始化好DAG，就建立了依赖关系，然后根据依赖关系顺序执行各个计算阶段，Spark大数据应用的计算就完成了。
 
-![image-20200405114927810](basic_knowledge.assets/image-20200405114927810.png)
+![image-20200717080514317](basic_knowledge.assets/image-20200717080514317.png)
 
 
 
@@ -201,6 +229,12 @@ GraphX 是用来操作图(比如社交网络的朋友关系图)的程序库，�
 
 # Spark 执行过程
 
+首先Driver根据用户编写的代码生成一个计算任务的有向无环图（Directed Acyclic Graph, DAG），接着，DAG会根据RDD（弹性分布式数据集）之间的依赖关系被DAGScheduler（Driver组件）切分成由Task组成的Stage（TaskSet）, TaskScheduler（Driver组件）会通过ClusterManager将任务调度到Executor上执行。在DAG中，每个Task的输入就是一个Partition（分区），而一个Executor同时只能执行一个Task，但一个Worker（物理节点）上可以同时运行多个Executor。
+
+![image-20200717080421468](basic_knowledge.assets/image-20200717080421468.png)
+
+
+
 Spark支持Standalone、Yarn、Mesos、Kubernetes等多种部署方案，几种部署方案原理也都一样，只是不同组件角色命名不同，但是核心功能和运行流程都差不多。
 
 ![image-20200405111123424](basic_knowledge.assets/image-20200405111123424.png)
@@ -214,22 +248,6 @@ Spark应用程序启动在自己的JVM进程里，即Driver进程，启动后调
 Worker收到信息以后，根据Driver的主机地址，跟Driver通信并注册，然后根据自己的空闲资源向Driver通报自己可以领用的任务数。Driver根据DAG图开始向注册的Worker分配任务。
 
 Worker收到任务后，启动Executor进程开始执行任务。Executor先检查自己是否有Driver的执行代码，如果没有，从Driver下载执行代码，通过Java反射加载后开始执行。
-
-
-
-## 和 Yarn 集群交互
-
-![image-20200504130721260](basic_knowledge.assets/image-20200504130721260.png)
-
-
-
-1. Client submit 任务
-2. ResourceManager选择一个NM创建ApplicationMaster，ApplicationMaster集群Driver（即初始化sc）
-3. ApplicationMaster向ResourceManager申请资源
-4. ResourceManager返回集群资源列表
-5. ApplicationMaster向NodeManager创建spark执行器对象，即Container 中的Excutor
-6. Executor反向注册到ApplicationMaster
-7. ApplicationMaster分解任务，然后发给Executor执行
 
 
 
@@ -265,6 +283,18 @@ Spark Streaming主要负责将流数据转换成小的批数据，剩下的就�
 
 
 
+## Tungsten项目
+
+Tungsten旨在利用应用程序语义显式管理内存，消除JVM对象模型和垃圾回收的开销
+
+JVM对象开销一向是很大的，例如字符串采用UTF-8编码，还有一些对象header等信息，这样就容易引起内存不足，降低CPU访问数据的吞吐量。JVM的垃圾回收器是一个非常复杂的组件，同时它的设计思路和面对的场景通常都是针对在线事务处理（OLTP）系统，如交易系统，而Spark的使用场景则偏向于在线分析处理（OLAP）系统和离线计算系统，这两种场景对于性能需求差别非常大，因此利用JVM的垃圾回收器来应对Spark面对的场景，必然无法令人满意。
+
+Tungsten的目的就是摆脱JVM的垃圾回收器，自己管理内存
+
+
+
+
+
 
 
 # Spark性能优化
@@ -283,6 +313,28 @@ Spark性能优化可以分解为下面几步。
 
 
 
+对 Spark 进行性能调优，通常就是修改 Spark 应用的运行时配置选项。Spark 中最主要的配 置机制是通过 SparkConf 类对 Spark 进行配置
+
+
+
+## 统一Dataset和DataFrame接口
+
+Dataset的目标是提供类型安全的编程接口。这允许开发人员使用编译时类型安全的半结构化数据（如JSON或键值对，即可以在应用程序运行之前检查错误）
+
+所以Spark Python API不实现Dataset API的原因是Python不是类型安全的语言。
+
+同样重要的是，Dataset API还包含高级域特定的语言操作，如sum、avg、join和group。该特性意味着Dataset具有传统RDD的灵活性，而且代码也更具可读性。类似于DataFrame, Dataset可以通过将表达式和数据字段暴露给查询计划器并利用Tungsten的快速内存编码来从Spark的Catalyst优化器获益
+
+![image-20200717084747140](basic_knowledge.assets/image-20200717084747140.png)
+
+Dataset API提供了类型安全的面向对象编程接口。Dataset可以通过将表达式和数据字段暴露给查询计划程序和Tungsten的快速内存编码来利用Catalyst优化器。但是，现在DataFrame和Dataset都作为Apache Spark 2.0的一部分，其实DataFrame现在是DatasetUntyped API的别名。更具体地说
+
+```
+DataFrame = Dataset[Row]
+```
+
+DataFrame API与DataSet API能够充分地享受到Tungsten项目的优化成果，这是由于在DataFrame中，可以获得更多的应用语义。
+
 
 
 # Spark on yarn vs Spark on k8s
@@ -294,6 +346,14 @@ spark-submit ---- ResourceManager ----- ApplicaitonMaster（Container） ---- Dr
 ```
 spark-submit ---- Kube-api-server（Pod） ---- Kube-scheduler（Pod） ---- Driver（Pod） ---- Executor（Pod）
 ```
+
+
+
+
+
+# Parquet
+
+一种流行的列式存储格式，可以高效地存储具有嵌套字段的记录
 
 
 
