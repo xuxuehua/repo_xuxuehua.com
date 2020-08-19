@@ -324,11 +324,11 @@ Out[8]: 'name=add\ndoc=This is doc string'
 
 静态方法并不能访问私有变量，只是给类方法加了类的属性
 
-静态函数可以用来做一些简单独立的任务，既方便测试，也能优化代码结构
+静态方法不能直接访问类的静态变量，但可以通过类名引用静态变量, 因为没有 self 参数，可以在类不进行实例化的情况下调用。也因此在静态方法中无法访问实例变量
 
-即和类以及对象都没有关系， 和普通的函数没有太多区别，常用于和类对象无任何关系的时候使用，即会使用到当前类里面的逻辑
+如果在方法中不需要访问任何实例方法和属性，纯粹地通过传入参数并返回数据的功能性方法，那么它就适合用静态方法来定义，它节省了实例化对象的开销成本，往往这种方法放在类外面的模块层作为一个函数存在也是没问题的，而放在类中，仅为这个类服务
 
-会使用到当前类里面的逻辑
+静态方法和类方法都是通过给类发消息来调用的
 
 ```
 class A:
@@ -342,6 +342,7 @@ a = A()
 
 a.print_val()
 A.print_val()
+
 >>>
 Traceback (most recent call last):
   File "/Users/xhxu/python/python3/test/9.py", line 10, in <module>
@@ -351,19 +352,12 @@ Traceback (most recent call last):
 NameError: name '_A__val' is not defined
 ```
 
-静态方法只属于定义他的类，而不属于任何一个具体的对象, 即不能传self，相当于单纯的一个函数
 
-静态方法无需传入self参数，因此在静态方法中无法访问实例变量
-
-静态方法不能直接访问类的静态变量，但可以通过类名引用静态变量
-
-与成员方法的区别是没有 self 参数，并且可以在类不进行实例化的情况下调用。
-
-静态方法和类方法都是通过给类发消息来调用的
 
 ```python
 class MyClass:
     var1 = "String1"
+    
     @staticmethod   #静态方法
     def staticmd():
         print('I am static method')
@@ -371,20 +365,54 @@ class MyClass:
 MyClass.staticmd()  #调用了静态方法
 c = MyClass()
 c.staticmd()
+
 >>>
 I am static method
 I am static method
 ```
 
+
+
 ## classmethod 类方法
 
 至少一个cls参数
 
-执行类方法时，自动将调用该方法的类复制给cls, cls指代调用者即类对象自身,通过这个cls参数我们可以获取和类相关的信息并且可以创建出类的对象
+执行类方法时，自动将调用该方法的类复制给cls, cls指代调用者即类对象自身,
+
+通过这个cls参数可以获取和类相关的信息并且可以创建出类的对象
 
 类方法传递类本身， 可以访问私有的类变量
 
 类函数最常用的功能是实现不同的 init 构造函数
+
+与静态方法一样，类方法可以使用类名调用类方法
+
+与静态方法一样，类成员方法也无法访问实例变量，但可以访问类的静态变量
+
+作为工厂方法创建实例对象，例如内置模块 datetime.date 类中就有大量使用类方法作为工厂方法，以此来创建date对象
+
+```
+class date:
+
+    def __new__(cls, year, month=None, day=None):
+        self = object.__new__(cls)
+        self._year = year
+        self._month = month
+        self._day = day
+        return self
+
+    @classmethod
+    def fromtimestamp(cls, t):
+        y, m, d, hh, mm, ss, weekday, jday, dst = _time.localtime(t)
+        return cls(y, m, d)
+
+    @classmethod
+    def today(cls):
+        t = _time.time()
+        return cls.fromtimestamp(t)
+```
+
+
 
 ```python
 class A:
@@ -403,28 +431,7 @@ print(A.get_val())
 3
 ```
 
-与静态方法一样，类方法可以使用类名调用类方法
 
-与静态方法一样，类成员方法也无法访问实例变量，但可以访问类的静态变量
-
-与成员方法的区别在于所接收的第一个参数不是 self （类实例的指针），而是cls（当前类的具体类型）。
-
-```python
-class MyClass:
-    val1 = "String1"  #静态变量
-    def __init__(self):
-        self.val2 = "Value 2"
-    @classmethod      #类方法
-    def classmd(cls):
-        print('Class: ' + str(cls) + ',val1: ' + cls.val1 + ', Cannot access value 2')
-
-MyClass.classmd()
-c = MyClass()
-c.classmd()
->>> 
-Class: <class '__main__.MyClass'>,val1: String1, Cannot access value 2
-Class: <class '__main__.MyClass'>,val1: String1, Cannot access value 2
-```
 
 ```
 from time import time, localtime, sleep
@@ -470,6 +477,8 @@ if __name__ == "__main__":
     main()
 ```
 
+
+
 类方法不能访问实例变量, 但可以访问类变量
 
 ```
@@ -495,19 +504,49 @@ Traceback (most recent call last):
 AttributeError: type object 'A' has no attribute 'x'
 ```
 
+
+
+如果希望在方法裡面调用静态类，那么把方法定义成类方法是合适的，因为要是定义成静态方法，那么你就要显示地引用类A，这对继承来说可不是一件好事情。
+
+classmethod增加了一个对实际调用类的引用，这带来了很多方便的地方：
+
+1. 方法可以判断出自己是通过基类被调用，还是通过某个子类被调用
+2. 通过子类调用时，方法可以返回子类的实例而非基类的实例
+3. 通过子类调用时，方法可以调用子类的其他classmethod
+
+一般来说classmethod可以完全替代staticmethod。staticmethod唯一的好处是调用时它返回的是一个真正的函数，而且每次调用时返回同一个实例（classmethod则会对基类和子类返回不同的bound method实例），但这点几乎从来没有什么时候是有用的。不过，staticmethod可以在子类上被重写为classmethod，反之亦然，因此也没有必要提前将staticmethod全部改为classmethod，按需要使用即可。
+
+
+
+```
+class A:
+
+    @staticmethod
+    def m1()
+        pass
+
+    @staticmethod
+    def m2():
+        A.m1() # bad
+
+    @classmethod
+    def m3(cls):
+        cls.m1() # good
+```
+
+
+
+
+
 ## property 属性
 
 加上property 装饰器，在函数调用的时候，就不需要加上小括号
 
 property调用的时候，只能调用self参数
 
-将一个类方法转变成一个静态属性,只读属性。
+可以将一个类方法转变成一个静态属性,只读属性。
 
 property 属性必须在setter 和 deleter之前
-
-
-
-类属性可以直接被类调用，如果想要实现能被类直接调用的方法就可以借助staticmethod和classmethod了，区别在于staticmethod的方法没有self参数，通常用来直接定一个静态类方法，如果想将一个普通动态方法变成类方法就要使用classmethod了。
 
 
 
@@ -534,10 +573,13 @@ a.value = -1
 print(a.value)
 a.value = 3
 print(a.value)
+
 >>>
 0
 3
 ```
+
+
 
 同一个对象的不同属性之间可能存在依赖关系。当某个属性被修改时，依赖于该属性的其他属性也会同时变化。
 
@@ -549,7 +591,7 @@ class chicken(bird):
     fly = False
     def __init__(self, age):
         self.age = age
-
+	  
     def getAdult(self):
         if self.age > 1.0:
             return True
@@ -562,10 +604,13 @@ summer = chicken(2)
 print(summer.adult)
 summer.age = 0.5
 print(summer.adult)
+
 >>>
 True
 False
 ```
+
+
 
 ```
 from abc import ABCMeta, abstractmethod
@@ -640,6 +685,8 @@ if __name__ == "__main__":
     main()
 ```
 
+
+
 ### setter 装饰器
 
 与属性名同名，并且接受2个参数，第一个是self， 第二个是将要赋值的值。
@@ -672,6 +719,8 @@ print(a.val)
 0
 3
 ```
+
+
 
 ### deleter 装饰器
 
@@ -710,6 +759,8 @@ print(p.age)
 del age
 30
 ```
+
+
 
 ### property 参数
 
@@ -750,10 +801,13 @@ print(obj.PRICE)
 obj.PRICE = 200
 print(obj.PRICE)
 del obj.PRICE
+
 >>>
 80.0
 160.0
 ```
+
+
 
 ### property 实现的原理
 
@@ -776,6 +830,7 @@ a = A()
 
 a.val = 3
 print(a.val)
+
 >>>
 <class 'property'>
 3
@@ -808,6 +863,8 @@ Wrapper of decorator
 hello world
 wrapper
 ```
+
+
 
 使用内置的wraps 保留原函数的元信息
 
@@ -861,6 +918,8 @@ def post_message(request, ...):
     pass
 ```
 
+
+
 ## 日志记录
 
 在实际工作中，如果你怀疑某些函数的耗时过长，导致整个系统的latency(延迟)增加，所以想在线上测试某些函数的执行时间，那么，装饰器就是一种很常用的手段。
@@ -900,6 +959,8 @@ def validation_check(input):
 def neural_network_training(param1, param2, ...):
 ...
 ```
+
+
 
 ## 缓存
 

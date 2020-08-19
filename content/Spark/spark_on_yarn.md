@@ -52,7 +52,7 @@ yarn-cluster
 2. ResourceManager选择一个NodeManager创建ApplicationMaster，ApplicationMaster集群Driver（即初始化sc）
 3. ApplicationMaster向ResourceManager申请资源
 4. ResourceManager返回集群资源列表
-5. ApplicationMaster向NodeManager创建spark执行器对象，即Container 中的Excutor
+5. ApplicationMaster向NodeManager创建spark执行器对象，即Container 中的Executor
 6. Executor反向注册到ApplicationMaster
 7. ApplicationMaster分解任务，然后发给Executor执行
 

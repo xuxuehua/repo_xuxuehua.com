@@ -32,6 +32,20 @@ key必须是可hash 对象
 
 
 
+dict 属于mapping 类型
+
+```
+from collections.abc import Mapping, MutableMapping
+
+a = {}
+print(isinstance(a, MutableMapping))
+
+>>>
+True
+```
+
+
+
 
 ## 定义字典
 
@@ -486,11 +500,13 @@ Out[92]: {}
 
 
 
-## 字典解析
+# 字典解析
 
-### 基本语法
+## 基本语法
 
-`ret = {exprK:exprV for item in iterator}`
+```
+ret = {exprK:exprV for item in iterator}
+```
 
 等价于
 
@@ -523,6 +539,12 @@ Out[29]: {'a': 1, 'b': 2}
 
 
 
+
+
+
+
+
+# Example
 
 ## dict 实现 switch 方法
 

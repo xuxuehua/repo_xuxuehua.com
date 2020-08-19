@@ -6,8 +6,7 @@ date: 2018-09-27 15:05
 
 [TOC]
 
-
-# vnc
+# vnc 
 
 
 
@@ -37,8 +36,7 @@ vncserver
 ## Ubuntu 
 
 ```
-sudo apt update -y 
-sudo apt upgrade -y
+sudo apt update
 
 sudo apt install -y tightvncserver ubuntu-gnome-desktop lxde
 
@@ -47,7 +45,7 @@ sudo apt install -y gnome-session gdm3
 sudo apt install -y tasksel
 sudo tasksel install ubuntu-desktop
 
-sudo apt install gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal
+sudo apt install -y gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal
 ```
 
 ```
@@ -290,4 +288,8 @@ ssh vnc@your_server_ip -L 5901:localhost:5901
 ```
 
 Authenticate as normal for the **vnc** user for SSH. Then, in the Screen Sharing app, use **localhost:5901**.
+
+
+
+
 

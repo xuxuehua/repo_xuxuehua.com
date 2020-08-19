@@ -101,7 +101,89 @@ my_thread
 
 
 
-## threading.Lock()
+
+
+## join() 阻塞
+
+join() 方法，调用该方法的线程将等待直到该Thread对象完成，再恢复运行，并根据情况阻塞某些进程。
+
+
+
+## setDaemon() 常驻
+
+作为常驻线程
+
+
+
+
+
+## threading.Event()
+
+与threading.Condition相类似，相当于没有潜在的Lock保护的condition variable。对象有True和False两个状态。可以多个线程使用wait()等待，直到某个线程调用该对象的set()方法，将对象设置为True。线程可以调用对象的clear()方法来重置对象为False状态。
+
+
+
+
+
+## threading.condition()
+
+Lock 上锁是很消耗CPU的行为，condition可以在没有数据的时候，处于一个阻塞的状态。一旦有合适的数据，可以使用notify相关的函数来通知其他处于等待状态的线程。
+
+condition variable，建立该对象时，会包含一个Lock对象 (因为condition variable总是和mutex一起使用)。
+
+### acquire 
+
+上锁
+
+
+
+### release 
+
+解锁
+
+
+
+### wait
+
+当前线程处于等待状态，并且会释放锁，可以被其他线程使用notify和notify_all函数唤醒
+
+被唤醒后会继续等待上锁，上锁后继续执行下面的代码
+
+
+
+### notify
+
+通知某个正在等待的线程，默认是第一个等待的线程
+
+
+
+### notify_all
+
+通知所有正在等待的线程，并且不会释放锁。需要在release之前调用
+
+
+
+
+
+# 线程通信
+
+
+
+## 共享变量 （不推荐）
+
+有线程安全问题，所以需要加锁，如dict
+
+
+
+## queue （推荐）
+
+queue的方式进行线程间同步， queue是线程安全的（内部通过deque实现）
+
+
+
+# 线程同步
+
+## Lock()
 
 对修改全局变量的地方，需要加锁
 
@@ -110,6 +192,8 @@ gLock = threading.Lock()
 gLock.acquire()
 gLock.release()
 ```
+
+
 
 ```
 import threading
@@ -197,69 +281,182 @@ if __name__ == '__main__':
 
 
 
-## join() 方法
-
-join() 方法，调用该方法的线程将等待直到该Thread对象完成，再恢复运行，并根据情况阻塞某些进程。
 
 
+锁会影响性能，同时锁会产生死锁
 
-## threading.Semaphore()
+```
+import threading
+import random
+import time
 
-semaphore，也就是计数锁(semaphore传统意义上是一种进程间同步工具)。创建对象的时候，可以传递一个整数作为计数上限 (sema = threading.Semaphore(5))。它与Lock类似，也有Lock的两个方法。
-
-
-
-## threading.Event()
-
-与threading.Condition相类似，相当于没有潜在的Lock保护的condition variable。对象有True和False两个状态。可以多个线程使用wait()等待，直到某个线程调用该对象的set()方法，将对象设置为True。线程可以调用对象的clear()方法来重置对象为False状态。
-
-
-
+gMoney = 1000
+gLock = threading.Lock()
+gTotalTimes = 10
+gTimes = 0
 
 
-## threading.condition()
-
-Lock 上锁是很消耗CPU的行为，condition可以在没有数据的时候，处于一个阻塞的状态。一旦有合适的数据，可以使用notify相关的函数来通知其他处于等待状态的线程。
-
-condition variable，建立该对象时，会包含一个Lock对象 (因为condition variable总是和mutex一起使用)。
-
-### acquire 
-
-上锁
-
-
-
-### release 
-
-解锁
-
-
-
-### wait
-
-当前线程处于等待状态，并且会释放锁，可以被其他线程使用notify和notify_all函数唤醒
-
-被唤醒后会继续等待上锁，上锁后继续执行下面的代码
+class Producer(threading.Thread):
+    def run(self):
+        global gMoney
+        global gTimes
+        while True:
+            money = random.randint(100, 1000)
+            gLock.acquire()
+            gLock.acquire()	# 这里多了一个acquire
+            if gTimes >= gTotalTimes:
+                gLock.release()
+                break
+            gMoney += money
+            print('%s produced %d, remaining %d' % (threading.current_thread(), money, gMoney))
+            gTimes += 1
+            gLock.release()
+            time.sleep(0.5)
 
 
+class Consumer(threading.Thread):
+    def run(self):
+        global gMoney
+        while True:
+            money = random.randint(100, 1000)
+            gLock.acquire()
+            if gMoney >= money:
+                gMoney -= money
+                print('%s costs %d, remaining %d' % (threading.current_thread(), money, gMoney))
+            else:
+                if gTimes >= gTotalTimes:
+                    gLock.release()
+                    break
+                print('%s consumer will cost %d, but remaining %d is not enough.' % (threading.current_thread(), money, gMoney))
+            gLock.release()
+            time.sleep(0.5)
 
-### notify
 
-通知某个正在等待的线程，默认是第一个等待的线程
+def main():
+    for x in range(5):
+        t = Producer(name='Producer threading %d' % x)
+        t.start()
 
-
-
-### notify_all
-
-通知所有正在等待的线程，并且不会释放锁。需要在release之前调用
-
-
+    for x in range(3):
+        t = Consumer(name='Consumer threading %d' % x)
+        t.start()
 
 
+if __name__ == '__main__':
+    main()
+
+```
 
 
 
-## example
+## RLock() 可重入锁 (常用)
+
+在同一个线程里面，可以多次调用acquire，但是要注意release的次数和acquire的次数要相等
+
+
+
+## Condition （常用）
+
+条件变量，用于复杂的线程间同步
+
+Wait 方法需要notify才可以唤醒
+
+```
+import threading
+
+
+class A(threading.Thread):
+    def __init__(self, cond):
+        super().__init__(name='myA')
+        self.cond = cond
+
+    def run(self):
+        with self.cond:
+            self.cond.wait()
+            print("Hi :%s" % self.name)
+            self.cond.notify()
+
+            self.cond.wait()
+            print('This is A')
+            self.cond.notify()
+
+
+class B(threading.Thread):
+    def __init__(self, cond):
+        super().__init__(name='myB')
+        self.cond = cond
+
+    def run(self):
+        with self.cond:
+            print("Hi %s" % self.name)
+            self.cond.notify()
+            self.cond.wait()
+
+            self.cond.notify()
+            
+
+
+if __name__ == '__main__':
+    cond = threading.Condition()
+    mya = A(cond)
+    myb = B(cond)
+    mya.start()
+    myb.start()
+
+>>>
+Hi myB
+Hi :myA
+This is A
+```
+
+
+
+## Semaphore() 记录锁数量
+
+semaphore，也就是计数锁(semaphore传统意义上是一种进程间同步工具)。
+
+创建对象的时候，可以传递一个整数作为计数上限 (sema = threading.Semaphore(5))。它与Lock类似，也有Lock的两个方法。
+
+
+
+```
+import threading
+import time
+
+
+class HtmlSpider(threading.Thread):
+    def __init__(self, url, sem):
+        super().__init__()
+        self.url = url
+        self.sem = sem
+
+    def run(self):
+        time.sleep(2)
+        print("got html text success")
+        self.sem.release()
+
+
+class UrlProducer(threading.Thread):
+    def __init__(self, sem):
+        super().__init__()
+        self.sem = sem
+
+    def run(self):
+        for i in range(20):
+            self.sem.acquire()
+            html_thread = HtmlSpider("https://baidu.com/{}".format(i), self.sem)
+            html_thread.start()
+
+
+if __name__ == '__main__':
+    sem = threading.Semaphore(3)
+    url_producer = UrlProducer(sem)
+    url_producer.start()         
+```
+
+
+
+# example
 
 ```
 import threading
@@ -297,11 +494,11 @@ if __name__ == '__main__':
 
 多线程售票以及同步
 
-* 使用mutex 就是Python中的lock类对象，来实现线程同步
+使用mutex 就是Python中的lock类对象，来实现线程同步
 
-* Python 使用threading.Thread对象来代表线程,用threading.Lock对象来代表一个互斥锁(mutex)
+Python 使用threading.Thread对象来代表线程,用threading.Lock对象来代表一个互斥锁(mutex)
 
-* booth 中使用的两个doChore()函数，可以在未来改进程序，第一个doChore()依然在Lock内部，所以可以安全地使用共享资源 (critical operations, 比如打印剩余票数)。第二个doChore()时，Lock已经被释放，所以不能再去使用共享资源。这时候可以做一些不使用共享资源的操作 (non-critical operation, 比如找钱、喝水)。我故意让doChore()等待了0.5秒，以代表这些额外的操作可能花费的时间。你可以定义的函数来代替doChore()。
+booth 中使用的两个doChore()函数，可以在未来改进程序，第一个doChore()依然在Lock内部，所以可以安全地使用共享资源 (critical operations, 比如打印剩余票数)。第二个doChore()时，Lock已经被释放，所以不能再去使用共享资源。这时候可以做一些不使用共享资源的操作 (non-critical operation, 比如找钱、喝水)。我故意让doChore()等待了0.5秒，以代表这些额外的操作可能花费的时间。你可以定义的函数来代替doChore()。
 
 
 

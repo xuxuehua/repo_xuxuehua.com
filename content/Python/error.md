@@ -191,7 +191,7 @@ finally block中的语句都会被执行，哪怕前面的try和excep block中�
 1. try -> 异常 -> except -> finally
 2. try -> 无异常 -> else -> finally
 
-常用于文件读取， 但with open可以最后自动关闭文件
+可用于文件读取， 但with open可以最后自动关闭文件
 
 ```
 import sys
@@ -205,6 +205,18 @@ except:
 finally:
     f.close()
 ```
+
+
+
+### 注意点
+
+不要在finally内部抛出异常，否则try中的异常会被覆盖
+
+不要在finally 中return，否则try except中的return会被覆盖
+
+
+
+
 
 ## raise 抛出异常
 
@@ -227,27 +239,15 @@ test
 ## 自定义异常
 
 ```
-class MyError(Exception):
-
-    def __init__(self, msg):
-        self.message = msg
-
-try:
-    raise MyError('This is my error.')
-except MyError as e:
-    print(e)
-```
-
-```
 class MyInputError(Exception):
         """Exception raised when there're errors in input""" 
         def __init__(self, value): # 自定义异常类型的初始化
                 self.value = value
         def __str__(self): # 自定义异常类型的string表达形式
-        return ("{} is invalid input".format(repr(self.value)))
+            return "{} is invalid input".format(repr(self.value))
 
 try:
-        raise MyInputError(1) # 抛出MyInputError这个异常
+    raise MyInputError(1) # 抛出MyInputError这个异常
 except MyInputError as err:
     print('error: {}'.format(err))
 ```

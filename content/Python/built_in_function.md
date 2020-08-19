@@ -36,6 +36,12 @@ In [11]: bin(255)
 Out[11]: '0b11111111'
 ```
 
+
+
+
+
+
+
 ## bool 布尔计算
 
 ```
@@ -66,6 +72,8 @@ Out[8]: False
 In [9]: bool(None)
 Out[9]: False
 ```
+
+
 
 ## bytes
 
@@ -118,6 +126,16 @@ Out[23]: 'c'
 
 向上取整
 
+
+
+## dir 获取对象属性
+
+列出对象的所有属性， 比`__dict__` 要更丰富
+
+
+
+
+
 ## divmod 取余
 
 divmod(a, b) 返回a除以b的商和余数，返回一个元组
@@ -129,6 +147,10 @@ print(divmod(8, 3))
 >
 (2, 2)
 ```
+
+
+
+
 
 ## enumerate 枚举
 
@@ -535,36 +557,3 @@ print(na, nb)
 (1, 2, 3) (4, 5, 6)
 ```
 
-## `__import__` 动态加载
-
-`__import__()`函数用于动态加载类和函数 。
-
-如果一个模块经常变化就可以使用 `__import__()` 来动态载入
-
-```
-__import__(name[, globals[, locals[, fromlist[, level]]]])
-```
-
-```
-a.py
-### 
-#!/usr/bin/env python    
-#encoding: utf-8  
-
-import os  
-
-print ('在 a.py 文件中 %s' % id(os))
-```
-
-```
-test.py
-###
-#!/usr/bin/env python    
-#encoding: utf-8  
-
-import sys  
-__import__('a')        # 导入 a.py 模块
-
->>>
-在 a.py 文件中 4394716136
-```

@@ -426,7 +426,7 @@ print(sorted(d.item(), key=lambda item: item[1], reverse=True))
 
 
 
-### 超大文件处理
+### partial 超大文件处理 
 
  read 函数，其实 Python 会将文件的内容一次性的全部载入内存中，如果文件有 10 个G甚至更多，那么你的电脑就要消耗的内存非常巨大。
 
@@ -549,7 +549,7 @@ with DBConnectionManager('localhost', '8080') as db_client:
 
 
 
-## 基于生成器的上下文管理器
+## contextmanager 基于生成器的上下文管理器
 
 基于生成器的上下文管理器更加方便、简洁，适用于中小型程序
 

@@ -17,14 +17,28 @@ date: 2018-06-29 13:30
 
 
 
+python 变量的本质就是指针，即先生成对象，然后再将变量指向对象
+
+
+
 ## 命名规则
 
-- 变量名只能是 字母、数字或下划线的任意组合
-- 变量名的第一个字符不能是数字
-- 以下关键字不能声明为变量名
-  ['and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'exec', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'not', 'or', 'pass', 'print', 'raise', 'return', 'try', 'while', 'with', 'yield']
+变量名只能是 字母、数字或下划线的任意组合
+
+变量名的第一个字符不能是数字
+
+以下关键字不能声明为变量名
+['and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'exec', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'not', 'or', 'pass', 'print', 'raise', 'return', 'try', 'while', 'with', 'yield']
 
 
+
+
+
+# None
+
+常量None的特殊性，体现在他既不是0，False之类，对应的数据类型为NoneType，遵循单例模式，是唯一的， 即指向的是相同的内存地址。
+
+因为不能创建None对象
 
 
 
@@ -36,7 +50,7 @@ date: 2018-06-29 13:30
 
 ASCII（American Standard Code for Information Interchange，美国标准信息交换代码）是基于拉丁字母的一套电脑编码系统，主要用于显示现代英语和其他西欧语言，其最多只能用 8 位来表示（一个字节），即：2**8 = 256，所以，ASCII码最多只能表示 256 个符号。
 
-![img](https://snag.gy/R0xrZH.jpg)
+![image-20200810090028968](variables_coding.assets/image-20200810090028968.png)
 
 
 
@@ -197,7 +211,9 @@ str是一种高层对象。bytes是一种底层的东西。
 
 在与外部通信的时候，比如保存文件，socket通信，使用bytes。
 
-![img](https://snag.gy/J5uRa3.jpg)
+
+
+![image-20200810090341221](variables_coding.assets/image-20200810090341221.png)
 
 
 
@@ -215,7 +231,7 @@ str是一种高层对象。bytes是一种底层的东西。
 
 * Python2 图解
 
-![img](https://snag.gy/EbpdFC.jpg)
+<img src="variables_coding.assets/image-20200810090354915.png" alt="image-20200810090354915" style="zoom:50%;" />
 
 
 

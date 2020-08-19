@@ -82,6 +82,7 @@ class Student(Human):
 
 student1 = Student('Xinghua', 'Rick', 18)
 student1.do_homework()
+
 >>>
 This is parent method
 English homework
@@ -107,64 +108,11 @@ class Human():
         print('This is parent method')
 ```
 
+
+
 ## 类的继承
 
 类可以继承其他类的内容，包括成员变量和成员函数
-
-```
-class People(object):
-
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-
-    def eat(self):
-        print('%s is eating...' % self.name)
-
-    def sleep(self):
-        print('%s is sleeping...' % self.name)
-
-    def talk(self):
-        print('%s is talking...' % self.name)
-
-
-class Man(People):
-    def __init__(self, name, age, money):
-        # People.__init__(self, name, age)  等同于下面
-        super(Man, self).__init__(name, age)  # 新式写法
-        self.money = money
-        print('%s has %s dollar' % (self.name, self.money))
-
-    def play(self):
-        print('%s is playing...' % self.name)
-
-    def sleep(self):
-        People.sleep(self)
-        print('man is sleeping...')
-
-
-class Woman(People):
-
-    def purchase(self):
-        print('%s is purchasing...' % self.name)
-
-
-m1 = Man('Rick', 18, 100000000)
-m1.eat()
-m1.play()
-m1.sleep()
-
-w1 = Woman('Michelle', 18)
-w1.purchase()
-
->>>
-Rick has 100000000 dollar
-Rick is eating...
-Rick is playing...
-Rick is sleeping...
-man is sleeping...
-Michelle is purchasing...
-```
 
 ```python
 import time
@@ -330,11 +278,11 @@ print(super_list([1, 2, 3]) - super_list([3, 4]))
 [1, 2]
 ```
 
+
+
 ### 子类私有方法
 
 子类可以重定义父类的私有方法，子类里面不可见
-
-儿子不能继承父亲的老婆，但是儿子可以自己娶老婆
 
 ```python
 class A:
@@ -388,6 +336,8 @@ AttributeError: 'super' object has no attribute '_B__method'
 
 接口提取了一群类共同的函数，可以把接口当做一个函数的集合，然后让子类去实现接口中的函数。
 
+
+
 ### 强行继承 (私有变量重写)
 
 强行继承父类的私有变量, 私有变量是可以被重写的
@@ -415,7 +365,9 @@ method of A
 method of B
 ```
 
-### 里式替换原则
+
+
+### 里式替换 (子类对象替换父类对象)
 
 在实际开发中，我们经常会用子类对象去替换掉一个父类对象，这是面向对象编程中一个常见的行为，对应的原则称之为[里氏替换原则](https://zh.wikipedia.org/wiki/里氏替换原则)
 
@@ -508,7 +460,9 @@ Jack Li with Professor is teaching Mathematics
 Jack Li is enjoy the av
 ```
 
-## 多继承
+
+
+## 多继承 (不推荐)
 
 多继承是毒药，不到万不得已不要使用
 
@@ -541,9 +495,7 @@ Method of B
 
 当类是新式类时，多继承情况下，会按照广度优先方式查找
 
-![img](https://cdn.pbrd.co/images/HC9883i.png)
 
-![img](https://cdn.pbrd.co/images/HCAU2kb.png)
 
 ### 多继承顺序
 
@@ -726,6 +678,10 @@ print(p1.course.name, p1.course.price, p1.course.period)
 Python 20000 4 months
 ```
 
+
+
+
+
 # 多态 Polymorphism
 
 多态是面向对象的重要特性,简单点说:“一个接口，多种实现”，指一个基类中派生出了不同的子类，且每个子类在继承了同样的方法名的同时又对父类的方法做了不同的实现，这就是同一种事物表现出的多种形态。
@@ -807,6 +763,8 @@ Draw Circle: (10, 10, 5)
 Draw Line: (10, 10, 20, 20)
 ```
 
+
+
 ## MRO (Method Resolution Order)
 
 MRO 通过C3算法计算出来的
@@ -865,7 +823,27 @@ C(B, A), B(A) ->
 * 从所有序列中移除此元素，合并到MRO序列中
 * 重复执行，直到所有序列为空或无法执行下去
 
-### MIXIN
+
+
+
+
+# MIXIN （组合模式）
 
 实现组合的一种方式
+
 实现数据和方法进行分离
+
+mixin功能尽量简单，一个函数即可
+
+不和基类关联，可以和任何基类组合，基类可以不和mixin关联，就可以初始化成功
+
+在mixin中不要使用super这种方法
+
+
+
+
+
+
+
+
+

@@ -110,62 +110,48 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 ### TCP 服务器
 
-1、创建套接字，绑定套接字到本地IP与端口
-
 ```
+1、创建套接字，绑定套接字到本地IP与端口
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind()
-```
 
 2、开始监听链接
-
-```
 s.listen()
-```
 
 3、进入循环，不断接受客户端的链接请求
-
-```
 While True:
     s.accept()
-```
 
 4、接收客户端传来的数据，并且发送给对方发送数据
-
-```
 s.recv()
 s.sendall()
-```
 
 5、传输完毕后，关闭套接字
-
-```
 s.close()
 ```
 
+
+
 ### TCP 客户端 
 
-1、创建套接字并链接至远端地址
-
 ```
+1、创建套接字并链接至远端地址
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect()
-```
+
 
 2、链接后发送数据和接收数据
-
-```
 s.sendall()
 s.recv()
-```
 
 3、传输完毕后，关闭套接字
+```
 
 
 
-### 实现TCP持续的socket通信
+# 实现TCP持续的socket通信
 
-#### 服务器端
+## Server 
 
 ```
 import socket
@@ -193,7 +179,7 @@ while True:
 
 
 
-#### 客户端
+## Client
 
 ```
 import socket
@@ -213,9 +199,9 @@ while True:
 
 
 
-### 实现UDP持续的socket通信
+# 实现UDP持续的socket通信
 
-#### 服务器端
+## Server
 
 ```
 import socket
@@ -237,7 +223,7 @@ while True:
 
 
 
-#### 客户端
+## Client 
 
 ```
 import socket
@@ -251,6 +237,51 @@ while True:
     cmd = input('UDP Data: ')
     s.sendto(cmd.encode('utf-8'), (HOST, PORT))
     print(s.recv(1024).decode('utf-8'))
+```
+
+
+
+# TCP 多线程聊天室
+
+## server 
+
+```
+import socket
+import threading
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(('0.0.0.0', 8000))
+server.listen()
+
+
+def handle_sock(sock, addr):
+    while True:
+        data = sock.recv(1024)
+        print(data.decode("utf-8"))
+        re_data = input()
+        sock.send(re_data.encode("utf-8"))
+
+
+while True:
+    sock, addr = server.accept()
+    client_thread = threading.Thread(target=handle_sock, args=(sock, addr))
+    client_thread.start()
+```
+
+
+
+## client 
+
+```
+import socket
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(("127.0.0.1", 8000))
+
+while True:
+    re_data = input()
+    client.send(re_data.encode("utf-8"))
+    data = client.recv(1024)
+    print(data.decode("utf-8"))
 ```
 
 

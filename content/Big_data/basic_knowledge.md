@@ -119,7 +119,7 @@ Spark出道以后，也迅速推出了自己的SQL引擎Shark，也就是后来�
 
 这些SQL引擎基本上都只支持类SQL语法，并不能像数据库那样支持标准SQL，特别是数据仓库领域几乎必然会用到嵌套查询SQL，也就是在where条件里面嵌套select子查询，但是几乎所有的大数据SQL引擎都不支持。
 
-## Beam
+## Apache Beam
 
 An advanced unified programming model 
 

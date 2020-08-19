@@ -444,6 +444,8 @@ git merge dev
 
 
 
+
+
 ### --allow-unrelated-histories   
 
 
@@ -457,6 +459,28 @@ git merge --no-ff -m "Merged with no-ff mode" dev
 ```
 
 合并分支时，加上`--no-ff`参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而`fast forward`合并就看不出来曾经做过合并。
+
+
+
+
+
+### --ours/--theirs
+
+```
+<<<<<<< 和 ======= 之间的部分称为 ours
+
+======= 和 >>>>>>> 之间则称为 theirs
+```
+
+
+
+可以使用`git diff` 查看需要merge 的部分
+
+然后checkout 到需要的文件
+
+```
+git checkout --ours some_file.py
+```
 
 
 

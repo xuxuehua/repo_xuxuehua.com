@@ -134,5 +134,11 @@ print(json.loads(json_str))
 
 
 
+Load a json file
+
+```
+with open('meta_data.json') as f:
+    print(json.loads(f.read()))
+```
 
 

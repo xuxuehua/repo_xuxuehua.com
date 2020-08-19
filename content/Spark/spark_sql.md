@@ -96,6 +96,12 @@ DataSet适用于每列类型程序都很确定时使用，而DataFrame适用于�
 
 
 
+# spark-sql Shell
+
+Spark还提供了Spark SQL的Shell工具spark-sql, 方便进行解释交互
+
+
+
 # example
 
 ## DataFrame for wordCount

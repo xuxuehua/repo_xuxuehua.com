@@ -402,16 +402,14 @@ Out[41]: [10, 2, 3, 4, 6]
 
 
 
-## 列表解析
+# 列表解析/列表生成器
 
 列表解析是python的重要的语法糖
 列表解析的速度比for in迭代快
 
-
-
-### 基本语法
-
-`ret = [expression for item in iterator]` 
+```
+ret = [expression for item in iterator]
+```
 
 等价于 
 ```python
@@ -432,6 +430,10 @@ Out[3]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 ```
 
+
+
+## 特点
+
 迭代时间快
 
 ```python
@@ -447,9 +449,9 @@ In [11]: timeit.timeit('''
 Out[11]: 3.5815405790053774
 ```
 
-### 带条件
 
-#### 语法
+
+## 带条件操作
 
 ```
 [expr for item in iterable if cond1 if cond2]
@@ -478,9 +480,9 @@ Out[15]: [5, 7, 9]
 
 ```
 
-## 笛卡尔积
 
-### 基本语法
+
+## 笛卡尔积
 
 ```
 [expression for x in X for y in Y]

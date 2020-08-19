@@ -12,25 +12,15 @@ date: 2020-05-06 02:44
 
 RDD是Spark的核心概念，是弹性数据集（Resilient Distributed Datasets）的缩写。RDD既是Spark面向开发者的编程模型，又是Spark自身架构的核心元素。
 
-
-
 Spark则直接针对数据进行编程，将大规模数据集合抽象成一个RDD对象，然后在这个RDD上进行各种计算处理，得到一个新的RDD，继续计算处理，直到得到最后的结果数据。所以Spark可以理解成是**面向对象的大数据计算**。
 
+Spark也是对大数据进行分片计算，Spark分布式计算的数据分片、任务调度都是以RDD为单位展开的，每个RDD分片都会分配到一个执行进程去处理。实质上RDD是一组分布式的JVM不可变对象集合，不可变决定了它是只读的，RDD在经过变换产生新的RDD时，原有RDD不会改变。
 
-
-所以在上面WordCount的代码示例里，第2行代码实际上进行了3次RDD转换，每次转换都得到一个新的RDD，因为新的RDD可以继续调用RDD的转换函数，所以连续写成一行代码。事实上，可以分成3行。
-
-```
-val rdd1 = textFile.flatMap(line => line.split(" "))
-val rdd2 = rdd1.map(word => (word, 1))
-val rdd3 = rdd2.reduceByKey(_ + _)
-```
+对数据的所有操作不外乎创建 RDD、转化已有 RDD 以及调用 RDD 操作进行求值。而在这一切背后，Spark 会自动将 RDD 中的数据分发到集群上，并将操作并行化执行。
 
 
 
-Spark也是对大数据进行分片计算，Spark分布式计算的数据分片、任务调度都是以RDD为单位展开的，每个RDD分片都会分配到一个执行进程去处理。
-
-在 Spark 中，对数据的所有操作不外乎创 建 RDD、转化已有 RDD 以及调用 RDD 操作进行求值。而在这一切背后，Spark 会自动将 RDD 中的数据分发到集群上，并将操作并行化执行。
+用户可以将RDD看作一个数组，数组并没有保存数据，而是每个数据分区的引用，数据以分区中的元素的形式分散保存在集群中的各个节点上。从这个角度上来说，RDD存储的是元数据而非数据本身
 
 
 
@@ -104,6 +94,8 @@ SparkContext 是所有 Spark 功能的入口，它代表了与 Spark 节点的�
 
 
 
+
+
 ## SparkConf
 
 SparkConf 则是一些参数配置信息
@@ -148,13 +140,15 @@ Spark 不需要将每个中间计算结果进行数据复制以防数据丢失�
 
 
 
-### 宽依赖（Wide Dependency）
+### 宽依赖/Shuffle依赖（Wide Dependency）
 
 宽依赖就是父 RDD 的每个分区可以被多个子 RDD 的分区使用
 
 宽依赖则必须等待父 RDD 的所有分区都被计算好之后才能开始处理。
 
 只有父RDD的分区被多个子RDD的分区利用的时候才是宽依赖，其他的情况就是窄依赖
+
+宽依赖还有个名字，叫Shuffle依赖，也就是说宽依赖必然会发生Shuffle操作，在前面也提到过Shuffle也是划分Stage的依据。而窄依赖由于不需要发生Shuffle，所有计算都是在分区所在节点完成，它类似于MapReduce中的ChainMapper。
 
 一些Join、groupBy 则会生成宽依赖关系，因为groupBy 则要将拥有所有分区里有相同 Key 的元素放到同一个目标分区，而每一个父分区都可能包含各种 Key 的元素，所以它可能被任意一个子分区所依赖
 
@@ -251,7 +245,11 @@ Spark 在每次转换操作的时候，使用了新产生的 RDD 来记录计算
 
 Spark并不是按照代码写的操作顺序去生成RDD，比如`rdd2 = rdd1.map(func)`这样的代码并不会在物理上生成一个新的RDD。物理上，Spark只有在产生新的RDD分片时候，才会真的生成一个RDD，Spark的这种特性也被称作**惰性计算**。
 
+RDD的执行是依靠血缘关系延迟计算，如果血缘关系过长，可以通过持久化来切段血缘关系
+
 Spark 并不会立刻计算出新 RDD 中各个分区的数值。直到遇到一个动作时，数据才会被计算，并且输出结果给 Driver。
+
+
 
 
 
@@ -275,25 +273,23 @@ rdd2.unpersist()
 
 持久化可以选择不同的存储级别。正如我们讲 RDD 的结构时提到的一样，有 MEMORY_ONLY，MEMORY_AND_DISK，DISK_ONLY 等。cache() 方法会默认取 MEMORY_ONLY 这一级别
 
-# RDD 的转换操作
-
-转换是用来把一个 RDD 转换成另一个 RDD，而动作则是通过计算返回一个结果
 
 
+# Transformation 转换函数/算子
 
-## Transformation 转换函数
+转换算子主要负责改变RDD中数据、切分RDD中数据、过滤掉某些数据等。转换算子按照一定顺序组合，Spark会将其放入到一个计算的有向无环图中，并不立刻执行，当Driver请求某些数据时，才会真正提交作业并触发计算
 
 函数返回值还是RDD
-
-调用以后得到的还是一个RDD，RDD的计算逻辑主要通过转换函数完成。
 
 Spark提供了很多对 RDD 的操作，如 Map、Filter、flatMap、groupByKey 和 Union 等等，极大地提升了对各种复杂场景的支持。开发者既不用再绞尽脑汁挖掘 MapReduce 模型的潜力，也不用维护复杂的 MapReduce 状态机。
 
 
 
-map，filter等不会出现新的分片， 
+## 通用类
 
-reduceByKey， union，join，groupByKey 等会出现新分片
+这一类可以满足绝大多数需要，特别适合通用分析型需求。
+
+
 
 
 
@@ -301,9 +297,13 @@ reduceByKey， union，join，groupByKey 等会出现新分片
 
 map 是最基本的转换操作
 
+一对一映射
+
+将原RDD分区中T类型的数据元素转换成U类型，并返回为一个新RDD。map算子会作用于分区内的每个元素
+
 与 MapReduce 中的 map 一样，它把一个 RDD 中的所有数据通过一个函数，映射成一个新的 RDD，任何原 RDD 中的元素在新 RDD 中都有且只有一个元素与之对应
 
-
+![image-20200718182119691](rdd.assets/image-20200718182119691.png)
 
 ```
 rdd = sc.parallelize(["b", "a", "c"])
@@ -315,9 +315,13 @@ rdd2 = rdd.map(lambda x: (x, 1))
 
 
 
+
+
 ### mapPartitions
 
 mapPartitions 是 map 的变种。不同于 map 的输入函数是应用于 RDD 中每个元素，mapPartitions 的输入函数是应用于 RDD 的每个分区，也就是把每个分区中的内容作为整体来处理的，所以输入函数的类型是 Iterator[T] => Iterator[U]
+
+mapPartitions的高阶函数是直接将分区数据看成一个迭代器，因此map的高阶函数执行次数与元素个数相同，mapPartitions的高阶函数执行次数与分区数相同，后者对初始化特别耗费资源的场景特别友好，例如，在插入数据库时，mapPartitions处理每个分区的元素只需要每个分区初始化一次连接，而不用像map一样每个元素都初始化一次。DataFrame API和Spark SQL默认会对程序进行mapPartitions的优化。
 
 ```
 
@@ -336,11 +340,50 @@ rdd2 = rdd.mapPartitions(f)
 
 
 
+### reduceByKey 聚合 
+
+reduceByKey算子执行的是归约操作，针对相同键的数据元素两两进行合并。在合并之前，reduceByKey算子需要将相同键的元素分发到同一个分区中去，分发规则可以自定义，分发的分区数量也可以自定义，因此该算子还可以接收分区器或者分区数作为参数，分区器在没有指定时，采用的是RDD内部的散列分区器
+
+![image-20200718182356258](rdd.assets/image-20200718182356258.png)
+
+```
+rdd.reduceByKey((x, y) => x + y)
+
+>>>
+{(1, 2), (3, 10)}
+```
+
+
+
+
+
+### flatMap
+
+flatMap算子的字面意思是“展平”, flatMap算子的函数参数的作用是将T类型的数据元素转换为元素类型为U的集合，如果处理过程到此为止，那么将RDD_1的一个分区看成一个集合的话，分区数据结构就相当于集合的集合，这种数据结构就不是“平”的，而是有层次的，因此flatMap算子还做了一个操作——将集合的集合合并为一个集合
+
+![image-20200718182454998](rdd.assets/image-20200718182454998.png)
+
+
+
+
+
+
+
+### distinct
+
+distinct算子的功能是对RDD所有数据元素进行去重，它由reduceByKey算子实现。
+
+
+
+
+
 
 
 ### filter 过滤 
 
 filter 这个操作，是选择原 RDD 里所有数据中满足某个特定条件的数据，去返回一个新的 RDD
+
+按照某种规则过滤掉某些数据，若f返回值为true则保留，false则丢弃，filter算子作用之后，可能会造成大量零碎分区，不利于后面计算过程，需要在计算之前进行合并
 
 ```
 rdd = sc.parallelize([1, 2, 3, 4, 5])
@@ -354,30 +397,9 @@ rdd2 = rdd.filter(lambda x: x % 2 == 0)
 
 
 
-### mapValues 
+### sortByKey
 
-计算每个键的对应值的均值
-
-![image-20200712110336978](rdd.assets/image-20200712110336978.png)
-
-
-
-
-
-
-
-### reduceByKey 聚合 
-
-reduceByKey(func, [numPartitions])  
-
-来自不同分片的相同Key必须聚合在一起进行操作，这样就会产生新的RDD分片。实际执行过程中，是否会产生新的RDD分片，并不是根据转换函数名就能判断出来的
-
-```
-rdd.reduceByKey((x, y) => x + y)
-
->>>
-{(1, 2), (3, 10)}
-```
+sortByKey算子是一个有意思的算子，它虽然只是完成了简单的排序操作，但是其过程值得探讨。从字面意思来看，执行过程先按照数据元素的键进行分发，然后各分区再进行排序操作，但是如果分发规则按照默认的散列分区器来执行，无疑达不到全排序的效果，除非分区数参数设置（numPartitions）为1
 
 
 
@@ -385,10 +407,13 @@ rdd.reduceByKey((x, y) => x + y)
 
 groupByKey([numPartitions])
 
+多对多映射
+
 groupByKey 和 SQL 中的 groupBy 类似，是把对象的集合按某个 Key 来归类，返回的 RDD 中每个 Key 对应一个序列。即对具有相同键的值进行分组
 
-```
+groupByKey在统计分析中经常用到，是分组计算的前提，它默认按照散列分区器进行分发，将同一个键的数据元素放入同一个迭代器中，为后面的汇总操作做准备，它的可选参数分区数、分区器
 
+```
 rdd = sc.parallelize([("a", 1), ("b", 1), ("a", 2)])
 rdd.groupByKey().collect()
 >>>
@@ -398,9 +423,73 @@ rdd.groupByKey().collect()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### combineByKey
+
+combineByKey算子属于RDD核心算子，很多聚合类算子底层都是由该算子实现，如groupByKey、reduceByKey、aggregateByKey等，它相比于其他算子，也是最灵活的。createCombiner会将分区内第一个V类型元素转换成C类型，mergeValue的作用是合并前面得到的C类型元素与当前V类型元素并得到C类型元素结果，mergeValue会不断执行，直到最后一个元素。MapSide Combine与mergeCombiners是优化项，默认开启，类似于MapReduce中的Combiner，它可以在Map端，也就是在Shuffle之前就做合并，这样可以大大减少Shuffle数据量，这种优化适用于求最大值、最小值这类操作，mergeCombiners作用在其他分区的输出结果上，在Map端合并数据
+
+
+
+### mapValues 
+
+计算每个键的对应值的均值
+
+![image-20200712110336978](rdd.assets/image-20200712110336978.png)
+
+
+
+## 数学/统计类
+
+这类算子实现的是某些常用的数学或者统计功能，如分层抽样等。
+
+
+
+
+
+### sampleByKey
+
+分层抽样是将数据元素按照不同特征分成不同的组，然后从这些组中分别抽样数据元素。Spark内置了实现这一功能的算子sampleByKey, withReplacement参数表示此次抽象是重置抽象还是不重置抽样，所谓重置抽样就是“有放回的抽象”，单次抽样后会放回。fractions是每个键的抽样比例，以Map的形式提供。seed为随机数种子，一般设置为当前时间戳
+
+## 集合论与关系类
+
+
+
+这类算子主要实现的是像连接数据集这种功能和其他关系代数的功能，如交集、差集、并集、笛卡儿积等。
+
+### cogroup
+
+cogroup算子相当于多个数据集一起做groupByKey操作，生成的Pair RDD的数据元素类型为(K, (Iterable[V],Iterable[W]))，其中第1个迭代器为当前键在RDD_0中的分组结果，第2个迭代器为RDD_1的结果
+
+![image-20200719085657855](rdd.assets/image-20200719085657855.png)
+
+
+
+
+
+
+
 ### union 合并数据集 
 
 union(otherDataset)
+
+多对一映射
+
+union算子将两个同类型的RDD合并为一个RDD，类似于求并集的操作
+
+
 
 
 
@@ -408,15 +497,63 @@ union(otherDataset)
 
 join(otherDataset, [numPartitions])
 
+join算子实现的是SQL中的内连接操作，该算子是一个组合算子，由cogroup与flatMap算子组合而成。在前面，我们知道了cogroup算子最后会将同一个键在左表（RDD_0）和右表（RDD_1）中的数据分别保存在两个集合里，要完成连接操作，还需要对这两个集合进行笛卡儿积，完成后需要展开为多行，该操作由flatMap算子完成。fullOuterJoin（全连接）、leftOuterJoin（左外连接）、rightOuterJoin（右外连接）会根据连接语义在Shuffle之前保留或过滤某些键的数据
 
 
 
 
 
+### subtractByKey
 
-## Action 执行函数
+假设当前RDD的数据为全集，subtractByKey算子返回当前RDD与other RDD的交集的补集
 
-函数不再返回RDD
+
+
+### intersection
+
+假设当前RDD的数据为全集，intersection算子返回当前RDD与other RDD的交集
+
+
+
+### cartesian
+
+cartesian算子的功能是对数据集中的数据元素两两连接，即求笛卡儿积，在大数据量下，该操作的性能消耗非常大，且输出文件的大小也会暴涨，需要谨慎使用
+
+
+
+## 数据结构类
+
+这类算子主要改变的是RDD中底层的数据结构，即RDD中的分区。在这些算子中，你可以直接操作分区而不需要访问这些分区中的元素。在Spark应用中，当你需要更高效地控制集群中的分区和分区的分发时，这些算子会非常有用。通常，根据集群状态、数据规模和使用方式有针对性地对数据进行重分区可以显著提升性能。默认情况下，RDD使用散列分区器对集群中的数据进行分区。分区数与集群中的节点数无关，很可能集群中的单个节点有几个数据分区。数据分区数一般取决于数据量和集群节点数。作业中的某个计算任务的输入是否在本地，这称为数据的本地性，计算任务会尽可能地优先选择本地数据。
+
+### partitionBy
+
+partitionBy会按照传入的分发规则对RDD进行重分区，分发规则由自定义分区器实现
+
+
+
+### coalesce
+
+coalesce会试图将RDD中分区数变为用户设定的分区数（numPartitions），从而调整作业的并行程度。如果用户设定的分区数（100）小于RDD原有分区数（1000），则会进行本地合并，而不会进行Shuffle，如果用户设定的分区数大于RDD原有分区数，则不会触发操作。如果需要增大分区数，则需要将shuffle参数设定为true，这样数据就会通过散列分区器将数据进行分发，以达到增加分区的效果。还有一种情况，如果当用户设置分区数为1时，这时如果shuffle参数为false，会在某些节点造成极大的性能负担，用户可以设置shuffle参数为true来汇总分区的上游计算过程并行执行。repartition是coalesce默认开启shuffle的简单封装
+
+
+
+### zipWithIndex
+
+zipWithIndex算子与Scala中的zipWithIndex函数类似，都是用一个自增长的整数集合与目标集合做一个类似“拉链”的操作，合并为一个新的集合，集合中每一个元素都会有一个自增长的序号。RDD的zipWithIndex算子也是如此，RDD分区内的每一个元素都会有一个自增长的序号，从zipWithIndex算子生成的RDD也可看出端倪，此RDD的第一个分区内的第一个元素的编号为0，最后一个分区的最后一个元素的编号最大。
+
+
+
+
+
+# Action 执行函数/算子
+
+与转换算子的最大不同之处在于：转换算子返回的还是RDD，行动算子返回的是非RDD类型的值，如整数，或者根本没有返回值。
+
+行动算子可以分为Driver和分布式两类。
+
+## Driver
+
+这种算子返回值通常为Driver内部的内存变量，如collect、count、countByKey等。这种算子会在远端Executor执行计算完成后将结果数据传回Driver。这种算子有个缺点是返回的数据如果太大，很容易会突破Driver内存限制，因此使用这种算子作为作业结束需要谨慎。
 
 
 
@@ -465,7 +602,7 @@ sorted(rdd.countByKey().items())
 
 ### reduce
 
-与 MapReduce 中的 reduce 类似，它会把 RDD 中的元素根据一个输入函数聚合起来
+与转换算子reduce类似，会用函数参数两两进行归约，直到最后一个值，返回值类型与RDD元素相同
 
 ```
 from operator import add
@@ -477,9 +614,75 @@ sc.parallelize([1, 2, 3, 4, 5]).reduce(add)
 
 
 
-### **saveAsTextFile**(path)
+### take
 
-将RDD数据存储到path路径下
+take算子会取出RDD前n个元素作为数组返回。first算子等于take(1)。这两个算子会直接根据下表返回而不会排序
+
+
+
+### takeOrdered
+
+takeOrdered算子与top算子类似于实现Top N的功能，但对于同样的数据集与参数，takeOrdered算子与top算子总是按照相反的排序规则返回前n个元素。top算子内部是利用takeOrdered算子并反转排序器实现
+
+
+
+
+
+### max
+
+返回数据集中的最大值，利用reduce算子实现。
+
+
+
+### min
+
+返回数据集中的最小值，利用reduce算子实现。
+
+
+
+### countByKey
+
+按照值进行分组统计，返回值类型为Map。
+
+
+
+### countByValue
+
+按照键进行分组统计，返回值类型为Map。
+
+
+
+### foreach(
+
+foreach算子迭代RDD中的每个元素，并且可以自定义输出操作，通过用户传入的函数，可以实现打印、插入到外部存储、修改累加器等迭代所带来的副作用。
+
+
+
+## 分布式
+
+与前一类算子将结果回传到Driver不同，这类算子会在集群中的节点上“就地”分布式执行，如saveAsTextFile。这是一种最常用的分布式行动算子。
+
+
+
+### saveAsTextFile
+
+该算子会将RDD输出到外部文件系统中，例如HDFS。
+
+
+
+### saveAsObjectFile
+
+该算子会将RDD中的元素序列化成对象存储到文件中，以SequenceFile的形式存储。
+
+
+
+### persist  / unpersist
+
+其中cache()=persist(MEMORY_ONLY),Spark会在作业执行过程中采用LRU策略来更新缓存，如果用户想要手动移除缓存的话，也可以采用unpersist算子手动释放缓存。其中persist可以选择存储级别
+
+![image-20200719093623990](rdd.assets/image-20200719093623990.png)
+
+> 如果内存足够大，使用MEMORY_ONLY无疑是性能最好的选择，想要节省点空间的话，可以采取MEMORY_ONLY_SER，可以序列化对象使其所占空间减少一点。DISK是在重算的代价特别昂贵时的不得已的选择。MEMORY_ONLY_2和MEMORY_AND_DISK_2拥有最佳的可用性，但是会消耗额外的存储空间
 
 
 

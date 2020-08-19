@@ -137,3 +137,32 @@ print(d)
 
 
 # OrderedDict
+
+
+
+
+
+
+
+# UserList
+
+以python 的方式解释list是如何做到的，因为默认list的源码是c语言实现的
+
+```
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

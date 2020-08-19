@@ -26,9 +26,11 @@ HBase之所以能够具有海量数据处理能力，其根本在于和传统关
 
 HBase的伸缩性主要依赖其可分裂的HRegion及可伸缩的分布式文件系统HDFS实现。
 
-![img](https://snag.gy/fBmRTJ.jpg)
+![image-20200729163708648](hbase.assets/image-20200729163708648.png)
 
-![img](https://snag.gy/Sk9O3D.jpg)
+
+
+![image-20200729163724214](hbase.assets/image-20200729163724214.png)
 
 
 

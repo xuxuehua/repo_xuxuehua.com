@@ -1,8 +1,6 @@
----
 title: "set 集合"
 date: 2018-08-19 10:51
 collection: 基本变量类型
----
 
 
 
@@ -26,6 +24,8 @@ collection: 基本变量类型
 字典和集合的内部结构都是一张哈希表。 
 
 而对集合来说，区别就是哈希表内没有键和值的配对，只有单一的元素了。 
+
+性能很高
 
 
 
@@ -78,11 +78,11 @@ In [75]: s
 Out[75]: {1, 2, 3}
 ```
 
-## 集合常用操作
 
-### 增
 
-#### add
+## 增
+
+### add
 
 若元素存在，就什么都不做
 
@@ -100,7 +100,7 @@ In [79]: s.add(3)
 
 
 
-#### update
+### update
 
 参数必须是可迭代对象
 
@@ -118,9 +118,9 @@ Out[82]: {1, 2, 3, 4, 5, 6}
 
 ### 
 
-### 查
+## 查
 
-#### len
+### len
 
 ```
 In [2]: s
@@ -132,7 +132,7 @@ Out[3]: 3
 
 
 
-#### in
+### in
 
 ```
 In [2]: s
@@ -147,9 +147,9 @@ Out[5]: True
 
 
 
-### 删
+## 删
 
-#### remove 
+### remove 
 
 key不存在抛出异常
 
@@ -173,7 +173,7 @@ KeyError: 10
 
 
 
-#### discard
+### discard
 
 移除一个元素
 
@@ -196,7 +196,7 @@ Out[92]: {2, 4, 5, 6}
 
 
 
-#### clear
+### clear
 
 ```python
 In [99]: s
@@ -210,7 +210,7 @@ Out[101]: set()
 
 
 
-#### pop
+### pop
 
 移除并返回任意的元素， 删除集合中最后一个元素，可是集合本身是无序的，你无法知道会删除哪 
 
@@ -229,9 +229,9 @@ Out[3]: {2, 3}
 ```
 
 
-### 集合运算
+# 集合运算
 
-#### union 并集
+## union 并集
 
 ```python
 In [1]: s1 = set({1, 2, 3})
@@ -251,7 +251,7 @@ Out[5]: {1, 2, 3, 4}
 
 
 
-#### intersection 交集
+## intersection 交集
 
 ```python
 In [6]: s1
@@ -266,7 +266,7 @@ Out[8]: {2, 3}
 
 
 
-#### difference 差集
+## difference 差集
 
 ```python
 In [9]: s1
@@ -284,7 +284,7 @@ Out[15]: {4}
 
 
 
-#### symmetric_difference 对称差集
+## symmetric_difference 对称差集
 
 两个集合中不重复的元素集合
 
@@ -306,17 +306,40 @@ Out[16]: {1, 4}
 
 
 
-#### symmetric_difference_update()
+## symmetric_difference_update()
 
 移除当前集合中在另外一个指定集合相同的元素，并将另外一个指定集合中不同的元素插入到当前集合中
 
 
 
+## 运算符计算 (-  &  | )
+
+```
+s1 = set(['a', 'b', 'c'])
+
+s2 = set("cdefg")
+
+ret = s1.difference(s2)
+print(ret)
+
+print(s1 - s2)
+print(s1 & s2)
+print(s1 | s2)
+
+>>>
+{'b', 'a'}
+{'b', 'a'}
+{'c'}
+{'a', 'g', 'f', 'e', 'd', 'b', 'c'}
+```
 
 
-### 集合判断
 
-#### issubset 子集 <=
+
+
+# 集合判断
+
+## issubset 子集 <=
 
 ```python
 In [20]: s
@@ -338,7 +361,7 @@ Out[77]: True
 
 
 
-#### 真子集 < 
+## 真子集 < 
 
 ```
 In [78]: s1 = ({4, 5, 6})
@@ -357,7 +380,7 @@ Out[82]: True
 
 
 
-#### issuperset 父集 >=
+## issuperset 父集 >=
 
 ```python
 In [22]: {0, 1, 2}.issuperset([1])
@@ -381,7 +404,7 @@ Out[83]: True
 
  
 
-#### isdisjoint 
+## isdisjoint 
 
 当前集合和另一个集合没有交集
 
@@ -403,11 +426,13 @@ Out[5]: True
 
 
 
-## 集合解析
+# 集合解析
 
-### 基本语法
+## 基本语法
 
-`ret = {expression for item in iterator}`
+```
+{expression for item in iterator}
+```
 
 等价于
 
@@ -417,6 +442,9 @@ ret = set()
 for item in iterator:
     ret.add(expression)
 ```
+
+
+
 
 ```python
 In [20]: s = {1, 3, 5}
@@ -430,3 +458,29 @@ Out[22]: {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 In [23]: {x+1 for x in [2, 2, 2, 2]}
 Out[23]: {3}
 ```
+
+
+
+
+
+
+
+# fronzenset （dict key用法）
+
+不可变集合，无序，不重复
+
+可以作为dict的key
+
+```
+s = set(['a', 'b'])
+s.add('a')
+print(s)
+
+s = frozenset("abcdefg")
+print(s)
+
+>>>
+{'b', 'a'}
+frozenset({'b', 'f', 'd', 'c', 'a', 'e', 'g'})
+```
+

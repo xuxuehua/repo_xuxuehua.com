@@ -295,62 +295,6 @@ Tungsten的目的就是摆脱JVM的垃圾回收器，自己管理内存
 
 
 
-
-
-# Spark性能优化
-
-Spark性能优化可以分解为下面几步。
-
-1.性能测试，观察Spark性能特性和资源（CPU、Memory、Disk、Net）利用情况。
-
-2.分析、寻找资源瓶颈。
-
-3.分析系统架构、代码，发现资源利用关键所在，思考优化策略。
-
-4.代码、架构、基础设施调优，优化、平衡资源利用。
-
-5.性能测试，观察系统性能特性，是否达到优化目的，以及寻找下一个瓶颈点。
-
-
-
-对 Spark 进行性能调优，通常就是修改 Spark 应用的运行时配置选项。Spark 中最主要的配 置机制是通过 SparkConf 类对 Spark 进行配置
-
-
-
-## 统一Dataset和DataFrame接口
-
-Dataset的目标是提供类型安全的编程接口。这允许开发人员使用编译时类型安全的半结构化数据（如JSON或键值对，即可以在应用程序运行之前检查错误）
-
-所以Spark Python API不实现Dataset API的原因是Python不是类型安全的语言。
-
-同样重要的是，Dataset API还包含高级域特定的语言操作，如sum、avg、join和group。该特性意味着Dataset具有传统RDD的灵活性，而且代码也更具可读性。类似于DataFrame, Dataset可以通过将表达式和数据字段暴露给查询计划器并利用Tungsten的快速内存编码来从Spark的Catalyst优化器获益
-
-![image-20200717084747140](basic_knowledge.assets/image-20200717084747140.png)
-
-Dataset API提供了类型安全的面向对象编程接口。Dataset可以通过将表达式和数据字段暴露给查询计划程序和Tungsten的快速内存编码来利用Catalyst优化器。但是，现在DataFrame和Dataset都作为Apache Spark 2.0的一部分，其实DataFrame现在是DatasetUntyped API的别名。更具体地说
-
-```
-DataFrame = Dataset[Row]
-```
-
-DataFrame API与DataSet API能够充分地享受到Tungsten项目的优化成果，这是由于在DataFrame中，可以获得更多的应用语义。
-
-
-
-# Spark on yarn vs Spark on k8s
-
-```
-spark-submit ---- ResourceManager ----- ApplicaitonMaster（Container） ---- Driver（Container）----Executor（Container）
-```
-
-```
-spark-submit ---- Kube-api-server（Pod） ---- Kube-scheduler（Pod） ---- Driver（Pod） ---- Executor（Pod）
-```
-
-
-
-
-
 # Parquet
 
 一种流行的列式存储格式，可以高效地存储具有嵌套字段的记录
@@ -399,6 +343,18 @@ root@ubuntu:/mnt/spark-2.4.5-bin-hadoop2.7# tree -L 1
 
 
 
+
+
+## 蒙特卡罗方法预测股票价格
+
+蒙特卡罗方法（Monte Carlo method），也称统计模拟方法，是20世纪40年代中期由于科学技术的发展和电子计算机的发明，而被提出的一种以概率统计理论为指导的一类非常重要的数值计算方法，原理是通过大量随机样本去了解一个系统，进而得到所要计算的值。它非常强大和灵活，又相当简单易懂，很容易实现。对于许多问题来说，它往往是最简单的计算方法，有时甚至是唯一可行的方法。蒙特卡罗方法在金融工程学、宏观经济学、计算物理学（如粒子输运计算、量子热力学计算、空气动力学计算）等领域应用广泛。
+
+运用蒙特卡罗方法预测股票价格，这里我们认为影响股票价格的因子（解释变量）有原油价格（WTI）、30年期国债价格（Bond）、标准普尔500指数（GSPC）、纳斯达克指数（NDAQ），它们之间是一个线性关系，
+
+
+$$
+y=b0+b1·x_{WTI}+b2·x_{Bond}+b3·x_{GSPC}+b4·x_{NDAQ}
+$$
 
 
 

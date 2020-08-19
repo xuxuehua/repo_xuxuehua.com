@@ -17,6 +17,16 @@ find [-H] [-L] [-P] [-Olevel] [-D help|tree|search|stat|rates|opt|exec] [path...
 
 
 
+## 通配符
+
+```
+find /etc -name *init
+
+find /etc -name init??? #模糊搜索，?代表单个字符
+```
+
+
+
 ## Options
 
 ### 逻辑判断
@@ -280,6 +290,7 @@ find . -path "./sk" -prune -o -name "*.txt" -print
 ```
 find . -iregex ".*\(\.txt\|\.pdf\)$"
 ```
+
 
 
 ### -links<连接数目>

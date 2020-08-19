@@ -164,6 +164,16 @@ yum -y install epel-release && yum -y upgrade && yum -y update && yum -y install
 ## Ubuntu
 
 ```
+sudo apt update
+sudo apt-get install --assume-yes wget
+wget https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
+sudo dpkg --install chrome-remote-desktop_current_amd64.deb
+sudo apt install --assume-yes --fix-broken
+```
+
+
+
+```
 echo $(hostname -I | cut -d\  -f1) $(hostname) | sudo tee -a /etc/hosts
 ```
 
@@ -172,11 +182,32 @@ echo $(hostname -I | cut -d\  -f1) $(hostname) | sudo tee -a /etc/hosts
 After installing the Debian package `chrome-remote-desktop_current_amd64.deb`, make sure the current user is part of the `chrome-remote-desktop` group:
 
 ```
-sudo usermod -a -G chrome-remote-desktop vnc
+sudo usermod -a -G chrome-remote-desktop $USER
 ```
 
-Stop Chrome Remote Desktop:
+
+
+You need to allow Chrome Remote Desktop to access your account. If you approve, the page displays a command line for Debian Linux that looks like the following:
 
 ```
-/opt/google/chrome-remote-desktop/chrome-remote-desktop --stop
+DISPLAY= /opt/google/chrome-remote-desktop/start-host \    --code="4/xxxxxxxxxxxxxxxxxxxxxxxx" \    --redirect-url="https://remotedesktop.google.com/_/oauthredirect" \    --name=
 ```
+
+
+
+Go to privacy to disable screen lock
+
+and change user vnc as administrator user
+
+```
+adduser vnc sudo 
+```
+
+
+
+Go to below to install snap core service, after that you could use snap to install those softwares
+
+```
+https://snapcraft.io/core
+```
+

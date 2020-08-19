@@ -533,8 +533,6 @@ curl -X POST --data-urlencode "date=April 1" example.com/form.cgi
 
 
 
-
-
 * json format 
 
  `-d '{"key1":"value1", "key2":"value2"}'` or `-d @data.json`
@@ -557,6 +555,36 @@ curl -X POST --data "data=xxx" example.com/form.cgi
 ```
 
 
+
+post encoded base64 file
+
+```
+
+$ ls -la 
+rxu_test.zip
+
+
+# Same above system path for below commands 
+
+zipFileName="rxu_test"
+
+roleName="BDP-PROD-DELIVER"
+
+apiToken=""
+
+DEPLOY_MESSAGE="testByRickXuZipPackage"
+
+base64App=`base64 ${zipFileName}.zip`
+
+
+echo {\"code_content\":\"${base64App}\", \"deploy_message\":\"${DEPLOY_MESSAGE}\"} > ${zipFileName}.txt
+
+curl --request POST \
+     --header "Content-Type:application/json" \
+     --header "API_TOKEN:${apiToken}" \
+     --data @${zipFileName}.txt \
+     https://xurick.com/test/application/${roleName}/${zipFileName}
+```
 
 
 

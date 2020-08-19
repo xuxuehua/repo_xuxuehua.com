@@ -113,7 +113,7 @@ from module_name import my_function
 
 ## 使用`__name__`
 
-当整个程序作为库被import的时候，我们并不需要测试语句。可以使用`__name__`跳过
+当整个程序作为库被import的时候，我们并不需要测试语句。可以使用`__name__`跳过, 这样不会执行该模块下面定义的调用方法和函数
 
 `__name__`是Python中一个隐含的变量它代表了模块的名字
 
