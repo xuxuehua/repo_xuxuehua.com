@@ -172,3 +172,77 @@ Here’s an example,
 2. Select the “**I accept the risk!**” button.
 3. Type “**javascript**” in the “**Search**” box.
 4. Double-click the “**javascript.enabled**” line to toggle the setting between “**true**” and “**false**” as desired.
+
+
+
+# disable copy
+
+You cannot prevent people from copying text from your page. If you are trying to satisfy a "requirement" this may work for you:
+
+```js
+<body oncopy="return false" oncut="return false" onpaste="return false">
+```
+
+
+
+# disable mouse select
+
+In most browsers, this can be achieved using proprietary variations on the CSS `user-select` property, [originally proposed and then abandoned in CSS 3](http://www.w3.org/TR/2000/WD-css3-userint-20000216#user-select) and now proposed in [CSS UI Level 4](https://drafts.csswg.org/css-ui-4/#content-selection):
+
+```css
+*.unselectable {
+   -moz-user-select: none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+
+   /*
+     Introduced in Internet Explorer 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+   -ms-user-select: none;
+   user-select: none;
+}
+```
+
+
+
+use JavaScript to do this recursively for an element's descendants:
+
+```
+function makeUnselectable(node) {
+    if (node.nodeType == 1) {
+        node.setAttribute("unselectable", "on");
+    }
+    var child = node.firstChild;
+    while (child) {
+        makeUnselectable(child);
+        child = child.nextSibling;
+    }
+}
+
+makeUnselectable(document.getElementById("foo"));
+```
+
+
+
+## Anti this operation
+
+go to console and paste below cmd
+
+```
+document.body.innerHTML = document.body.innerHTML.replace(/-moz-user-select/g, "XYZ")
+document.head.innerHTML = document.head.innerHTML.replace(/-moz-user-select/g, "XYZ")
+
+document.body.innerHTML = document.body.innerHTML.replace(/-khtml-user-select/g, "XYZ")
+document.head.innerHTML = document.head.innerHTML.replace(/-khtml-user-select/g, "XYZ")
+
+document.body.innerHTML = document.body.innerHTML.replace(/-webkit-user-select/g, "XYZ")
+document.head.innerHTML = document.head.innerHTML.replace(/-webkit-user-select/g, "XYZ")
+
+document.body.innerHTML = document.body.innerHTML.replace(/-ms-user-select/g, "XYZ")
+document.head.innerHTML = document.head.innerHTML.replace(/-ms-user-select/g, "XYZ")
+
+document.body.innerHTML = document.body.innerHTML.replace(/user-select/g, "XYZ")
+document.head.innerHTML = document.head.innerHTML.replace(/user-select/g, "XYZ")
+```
+

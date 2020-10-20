@@ -28,6 +28,20 @@ sudo apt-get install postgresql-client
 
 
 
+
+
+## docker
+
+```
+docker run -d --name postgresql2 --restart always -e POSTGRES_USER='postgres' -e POSTGRES_PASSWORD='abc123' -e ALLOW_IP_RANGE=0.0.0.0/0 -v /home/postgres/data:/var/lib/postgresql -v /4T/tmp:/tmp/tmp -p 55433:5432 -t postges
+```
+
+```
+psql -h 127.0.0.1 -p 55433 -U postgres 
+```
+
+
+
 # 初始化
 
 ## 新用户
@@ -113,7 +127,7 @@ psql exampledb < exampledb.sql
 \l：列出所有数据库。
 \c [database_name]：连接其他数据库。
 \d：列出当前数据库的所有表格。
-\d [table_name]：列出某一张表格的结构
+\d [table_name]：列出某一张表格的结构  或者 select * from information_schema.columns where table_name='app';
 \dn: list schema
 \dt: list tables
 \dt SCHEMA.*  列出schema所有的tables
@@ -296,6 +310,8 @@ user_data=>  select * from pg_stat_activity where pid=1264;
 
 
 
+
+
 # Type
 
 ## json vs jsonb
@@ -383,3 +399,12 @@ admin=> \q
 
 
 
+
+
+
+
+# FAQ
+
+## cannot use column reference in DEFAULT expression 
+
+注意默认值如何用双引号和单引号引起来

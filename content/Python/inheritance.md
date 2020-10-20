@@ -56,6 +56,8 @@ class Human():
         print(self.name)
 ```
 
+
+
 ## super 方法
 
 父类，也可以称为超类，基类
@@ -64,6 +66,24 @@ class Human():
 super对象使用super方法生成
 
 使用super这种方法时，要求继承链的最顶层父类必须要继承 object
+
+c2.py
+
+```
+class Human():
+    sum = 0
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def get_name(self):
+        print(self.name)
+
+    def do_homework(self):
+        print('This is parent method')
+```
+
+
 
 c1.py
 
@@ -91,22 +111,6 @@ English homework
 > 子类方法和父类重名，子类方法会覆盖父类方法
 > 
 > 但也可以通过super方法调用父类的方法·
-
-c2.py
-
-```
-class Human():
-    sum = 0
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-
-    def get_name(self):
-        print(self.name)
-
-    def do_homework(self):
-        print('This is parent method')
-```
 
 
 

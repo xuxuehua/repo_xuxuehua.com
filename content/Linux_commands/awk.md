@@ -218,7 +218,7 @@ mysql     27        -20s
 
 
 
-## NF 浏览域个数
+## NF 最后一列数据
 
 Number of Field   当前记录的field个数
 

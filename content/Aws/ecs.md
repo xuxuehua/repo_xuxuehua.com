@@ -130,7 +130,15 @@ $ aws ecs list-task-definitions --region us-east-1
 
 **memoryReservation** (a soft limit) and **memory** (a hard limit)
 
+若只配置soft， hard默认为集群物理内存的最大值
+
+By specifying only a hard memory limit for your tasks you avoid running out of memory because ECS stops placing tasks on the instance, and docker kills any containers that try to go over the hard limit.
+
 如果二者均配置 **memory**(hard) must be greater than **memoryReservation**(soft)
+
+If a task-level memory value is not specified, you must specify a non-zero integer for one or both of `memory` or `memoryReservation` in a container definition. 
+
+
 
 
 

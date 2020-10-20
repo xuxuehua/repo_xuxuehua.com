@@ -194,3 +194,215 @@ random.gauss(mu, sigma)
 
 随机生成符合指数分布的随机数，lambd为指数分布的参数
 random.expovariate(lambd)
+
+
+
+
+
+
+
+# example
+
+
+
+
+
+## random string of fixed length
+
+Use the string constant **`string.ascii_lowercase`** to get all the lowercase letters. 
+
+```
+import random
+import string
+
+def get_random_string(length):
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    print("Random string of length", length, "is:", result_str)
+
+get_random_string(8)
+get_random_string(8)
+get_random_string(6)
+```
+
+
+
+
+
+## random string of lower case and upper case letters
+
+```
+import random
+import string
+
+def get_random_string(length):
+    # Random string with the combination of lower and upper case
+    letters = string.ascii_letters
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    print("Random string is:", result_str)
+
+get_random_string(8)
+get_random_string(8)
+```
+
+
+
+## random string of specific letters only
+
+```
+import random
+
+def get_random_string(length):
+    # put your letters in the following string
+    sample_letters = 'abcdefghi'
+    result_str = ''.join((random.choice(sample_letters) for i in range(length)))
+    print("Random string is:", result_str)
+
+get_random_string(5)
+get_random_string(5)
+
+>>>
+Random string is: ediec
+Random string is: iedch
+```
+
+
+
+## random string without repeating characters
+
+As I mentioned earlier, the `random.choice` function might pick the same character again. When you don’t want repeated characters in a random string use [random.sample()](https://pynative.com/python-random-sample/) function. Let see the demo.
+
+```python
+import random
+import string
+
+# get random string without repeating letters
+def get_random_string(length):
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.sample(letters, length))
+    print("Random String is:", result_str)
+
+get_random_string(8)
+get_random_string(8)
+```
+
+
+
+
+
+## random alphanumeric string of letters and digits
+
+Many times we want to create a random string that contains both letters and digit. For example, you want a random string like *ab23cd*, *jkml98*, *87thki*. We can use the `**string.ascii_letters**` and **`string.digits`** constants to get the combinations of letters and digits in our random string.
+
+Now, let’s see the example to generate a random string with letters and digits in Python. In this example, we are creating a random string with the combination of a letter from **A-Z, a-z, and digits 0-9**.
+
+```python
+import random
+import string
+
+def get_random_alphanumeric_string(length):
+    letters_and_digits = string.ascii_letters + string.digits
+    result_str = ''.join((random.choice(letters_and_digits) for i in range(length)))
+    print("Random alphanumeric String is:", result_str)
+
+get_random_alphanumeric_string(8)
+get_random_alphanumeric_string(8)
+```
+
+
+
+## random alphanumeric string with a fixed count of letters and digits
+
+For example, I want to create a random alpha-numeric string that contains 5 letters and 3 numbers.
+
+```python
+import random
+import string
+
+def get_random_alphanumeric_string(letters_count, digits_count):
+    sample_str = ''.join((random.choice(string.ascii_letters) for i in range(letters_count)))
+    sample_str += ''.join((random.choice(string.digits) for i in range(digits_count)))
+
+    # Convert string to list and shuffle it to mix letters and digits
+    sample_list = list(sample_str)
+    random.shuffle(sample_list)
+    final_string = ''.join(sample_list)
+    return final_string
+
+# 5 letters and 3 digits
+print("First random alphanumeric string is:", get_random_alphanumeric_string(5, 3))
+
+# 6 letters and 2 digits
+print("Second random alphanumeric string is:", get_random_alphanumeric_string(6, 2))
+```
+
+
+
+## random password string with Special characters, letters, and digits
+
+```
+import random
+import string
+
+# get random string password with letters, digits, and symbols
+def get_random_password_string(length):
+    password_characters = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(random.choice(password_characters) for i in range(length))
+    print("Random string password is:", password)
+
+get_random_password_string(10)
+get_random_password_string(10)
+```
+
+
+
+
+
+## secure random string and password
+
+**Above all examples are not cryptographically secure**. The cryptographically secure random generator generates random data using synchronization methods to ensure that no two processes can obtain the same data at the same time.
+
+If you are using Python version less than 3.6, and want to generate cryptographically secure random string then use the `random.SystemRandom().choice()` function instead of `random.choice()`. Refer to [How to secure random data in python](https://pynative.com/cryptographically-secure-random-data-in-python/).
+
+If you are using Python version higher than 3.6 you can use the [secrets module](https://pynative.com/python-secrets-module/) to generate a secure random string.
+
+### Use the secrets module to generate a secure random string
+
+Use `secrets.choice()` function instead of `random.choice()`
+
+```python
+import secrets
+import string
+
+def get_secure_random_string(length):
+    secure_str = ''.join((secrets.choice(string.ascii_letters) for i in range(length)))
+    return secure_str
+
+print("First secure random String is:", get_secure_random_string(8))
+print("Second secure random String is:", get_secure_random_string(8))
+```
+
+
+
+```
+First secure random String is: PGLQbLLk
+Second secure random String is: oNwmymUW
+```
+
+Above all combinations are depends on String constants and random module functions. There are also other ways available to generate a random string in Python let see those now.
+
+### secrets module to generate a secure token string
+
+We can use `secrets.token_hex()` to get a secure random text string in hexadecimal format.
+
+```python
+import secrets
+print("Secure hexadecimal string token", secrets.token_hex(32))
+```
+
+
+
+```
+Secure hexadecimal string token 25cd4dd7bedd7dfb1261e2dc1489bc2f046c70f986841d3cb3d59a9626e0d802
+```
+

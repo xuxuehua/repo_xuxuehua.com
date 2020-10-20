@@ -44,3 +44,11 @@ S3 list 结果和emr数据不一致的时候，需要开启EMRFS一致性视图(
 
 
 
+
+
+
+
+# example
+
+![image-20201006223408772](emr.assets/image-20201006223408772.png)
+

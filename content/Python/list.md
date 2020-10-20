@@ -469,6 +469,29 @@ for item in iterable:
 
 
 
+列表推导式总共有两种形式：
+
+```
+[x for x in data if condition]
+```
+
+> 此处if主要起条件判断作用，data数据中只有满足if条件的才会被留下，最后统一生成为一个数据列表
+
+
+
+```
+[exp1 if condition else exp2 for x in data]
+```
+
+> 此处if...else主要起赋值作用，当data中的数据满足if条件时将其做exp1处理，否则按照exp2处理，最后统一生成为一个
+> 数据列表
+
+
+
+
+
+
+
 ```python
 Out[12]: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -479,6 +502,28 @@ In [15]: [x+1 for x in L if x%2 == 0 if x>2]
 Out[15]: [5, 7, 9]
 
 ```
+
+
+
+```
+
+d = {20600000000005: 'new_type_string2', 20600000000006: 'new_type_string1'}
+d_new = {20600000000005: 'new_type_string2'}
+
+[{'id': k, 'text': v, 'type': type_value, 'is_new': True} if k in d_new.keys() else {'id': k, 'text': v, 'type': type_value, 'is_new': False} for k, v in d.items()]
+
+>>>
+[{'id': 20600000000005,
+  'text': 'new_type_string2',
+  'type': 'app',
+  'is_new': True},
+ {'id': 20600000000006,
+  'text': 'new_type_string1',
+  'type': 'app',
+  'is_new': False}]
+```
+
+> 有数据错乱问题，需要测试
 
 
 

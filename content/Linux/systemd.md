@@ -776,6 +776,36 @@ semanage port -a -t ssh_port_t -p tcp 22220
 
 
 
+## ss
+
+```
+vim /lib/systemd/system/ss-local.service
+```
+
+
+
+```
+[Unit]
+Description=Shadowsocks-Libev Custom Client Service for %I
+Documentation=man:ss-local(1)
+After=network.target
+
+[Service]
+Type=simple
+# CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+User=nobody
+Group=nogroup
+LimitNOFILE=32768
+ExecStart=/usr/bin/ss-local -c /etc/shadowsocks-libev/config.json
+# ExecStart=/usr/bin/ss-local -c $CONFFILE $DAEMON_ARGS
+
+
+[Install]
+WantedBy=multi-user.target
+```
+
+
+
 ## Python-configparser
 
 可通过configparser 生成systemd配置文件

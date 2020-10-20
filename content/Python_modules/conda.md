@@ -12,6 +12,32 @@ date: 2020-07-23 09:55
 
 
 
+
+
+## create env
+
+```
+(base) rxus-MacBook-Pro:~ rxu$ conda env list
+# conda environments:
+#
+base                  *  /opt/anaconda3
+
+(base) rxus-MacBook-Pro:~ rxu$ conda create -n mypy37env python=3.7
+…
+…
+Proceed ([y]/n)? y
+…
+…
+(base) rxus-MacBook-Pro:~ rxu$ conda activate mypy37env
+(mypy37env) rxus-MacBook-Pro:~ rxu$ conda env list
+# conda environments:
+#
+base                     /opt/anaconda3
+mypy37env             *  /opt/anaconda3/envs/mypy37env
+```
+
+
+
 ## conda init 
 
 cat ~/.bash_profile
@@ -33,5 +59,17 @@ else
 fi
 unset __conda_setup
 # <<< conda init <<<
+```
+
+
+
+
+
+# FAQ
+
+## Disable base env for auto-activating
+
+```
+conda config --set auto_activate_base false
 ```
 

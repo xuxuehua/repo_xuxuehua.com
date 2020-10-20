@@ -273,6 +273,13 @@ f.write('I like apple!\n')      # 将'I like apple'写入文件并换行
 
 
 
+```
+            with open('only_new_strings.txt', 'a') as nf:
+                nf.write('executor result: %s \n' % data)
+```
+
+
+
 ### close 关闭
 
 关闭前会调用flush()
@@ -549,7 +556,7 @@ with DBConnectionManager('localhost', '8080') as db_client:
 
 
 
-## contextmanager 基于生成器的上下文管理器
+## context manager 基于生成器的上下文管理器
 
 基于生成器的上下文管理器更加方便、简洁，适用于中小型程序
 

@@ -35,6 +35,12 @@ rsync -avz -e "ssh -i ./1 -p 54321 -o StrictHostKeyChecking=no -o UserKnownHosts
 
 
 
+## --exclude 排除文件或目录
+
+```
+rsync -av --exclude=ONE_DIRECTORY ./* ONE_DIRECTORY
+```
+
 
 
 ## 本地到远程  PUSH

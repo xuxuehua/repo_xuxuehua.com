@@ -18,7 +18,7 @@ Python实现多线程/多进程，大家常常会用到标准库中的threading�
 
 ## Concurrency 并发
 
-首先要辨别一个误区，在 Python 中，并发并不是指同一时刻有多个操作（thread、task）同时进行。相反，某个特定的时刻，它只允许有一个操作发生，只不过线程 / 任务之间会互相切换，直到完成。
+某个特定的时刻，它只允许有一个程序在CPU上运行，只不过线程 / 任务之间会互相切换，直到完成
 
 ![image-20200814095532171](concurrent.assets/image-20200814095532171.png)
 
@@ -34,7 +34,9 @@ Python实现多线程/多进程，大家常常会用到标准库中的threading�
 
 ## Parallelism 并行
 
-至于所谓的并行，指的才是同一时刻、同时发生。Python 中的 multi-processing 便是这个意思，对于 multi-processing，你可以简单地这么理解：比如电脑是 6 核处理器，那么在运行程序时，就可以强制 Python 开 6 个进程，同时执行，以加快运行速度
+Python 中的 multi-processing 便是这个意思，对于 multi-processing，
+
+同一之间，多个程序同时运行在多个CPU上
 
 并行则更多应用于 CPU heavy 的场景，比如 MapReduce 中的并行计算，为了加快运行速度，一般会用多台机器、多个处理器来完成
 
@@ -230,6 +232,16 @@ with ThreadPoolExecutor(3) as executor:
     print('end time: {}'.format(time.time() - start_time))
 
 ```
+
+
+
+#### 限制
+
+受限于硬件、内存和性能，我们不可能无限制的创建任意数量的线程，因为每一台机器允许的最大线程是一个有界值。
+
+线程池就是用这些有限个数的线程，去执行提交的任务。然而对于多用户、高并发的应用来说，提交的任务数量非常巨大，一定会比允许的最大线程数多很多。
+
+
 
 
 

@@ -72,9 +72,9 @@ Spark 支持的 Hadoop 输入格式包括文本文件、SequenceFile、 Avro、P
 
 # Spark 架构
 
-降低了耦合性
-
 ![image-20200717075939893](basic_knowledge.assets/image-20200717075939893.png)
+
+
 
 
 

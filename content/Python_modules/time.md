@@ -257,7 +257,16 @@ print(timeit.timeit(lambda :run_sleep(2), number=5))
 
 
 
-## 
+
+
+## 执行时间差
+
+结果为秒
+
+```
+start_time = time.perf_counter()
+end_time = time.perf_counter()
+```
 
 
 

@@ -280,7 +280,6 @@ show binary logs;
 
 show slave status;
 show processlist;
-
 ```
 
 
@@ -446,9 +445,9 @@ mysql> SHOW SLAVE STATUSG;
 
 **3.1 配置要求**
 
-\1. 主库开启二进制日志
+1. 主库开启二进制日志
 
-\2. 主库和各个从库配置唯一的server_id
+2. 主库和各个从库配置唯一的server_id
 
 **3.2 主库创建复制用户**
 

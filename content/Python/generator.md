@@ -58,6 +58,10 @@ return 为生成器对象
 
 生成器只有在调用的时候才会生成相应的数据
 
+
+
+### next
+
 ```
 In [18]: g = ((i*2 for i in range(2)))
 
@@ -74,6 +78,96 @@ StopIteration                             Traceback (most recent call last)
 ----> 1 g.__next__()
 
 StopIteration:
+```
+
+
+
+### send 传入值到生成器内部
+
+可以传入值到生成器内部，同时还可以重启生成器执行到下一个yield位置
+
+```
+def get_func():
+    html = yield "https://xuxuehua.com"
+    print('get_func html:', html)
+    yield 2
+    yield 3
+    return "Rick"
+
+
+if __name__ == '__main__':
+    gen = get_func()
+    url = gen.send(None)
+    # url = next(gen)
+    html = 'Xu'
+    print(gen.send(html))
+
+>>>
+get_func html: Xu
+2
+```
+
+> 需要通过send 发送一个None激活生成器，或者通过next方法 调用激活生成器
+
+
+
+### close 方法
+
+```
+def get_func():
+    try:
+        html = yield "https://xuxuehua.com"
+        print('get_func html:', html)
+    except Exception:
+        pass
+    yield 2
+    yield 3
+    return "Rick"
+
+
+if __name__ == '__main__':
+    gen = get_func()
+    print(next(gen))
+    gen.close()
+    next(gen)
+
+>>>
+https://xuxuehua.com
+Traceback (most recent call last):
+  File "/Users/rxu/test_purpose/socket_client.py", line 16, in <module>
+    next(gen)
+StopIteration  
+```
+
+> 这里的异常是最后一个next(gen) 抛出的
+
+
+
+
+
+### throw 方法
+
+```
+def get_func():
+    yield "https://xuxuehua.com"
+    yield 2
+    yield 3
+    return "Rick"
+
+
+if __name__ == '__main__':
+    gen = get_func()
+    print(next(gen))
+    gen.throw(Exception, 'url value')
+
+>>>
+https://xuxuehua.com
+Traceback (most recent call last):
+  File "/Users/rxu/test_purpose/socket_client.py", line 11, in <module>
+    gen.throw(Exception, 'url value')
+  File "/Users/rxu/test_purpose/socket_client.py", line 2, in get_func
+    yield "https://xuxuehua.com"
+Exception: url value
 ```
 
 
@@ -136,48 +230,208 @@ print(f.__next__())
 
 ## yield from
 
-```
-In [197]: def inc():
-     ...:     yield from range(100)
-     ...:
-
-In [198]: foo = inc()
-
-In [199]: next(foo)
-Out[199]: 0
-
-In [200]: next(foo)
-Out[200]: 1
-
-In [201]: next(foo)
-Out[201]: 2
-```
-
-
+yield from 后面是一个iterable 对象
 
 ```
-In [202]: def counter(n):
-     ...:     for x in range(n):
-     ...:         yield x
-     ...:
+def g1(iterable):
+    yield iterable
 
-In [203]: def inc(n):
-     ...:     yield from counter(n)
-     ...:
 
-In [204]: foo = inc(10)
+def g2(iterable):
+    yield from iterable
 
-In [205]: next(foo)
-Out[205]: 0
 
-In [206]: next(foo)
-Out[206]: 1
+for value in g1(range(10)):
+    print('g1: ', value)
 
-In [207]: next(foo)
-Out[207]: 2
+for value in g2(range(10)):
+    print('g2: ', value)
 
-In [208]: next(foo)
-Out[208]: 3
+>>>
+g1:  range(0, 10)
+g2:  0
+g2:  1
+g2:  2
+g2:  3
+g2:  4
+g2:  5
+g2:  6
+g2:  7
+g2:  8
+g2:  9
+```
+
+
+
+yield from后面加上可迭代对象，他可以把可迭代对象里的每个元素一个一个的yield出来，对比yield来说代码更加简洁，结构更加清晰。
+
+```
+a_str = 'ABC'
+a_list = [1, 2, 3]
+a_dict = {"name": "rick", "age": 18}
+gen = (i for i in range(1, 3))
+
+
+def gen_by_yield_from(*args, **kwargs):
+    for item in args:
+        yield from item
+
+
+def gen_by_yield(*args, **kwargs):
+    for item in args:
+        for i in item:
+            yield i
+
+
+yield_from_result = gen_by_yield_from(a_str, a_list, a_dict, gen)
+yield_result = gen_by_yield(a_str, a_list, a_dict, gen)
+print(list(yield_from_result))
+print(list(yield_result))
+
+>>>
+['A', 'B', 'C', 1, 2, 3, 'name', 'age', 1, 2]
+['A', 'B', 'C', 1, 2, 3, 'name', 'age']
+```
+
+
+
+### 协程核心
+
+yield from（委托生成器）将调用方和子生成器之间建立了一个双向通道， 即调用方可以通过`send()`直接发送消息给子生成器，而子生成器yield的值，也是直接返回给调用方。
+
+```
+# 子生成器
+def average_gen():
+    total = 0
+    count = 0
+    average = 0
+    while True:
+        new_num = yield average
+        count += 1
+        total += new_num
+        average = total/count
+
+# 委托生成器
+def proxy_gen():
+    while True:
+        yield from average_gen()
+
+# 调用方
+if __name__ == '__main__':
+    calculate_average = proxy_gen()
+    next(calculate_average)
+    print(calculate_average.send(10))
+    print(calculate_average.send(20))
+    print(calculate_average.send(30))
+
+>>>
+10.0
+15.0
+20.0
+```
+
+
+
+
+
+```
+# 子生成器
+def average_gen():
+    total = 0
+    count = 0
+    average = 0
+    while True:
+        new_num = yield average
+        if new_num is None:
+            break
+        count += 1
+        total += new_num
+        average = total/count
+
+    # 每一次return，都意味着当前协程结束。
+    return total, count, average
+
+
+# 委托生成器
+def proxy_gen():
+    while True:
+        # 只有子生成器要结束（return）了，yield from左边的变量才会被赋值，后面的代码才会执行。
+        total, count, average = yield from average_gen()
+        print("count=%s, total=%s, average=%s" % (count, total, average))
+
+
+# 调用方
+if __name__ == '__main__':
+    calc_average = proxy_gen()
+    next(calc_average)
+    print(calc_average.send(10))
+    print(calc_average.send(20))
+    print(calc_average.send(30))
+    # 结束协程
+    calc_average.send(None)
+    # 如果此处再调用calc_average.send(10)，由于上一协程已经结束，将重开一协程
+
+>>>
+10.0
+15.0
+20.0
+count=3, total=60, average=20.0
+```
+
+
+
+### yield from 原理
+
+```
+"""
+_i：子生成器，同时也是一个迭代器
+_y：子生成器生产的值
+_r：yield from 表达式最终的值
+_s：调用方通过send()发送的值
+_e：异常对象
+"""
+
+_i = iter(EXPR)
+
+try:
+    _y = next(_i)
+except StopIteration as _e:
+    _r = _e.value
+
+else:
+    while 1:
+        try:
+            _s = yield _y
+        except GeneratorExit as _e:
+            try:
+                _m = _i.close
+            except AttributeError:
+                pass
+            else:
+                _m()
+            raise _e
+        except BaseException as _e:
+            _x = sys.exc_info()
+            try:
+                _m = _i.throw
+            except AttributeError:
+                raise _e
+            else:
+                try:
+                    _y = _m(*_x)
+                except StopIteration as _e:
+                    _r = _e.value
+                    break
+        else:
+            try:
+                if _s is None:
+                    _y = next(_i)
+                else:
+                    _y = _i.send(_s)
+            except StopIteration as _e:
+                _r = _e.value
+                break
+RESULT = _r
 ```
 
 

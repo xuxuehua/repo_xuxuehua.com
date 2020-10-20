@@ -196,7 +196,7 @@ apt-get update && sudo apt-get upgrade
 apt install build-essential checkinstall zlib1g-dev libssl-dev -y
 
 
-apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev libgdbm-compat-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev libffi6
+apt-get install -y build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev libgdbm-compat-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev libffi6
 ```
 
 
@@ -210,11 +210,17 @@ curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer 
 
 
 ```
-export PATH="/home/python/.pyenv/bin:$PATH"
+export PATH="/root/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 source ~/.bashrc
 ```
+
+
+
+ 
+
+
 
 
 

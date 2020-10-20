@@ -46,3 +46,11 @@ lambda: Json-encoded message to an AWS Lambda function
 
 
 
+
+
+# sns vs ses
+
+![image-20201011170708165](sns.assets/image-20201011170708165.png)
+
+
+

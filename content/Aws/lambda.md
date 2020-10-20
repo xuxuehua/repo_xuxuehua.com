@@ -246,9 +246,55 @@ Gateway API
 
 ## layer打包
 
-![image-20200324155750532](lambda.assets/image-20200324155750532.png)
+基于ec2
+
+https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
 
 
+
+
+
+基于docker
+
+```
+docker run -v "$PWD":/var/task "lambci/lambda:build-python3.7" /bin/sh -c "pip install psycopg2-binary -t python/lib/python3.7/site-packages/; exit"
+```
+
+
+
+```
+zip -r9 mypythonlibs.zip python > /dev/null
+```
+
+
+
+```
+aws lambda publish-layer-version --layer-name mypythonlibs --description "My python libs" --zip-file fileb://mypythonlibs.zip --compatible-runtimes "python2.7" "python3.6" "python3.7"
+
+aws lambda update-function-configuration --layers arn:aws:lambda:us-east-2:123456789012:layer:mypythonlibs:1 --function-name my-function
+```
+
+
+
+
+
+You can also use the lambci/lambda Docker images directly for your Lambda package, without creating a layer. Run the following command to get the required versions of your dependencies:
+
+**Note:** Replace **3.6** with **3.7** or **3.8** depending on the compatible libraries that you want to install.
+
+```plainText
+docker run -v "$PWD":/var/task "lambci/lambda:build-python3.6" /bin/sh -c "pip install -r requirements.txt -t libs; exit"
+```
+
+
+
+# example
+
+
+
+## lambda to rds
+
+https://aws.amazon.com/blogs/database/query-your-aws-database-from-your-serverless-application/
 
 
 

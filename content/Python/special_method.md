@@ -97,7 +97,7 @@ b'call __bytes__ name is Rick'
 class A:
 
     def __str__(self):
-        return &#39;Rick&#39;
+        return "Rick"
 
 obj = A()
 print(obj)
@@ -109,11 +109,13 @@ Rick
 
 ### `__repr__` 开发的时候使用
 
-`__repr__`和`__str__`这两个方法都是用于显示的，`__str__`是面向用户的，而`__repr__`面向程序员。
+`__repr__`和`__str__`这两个方法都是用于显示的，`__str__`是面向用户的，而`__repr__`的结果是让解释器用的。
 
 打印操作会首先尝试`__str__`和str内置函数(print运行的内部等价形式)，它通常应该返回一个友好的显示。`__repr__`用于所有其他的环境中：用于交互模式下提示回应以及repr函数，如果没有使用`__str__`，会使用print和str。它通常应该返回一个编码字符串，可以用来重新创建对象，或者给开发者详细的显示。
 
-当我们想所有环境下都统一显示的话，可以重构`__repr__`方法；当我们想在不同环境下支持不同的显示，例如终端用户显示使用`__str__`，而程序员在开发期间则使用底层的`__repr__`来显示，实际上`__str__`只是覆盖了`__repr__`以得到更友好的用户显示。
+当我们想所有环境下都统一显示的话，可以重构`__repr__`方法；当我们想在不同环境下支持不同的显示，例如终端用户显示使用`__str__`
+
+如果没有重写`__str__`方法，但重写了`__repr__`方法时，所有调用`__str__`的时机都会调用`__repr__`方法
 
 
 
@@ -730,14 +732,12 @@ get name y
 
 ### `__all__`
 
-指定所导入的变量
+指定所导入的变量， 或模块
 
 ```
 __all__ = ['a', 'b']
 __all__ = ['Module1', 'Module2']
 ```
-
-指定可导入的模块
 
 
 
@@ -809,7 +809,7 @@ print(Exam.__dict__)
 
 ```
 class Exam:
-    &#39;hahaha&#39;
+    'hahaha'
 
     def __init__(self, name, score):
         self.name = name
@@ -847,7 +847,7 @@ list
 
 ```
 class Exam:
-    &#39;hahaha&#39;
+    'hahaha'
 
     def __init__(self, name, score):
         self.name = name
@@ -867,7 +867,7 @@ __main__
 
 ```
 class Exam:
-    &#39;hahaha&#39;
+    'hahaha'
 
     def __init__(self, name, score):
         self.name = name
@@ -889,13 +889,14 @@ print(Exam.__bases__)
 class A:
 
     def __init__(self):
-        self.name = &#39;Rick&#39;
+        self.name = 'Rick'
 
 
 obj = A()
 print(obj.__class__)
+
 >>>
-<class &#39;__main__.A&#39;>
+<class '__main__.A'>
 ```
 
 

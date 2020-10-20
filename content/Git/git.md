@@ -903,6 +903,8 @@ git stash apply
 git stash apply stash@{0}
 ```
 
+> stash编号0为最新，以此类推 
+
 
 
 ### pop 恢复临时现场 (不保留堆栈)

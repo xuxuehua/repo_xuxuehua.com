@@ -8,6 +8,8 @@ date: 2019-11-25 14:54
 
 # Performance 
 
+![img](performance.assets/DE_observability_sticker_100x80_PG13-1-1536x1229.jpg)
+
 
 
 ## pg_stat_activity

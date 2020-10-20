@@ -206,6 +206,20 @@ In [31]: 'Hello %(name)s!' % {'name': 'Rick'}                                   
 
 
 
+
+
+#### unsupported format character '?' (0xa)
+
+结尾没有s导致该报错
+
+```
+ValueError: unsupported format character '?' (0xa) at index 447
+```
+
+
+
+
+
 ### %d
 
 ```python

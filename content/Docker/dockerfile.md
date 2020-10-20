@@ -108,16 +108,76 @@ Same as ‘ADD’ but without the tar and remote url handling.
 
 
 
-### 指定权限复制
+### include files outside of Docker's build context
 
-**For versions v17.09.0-ce and newer**
+目标:在于解决ADD/COPY当前Dockerfile所在目录之外的目录下的文件
 
-Use the optional flag `--chown=<user>:<group>` with either the `ADD` or `COPY` commands.
-
-For example
+文件目录结构如下:
 
 ```
+project
+├── dockerfile
+│   ├── docker-compose.yml
+│   └── Dockerfile
+└── test
+    └── 1.txt
+123456
+```
 
+常用错误思路:
+
+```
+Dockerfile:
+
+	FROM ubuntu:latest  
+	COPY ../test/1.txt  /
+	RUN echo $whl           
+12345
+```
+
+> 提示:COPY failed: Forbidden path outside the build context: …/test/1.txt ()
+
+正确处理方法
+
+1.修改Dockerfile
+
+```
+	FROM ubuntu:latest  
+	# COPY ../test/1.txt  /
+	COPY test/1.txt  /
+	RUN echo $whl     
+1234
+```
+
+2.**在最外层目录**下使用下面命令build
+
+```
+docker build -f dockerfile/Dockerfile .
+1
+```
+
+3.也可以配置docker-compose.yml使用
+
+```
+docker-compose.yml
+
+	version: '3'
+	services:
+	  web:
+	    build:
+	      context: ../
+	      dockerfile: dockerfile/Dockerfile
+	    expose:
+	      - "8000"
+12345678910
+```
+
+
+
+在**docker-compose.yml所在目录**使用命令:
+
+```
+docker-compose up web
 ```
 
 

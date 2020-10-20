@@ -385,12 +385,6 @@ MariaDB [hellodb]> SELECT * FROM students;
 
 
 
-# 死锁
-
-两个或者多个事物在一组资源上相互占用，并请求锁定对方占用的资源的状态。
-
-
-
 # 事务隔离级别
 
 使用`SET tx_isolation=""` 方式设置，临时会话加上`SESSION`参数

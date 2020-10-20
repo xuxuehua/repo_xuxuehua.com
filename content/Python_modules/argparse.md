@@ -13,8 +13,6 @@ python的命令行解析工具，或者说可以在python代码中调用shell的
 
 
 
-
-
 ## 解析器对象 ArgumentParser
 
 创建解析器对象ArgumentParser，可以添加参数。

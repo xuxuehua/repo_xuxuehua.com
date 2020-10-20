@@ -29,3 +29,9 @@ ALB 是 Amazon Elastic Load Balancing（ELB） 服务的一个负载均衡选项
 也可以基于路径的路由：您可以基于 HTTP 标头的 URL 路径路由客户端请求。
 
  
+
+
+
+# alb vs elb
+
+![image-20201011170552048](elb.assets/image-20201011170552048.png)

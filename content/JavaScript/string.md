@@ -144,7 +144,7 @@ s.indexOf('world'); // 返回7
 s.indexOf('World'); // 没有找到指定的子串，返回-1
 ```
 
-### substring
+### substring 切片
 
 `substring()`返回指定索引区间的子串：
 

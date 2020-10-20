@@ -452,6 +452,12 @@ curl -v www.sina.com
 
 
 
+### -w/--write-out 
+
+format]什么输出完成后  
+
+
+
 
 
 ### -x/--proxy  代理
@@ -797,7 +803,7 @@ curl -# -O  http://blog.51yip.com/wp-content/uploads/2010/09/compare_varnish.jpg
 
 -U/--proxy-user <user[:password]>设置代理用户名和密码  
 -V/--version 显示版本信息  
--w/--write-out [format]什么输出完成后  
+
  
 
 -y/--speed-time 放弃限速所要的时间。默认为30  

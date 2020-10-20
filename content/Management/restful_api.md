@@ -53,3 +53,30 @@ Client 相关的 response 格式，不应该在 API 中实现。而所有的 cli
 
 
 尽可能让 API 是 Idempotent（幂等 denoting an element of a set which is unchanged in value when multiplied or otherwise operated on by itself.）的。这有好几个不同层次的含义。举几个例子：同一个 request 发一遍和发两遍是不是能够保证相同结果？Request 失败后重发和第一次发是不是能保证相同结果？当然具体的做法还是要看应用场景。
+
+
+
+
+
+## nonce
+
+nonce，这是个很关键并且在网络通信中很常见的字段。
+
+因为网络通信是不可靠的，一个信息包有可能会丢失，也有可能重复发送，在金融操作中，这两者都会造成很严重的后果。丢包的话，我们重新发送就行了；但是重复的包，我们需要去重。
+
+虽然 TCP 在某种程度上可以保证，但为了在应用层面进一步减少错误发生的机会，Gemini 交易所要求所有的通信 payload 必须带有 nonce。
+
+nonce 是个单调递增的整数。当某个后来的请求的 nonce，比上一个成功收到的请求的 nouce 小或者相等的时候，Gemini 便会拒绝这次请求。这样一来，重复的包就不会被执行两次了。
+
+另一方面，这样也可以在一定程度上防止中间人攻击：
+
+一则是因为 nonce 的加入，使得加密后的同样订单的加密文本完全混乱；
+
+二则是因为，这会使得中间人无法通过“发送同样的包来构造重复订单“进行攻击。
+
+```
+t = datetime.datetime.now()
+payload_nonce = str(int(time.mktime(t.timetuple())*1000))
+payload = {   "request": "/v1/order/new",   "nonce": payload_nonce,   "symbol": "btcusd",   "amount": "5",   "price": "3633.00",   "side": "buy",   "type": "exchange limit",   "options": ["maker-or-cancel"]}
+```
+

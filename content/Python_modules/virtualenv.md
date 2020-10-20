@@ -45,19 +45,26 @@ virtualenv --python=/usr/bin/python2.6 <path/to/new/virtualenv/>
 # Install specific python
 
 ```
-mkdir ~/src
+cd /tmp
 wget https://www.python.org/ftp/python/3.7.6/Python-3.7.6.tar.xz
-tar -zxvf Python-3.7.6.tar.xz
+tar -xf Python-3.7.6.tar.xz
 cd Python-3.7.6
-mkdir ~/.localpython
-./configure --prefix=$HOME/.localpython
-make
-make install
+mkdir /root/id_generator/.localpython
+./configure --prefix=/root/id_generator/.localpython
+make && make install
 ```
 
 
 
-
+```
+cd /tmp
+wget https://www.python.org/ftp/python/3.7.6/Python-3.7.6.tar.xz
+tar -xf Python-3.7.6.tar.xz
+cd Python-3.7.6
+mkdir /tmp/id_generator/.localpython
+./configure --prefix=/tmp/id_generator/.localpython
+make && make install
+```
 
 
 

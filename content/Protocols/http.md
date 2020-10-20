@@ -204,6 +204,36 @@ Web服务器端使用什么程序响应的
 
 
 
+# RESTFUL API 设计
+
+https://github.com/godruoyi/restful-api-specification
+
+
+
+## HATEOAS
+
+API 的使用者未必知道，URL 是怎么设计的。一个解决方法就是，在回应中，给出相关链接，便于下一步操作。这样的话，用户只要记住一个 URL，就可以发现其他的 URL。这种方法叫做 HATEOAS。
+
+```
+{
+  ...
+  "feeds_url": "https://api.github.com/feeds",
+  "followers_url": "https://api.github.com/user/followers",
+  "following_url": "https://api.github.com/user/following{/target}",
+  "gists_url": "https://api.github.com/gists{/gist_id}",
+  "hub_url": "https://api.github.com/hub",
+  ...
+}
+```
+
+
+
+
+
+
+
+
+
 # HTTP 响应状态码
 
 详细查看 [https://tools.ietf.org/html/rfc7231](https://tools.ietf.org/html/rfc7231)
@@ -212,13 +242,15 @@ Web服务器端使用什么程序响应的
 
 
 
-## 1XX 纯信息
+## 1XX 信息相关
+
+API 不需要`1xx`状态码
 
 
 
 ## 2XX 成功类
 
-### 200
+### 200 
 
 请求被正常处理
 
@@ -226,7 +258,7 @@ OK. The request has successfully executed. Response depends upon the verb invoke
 
 
 
-### 201
+### 201 
 
 请求被正常处理，并创建一个新的资源
 
@@ -234,7 +266,7 @@ Created. The request has successfully executed and a new resource has been creat
 
 
 
-### 202
+### 202 
 
 Accepted. The request was valid and has been accepted but has not yet been processed. The response should include a URI to poll for status updates on the request. This allows asynchronous REST requests
 
@@ -278,6 +310,17 @@ Found. The requested resource has temporarily been found somewhere else. The tem
 
 所请求的页面可在别的url下被找到。
 
+`303`用于`POST`、`PUT`和`DELETE`请求
+
+收到`303`以后，浏览器不会自动跳转，而会让用户自己决定下一步怎么办。下面是一个例子。
+
+```http
+HTTP/1.1 303 See Other
+Location: /api/orders/12345
+```
+
+
+
 See Other. This response code has been reinterpreted by the W3C Technical Architecture Group (TAG) as a way of responding to a valid request for a non-network addressable resource. This is an important concept in the Semantic Web when we give URIs to people, concepts, organizations, etc. There is a distinction between resources that can be found on the Web and those that cannot. Clients can tell this difference if they get a 303 instead of 200. The redirected location will be reflected in the Location header of the response. This header will contain a reference to a document about the resource or perhaps some metadata about it.
 
 
@@ -285,6 +328,14 @@ See Other. This response code has been reinterpreted by the W3C Technical Archit
 ### 304
 
 Not modified 未按预期修改文档。客户端有缓冲的文档并发出了一个条件性的请求（一般是提供If-Modified-Since头表示客户只想比指定日期更新的文档）。服务器告诉客户，原来缓冲的文档还可以继续使用。即重定向到缓存的资源
+
+
+
+
+
+### 307
+
+`302`和`307`的含义一样，也是"暂时重定向"，区别在于`302`和`307`用于`GET`请求
 
 
 
@@ -298,17 +349,17 @@ Not modified 未按预期修改文档。客户端有缓冲的文档并发出了�
 
 ### 400
 
-请求到URL在服务器上找不到，也就是请求URL 错误， 请求参数错误
+请求到URL在服务器上找不到，也就是客户端请求URL 错误， 请求参数错误，不做任何处理
 
 Bad Request 服务器未能理解请求。
 
-`**400 Bad Request**` response status code indicates that the server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).
+400 Bad Request response status code indicates that the server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).
 
 
 
 ### 401
 
-未授权请求，需要获取授权信息
+Unauthorized 未授权请求，需要获取授权信息
 
 
 
@@ -316,7 +367,9 @@ Bad Request 服务器未能理解请求。
 
 ### 403
 
-服务器拒绝访问，权限不够
+Forbidden， 服务器拒绝访问，权限不够
+
+但是不具有访问资源所需的权限
 
 
 
@@ -328,7 +381,7 @@ Not Found 服务器无法找到被请求的页面。
 
 ### 405 
 
-若只允许指定的http方法如GET方法。POST方法会放回405， Method not allowed，请求方法不允许
+ Method not allowed，若只允许指定的http方法如GET方法。POST方法会放回405，用户已经通过了认证，但是请求方法不允许
 
 
 
@@ -340,7 +393,7 @@ Not Acceptable
 
 ### 410
 
-Gone.
+Gone. 所请求的资源已从这个地址转移，不再可用。
 
 
 
@@ -372,11 +425,25 @@ URI Too Long.
 
 Unsupported Media Type.
 
+客户端要求的返回格式不支持。比如，API 只能返回 JSON 格式，但是客户端要求返回 XML 格式。
+
 
 
 ### 417
 
 Expectation Failed.
+
+
+
+### 422
+
+Unprocessable Entity， 客户端上传的附件无法处理，导致请求失败。
+
+
+
+### 429
+
+Too Many Requests， 客户端的请求次数超过限额。
 
 
 
@@ -386,11 +453,9 @@ Expectation Failed.
 
 
 
-
-
 ### 500
 
-Internet Server Error 请求未完成。服务器遇到不可预知的情况，服务器内部发生错误
+Internet Server Error 请求未完成。客户端请求有效，但服务器遇到不可预知的情况，服务器内部发生错误
 
 
 
@@ -406,6 +471,8 @@ Not Implemented 请求未完成。服务器不支持所请求的功能。
 
 连接超时 我们向服务器发送请求 由于服务器当前链接太多，导致服务器方面无法给于正常的响应,产生此类报错
 
+The 502 Bad Gateway error is an HTTP status code that means that ELB received an invalid response from the EC2 Instance.
+
 
 
 解决办法：
@@ -420,7 +487,28 @@ Not Implemented 请求未完成。服务器不支持所请求的功能。
 
 
 
+HTTP 502: Bad gateway
+
+Possible causes:
+
+- The load balancer received a TCP RST from the target when attempting to establish a connection.
+- The load balancer received an unexpected response from the target, such as "ICMP Destination unreachable (Host unreachable)", when attempting to establish a connection. Check whether traffic is allowed from the load balancer subnets to the targets on the target port.
+- The target closed the connection with a TCP RST or a TCP FIN while the load balancer had an outstanding request to the target. Check whether the keep-alive duration of the target is shorter than the idle timeout value of the load balancer.
+- The target response is malformed or contains HTTP headers that are not valid.
+- The load balancer encountered an SSL handshake error or SSL handshake timeout (10 seconds) when connecting to a target.
+- The deregistration delay period elapsed for a request being handled by a target that was deregistered. Increase the delay period so that lengthy operations can complete.
+- The target is a Lambda function and the response body exceeds 1 MB.
+- The target is a Lambda function that did not respond before its configured timeout was reached.
+
+
+
+当目标类型为 `ip` 时，负载均衡器可支持针对每个唯一目标（IP 地址和端口）的 55000 个并发连接或每分钟约 55000 个连接。如果连接数超过该值，则会增大出现端口分配错误的几率。如果您收到端口分配错误，请将多个目标添加到目标组。
+Network Load Balancer不支持 `lambda` 目标类型，仅 Application Load Balancer 支持 `lambda` 目标类型。有关详细信息，请参阅 [Lambda功能作为目标](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/lambda-functions.html) 在 *Application Load Balancer 用户指南*.
+
+
+
 ### 503
 
 Service Unavailable.
 
+服务器无法处理请求，一般用于网站维护状态。

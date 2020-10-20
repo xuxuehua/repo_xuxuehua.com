@@ -7,6 +7,10 @@ date: 2018-06-07 01:51
 
 # sudoers 文件配置
 
+```
+export EDITOR=vim
+```
+
 
 
 ## 配置定义
@@ -146,6 +150,7 @@ user01     ALL = /bin/more /etc/shadow
 
 ```
 CENTREON   ALL = NOPASSWD: /etc/init.d/nagios restart
-
 ```
+
+
 
