@@ -20,6 +20,12 @@ date: 2019-03-21 19:10
 
 
 
+### -p 挑选改动
+
+挑选改动提交
+
+
+
 ## alias 设置别名
 
 ```
@@ -185,6 +191,12 @@ git checkout -- SOME_FILES
 ```
 git checkout -
 ```
+
+
+
+## cherry-pick 
+
+有选择地合并提交
 
 
 
@@ -374,6 +386,16 @@ git push origin master
 
 
 
+## grep 过滤代码
+
+可以用来再所有的提交中招代码
+
+```
+git grep $regexp $(git rev-list --all)
+```
+
+
+
 ## init 初始化
 
 ```
@@ -489,6 +511,12 @@ git checkout --ours some_file.py
 ## pull 拉取远端
 
 等同于执行了git fetch + git merge
+
+
+
+### --rebase
+
+可以把服务器上的提交直接合并到你的代码中
 
 
 

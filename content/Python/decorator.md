@@ -1,5 +1,5 @@
 ---
-title: "decoration"
+title: "decorator"
 date: 2018-08-21 21:30
 collection: 函数
 ---
@@ -95,6 +95,62 @@ this is test
 end func
 ```
 
+
+
+### Pipeline 的一种实现
+
+```
+class Pipe:
+    def __init__(self, func):
+        self.func = func
+
+    def __ror__(self, other):
+        def generator():
+            for obj in other:
+                if obj is not None:
+                    yield self.func(obj)
+        return generator()
+
+
+@Pipe
+def event_filter(num):
+    return num if num % 2 == 0 else None
+
+
+@Pipe
+def multiply_by_three(num):
+    return num*3
+
+
+@Pipe
+def convert_to_string(num):
+    return 'The Number: %s' % num
+
+
+@Pipe
+def echo(item):
+    print(item)
+    return item
+
+
+def force(sqs):
+    for item in sqs: pass
+
+
+nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+force(nums | event_filter | multiply_by_three | convert_to_string | echo )
+
+>>>
+The Number: 6
+The Number: 12
+The Number: 18
+The Number: 24
+The Number: 30
+```
+
+
+
 ## 带参数操作
 
 ### 带参数的函数进行装饰
@@ -180,6 +236,8 @@ inside end with deco params
 ret value (1, 2, 3)
 ```
 
+
+
 ## 叠放装饰器
 
 如果一个函数被多个装饰器修饰，其实应该是该函数先被最里面的装饰器修饰, 即从里到外执行
@@ -229,6 +287,39 @@ Running main
 ```
 
 > 函数main()先被inner装饰，变成新的函数，变成另一个函数后，再次被装饰器修饰
+
+
+
+
+
+### make html tag
+
+```
+def make_html_tag(tag, *args, **kwargs):
+    def real_decorator(func):
+        css_class = " class='{}'".format(kwargs['css_class']) if 'css_class' in kwargs else ""
+
+        def wrapper(*args, **kwargs):
+            return "<"+tag+css_class+">" + func(*args, **kwargs) + "</"+tag+">"
+        return wrapper
+    return real_decorator
+
+
+@make_html_tag(tag="b", css_class="bold_css")
+@make_html_tag(tag="i", css_class="italic_css")
+def hello():
+    return "hello world"
+
+
+print(hello())
+
+>>>
+<b class='bold_css'><i class='italic_css'>hello world</i></b>
+```
+
+
+
+
 
 ## 类装饰器
 

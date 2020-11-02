@@ -273,6 +273,19 @@ product = reduce(lambda x, y: x * y, l)
 
 
 
+```
+# 计算数组中正数的平均值
+from functools import reduce
+num =  [2, -5, 9, 7, -2, 5, 3, 1, 0, -3, 8]
+positive_num = list(filter(lambda x: x>0, num))
+average = reduce(lambda x,y: x+y, positive_num) / len(positive_num)
+
+>>>
+5.0ø
+```
+
+
+
 ## Currying 柯里化
 
 将原来接受两个参数的函数变成接受一个参数的函数的过程，新的函数返回一个以原有函数的第二个参数作为参数的函数

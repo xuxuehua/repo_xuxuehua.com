@@ -33,6 +33,20 @@ top指令是从`/proc/stats` 目录下获取数据
 
 
 
+
+
+## -H Threads-mode operation
+
+Instructs  top to display individual threads.  Without this command-line option a summation of all threads in each process is shown.  Later this can be changed with the `H` interactive command
+
+
+
+```
+top -H -p <process_id>
+```
+
+
+
 # example
 
 ```

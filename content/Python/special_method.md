@@ -313,6 +313,7 @@ def do_something(*args, **kwargs):
     print(kwargs.get('user'))
 
 do_something()
+
 >>>
 Rick
 ```

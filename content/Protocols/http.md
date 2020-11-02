@@ -512,3 +512,20 @@ Network Load Balancer不支持 `lambda` 目标类型，仅 Application Load Bala
 Service Unavailable.
 
 服务器无法处理请求，一般用于网站维护状态。
+
+
+
+### 504
+
+Gateway timeout
+
+the proxy server or gateway did not receive a response from the origin server within a specified timeout. Consider for example that an Elastic Load Balancer is sitting between your origin server, and the ELB timed out trying to receiving the response from your server.
+
+Possible causes:
+
+- The load balancer failed to establish a connection to the target before the connection timeout expired (10 seconds).
+- The load balancer established a connection to the target but the target did not respond before the idle timeout period elapsed.
+- The network ACL for the subnet did not allow traffic from the targets to the load balancer nodes on the ephemeral ports (1024-65535).
+- The target returns a content-length header that is larger than the entity body. The load balancer timed out waiting for the missing bytes.
+- The target is a Lambda function and the Lambda service did not respond before the connection timeout expired.
+

@@ -261,52 +261,6 @@ bin/workloads/micro/terasort/spark/run.sh
 
 
 
-# CAP 定理（CAP Theorem）
-
-在任意的分布式系统中，一致性（Consistency），可用性（Availability）和分区容错性（Partition-tolerance）这三种属性最多只能同时存在两个属性。
-
-大部分情况下，系统设计都会保留 P 属性，而在 C 和 A 中二选一
-
-
-
-## 划分
-
-CP 系统：Google BigTable, Hbase, MongoDB, Redis, MemCacheDB，这些存储架构都是放弃了高可用性（High Availablity）而选择 CP 属性的。
-
-AP 系统：Amazon Dynamo 系统以及它的衍生存储系统 Apache Cassandra 和 Voldemort 都是属于 AP 系统
-
-CA 系统：Apache Kafka 是一个比较典型的 CA 系统。
-
-在 Kafka 发布了 0.8 版本之后，Kafka 系统引入了 Replication 的概念。Kafka Relocation 通过将数据复制到不同的节点上，从而增强了数据在系统中的持久性（Durability）和可用性（Availability）。在 Kafka Replication 的系统设计中，所有的数据日志存储是设计在同一个数据中心（Data Center）里面的，也就是说，在同一个数据中心里网络分区出现的可能性是十分之小的。
-
-在 Kafka 数据副本（Data Replication）的设计中，先通过 Zookeeper 选举出一个领导者节点（Leader）。这个领导者节点负责维护一组被称作同步数据副本（In-sync-replica）的节点，所有的数据写入都必须在这个领导者节点中记录。
-
-
-
-## Consistency
-
-一致性在这里指的是线性一致性（Linearizability Consistency）。在线性一致性的保证下，所有分布式环境下的操作都像是在单机上完成的一样
-
-
-
-## Availability
-
-在分布式系统中，任意非故障的服务器都必须对客户的请求产生响应。
-
-当系统满足可用性的时候，不管出现什么状况（除非所有的服务器全部崩溃），都能返回消息
-
-
-
-## Partition-tolerance
-
-分区容错性。它分为两个部分，“分区”和“容错”。
-
-在现代网络通信中，节点出现故障或者网络出现丢包这样的情况是时常会发生的。如果没有了分区容错性，也就是说系统不允许这些节点间的通讯出现任何错误的话，那我们日常所用到的很多系统就不能再继续工作了。
-
-
-
-
-
 # 前端埋点
 
 前端埋点数据采集也是互联网应用大数据的重要来源之一，用户的某些前端行为并不会产生后端请求，比如用户在一个页面的停留时间、用户拖动页面的速度、用户选中一个复选框然后又取消了。这些信息对于大数据处理，对于分析用户行为，进行智能推荐都很有价值。但是这些数据必须通过前端埋点获得，所谓前端埋点，就是应用前端为了进行数据统计和分析而采集数据。

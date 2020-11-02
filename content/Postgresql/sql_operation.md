@@ -90,3 +90,32 @@ from INFORMATION_SCHEMA.COLUMNS where table_name = '<name of table>';
 \d+ tablename
 ```
 
+
+
+
+
+
+
+# FAQ
+
+
+
+## Good SQL
+
+BAD QUERY which will load all  data of 2020-09-30 on each plproxy node, and SLOW DOWN  production DB
+
+```
+SELECT date, count(*) FROM plproxy.execute_select(\$proxy\$
+    SELECT * FROM mw.domain_x_domain_m WHERE date = '2020-09-30' 
+\$proxy\$) t (.......) group by date order by date desc;
+```
+
+
+
+should do the aggregation(count/sum) in the query inside, and sum the count from outside query
+
+```
+SELECT  sum(count_a) FROM plproxy.execute_select(\$proxy\$
+    SELECT count(*) as count_a FROM mw.domain_x_domain_m WHERE date = '2020-09-30' 
+\$proxy\$) t (count_a bigint) ;
+```
