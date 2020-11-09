@@ -24,7 +24,9 @@ iptables 是规则管理工具
 
 ### IPV4
 
-![img](https://cdn.pbrd.co/images/HO7KqdW.png)
+![image-20201106114548621](basic_knowledge.assets/image-20201106114548621.png)
+
+
 
 Total Length：整个报文的总长度 
 
@@ -40,9 +42,7 @@ Fragment Offset: 片偏移，即对报文排序
 
 ### TCP Header
 
-![img](https://cdn.pbrd.co/images/HO7L0L1.png)
-
-
+![image-20201106114623761](basic_knowledge.assets/image-20201106114623761.png)
 
 Squence Number: 发送方告诉接收方的编号 
 
@@ -66,7 +66,7 @@ FIN: 断开连接
 
 #### TCP 有限状态机
 
-![img](https://cdn.pbrd.co/images/HO7Muu7.png)
+![TCP Finite State Machine | Download Scientific Diagram](basic_knowledge.assets/TCP-Finite-State-Machine.png)
 
 
 
@@ -78,11 +78,11 @@ FIN: 断开连接
 
 iptables -> Tables -> Chains -> Rules
 
-![img](https://cdn.pbrd.co/images/HP4kqNL.png)
+![image-20201106114806660](basic_knowledge.assets/image-20201106114806660.png)
 
 
 
-![img](https://cdn.pbrd.co/images/HP8MZpP.png)
+![Do I need a Firewall in Linux? | Average Linux User](basic_knowledge.assets/fw-ids-iptables-flowchart-800x447.jpeg)
 
 
 
@@ -179,7 +179,7 @@ OUTPUT chain
 
 raw > mangle > nat > filter
 
-![img](https://cdn.pbrd.co/images/HP55v46.png)
+![Linux](basic_knowledge.assets/zmvYZ5HM8gDWIILAYwm5uNXcsz7SsbAVm0roS_mlPtdt-pia8bAR-I7EodwLTfcHifjZbqEpgLRU2gx6pgcu9Yrqxj4rBO-5F1tNy1qJuen5Y0aHXLAHzb7TOiOgXu-Xsfo.png)
 
 
 

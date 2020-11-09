@@ -208,6 +208,8 @@ TSM Tree是在LSM Tree的基础上稍作修改优化而来。它主要包含四�
 
 不要有太多的series tags包含高度可变的信息，如UUID，哈希值和随机字符串，这将导致数据库中的大量series, series cardinality高是许多数据库高内存使用的主要原因。因为这些数据都是存储在内存里，会导致OOM (理解series概念)。
 
+Influxdb is memory bound application, [series cardinality](https://docs.influxdata.com/influxdb/v1.3/concepts/glossary/#series-cardinality) will impact memory usage seriously **Reduce series cardinality** Tags is the Key of series cardinality.So don't use too much tags key, and each don't put too much values into each tags key, it will increase series cardinality, and use too much query memory cache (OOM) when you check your dashboard.
+
 
 
 ## 确定tag / field

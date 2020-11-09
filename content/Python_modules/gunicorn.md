@@ -53,6 +53,10 @@ Specify a server socket to bind. Server sockets can be any of `$(HOST)`, `$(HOST
 
 The number of worker processes. This number should generally be between 2-4 workers per core in the server. Check the [FAQ](http://docs.gunicorn.org/en/latest/faq.html#faq) for ideas on tuning this parameter.
 
+Gunicorn relies on the operating system to provide all of the load balancing when handling requests. Generally we recommend `(2 x $num_cores) + 1` as the number of workers to start off with. While not overly scientific, the formula is based on the assumption that for a given core, one worker will be reading or writing from the socket while the other worker is processing a request.
+
+
+
 ## `-k WORKERCLASS, --worker-class=WORKERCLASS` 
 
 The type of worker process to run. You’ll definitely want to read the production page for the implications of this parameter. You can set this to `$(NAME)` where `$(NAME)` is one of `sync`, `eventlet`, `gevent`, `tornado`, `gthread`, `gaiohttp` (deprecated). `sync` is the default. See the [worker_class](http://docs.gunicorn.org/en/latest/settings.html#worker-class) documentation for more information.

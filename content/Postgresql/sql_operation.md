@@ -94,6 +94,12 @@ from INFORMATION_SCHEMA.COLUMNS where table_name = '<name of table>';
 
 
 
+## 重复item
+
+```
+SELECT task_id, attempt, COUNT(attempt) FROM  prod_usage.task_attempts GROUP BY task_id, attempt HAVING COUNT(attempt) > 1;
+```
+
 
 
 # FAQ

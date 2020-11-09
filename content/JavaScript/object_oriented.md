@@ -119,7 +119,7 @@ true
 
 
 
-## 原型链
+## 原型链 prototype
 
 创建一个`Array`对象：
 
@@ -154,6 +154,17 @@ foo ----> Function.prototype ----> Object.prototype ----> null
 很容易想到，如果原型链很长，那么访问一个对象的属性就会因为花更多的时间查找而变得更慢，因此要注意不要把原型链搞得太长。
 
  
+
+### `prototype` VS `__proto__`
+
+需要解释一下 JavaScript 的两个东西，一个是 `__proto__`，另一个是 `prototype`，这两个东西很容易混淆。这里说明一下：
+
+- **`__proto__`** 主要是安放在一个实际的对象中，用它来产生一个链接，一个原型链连，用于寻找方法名或属性，等等。
+- **`prototype`** 是用 `new` 来创建一个对象时构造 `__proto__` 用的。它是构造函数的一个属性。
+
+在 JavaScript 中，对象有两种表现形式， 一种是 `Object` ([ES5 关于 Object 的文档](http://www.ecma-international.org/ecma-262/5.1/#sec-15.2))，一种是 `Function` （[ES5 关于 Function 的文档](http://www.ecma-international.org/ecma-262/5.1/#sec-15.2)）。
+
+我们可以简单地认为，`__proto__` 是所有对象用于链接原型的一个指针，而 `prototype` 则是 Function 对象的属性，其主要是用来当需要 new 一个对象时让 `__proto__` 指针所指向的地方。 对于超级对象 `Function` 而言， `Function.__proto__` 就是 `Function.prototype`。
 
 
 

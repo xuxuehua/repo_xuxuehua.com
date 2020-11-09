@@ -194,6 +194,14 @@ git checkout -
 
 
 
+```
+git checkout HEAD -- my-file.txt
+```
+
+> which will update both the working copy of `my-file.txt` and its state in the index with that from HEAD.
+
+
+
 ## cherry-pick 
 
 有选择地合并提交
@@ -689,7 +697,7 @@ git reset HEAD
 
 
 
-### --filename 取消部分文件全部的修改
+### -- filename 取消部分文件全部的修改
 
 ```
 git reset HEAD -- FILENAME
