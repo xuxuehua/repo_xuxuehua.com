@@ -1,0 +1,476 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>os - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;os
+    <span class="updated">Page Updated&nbsp;
+      2018-07-02 18:06
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">os</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#os">OS 模块</a><ul>
+<li><a href="#oschmod">os.chmod</a></li>
+<li><a href="#oschdirdirname">os.chdir(dirname)</a></li>
+<li><a href="#oschown">os.chown</a></li>
+<li><a href="#oscurdir">os.curdir()</a></li>
+<li><a href="#osexit">os.exit()</a></li>
+<li><a href="#osenviron">os.environ</a></li>
+<li><a href="#osgetcwd">os.getcwd</a></li>
+<li><a href="#osgetenvosputenv">os.getenv()和os.putenv</a></li>
+<li><a href="#osgetatimepath">os.getatime(path)</a></li>
+<li><a href="#osgetmtimepath">os.getmtime(path)</a></li>
+<li><a href="#oslistdir">os.listdir()</a></li>
+<li><a href="#oslinesep">os.linesep</a></li>
+<li><a href="#osmkdir">os.mkdir</a></li>
+<li><a href="#osmakedirs">os.makedirs</a></li>
+<li><a href="#osname">os.name</a></li>
+<li><a href="#ospathabspathname">os.path.abspath(name)</a></li>
+<li><a href="#ospathbasenamepath">os.path.basename(path)</a></li>
+<li><a href="#ospathexistsname">os.path.exists(name)</a></li>
+<li><a href="#ospathexpandvars">os.path.expandvars()</a></li>
+<li><a href="#ospathexpanduser">os.path.expanduser()</a></li>
+<li><a href="#ospathisfile">os.path.isfile()</a></li>
+<li><a href="#ospathisdir">os.path.isdir()</a></li>
+<li><a href="#ospathisabs">os.path.isabs()</a></li>
+<li><a href="#ospathisdirname">os.path.isdir(name)</a></li>
+<li><a href="#ospathisfilename">os.path.isfile(name)</a></li>
+<li><a href="#ospathgetsizename">os.path.getsize(name)</a></li>
+<li><a href="#ospathjoinpathname">os.path.join(path,name)</a></li>
+<li><a href="#ospathnormpathpath">os.path.normpath(path)</a></li>
+<li><a href="#ospathsplit">os.path.split()</a></li>
+<li><a href="#ospathsplitext">os.path.splitext()</a></li>
+<li><a href="#ospathdirnamepath">os.path.dirname(path)</a></li>
+<li><a href="#ospathsep">os.pathsep</a></li>
+<li><a href="#ospopen">os.popen</a></li>
+<li><a href="#osremovefile">os.remove(file)</a></li>
+<li><a href="#osremovedirs">os.removedirs()</a></li>
+<li><a href="#osrmdirname">os.rmdir(name)</a></li>
+<li><a href="#osremovedirs_1">os.removedirs()</a></li>
+<li><a href="#ossep">os.sep</a></li>
+<li><a href="#osstat">os.stat() 文件属性</a></li>
+<li><a href="#ossystem-deprecate">os.system (deprecate)</a></li>
+<li><a href="#ossymlinksource-link_name">os.symlink(source, link_name)</a></li>
+<li><a href="#osuname">os.uname()</a></li>
+<li><a href="#osunlinkpath">os.unlink(path)</a></li>
+<li><a href="#osutimepath-times">os.utime(path, times)</a></li>
+<li><a href="#ostempnamdir-prefix">os.tempnam([dir[, prefix]])</a></li>
+<li><a href="#ostmpnam">os.tmpnam()</a></li>
+<li><a href="#oswalk">os.walk()</a></li>
+</ul>
+</li>
+<li><a href="#_1">文件操作</a><ul>
+<li><a href="#open">open的模式</a></li>
+<li><a href="#_2">文件的函数</a><ul>
+<li><a href="#fpreadsize">fp.read([size])</a></li>
+<li><a href="#fpreadlinesize">fp.readline([size])</a></li>
+<li><a href="#fpreadlinessize">fp.readlines([size])</a></li>
+<li><a href="#fpwritestr">fp.write(str)</a></li>
+<li><a href="#fpwritelinesseq">fp.writelines(seq)</a></li>
+<li><a href="#fpclose">fp.close()</a></li>
+<li><a href="#fpflush">fp.flush()</a></li>
+<li><a href="#fpfileno">fp.fileno()</a></li>
+<li><a href="#fpisatty">fp.isatty()</a></li>
+<li><a href="#fptell">fp.tell()</a></li>
+<li><a href="#fpnext">fp.next()</a></li>
+<li><a href="#fpseekoffsetwhence">fp.seek(offset[,whence])</a></li>
+<li><a href="#fptruncatesize">fp.truncate([size])</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_3">目录操作</a><ul>
+<li><a href="#_4">复制文件</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="os">OS 模块</h1>
+<h2 id="oschmod">os.chmod</h2>
+<p>修改文件权限和时间戳</p>
+<h2 id="oschdirdirname">os.chdir(dirname)</h2>
+<p>改变工作目录到dirname</p>
+<h2 id="oschown">os.chown</h2>
+<p>修改文件的属主，属组，需要足够的权限Ω</p>
+<h2 id="oscurdir">os.curdir()</h2>
+<p>返回当前目录（'.'）</p>
+<h2 id="osexit">os.exit()</h2>
+<p>终止当前进程</p>
+<h2 id="osenviron">os.environ</h2>
+<p>设置/查看环境变量</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">90</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="err">&#39;</span><span class="n">MY_ENV</span><span class="err">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">my_env</span><span class="err">&#39;</span>                                                                                                                                     
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">91</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="err">&#39;</span><span class="n">MY_ENV</span><span class="err">&#39;</span><span class="p">]</span>                                                                                                                                                
+<span class="n">Out</span><span class="p">[</span><span class="mi">91</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">my_env</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<p>获取当前用户的主目录路径（家目录）</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="err">&#39;</span><span class="n">HOME</span><span class="err">&#39;</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="osgetcwd">os.getcwd</h2>
+<p>得到当前工作目录，即当前python脚本工作的目录路径。</p>
+<h2 id="osgetenvosputenv">os.getenv()和os.putenv</h2>
+<p>分别用来读取和设置环境变量</p>
+<div class="hlcode"><pre><span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="err">&#39;</span><span class="n">SECRET_KEY</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">secret</span> <span class="n">string</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="osgetatimepath">os.getatime(path)</h2>
+<p>返回path所指向的尾巴尖或者目录的最后存取时间</p>
+<h2 id="osgetmtimepath">os.getmtime(path)</h2>
+<p>返回path所指向的尾巴尖或者目录的最后修改时间</p>
+<h2 id="oslistdir">os.listdir()</h2>
+<p>返回指定目录下的所有文件和目录名</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">24</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">listdir</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">24</span><span class="p">]</span><span class="o">:</span>
+<span class="p">[</span><span class="err">&#39;</span><span class="p">.</span><span class="n">DS_Store</span><span class="err">&#39;</span><span class="p">,</span>
+ <span class="err">&#39;</span><span class="n">Snapshots</span><span class="err">&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="oslinesep">os.linesep</h2>
+<p>给出当前平台的行终止符。例如，Windows使用'\r\n'，Linux使用'\n'而Mac使用'\r'</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">46</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">linesep</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">46</span><span class="p">]</span><span class="o">:</span> <span class="sc">&#39;\n&#39;</span>
+</pre></div>
+
+
+<h2 id="osmkdir">os.mkdir</h2>
+<p>创建目录</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">os</span>
+<span class="n">os</span><span class="p">.</span><span class="n">mkdir</span><span class="p">(</span><span class="err">&#39;</span><span class="n">mydir</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="osmakedirs">os.makedirs</h2>
+<p>创建多级目录</p>
+<div class="hlcode"><pre><span class="n">os</span><span class="p">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">r</span><span class="err">&#39;</span><span class="n">a</span><span class="o">/</span><span class="n">b</span><span class="o">/</span><span class="n">c</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="osname">os.name</h2>
+<p>指示你正在使用的工作平台。比如对于Windows，它是'nt'，而对于Linux/Unix用户，它是'posix'。</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">47</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">name</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">47</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">posix</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="ospathabspathname">os.path.abspath(name)</h2>
+<p>获得文件的绝对路径</p>
+<div class="hlcode"><pre><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="ospathbasenamepath">os.path.basename(path)</h2>
+<p>返回文件名</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">basename</span><span class="p">(</span><span class="err">&#39;</span><span class="n">_config</span><span class="p">.</span><span class="n">yml</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">_config</span><span class="p">.</span><span class="n">yml</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="n">p</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="n">path</span><span class="p">.</span><span class="n">basename</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">network</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="ospathexistsname">os.path.exists(name)</h2>
+<p>判断是否存在文件或目录name</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]</span><span class="o">:</span> <span class="n">from</span> <span class="n">os</span> <span class="n">import</span> <span class="n">path</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">:</span> <span class="n">p</span> <span class="o">=</span> <span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">etc</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">sysconfig</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">network</span><span class="err">&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="n">p</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">:</span> <span class="n">path</span><span class="p">.</span><span class="n">exists</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">:</span> <span class="n">path</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">:</span> <span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">network</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="ospathexpandvars">os.path.expandvars()</h2>
+<p>获取当前用户的主目录路径（家目录）</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">expandvars</span><span class="p">(</span><span class="err">&#39;$</span><span class="n">HOME</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="ospathexpanduser">os.path.expanduser()</h2>
+<p>获取当前用户的主目录路径（家目录）</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">expanduser</span><span class="p">(</span><span class="sc">&#39;~&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="ospathisfile">os.path.isfile()</h2>
+<p>分别检验给出的路径是一个目录还是文件</p>
+<h2 id="ospathisdir">os.path.isdir()</h2>
+<p>分别检验给出的路径是一个目录还是文件</p>
+<h2 id="ospathisabs">os.path.isabs()</h2>
+<p>判断是否为绝对路径</p>
+<h2 id="ospathisdirname">os.path.isdir(name)</h2>
+<p>判断name是不是目录，不是目录就返回false</p>
+<h2 id="ospathisfilename">os.path.isfile(name)</h2>
+<p>判断name这个文件是否存在，不存在返回false</p>
+<h2 id="ospathgetsizename">os.path.getsize(name)</h2>
+<p>或得文件大小，如果name是目录返回0L</p>
+<h2 id="ospathjoinpathname">os.path.join(path,name)</h2>
+<p>连接目录与文件名或目录</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]</span><span class="o">:</span> <span class="n">from</span> <span class="n">os</span> <span class="n">import</span> <span class="n">path</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">:</span> <span class="n">p</span> <span class="o">=</span> <span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">etc</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">sysconfig</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">network</span><span class="err">&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="n">p</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">:</span> <span class="n">path</span><span class="p">.</span><span class="n">exists</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">:</span> <span class="n">path</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">:</span> <span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">network</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="ospathnormpathpath">os.path.normpath(path)</h2>
+<p>规范path字符串形式</p>
+<h2 id="ospathsplit">os.path.split()</h2>
+<p>分割文件名与目录（事实上，如果你完全使用目录，它也会将最后一个目录作为文件名而分离，同时它不会判断文件或目录是否存在）</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]</span><span class="o">:</span> <span class="n">from</span> <span class="n">os</span> <span class="n">import</span> <span class="n">path</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">:</span> <span class="n">p</span> <span class="o">=</span> <span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">etc</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">sysconfig</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">network</span><span class="err">&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="n">p</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">:</span> <span class="n">path</span><span class="p">.</span><span class="n">exists</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">:</span> <span class="n">path</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">:</span> <span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">network</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="ospathsplitext">os.path.splitext()</h2>
+<p>分离文件名和扩展名</p>
+<h2 id="ospathdirnamepath">os.path.dirname(path)</h2>
+<p>返回当前文件路径</p>
+<div class="hlcode"><pre><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
+</pre></div>
+
+
+<p>返回父目录文件路径</p>
+<div class="hlcode"><pre><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="n">p</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="o">:</span> <span class="n">path</span><span class="p">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="ospathsep">os.pathsep</h2>
+<p>文件路径分隔符</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">43</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">pathsep</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">43</span><span class="p">]</span><span class="o">:</span> <span class="sc">&#39;:&#39;</span>
+</pre></div>
+
+
+<h2 id="ospopen">os.popen</h2>
+<p>可以保存执行结果，必须通过read方法处理</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">os</span>
+<span class="n">cmd_result</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="err">&#39;</span><span class="n">ls</span><span class="err">&#39;</span><span class="p">).</span><span class="n">read</span><span class="p">()</span>
+<span class="n">print</span><span class="p">(</span><span class="n">cmd_result</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="osremovefile">os.remove(file)</h2>
+<p>删除一个文件</p>
+<h2 id="osremovedirs">os.removedirs()</h2>
+<p>删除多级目录</p>
+<div class="hlcode"><pre><span class="n">os</span><span class="p">.</span><span class="n">removedirs</span><span class="p">(</span><span class="n">r</span><span class="err">&#39;</span><span class="n">a</span><span class="o">/</span><span class="n">b</span><span class="o">/</span><span class="n">c</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="osrmdirname">os.rmdir(name)</h2>
+<p>删除目录</p>
+<h2 id="osremovedirs_1">os.removedirs()</h2>
+<p>删除多个目录</p>
+<div class="hlcode"><pre><span class="n">os</span><span class="p">.</span><span class="n">removedirs</span><span class="p">(</span><span class="n">r</span><span class="err">&#39;</span><span class="n">a</span><span class="o">/</span><span class="n">b</span><span class="o">/</span><span class="n">c</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="ossep">os.sep</h2>
+<p>取代操作系统特定的路径分隔符</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">41</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">sep</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">41</span><span class="p">]</span><span class="o">:</span> <span class="sc">&#39;/&#39;</span>
+</pre></div>
+
+
+<h2 id="osstat">os.stat() 文件属性</h2>
+<p>获得文件属性</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">29</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">stat</span><span class="p">(</span><span class="err">&#39;</span><span class="mf">1.</span><span class="n">py</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">29</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">stat_result</span><span class="p">(</span><span class="n">st_mode</span><span class="o">=</span><span class="mi">33279</span><span class="p">,</span> <span class="n">st_ino</span><span class="o">=</span><span class="mi">6332744</span><span class="p">,</span> <span class="n">st_dev</span><span class="o">=</span><span class="mi">16777220</span><span class="p">,</span> <span class="n">st_nlink</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">st_uid</span><span class="o">=</span><span class="mi">1204811411</span><span class="p">,</span> <span class="n">st_gid</span><span class="o">=</span><span class="mi">254449427</span><span class="p">,</span> <span class="n">st_size</span><span class="o">=</span><span class="mi">910</span><span class="p">,</span> <span class="n">st_atime</span><span class="o">=</span><span class="mi">1548951081</span><span class="p">,</span> <span class="n">st_mtime</span><span class="o">=</span><span class="mi">1511237678</span><span class="p">,</span> <span class="n">st_ctime</span><span class="o">=</span><span class="mi">1543894951</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="ossystem-deprecate">os.system (deprecate)</h2>
+<p>执行命令，不保存结果</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">os</span>
+<span class="n">print</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">system</span><span class="p">(</span><span class="err">&#39;</span><span class="n">ls</span><span class="err">&#39;</span><span class="p">))</span>   
+</pre></div>
+
+
+<h2 id="ossymlinksource-link_name">os.symlink(source, link_name)</h2>
+<p>为源文件source创建一个符号链接link_name。</p>
+<h2 id="osuname">os.uname()</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">23</span><span class="p">]</span><span class="o">:</span> <span class="n">os</span><span class="p">.</span><span class="n">uname</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">23</span><span class="p">]</span><span class="o">:</span> <span class="n">posix</span><span class="p">.</span><span class="n">uname_result</span><span class="p">(</span><span class="n">sysname</span><span class="o">=</span><span class="err">&#39;</span><span class="n">Darwin</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">nodename</span><span class="o">=</span><span class="err">&#39;</span><span class="n">mac</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">release</span><span class="o">=</span><span class="err">&#39;</span><span class="mf">17.7.0</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="err">&#39;</span><span class="n">Darwin</span> <span class="n">Kernel</span> <span class="n">Version</span> <span class="mf">17.7.0</span><span class="o">:</span> <span class="n">Fri</span> <span class="n">Jul</span>  <span class="mi">6</span> <span class="mi">19</span><span class="o">:</span><span class="mi">54</span><span class="o">:</span><span class="mi">51</span> <span class="n">PDT</span> <span class="mi">2018</span><span class="p">;</span> <span class="n">root</span><span class="o">:</span><span class="n">xnu</span><span class="o">-</span><span class="mf">4570.71.3</span><span class="o">~</span><span class="mi">2</span><span class="o">/</span><span class="n">RELEASE_X86_64</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">machine</span><span class="o">=</span><span class="err">&#39;</span><span class="n">x86_64</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="osunlinkpath">os.unlink(path)</h2>
+<p>删除一个path指定的文件，和os.remove()的工作机制一样。</p>
+<h2 id="osutimepath-times">os.utime(path, times)</h2>
+<p>修改文件的访问时间和修改时间。如果times参数为<strong>None</strong>，则设置文件的访问时间和修改时间为当前的时间。否则，如果times参数不为空，则times参数是一个二元组(atime, mtime)，用于设置文件的访问时间和修改时间。</p>
+<h2 id="ostempnamdir-prefix">os.tempnam([dir[, prefix]])</h2>
+<p>返回一个独一无二的路径名作为临时文件的文件名。返回的路径名是一个绝对路径，该临时文件名的入口由dir参数指定，如果dir参数没有指定或者为<strong>None</strong>，则用通用的临时文件目录作为临时文件的目录。如果dir被指定，并且不是<strong>None</strong>，则prefix参数被用来作为创建的临时文件名的前缀。</p>
+<h2 id="ostmpnam">os.tmpnam()</h2>
+<p>返回一个独一无二的路径名作为临时文件的文件名，该文件名被创建者通用的临时文件目录下。</p>
+<blockquote>
+<p>os.tmpnam()和os.tempnam()只是负责生产一个临时文件的路径名，而不负责文件的创建和删除。</p>
+</blockquote>
+<h2 id="oswalk">os.walk()</h2>
+<p>os.walk(top, topdown = True, onerror = None, followlinks = False)</p>
+<p>以自顶向下遍历目录树或者以自底向上遍历目录树，对每一个目录都返回一个三元组(dirpath, dirnames, filenames)。</p>
+<p>三元组(dirpath，dirnames，filenames)：</p>
+<p>dirpath - 遍历所在目录树的位置，是一个字符串对象</p>
+<p>dirnames - 目录树中的子目录组成的列表，不包括("."和"..")</p>
+<p>filenames - 目录树中的文件组成的列表</p>
+<p>如果可选参数topdown = True或者没有指定，则其实目录的三元组先于其子目录的三元组生成(自顶向下生成三元组)，如果topdown = False，则起始目录的三元组在其子目录的三元组生成后才生成(自底向上生成三元组)。</p>
+<p>当topdown = True，os.walk()函数会就地修改三元组中的<em>dirnames</em>列表(可能是使用del或者进行切片），然后再使用os.walk()递归地处理剩余在<em>dirnames</em>列表中的目录。这种方式有助于加快搜索效率，可以指定特殊的遍历顺序。当topdown = False的时候修改<em>dirnames</em>是无效的，因为在使用自底向上进行遍历的时候子目录的三元组是先于上一级目录的三元组创建的。</p>
+<p>默认情况下，调用listdir()返回的错误会被忽略，如果可选参数oneerror被指定，则oneerror必须是一个函数，该函数有一个OSError实例的参数，这样可以允许在运行的时候即使出现错误的时候不会打断os.walk()的执行，或者抛出一个异常并终止os.walk()的运行。<br />
+默认情况下，os.walk()遍历的时候不会进入符号链接，如果设置了可选参数followlinks = True，则可以进入符号链接。</p>
+<p>注意：当设置followlinks = True时，可能会出现循环遍历，因为符号链接可能会出现自己链接自己的情况，而os.walk()不会意识到这一点。</p>
+<p>注意：如果传递过去的路径名是一个相对路径，则不会修改当前的工作路径。</p>
+<p>使用os.walk遍历目录真的很方便：</p>
+<div class="hlcode"><pre><span class="cp">#-*- coding:utf-8 -*-</span>
+
+<span class="n">import</span> <span class="n">os</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="err">&#39;</span><span class="n">__main__</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="nl">try:</span>
+    <span class="err">&#39;&#39;&#39;</span><span class="n">traval</span> <span class="n">and</span> <span class="n">list</span> <span class="n">all</span> <span class="n">files</span> <span class="n">and</span> <span class="n">all</span> <span class="n">dirs</span><span class="err">&#39;&#39;&#39;</span> 
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="n">in</span> <span class="n">os</span><span class="p">.</span><span class="n">walk</span><span class="p">(</span><span class="err">&#39;</span><span class="n">D</span><span class="o">:</span><span class="err">&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="p">.</span><span class="n">sep</span> <span class="o">+</span> <span class="err">&#39;</span><span class="n">Python27</span><span class="err">&#39;</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">print</span> <span class="err">&#39;</span><span class="o">-------------------</span><span class="n">directory</span> <span class="o">&lt;</span> <span class="err">&#39;</span> <span class="o">+</span> <span class="n">root</span> <span class="o">+</span> <span class="err">&#39;</span> <span class="o">&gt;</span> <span class="o">--------------------------</span><span class="err">&#39;</span>
+
+        <span class="k">for</span> <span class="n">d</span> <span class="n">in</span> <span class="n">dirs</span><span class="o">:</span>
+        <span class="n">print</span> <span class="n">d</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="n">in</span> <span class="n">files</span><span class="o">:</span>
+        <span class="n">print</span> <span class="n">f</span>
+    <span class="n">except</span> <span class="n">OSError</span><span class="p">,</span> <span class="n">e</span><span class="o">:</span>
+    <span class="n">print</span> <span class="n">os</span><span class="p">.</span><span class="n">strerror</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">errno</span><span class="p">)</span>
+</pre></div>
+
+
+<h1 id="_1">文件操作</h1>
+<p><code>fp = open("text.txt",w)</code>:直接打开一个文件，如果文件不存在就创建文件</p>
+<h2 id="open"><code>open</code>的模式</h2>
+<div class="hlcode"><pre><span class="n">w</span> <span class="err">写方式</span>
+<span class="n">a</span> <span class="err">追加模式打开（从</span><span class="n">EOF</span><span class="err">开始，必要时创建新文件）</span>
+<span class="n">r</span><span class="o">+</span> <span class="err">以读写模式打开</span>
+<span class="n">w</span><span class="o">+</span> <span class="err">以读写模式打开</span>
+<span class="n">a</span><span class="o">+</span> <span class="err">以读写模式打开</span>
+<span class="n">rb</span> <span class="err">以二进制读模式打开</span>
+<span class="n">wb</span> <span class="err">以二进制写模式打开</span> <span class="p">(</span><span class="err">参见</span> <span class="n">w</span> <span class="p">)</span>
+<span class="n">ab</span> <span class="err">以二进制追加模式打开</span> <span class="p">(</span><span class="err">参见</span> <span class="n">a</span> <span class="p">)</span>
+<span class="n">rb</span><span class="o">+</span> <span class="err">以二进制读写模式打开</span> <span class="p">(</span><span class="err">参见</span> <span class="n">r</span><span class="o">+</span> <span class="p">)</span>
+<span class="n">wb</span><span class="o">+</span> <span class="err">以二进制读写模式打开</span> <span class="p">(</span><span class="err">参见</span> <span class="n">w</span><span class="o">+</span> <span class="p">)</span>
+<span class="n">ab</span><span class="o">+</span> <span class="err">以二进制读写模式打开</span> <span class="p">(</span><span class="err">参见</span> <span class="n">a</span><span class="o">+</span> <span class="p">)</span>
+</pre></div>
+
+
+<h2 id="_2">文件的函数</h2>
+<h3 id="fpreadsize">fp.read([size])</h3>
+<p>size为读取的长度，以byte为单位</p>
+<h3 id="fpreadlinesize">fp.readline([size])</h3>
+<p>读一行，如果定义了size，有可能返回的只是一行的一部分</p>
+<h3 id="fpreadlinessize">fp.readlines([size])</h3>
+<p>把文件每一行作为一个list的一个成员，并返回这个list。其实它的内部是通过循环调用readline()来实现的。如果提供size参数，size是表示读取内容的总长，也就是说可能只读到文件的一部分。</p>
+<h3 id="fpwritestr">fp.write(str)</h3>
+<p>把str写到文件中，write()并不会在str后加上一个换行符</p>
+<h3 id="fpwritelinesseq">fp.writelines(seq)</h3>
+<p>把seq的内容全部写到文件中(多行一次性写入)。这个函数也只是忠实地写入，不会在每行后面加上任何东西。</p>
+<h3 id="fpclose">fp.close()</h3>
+<p>关闭文件。python会在一个文件不用后自动关闭文件，不过这一功能没有保证，最好还是养成自己关闭的习惯。 如果一个文件在关闭后还对其进行操作会产生ValueError</p>
+<h3 id="fpflush">fp.flush()</h3>
+<p>把缓冲区的内容写入硬盘</p>
+<h3 id="fpfileno">fp.fileno()</h3>
+<p>返回一个长整型的”文件标签“</p>
+<h3 id="fpisatty">fp.isatty()</h3>
+<p>文件是否是一个终端设备文件（unix系统中的）</p>
+<h3 id="fptell">fp.tell()</h3>
+<p>返回文件操作标记的当前位置，以文件的开头为原点</p>
+<h3 id="fpnext">fp.next()</h3>
+<p>返回下一行，并将文件操作标记位移到下一行。把一个file用于for … in file这样的语句时，就是调用next()函数来实现遍历的。</p>
+<h3 id="fpseekoffsetwhence">fp.seek(offset[,whence])</h3>
+<p>将文件打操作标记移到offset的位置。这个offset一般是相对于文件的开头来计算的，一般为正数。但如果提供了whence参数就不一定了，whence可以为0表示从头开始计算，1表示以当前位置为原点计算。2表示以文件末尾为原点进行计算。需要注意，如果文件以a或a+的模式打开，每次进行写操作时，文件操作标记会自动返回到文件末尾。</p>
+<h3 id="fptruncatesize">fp.truncate([size])</h3>
+<p>把文件裁成规定的大小，默认的是裁到当前文件操作标记的位置。如果size比文件的大小还要大，依据系统的不同可能是不改变文件，也可能是用0把文件补到相应的大小，也可能是以一些随机的内容加上去。</p>
+<h1 id="_3">目录操作</h1>
+<h2 id="_4">复制文件</h2>
+<p>shutil.copyfile("oldfile","newfile")      </p>
+<p>oldfile和newfile都只能是文件</p>
+<p>shutil.copy("oldfile","newfile")            </p>
+<p>oldfile只能是文件夹，newfile可以是文件，也可以是目标目录</p>
+<p>shutil.copytree("olddir","newdir")       </p>
+<p>复制文件夹.olddir和newdir都只能是目录，且newdir必须不存在</p>
+<p>os.rename("oldname","newname")       </p>
+<p>重命名文件（目录）.文件或目录都是使用这条命令</p>
+<p>shutil.move("oldpos","newpos")   </p>
+<p>移动文件（目录）</p>
+<p>os.rmdir("dir")<br />
+只能删除空目录</p>
+<p>shutil.rmtree("dir")    </p>
+<p>空目录、有内容的目录都可以删</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

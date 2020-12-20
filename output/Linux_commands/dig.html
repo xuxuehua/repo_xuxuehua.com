@@ -1,0 +1,234 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>dig - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;dig
+    <span class="updated">Page Updated&nbsp;
+      2019-01-04 12:47
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">dig</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#dig">dig</a><ul>
+<li><a href="#installation">Installation</a><ul>
+<li><a href="#ubuntu">Ubuntu</a></li>
+<li><a href="#centos">Centos</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#options">Options</a><ul>
+<li><a href="#domain">domain</a></li>
+<li><a href="#q-class">q-class</a></li>
+<li><a href="#q-type">q-type</a></li>
+<li><a href="#q-opt">q-opt</a><ul>
+<li><a href="#-4">-4</a></li>
+<li><a href="#-6">-6</a></li>
+<li><a href="#nocmd">+nocmd</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="dig">dig</h1>
+<p>Dig（ Domain Information Groper）是一个功能强大的命令行工具，可以用于DNS 记录查询。使用 dig 命令，可以查询各种 DNS 记录的信息，包括：主机名称记录（A、AAAA）、邮件交换记录（MX）和别名记录（CNAME）等等。</p>
+<h2 id="installation">Installation</h2>
+<h3 id="ubuntu">Ubuntu</h3>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">apt</span> <span class="n">install</span> <span class="n">dnsutils</span>
+</pre></div>
+
+
+<h3 id="centos">Centos</h3>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">yum</span> <span class="n">install</span> <span class="n">bind</span><span class="o">-</span><span class="n">utils</span>
+</pre></div>
+
+
+<h1 id="usage">Usage</h1>
+<div class="hlcode"><pre><span class="n">dig</span> <span class="p">[</span><span class="err">@</span><span class="n">global</span><span class="o">-</span><span class="n">server</span><span class="p">][</span><span class="n">domain</span><span class="p">]</span> <span class="p">[</span><span class="n">q</span><span class="o">-</span><span class="n">type</span><span class="p">][</span><span class="n">q</span><span class="o">-</span><span class="n">class</span><span class="p">]</span> <span class="p">{</span><span class="n">q</span><span class="o">-</span><span class="n">opt</span><span class="p">}</span>
+            <span class="p">{</span><span class="n">global</span><span class="o">-</span><span class="n">d</span><span class="o">-</span><span class="n">opt</span><span class="p">}</span> <span class="n">host</span> <span class="p">[</span><span class="err">@</span><span class="n">local</span><span class="o">-</span><span class="n">server</span><span class="p">]</span> <span class="p">{</span><span class="n">local</span><span class="o">-</span><span class="n">d</span><span class="o">-</span><span class="n">opt</span><span class="p">}</span>
+            <span class="p">[</span> <span class="n">host</span> <span class="p">[</span><span class="err">@</span><span class="n">local</span><span class="o">-</span><span class="n">server</span><span class="p">]</span> <span class="p">{</span><span class="n">local</span><span class="o">-</span><span class="n">d</span><span class="o">-</span><span class="n">opt</span><span class="p">}</span> <span class="p">[...]]</span>
+</pre></div>
+
+
+<h1 id="options">Options</h1>
+<h2 id="domain">domain</h2>
+<p>is in the Domain Name System</p>
+<h2 id="q-class">q-class</h2>
+<p>is one of (in,hs,ch,...) [default: in]</p>
+<h2 id="q-type">q-type</h2>
+<p>is one of (a,any,mx,ns,soa,hinfo,axfr,txt,...) [default:a]<br />
+​                 (Use ixfr=version for type ixfr)<br />
+​       </p>
+<h2 id="q-opt">q-opt</h2>
+<h3 id="-4">-4</h3>
+<p>(use IPv4 query transport only)</p>
+<h3 id="-6">-6</h3>
+<p>(use IPv6 query transport only)<br />
+​                 -b address[#port]   (bind to source address/port)<br />
+​                 -c class            (specify query class)<br />
+​                 -f filename         (batch mode)<br />
+​                 -i                  (use IP6.INT for IPv6 reverse lookups)<br />
+​                 -k keyfile          (specify tsig key file)<br />
+​                 -m                  (enable memory usage debugging)<br />
+​                 -p port             (specify port number)<br />
+​                 -q name             (specify query name)<br />
+​                 -t type             (specify query type)<br />
+​                 -u                  (display times in usec instead of msec)<br />
+​                 -x dot-notation     (shortcut for reverse lookups)<br />
+​                 -y [hmac:]name:key  (specify named base64 tsig key)<br />
+​        d-opt    is of the form +keyword[=value], where keyword is:<br />
+​                 +[no]aaflag         (Set AA flag in query (+[no]aaflag))<br />
+​                 +[no]aaonly         (Set AA flag in query (+[no]aaflag))<br />
+​                 +[no]additional     (Control display of additional section)<br />
+​                 +[no]adflag         (Set AD flag in query (default on))<br />
+​                 +[no]all            (Set or clear all display flags)<br />
+​                 +[no]answer         (Control display of answer section)<br />
+​                 +[no]authority      (Control display of authority section)<br />
+​                 +[no]badcookie      (Retry BADCOOKIE responses)<br />
+​                 +[no]besteffort     (Try to parse even illegal messages)<br />
+​                 +bufsize=###        (Set EDNS0 Max UDP packet size)<br />
+​                 +[no]cdflag         (Set checking disabled flag in query)<br />
+​                 +[no]class          (Control display of class in records)<br />
+​                 +[no]cmd            (Control display of command line)<br />
+​                 +[no]comments       (Control display of comment lines)<br />
+​                 +[no]cookie         (Add a COOKIE option to the request)<br />
+​                 +[no]crypto         (Control display of cryptographic fields in records)<br />
+​                 +[no]defname        (Use search list (+[no]search))<br />
+​                 +[no]dnssec         (Request DNSSEC records)<br />
+​                 +domain=###         (Set default domainname)<br />
+​                 +[no]dscp[=###]     (Set the DSCP value to ### [0..63])<br />
+​                 +[no]edns[=###]     (Set EDNS version) [0]<br />
+​                 +ednsflags=###      (Set EDNS flag bits)<br />
+​                 +[no]ednsnegotiation (Set EDNS version negotiation)<br />
+​                 +ednsopt=###[:value] (Send specified EDNS option)<br />
+​                 +noednsopt          (Clear list of +ednsopt options)<br />
+​                 +[no]expire         (Request time to expire)<br />
+​                 +[no]fail           (Don't try next server on SERVFAIL)<br />
+​                 +[no]header-only    (Send query without a question section)<br />
+​                 +[no]identify       (ID responders in short answers)<br />
+​                 +[no]idnout         (convert IDN response)<br />
+​                 +[no]ignore         (Don't revert to TCP for TC responses.)<br />
+​                 +[no]keepopen       (Keep the TCP socket open between queries)<br />
+​                 +[no]mapped         (Allow mapped IPv4 over IPv6)<br />
+​                 +[no]multiline      (Print records in an expanded format)<br />
+​                 +ndots=###          (Set search NDOTS value)<br />
+​                 +[no]nsid           (Request Name Server ID)<br />
+​                 +[no]nssearch       (Search all authoritative nameservers)<br />
+​                 +[no]onesoa         (AXFR prints only one soa record)<br />
+​                 +[no]opcode=###     (Set the opcode of the request)<br />
+​                 +[no]qr             (Print question before sending)<br />
+​                 +[no]question       (Control display of question section)<br />
+​                 +[no]rdflag         (Recursive mode (+[no]recurse))<br />
+​                 +[no]recurse        (Recursive mode (+[no]rdflag))<br />
+​                 +retry=###          (Set number of UDP retries) [2]<br />
+​                 +[no]rrcomments     (Control display of per-record comments)<br />
+​                 +[no]search         (Set whether to use searchlist)<br />
+​                 +[no]short          (Display nothing except short<br />
+​                                      form of answer)<br />
+​                 +[no]showsearch     (Search with intermediate results)<br />
+​                 +[no]sigchase       (Chase DNSSEC signatures)<br />
+​                 +[no]split=##       (Split hex/base64 fields into chunks)<br />
+​                 +[no]stats          (Control display of statistics)<br />
+​                 +subnet=addr        (Set edns-client-subnet option)<br />
+​                 +[no]tcp            (TCP mode (+[no]vc))<br />
+​                 +timeout=###        (Set query timeout) [5]<br />
+​                 +[no]topdown        (Do +sigchase in top-down mode)<br />
+​                 +[no]trace          (Trace delegation down from root [+dnssec])<br />
+​                 +trusted-key=####   (Trusted Key to use with +sigchase)<br />
+​                 +tries=###          (Set number of UDP attempts) [3]<br />
+​                 +[no]ttlid          (Control display of ttls in records)<br />
+​                 +[no]ttlunits       (Display TTLs in human-readable units)<br />
+​                 +[no]unknownformat  (Print RDATA in RFC 3597 "unknown" format)<br />
+​                 +[no]vc             (TCP mode (+[no]tcp))<br />
+​                 +[no]zflag          (Set Z flag in query)<br />
+​        global d-opts and servers (before host name) affect all queries.<br />
+​        local d-opts and servers (after host name) affect only that lookup.<br />
+​        -h                           (print help and exit)<br />
+​        -v                           (print version and exit)</p>
+<h3 id="nocmd">+nocmd</h3>
+<p>dig命令的第一个参数，可以关闭版本输出输出</p>
+<div class="hlcode"><pre><span class="o">&lt;&lt;&gt;&gt;</span> <span class="n">DiG</span> <span class="mf">9.11.3</span><span class="o">-</span><span class="mi">1u</span><span class="n">buntu1</span><span class="mf">.3</span><span class="o">-</span><span class="n">Ubuntu</span> <span class="o">&lt;&lt;&gt;&gt;</span> <span class="n">www</span><span class="p">.</span><span class="n">xuxuehua</span><span class="p">.</span><span class="n">com</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="c1"># dig www.xuxuehua.com</span>
+
+<span class="p">;</span> <span class="o">&lt;&lt;&gt;&gt;</span> DiG <span class="m">9.11.3-1</span>ubuntu1.3<span class="o">-</span>Ubuntu <span class="o">&lt;&lt;&gt;&gt;</span> www.xuxuehua.com
+<span class="p">;;</span> global options<span class="o">:</span> <span class="o">+</span>cmd
+<span class="p">;;</span> Got answer<span class="o">:</span>
+<span class="p">;;</span> <span class="o">-&gt;&gt;</span>HEADER<span class="o">&lt;&lt;-</span> opcode<span class="o">:</span> QUERY<span class="p">,</span> status<span class="o">:</span> NOERROR<span class="p">,</span> id<span class="o">:</span> <span class="m">39238</span>
+<span class="p">;;</span> flags<span class="o">:</span> qr rd ra<span class="p">;</span> QUERY<span class="o">:</span> <span class="m">1</span><span class="p">,</span> ANSWER<span class="o">:</span> <span class="m">5</span><span class="p">,</span> AUTHORITY<span class="o">:</span> <span class="m">0</span><span class="p">,</span> ADDITIONAL<span class="o">:</span> <span class="m">1</span>
+
+<span class="p">;;</span> OPT PSEUDOSECTION<span class="o">:</span>
+<span class="p">;</span> EDNS<span class="o">:</span> version<span class="o">:</span> <span class="m">0</span><span class="p">,</span> flags<span class="o">:</span><span class="p">;</span> udp<span class="o">:</span> <span class="m">65494</span>
+<span class="p">;;</span> QUESTION SECTION<span class="o">:</span>
+<span class="p">;</span>www.xuxuehua.com.      IN  A
+
+<span class="p">;;</span> ANSWER SECTION<span class="o">:</span>
+www.xuxuehua.com.   <span class="m">405</span> IN  CNAME   xuxuehua.github.io.
+xuxuehua.github.io. <span class="m">3405</span>    IN  A   <span class="m">185.199.108.153</span>
+xuxuehua.github.io. <span class="m">3405</span>    IN  A   <span class="m">185.199.110.153</span>
+xuxuehua.github.io. <span class="m">3405</span>    IN  A   <span class="m">185.199.109.153</span>
+xuxuehua.github.io. <span class="m">3405</span>    IN  A   <span class="m">185.199.111.153</span>
+
+<span class="p">;;</span> Query time<span class="o">:</span> <span class="m">0</span> msec
+<span class="p">;;</span> SERVER<span class="o">:</span> <span class="m">127.0.0.53</span><span class="c1">#53(127.0.0.53)</span>
+<span class="p">;;</span> WHEN<span class="o">:</span> Fri Jan <span class="m">04</span> <span class="m">05</span><span class="o">:</span><span class="m">06</span><span class="o">:</span><span class="m">51</span> UTC <span class="m">2019</span>
+<span class="p">;;</span> MSG SIZE  rcvd<span class="o">:</span> <span class="m">141</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="c1"># dig +nocmd www.xuxuehua.com</span>
+<span class="p">;;</span> Got answer<span class="o">:</span>
+<span class="p">;;</span> <span class="o">-&gt;&gt;</span>HEADER<span class="o">&lt;&lt;-</span> opcode<span class="o">:</span> QUERY<span class="p">,</span> status<span class="o">:</span> NOERROR<span class="p">,</span> id<span class="o">:</span> <span class="m">49281</span>
+<span class="p">;;</span> flags<span class="o">:</span> qr rd ra<span class="p">;</span> QUERY<span class="o">:</span> <span class="m">1</span><span class="p">,</span> ANSWER<span class="o">:</span> <span class="m">5</span><span class="p">,</span> AUTHORITY<span class="o">:</span> <span class="m">0</span><span class="p">,</span> ADDITIONAL<span class="o">:</span> <span class="m">1</span>
+
+<span class="p">;;</span> OPT PSEUDOSECTION<span class="o">:</span>
+<span class="p">;</span> EDNS<span class="o">:</span> version<span class="o">:</span> <span class="m">0</span><span class="p">,</span> flags<span class="o">:</span><span class="p">;</span> udp<span class="o">:</span> <span class="m">65494</span>
+<span class="p">;;</span> QUESTION SECTION<span class="o">:</span>
+<span class="p">;</span>www.xuxuehua.com.      IN  A
+
+<span class="p">;;</span> ANSWER SECTION<span class="o">:</span>
+www.xuxuehua.com.   <span class="m">427</span> IN  CNAME   xuxuehua.github.io.
+xuxuehua.github.io. <span class="m">3427</span>    IN  A   <span class="m">185.199.108.153</span>
+xuxuehua.github.io. <span class="m">3427</span>    IN  A   <span class="m">185.199.110.153</span>
+xuxuehua.github.io. <span class="m">3427</span>    IN  A   <span class="m">185.199.109.153</span>
+xuxuehua.github.io. <span class="m">3427</span>    IN  A   <span class="m">185.199.111.153</span>
+
+<span class="p">;;</span> Query time<span class="o">:</span> <span class="m">0</span> msec
+<span class="p">;;</span> SERVER<span class="o">:</span> <span class="m">127.0.0.53</span><span class="c1">#53(127.0.0.53)</span>
+<span class="p">;;</span> WHEN<span class="o">:</span> Fri Jan <span class="m">04</span> <span class="m">05</span><span class="o">:</span><span class="m">06</span><span class="o">:</span><span class="m">28</span> UTC <span class="m">2019</span>
+<span class="p">;;</span> MSG SIZE  rcvd<span class="o">:</span> <span class="m">141</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

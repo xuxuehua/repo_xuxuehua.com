@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>spark_shell - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Spark">Spark</a>&nbsp;&#187;&nbsp;spark_shell
+    <span class="updated">Page Updated&nbsp;
+      2020-05-04 18:25
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">spark_shell</div>
+
+  <p>[toc]</p>
+<h1 id="spark-shell">Spark shell</h1>
+<p>Spark Shell是Spark提供的一种基于Scala的REPL（Read-Eval-Print-Loop）交互式解释器环境, 可以作即时数据分析。</p>
+<p>类似 R、Python、Scala 所 提供的 shell，然而和其他 shell 工具不一样的是，在其他 shell 工具中你只能使 用单机的硬盘和内存来操作数据，而 Spark shell 可用来与分布式存储在许多机器的内存或 者硬盘上的数据进行交互，并且处理过程的分发由 Spark 自动控制完成。</p>
+<p>用户可以通过Spark Shell编码、配置并提交作业，Spark Shell本质上是对spark-submit命令的客户端模式的封装，用户可以在执行spark-shell脚本时加上启动参数，如--num-executors等</p>
+<h2 id="pyspark">pyspark</h2>
+<p>PySpark基于Spark的Java API，提供了Spark Python应用的运行环境和编程接口。</p>
+<p>用户提交作业后，会启动一个Python版的SparkSession，其中SparkContext会通过Py4J启动一个JVM并创建一个JavaSparkContext。</p>
+<p>Py4J只在Driver端用于JavaSparkContext与Python之间的本地通信，而中间结果的传输（Shuffle）则没有采用Py4J，而是使用Spark自己的数据传输机制。</p>
+<p>在集群中，传输过来的数据以及用户代码会通过管道在Python子进程中处理，结果再通过管道输出回Spark Worker中。</p>
+<p>以PySpark这种方式提交的作业，计算由Python子进程完成，数据缓存在JVM中，由于Python天生计算性能不足，以这种方式执行的Spark应用速度会慢于同样逻辑的Scala或者Java版Spark应用</p>
+<p><img alt="image-20200719100920096" src="spark_shell.assets/image-20200719100920096.png" /></p>
+<blockquote>
+<p>PySpark执行Spark应用需要所有Executor节点上都要安装Python运行环境。</p>
+</blockquote>
+<h3 id="initialize-locally">Initialize locally</h3>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="n">https</span><span class="o">:</span><span class="c1">//mirrors.tuna.tsinghua.edu.cn/apache/spark/spark-2.4.5/spark-2.4.5-bin-hadoop2.7.tgz</span>
+
+<span class="n">export</span> <span class="n">SPARK_LOCAL_HOSTNAME</span><span class="o">=</span><span class="n">localhost</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">wget</span> <span class="n">https</span><span class="o">:</span><span class="c1">//mirrors.huaweicloud.com/java/jdk/8u201-b09/jdk-8u201-linux-x64.tar.gz</span>
+
+<span class="n">vim</span> <span class="o">~/</span><span class="p">.</span><span class="n">bashrc</span>
+<span class="n">export</span> <span class="n">JRE_HOME</span><span class="o">=/</span><span class="n">root</span><span class="o">/</span><span class="n">java_web</span><span class="o">/</span><span class="n">jdk1</span><span class="mf">.8.0</span><span class="n">_201</span><span class="o">/</span><span class="n">jre</span>
+<span class="n">export</span> <span class="n">JAVA_HOME</span><span class="o">=/</span><span class="n">root</span><span class="o">/</span><span class="n">java_web</span><span class="o">/</span><span class="n">jdk1</span><span class="mf">.8.0</span><span class="n">_201</span>
+<span class="n">export</span> <span class="n">JAVA_BIN</span><span class="o">=/</span><span class="n">root</span><span class="o">/</span><span class="n">java_web</span><span class="o">/</span><span class="n">jdk1</span><span class="mf">.8.0</span><span class="n">_201</span><span class="o">/</span><span class="n">bin</span>
+<span class="n">PATH</span><span class="o">=</span><span class="err">$</span><span class="n">PATH</span><span class="o">:</span><span class="err">$</span><span class="n">JAVA_BIN</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">root</span><span class="err">@</span><span class="n">ubuntu</span><span class="o">:/</span><span class="n">mnt</span><span class="o">/</span><span class="n">spark</span><span class="o">-</span><span class="mf">2.4.5</span><span class="o">-</span><span class="n">bin</span><span class="o">-</span><span class="n">hadoop2</span><span class="mf">.7</span><span class="err">#</span> <span class="p">.</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">pyspark</span> 
+<span class="n">Python</span> <span class="mf">2.7.17</span> <span class="p">(</span><span class="k">default</span><span class="p">,</span> <span class="n">Apr</span> <span class="mi">15</span> <span class="mi">2020</span><span class="p">,</span> <span class="mi">17</span><span class="o">:</span><span class="mi">20</span><span class="o">:</span><span class="mi">14</span><span class="p">)</span> 
+<span class="p">[</span><span class="n">GCC</span> <span class="mf">7.5.0</span><span class="p">]</span> <span class="n">on</span> <span class="n">linux2</span>
+<span class="n">Type</span> <span class="s">&quot;help&quot;</span><span class="p">,</span> <span class="s">&quot;copyright&quot;</span><span class="p">,</span> <span class="s">&quot;credits&quot;</span> <span class="n">or</span> <span class="s">&quot;license&quot;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span><span class="p">.</span>
+<span class="mi">20</span><span class="o">/</span><span class="mo">05</span><span class="o">/</span><span class="mo">05</span> <span class="mi">18</span><span class="o">:</span><span class="mi">18</span><span class="o">:</span><span class="mi">17</span> <span class="n">WARN</span> <span class="n">NativeCodeLoader</span><span class="o">:</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">load</span> <span class="n">native</span><span class="o">-</span><span class="n">hadoop</span> <span class="n">library</span> <span class="k">for</span> <span class="n">your</span> <span class="n">platform</span><span class="p">...</span> <span class="n">using</span> <span class="n">builtin</span><span class="o">-</span><span class="n">java</span> <span class="n">classes</span> <span class="n">where</span> <span class="n">applicable</span>
+<span class="n">Using</span> <span class="n">Spark</span><span class="err">&#39;</span><span class="n">s</span> <span class="k">default</span> <span class="n">log4j</span> <span class="n">profile</span><span class="o">:</span> <span class="n">org</span><span class="o">/</span><span class="n">apache</span><span class="o">/</span><span class="n">spark</span><span class="o">/</span><span class="n">log4j</span><span class="o">-</span><span class="n">defaults</span><span class="p">.</span><span class="n">properties</span>
+<span class="n">Setting</span> <span class="k">default</span> <span class="n">log</span> <span class="n">level</span> <span class="n">to</span> <span class="s">&quot;WARN&quot;</span><span class="p">.</span>
+<span class="n">To</span> <span class="n">adjust</span> <span class="n">logging</span> <span class="n">level</span> <span class="n">use</span> <span class="n">sc</span><span class="p">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="n">newLevel</span><span class="p">).</span> <span class="n">For</span> <span class="n">SparkR</span><span class="p">,</span> <span class="n">use</span> <span class="n">setLogLevel</span><span class="p">(</span><span class="n">newLevel</span><span class="p">).</span>
+<span class="n">Welcome</span> <span class="n">to</span>
+      <span class="n">____</span>              <span class="n">__</span>
+     <span class="o">/</span> <span class="n">__</span><span class="o">/</span><span class="n">__</span>  <span class="n">___</span> <span class="n">_____</span><span class="o">/</span> <span class="o">/</span><span class="n">__</span>
+    <span class="n">_</span><span class="err">\</span> <span class="err">\</span><span class="o">/</span> <span class="n">_</span> <span class="err">\</span><span class="o">/</span> <span class="n">_</span> <span class="err">`</span><span class="o">/</span> <span class="n">__</span><span class="o">/</span>  <span class="err">&#39;</span><span class="n">_</span><span class="o">/</span>
+   <span class="o">/</span><span class="n">__</span> <span class="o">/</span> <span class="p">.</span><span class="n">__</span><span class="o">/</span><span class="err">\</span><span class="n">_</span><span class="p">,</span><span class="n">_</span><span class="o">/</span><span class="n">_</span><span class="o">/</span> <span class="o">/</span><span class="n">_</span><span class="o">/</span><span class="err">\</span><span class="n">_</span><span class="err">\</span>   <span class="n">version</span> <span class="mf">2.4.5</span>
+      <span class="o">/</span><span class="n">_</span><span class="o">/</span>
+
+<span class="n">Using</span> <span class="n">Python</span> <span class="n">version</span> <span class="mf">2.7.17</span> <span class="p">(</span><span class="k">default</span><span class="p">,</span> <span class="n">Apr</span> <span class="mi">15</span> <span class="mi">2020</span> <span class="mi">17</span><span class="o">:</span><span class="mi">20</span><span class="o">:</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">SparkSession</span> <span class="n">available</span> <span class="n">as</span> <span class="err">&#39;</span><span class="n">spark</span><span class="err">&#39;</span><span class="p">.</span>
+</pre></div>
+
+
+<h3 id="log4j">log4j</h3>
+<p>Spark 开发者们已经在 Spark 中加入了一个日志设置文件的模版，叫作 log4j.properties.template</p>
+<p>可以先把这个日志设置模版文件复制一份到 conf/log4j. properties 来作为日志设置文件，接下来找到下面这一行:</p>
+<div class="hlcode"><pre><span class="n">log4j</span><span class="p">.</span><span class="n">rootCategory</span><span class="o">=</span><span class="n">INFO</span><span class="p">,</span> <span class="n">console</span>
+</pre></div>
+
+
+<p>然后通过下面的设定降低日志级别，只显示警告及更严重的信息:</p>
+<div class="hlcode"><pre><span class="n">log4j</span><span class="p">.</span><span class="n">rootCategory</span><span class="o">=</span><span class="n">WARN</span><span class="p">,</span> <span class="n">console</span>
+</pre></div>
+
+
+<p>从而减少日志输出</p>
+<h3 id="ipython">ipython</h3>
+<p>IPython 是一个受许多 Python 使用者喜爱的增强版 Python shell，能够提供自 动补全等好用的功能。</p>
+<div class="hlcode"><pre><span class="p">(</span><span class="n">spark</span><span class="o">-</span><span class="mf">2.4.5</span><span class="o">-</span><span class="n">bin</span><span class="o">-</span><span class="n">hadoop2</span><span class="mf">.7</span><span class="p">)</span> <span class="n">root</span><span class="err">@</span><span class="n">ubuntu</span><span class="o">:/</span><span class="n">mnt</span><span class="o">/</span><span class="n">spark</span><span class="o">-</span><span class="mf">2.4.5</span><span class="o">-</span><span class="n">bin</span><span class="o">-</span><span class="n">hadoop2</span><span class="mf">.7</span><span class="err">#</span> <span class="n">PYSPARK_DRIVER_PYTHON</span><span class="o">=</span><span class="n">ipython</span> <span class="p">.</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">pyspark</span>
+<span class="n">Python</span> <span class="mf">3.6.9</span> <span class="p">(</span><span class="k">default</span><span class="p">,</span> <span class="n">Apr</span> <span class="mi">18</span> <span class="mi">2020</span><span class="p">,</span> <span class="mo">01</span><span class="o">:</span><span class="mi">56</span><span class="o">:</span><span class="mo">04</span><span class="p">)</span> 
+<span class="n">Type</span> <span class="err">&#39;</span><span class="n">copyright</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">credits</span><span class="err">&#39;</span> <span class="n">or</span> <span class="err">&#39;</span><span class="n">license</span><span class="err">&#39;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span>
+<span class="n">IPython</span> <span class="mf">7.14.0</span> <span class="o">--</span> <span class="n">An</span> <span class="n">enhanced</span> <span class="n">Interactive</span> <span class="n">Python</span><span class="p">.</span> <span class="n">Type</span> <span class="sc">&#39;?&#39;</span> <span class="k">for</span> <span class="n">help</span><span class="p">.</span>
+<span class="mi">20</span><span class="o">/</span><span class="mo">05</span><span class="o">/</span><span class="mo">05</span> <span class="mi">18</span><span class="o">:</span><span class="mi">32</span><span class="o">:</span><span class="mi">32</span> <span class="n">WARN</span> <span class="n">NativeCodeLoader</span><span class="o">:</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">load</span> <span class="n">native</span><span class="o">-</span><span class="n">hadoop</span> <span class="n">library</span> <span class="k">for</span> <span class="n">your</span> <span class="n">platform</span><span class="p">...</span> <span class="n">using</span> <span class="n">builtin</span><span class="o">-</span><span class="n">java</span> <span class="n">classes</span> <span class="n">where</span> <span class="n">applicable</span>
+<span class="n">Using</span> <span class="n">Spark</span><span class="err">&#39;</span><span class="n">s</span> <span class="k">default</span> <span class="n">log4j</span> <span class="n">profile</span><span class="o">:</span> <span class="n">org</span><span class="o">/</span><span class="n">apache</span><span class="o">/</span><span class="n">spark</span><span class="o">/</span><span class="n">log4j</span><span class="o">-</span><span class="n">defaults</span><span class="p">.</span><span class="n">properties</span>
+<span class="n">Setting</span> <span class="k">default</span> <span class="n">log</span> <span class="n">level</span> <span class="n">to</span> <span class="s">&quot;WARN&quot;</span><span class="p">.</span>
+<span class="n">To</span> <span class="n">adjust</span> <span class="n">logging</span> <span class="n">level</span> <span class="n">use</span> <span class="n">sc</span><span class="p">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="n">newLevel</span><span class="p">).</span> <span class="n">For</span> <span class="n">SparkR</span><span class="p">,</span> <span class="n">use</span> <span class="n">setLogLevel</span><span class="p">(</span><span class="n">newLevel</span><span class="p">).</span>
+<span class="n">Welcome</span> <span class="n">to</span>
+      <span class="n">____</span>              <span class="n">__</span>
+     <span class="o">/</span> <span class="n">__</span><span class="o">/</span><span class="n">__</span>  <span class="n">___</span> <span class="n">_____</span><span class="o">/</span> <span class="o">/</span><span class="n">__</span>
+    <span class="n">_</span><span class="err">\</span> <span class="err">\</span><span class="o">/</span> <span class="n">_</span> <span class="err">\</span><span class="o">/</span> <span class="n">_</span> <span class="err">`</span><span class="o">/</span> <span class="n">__</span><span class="o">/</span>  <span class="err">&#39;</span><span class="n">_</span><span class="o">/</span>
+   <span class="o">/</span><span class="n">__</span> <span class="o">/</span> <span class="p">.</span><span class="n">__</span><span class="o">/</span><span class="err">\</span><span class="n">_</span><span class="p">,</span><span class="n">_</span><span class="o">/</span><span class="n">_</span><span class="o">/</span> <span class="o">/</span><span class="n">_</span><span class="o">/</span><span class="err">\</span><span class="n">_</span><span class="err">\</span>   <span class="n">version</span> <span class="mf">2.4.5</span>
+      <span class="o">/</span><span class="n">_</span><span class="o">/</span>
+
+<span class="n">Using</span> <span class="n">Python</span> <span class="n">version</span> <span class="mf">3.6.9</span> <span class="p">(</span><span class="k">default</span><span class="p">,</span> <span class="n">Apr</span> <span class="mi">18</span> <span class="mi">2020</span> <span class="mo">01</span><span class="o">:</span><span class="mi">56</span><span class="o">:</span><span class="mo">04</span><span class="p">)</span>
+<span class="n">SparkSession</span> <span class="n">available</span> <span class="n">as</span> <span class="err">&#39;</span><span class="n">spark</span><span class="err">&#39;</span><span class="p">.</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span>  
+</pre></div>
+
+
+<h2 id="spark">安装Spark 客户端</h2>
+<p>安装Spark客户端的核心其实就是通过配置让该客户端找到相应的资源管理与调度平台，因此只需在spark-env.sh文件中添加HADOOP_CONF_DIR环境变量即可</p>
+<div class="hlcode"><pre><span class="n">HADOOP_CONF_DIR</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">hadoop</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span>
+</pre></div>
+
+
+<blockquote>
+<p>该路径下部署了YARN、HDFS等相关配置文件，此外如果还需要用到HBase、Hive等组件，可以将这些组件的配置文件放到Spark客户端的conf文件夹下。</p>
+</blockquote>
+<h2 id="_1">提交作业</h2>
+<p>安装好了Spark以后，通常安装Spark的节点被称为Spark客户端，用户可以通过Spark安装路径bin目录下的spark-summit脚本来向集群提交任务</p>
+<div class="hlcode"><pre>        <span class="nx">.</span><span class="p">/</span><span class="nx">bin</span><span class="p">/</span><span class="nx">spark</span><span class="na">-submit</span> <span class="o">\</span>
+        <span class="o">--</span><span class="nb">class</span> <span class="o">&lt;</span><span class="nx">main</span><span class="na">-class</span><span class="o">&gt;</span> <span class="o">\</span>
+        <span class="o">--</span><span class="nx">master</span> <span class="o">&lt;</span><span class="nx">master</span><span class="na">-url</span><span class="o">&gt;</span> <span class="o">\</span>
+        <span class="o">--</span><span class="nx">deploy</span><span class="na">-mode</span> <span class="o">&lt;</span><span class="nx">deploy</span><span class="na">-mode</span><span class="o">&gt;</span> <span class="o">\</span>
+        <span class="o">--</span><span class="nx">conf</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;=&lt;</span><span class="nb">value</span><span class="o">&gt;</span> <span class="o">\</span>
+        <span class="nx">...</span> <span class="err">#</span> <span class="nx">其他配置项</span>
+        <span class="o">&lt;</span><span class="nx">application</span><span class="na">-jar</span><span class="o">&gt;</span> <span class="o">\</span>
+        <span class="err">[</span><span class="nx">application</span><span class="na">-arguments</span><span class="cp">]</span>
+</pre></div>
+
+
+<p>用户可以通过配置master与deploy-mode选项来指定提交的集群与Driver运行的方式，class选项指定了应用的入口</p>
+<div class="hlcode"><pre>        <span class="p">.</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">spark</span><span class="o">-</span><span class="n">submit</span> \
+        <span class="o">--</span><span class="n">class</span> <span class="n">org</span><span class="p">.</span><span class="n">apache</span><span class="p">.</span><span class="n">spark</span><span class="p">.</span><span class="n">examples</span><span class="p">.</span><span class="n">SparkPi</span> \
+        <span class="o">--</span><span class="n">master</span> <span class="n">spark</span><span class="o">:</span><span class="c1">//192.184.56.138:7077 \</span>
+<span class="c1">        --deploy-mode cluster \</span>
+<span class="c1">        --supervise \</span>
+<span class="c1">        --executor-memory 20G \</span>
+<span class="c1">        --total-executor-cores 100 \</span>
+<span class="c1">        /path/to/examples.jar 1000</span>
+</pre></div>
+
+
+<blockquote>
+<p>向以Standalone模式部署的集群提交作业，而Driver也运行在集群中，每个Executor的内存大小为20 GB，所有Executor可以使用的CPU资源为100核，应用参数为1000。supervise选项确保当Driver以非零值退出时自动重启。/path/to/examples.jar是用户编写的代码打包成的jar包</p>
+</blockquote>
+<h3 id="yarn">Yarn 方式</h3>
+<div class="hlcode"><pre>        <span class="n">export</span> <span class="n">HADOOP_CONF_DIR</span><span class="o">=</span><span class="n">XXX</span>
+        <span class="p">.</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">spark</span><span class="o">-</span><span class="n">submit</span> \
+        <span class="o">--</span><span class="n">class</span> <span class="n">org</span><span class="p">.</span><span class="n">apache</span><span class="p">.</span><span class="n">spark</span><span class="p">.</span><span class="n">examples</span><span class="p">.</span><span class="n">SparkPi</span> \
+        <span class="o">--</span><span class="n">master</span> <span class="n">YARN</span> \
+        <span class="o">--</span><span class="n">deploy</span><span class="o">-</span><span class="n">mode</span> <span class="n">cluster</span> \
+        <span class="o">--</span><span class="n">executor</span><span class="o">-</span><span class="n">memory</span> <span class="mi">10</span><span class="n">G</span> \
+        <span class="o">--</span><span class="n">num</span><span class="o">-</span><span class="n">executors</span> <span class="mi">10</span> \
+        <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">examples</span><span class="p">.</span><span class="n">jar</span> <span class="mi">1000</span>
+</pre></div>
+
+
+<blockquote>
+<p>向YARN集群提交作业则有些不同，由于YARN并没有Master URL这样的配置来定位资源集群，用户需要让客户端找到YARN的配置，因此需要指定HADOOP_CONF_DIR的路径为YARN的配置文件所在路径，这样才能提交成功。此外，提交的master配置项可以简写为yarn-client/yarn-master，它们等同于--master yarn--deploy-mode cluster/client</p>
+</blockquote>
+<h2 id="sparkr">SparkR</h2>
+<p>SparkR同样提供了R语言运行环境和编程接口，其原理大同小异</p>
+<p><img alt="image-20200719101153476" src="spark_shell.assets/image-20200719101153476.png" /></p>
+<p>同样是通过R语言调用Java API初始化生成Spark的JVM Driver，中间结果还是利用Spark本身的机制进行传输。用户代码在Executor所在节点的R子进程中执行，并通过管道将结果输出回Executor。R语言版的Spark应用性能与Python版Spark应用类似。</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

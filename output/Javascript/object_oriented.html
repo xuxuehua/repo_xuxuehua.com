@@ -1,0 +1,288 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>object_oriented 面向对象 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Javascript">Javascript</a>&nbsp;&#187;&nbsp;object_oriented 面向对象
+    <span class="updated">Page Updated&nbsp;
+      2018-06-20 16:00
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">object_oriented 面向对象</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#object-oriented-programming">Object Oriented Programming</a><ul>
+<li><a href="#_1">概念</a></li>
+<li><a href="#_2">创建对象</a></li>
+<li><a href="#prototype">原型链 prototype</a><ul>
+<li><a href="#prototype-vs-__proto__">prototype VS __proto__</a></li>
+</ul>
+</li>
+<li><a href="#_3">构造函数</a><ul>
+<li><a href="#new">忘记写new怎么办</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="object-oriented-programming">Object Oriented Programming</h1>
+<h2 id="_1">概念</h2>
+<p>面向对象的两个基本概念：</p>
+<ol>
+<li>类：类是对象的类型模板，例如，定义<code>Student</code>类来表示学生，类本身是一种类型，<code>Student</code>表示学生类型，但不表示任何具体的某个学生；</li>
+<li>
+<p>实例：实例是根据类创建的对象，例如，根据<code>Student</code>类可以创建出<code>xiaoming</code>、<code>xiaohong</code>、<code>xiaojun</code>等多个实例，每个实例表示一个具体的学生，他们全都属于<code>Student</code>类型。</p>
+</li>
+<li>
+<p>JavaScript不区分类和实例的概念，而是通过原型（prototype）来实现面向对象编程</p>
+</li>
+</ol>
+<p>原型是指当我们想要创建<code>xiaoming</code>这个具体的学生时，我们并没有一个<code>Student</code>类型可用。那怎么办？恰好有这么一个现成的对象：</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">robot</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Robot&#39;</span><span class="p">,</span>
+    <span class="nx">height</span><span class="o">:</span> <span class="mf">1.6</span><span class="p">,</span>
+    <span class="nx">run</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; is running...&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<blockquote>
+<p>我们看这个<code>robot</code>对象有名字，有身高，还会跑，有点像小明，干脆就根据它来“创建”小明得了！</p>
+</blockquote>
+<p>于是我们把它改名为<code>Student</code>，然后创建出<code>xiaoming</code>：</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">Student</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Robot&#39;</span><span class="p">,</span>
+    <span class="nx">height</span><span class="o">:</span> <span class="mf">1.2</span><span class="p">,</span>
+    <span class="nx">run</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; is running...&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">xiaoming</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;小明&#39;</span>
+<span class="p">};</span>
+
+<span class="nx">xiaoming</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">=</span> <span class="nx">Student</span><span class="p">;</span>
+<span class="nx">xiaoming</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span> <span class="c1">// &#39;小明&#39;</span>
+<span class="nx">xiaoming</span><span class="p">.</span><span class="nx">run</span><span class="p">();</span> <span class="c1">// 小明 is running...</span>
+</pre></div>
+
+
+<p>JavaScript的原型链和Java的Class区别就在，它没有“Class”的概念，所有对象都是实例，所谓继承关系不过是把一个对象的原型指向另一个对象而已。</p>
+<p>如果你把<code>xiaoming</code>的原型指向其他对象：</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">Bird</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">fly</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; is flying...&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">xiaoming</span><span class="p">.</span><span class="nx">__proto__</span> <span class="o">=</span> <span class="nx">Bird</span><span class="p">;</span>
+</pre></div>
+
+
+<p>现在<code>xiaoming</code>已经无法<code>run()</code>了，他已经变成了一只鸟：</p>
+<div class="hlcode"><pre><span class="n">xiaoming</span><span class="p">.</span><span class="n">fly</span><span class="p">();</span> <span class="c1">// 小明 is flying...</span>
+</pre></div>
+
+
+<ul>
+<li>请注意，上述代码仅用于演示目的。在编写JavaScript代码时，不要直接用<code>obj.__proto__</code>去改变一个对象的原型，并且，低版本的IE也无法使用<code>__proto__</code>。</li>
+<li><code>Object.create()</code>方法可以传入一个原型对象，并创建一个基于该原型的新对象，但是新对象什么属性都没有，因此，我们可以编写一个函数来创建<code>xiaoming</code>：</li>
+</ul>
+<div class="hlcode"><pre><span class="c1">// 原型对象:</span>
+<span class="k">var</span> <span class="n">Student</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nl">name:</span> <span class="p">&#39;</span><span class="n">Robot</span><span class="p">&#39;,</span>
+    <span class="nl">height:</span> <span class="mf">1.2</span><span class="p">,</span>
+    <span class="nl">run:</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">name</span> <span class="o">+</span> <span class="p">&#39;</span> <span class="n">is</span> <span class="n">running</span><span class="p">...&#39;);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">function</span> <span class="n">createStudent</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 基于Student原型创建一个新对象:</span>
+    <span class="k">var</span> <span class="n">s</span> <span class="o">=</span> <span class="n">Object</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">Student</span><span class="p">);</span>
+    <span class="c1">// 初始化新对象:</span>
+    <span class="n">s</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">s</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">var</span> <span class="n">xiaoming</span> <span class="o">=</span> <span class="n">createStudent</span><span class="p">(&#39;</span><span class="err">小明</span><span class="p">&#39;);</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">run</span><span class="p">();</span>
+<span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">xiaoming</span><span class="p">.</span><span class="n">__proto__</span> <span class="o">===</span> <span class="n">Student</span><span class="p">);</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">xiaoming</span> <span class="n">is</span> <span class="n">running</span><span class="p">...</span>
+<span class="n">true</span>
+</pre></div>
+
+
+<h2 id="_2">创建对象</h2>
+<ul>
+<li>JavaScript对每个创建的对象都会设置一个原型，指向它的原型对象。</li>
+</ul>
+<p>当我们用<code>obj.xxx</code>访问一个对象的属性时，JavaScript引擎先在当前对象上查找该属性，如果没有找到，就到其原型对象上找，如果还没有找到，就一直上溯到<code>Object.prototype</code>对象，最后，如果还没有找到，就只能返回<code>undefined</code>。</p>
+<h2 id="prototype">原型链 prototype</h2>
+<p>创建一个<code>Array</code>对象：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+</pre></div>
+
+
+<p>其原型链是：</p>
+<div class="hlcode"><pre><span class="n">arr</span> <span class="o">----&gt;</span> <span class="n">Array</span><span class="p">.</span><span class="n">prototype</span> <span class="o">----&gt;</span> <span class="n">Object</span><span class="p">.</span><span class="n">prototype</span> <span class="o">----&gt;</span> <span class="n">null</span>
+</pre></div>
+
+
+<p><code>Array.prototype</code>定义了<code>indexOf()</code>、<code>shift()</code>等方法，因此你可以在所有的<code>Array</code>对象上直接调用这些方法。</p>
+<p>当我们创建一个函数时：</p>
+<div class="hlcode"><pre><span class="kd">function</span> <span class="nx">foo</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>函数也是一个对象，它的原型链是：</p>
+<div class="hlcode"><pre><span class="n">foo</span> <span class="o">----&gt;</span> <span class="n">Function</span><span class="p">.</span><span class="n">prototype</span> <span class="o">----&gt;</span> <span class="n">Object</span><span class="p">.</span><span class="n">prototype</span> <span class="o">----&gt;</span> <span class="n">null</span>
+</pre></div>
+
+
+<p>由于<code>Function.prototype</code>定义了<code>apply()</code>等方法，因此，所有函数都可以调用<code>apply()</code>方法。</p>
+<p>很容易想到，如果原型链很长，那么访问一个对象的属性就会因为花更多的时间查找而变得更慢，因此要注意不要把原型链搞得太长。</p>
+<h3 id="prototype-vs-__proto__"><code>prototype</code> VS <code>__proto__</code></h3>
+<p>需要解释一下 JavaScript 的两个东西，一个是 <code>__proto__</code>，另一个是 <code>prototype</code>，这两个东西很容易混淆。这里说明一下：</p>
+<ul>
+<li><strong><code>__proto__</code></strong> 主要是安放在一个实际的对象中，用它来产生一个链接，一个原型链连，用于寻找方法名或属性，等等。</li>
+<li><strong><code>prototype</code></strong> 是用 <code>new</code> 来创建一个对象时构造 <code>__proto__</code> 用的。它是构造函数的一个属性。</li>
+</ul>
+<p>在 JavaScript 中，对象有两种表现形式， 一种是 <code>Object</code> (<a href="http://www.ecma-international.org/ecma-262/5.1/#sec-15.2">ES5 关于 Object 的文档</a>)，一种是 <code>Function</code> （<a href="http://www.ecma-international.org/ecma-262/5.1/#sec-15.2">ES5 关于 Function 的文档</a>）。</p>
+<p>我们可以简单地认为，<code>__proto__</code> 是所有对象用于链接原型的一个指针，而 <code>prototype</code> 则是 Function 对象的属性，其主要是用来当需要 new 一个对象时让 <code>__proto__</code> 指针所指向的地方。 对于超级对象 <code>Function</code> 而言， <code>Function.__proto__</code> 就是 <code>Function.prototype</code>。</p>
+<h2 id="_3">构造函数</h2>
+<p>除了直接用<code>{ ... }</code>创建一个对象外，JavaScript还可以用一种构造函数的方法来创建对象。它的用法是，先定义一个构造函数：</p>
+<div class="hlcode"><pre><span class="kd">function</span> <span class="nx">Student</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">hello</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hello, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;!&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>你会问，咦，这不是一个普通函数吗？</p>
+<p>这确实是一个普通函数，但是在JavaScript中，可以用关键字<code>new</code>来调用这个函数，并返回一个对象：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">xiaoming</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Student</span><span class="p">(</span><span class="err">&#39;小明&#39;</span><span class="p">);</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">name</span><span class="p">;</span> <span class="c1">// &#39;小明&#39;</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">hello</span><span class="p">();</span> <span class="c1">// Hello, 小明!</span>
+</pre></div>
+
+
+<p><em>注意</em>，如果不写<code>new</code>，这就是一个普通函数，它返回<code>undefined</code>。但是，如果写了<code>new</code>，它就变成了一个构造函数，它绑定的<code>this</code>指向新创建的对象，并默认返回<code>this</code>，也就是说，不需要在最后写<code>return this;</code>。</p>
+<p>新创建的<code>xiaoming</code>的原型链是：</p>
+<div class="hlcode"><pre><span class="n">xiaoming</span> <span class="o">----&gt;</span> <span class="n">Student</span><span class="p">.</span><span class="n">prototype</span> <span class="o">----&gt;</span> <span class="n">Object</span><span class="p">.</span><span class="n">prototype</span> <span class="o">----&gt;</span> <span class="n">null</span>
+</pre></div>
+
+
+<p>也就是说，<code>xiaoming</code>的原型指向函数<code>Student</code>的原型。如果你又创建了<code>xiaohong</code>、<code>xiaojun</code>，那么这些对象的原型与<code>xiaoming</code>是一样的：</p>
+<div class="hlcode"><pre><span class="n">xiaoming</span> <span class="err">↘</span>
+<span class="n">xiaohong</span> <span class="o">-</span><span class="err">→</span> <span class="n">Student</span><span class="p">.</span><span class="n">prototype</span> <span class="o">----&gt;</span> <span class="n">Object</span><span class="p">.</span><span class="n">prototype</span> <span class="o">----&gt;</span> <span class="n">null</span>
+<span class="n">xiaojun</span>  <span class="err">↗</span>
+</pre></div>
+
+
+<p>用<code>new Student()</code>创建的对象还从原型上获得了一个<code>constructor</code>属性，它指向函数<code>Student</code>本身：</p>
+<div class="hlcode"><pre><span class="n">xiaoming</span><span class="p">.</span><span class="n">constructor</span> <span class="o">===</span> <span class="n">Student</span><span class="p">.</span><span class="n">prototype</span><span class="p">.</span><span class="n">constructor</span><span class="p">;</span> <span class="c1">// true</span>
+<span class="n">Student</span><span class="p">.</span><span class="n">prototype</span><span class="p">.</span><span class="n">constructor</span> <span class="o">===</span> <span class="n">Student</span><span class="p">;</span> <span class="c1">// true</span>
+
+<span class="n">Object</span><span class="p">.</span><span class="n">getPrototypeOf</span><span class="p">(</span><span class="n">xiaoming</span><span class="p">)</span> <span class="o">===</span> <span class="n">Student</span><span class="p">.</span><span class="n">prototype</span><span class="p">;</span> <span class="c1">// true</span>
+
+<span class="n">xiaoming</span> <span class="n">instanceof</span> <span class="n">Student</span><span class="p">;</span> <span class="c1">// true</span>
+</pre></div>
+
+
+<p>函数<code>Student</code>恰好有个属性<code>prototype</code>指向<code>xiaoming</code>、<code>xiaohong</code>的原型对象，但是<code>xiaoming</code>、<code>xiaohong</code>这些对象可没有<code>prototype</code>这个属性，不过可以用<code>__proto__</code>这个非标准用法来查看。</p>
+<p>现在我们就认为<code>xiaoming</code>、<code>xiaohong</code>这些对象“继承”自<code>Student</code>。</p>
+<p>不过还有一个小问题，注意观察：</p>
+<div class="hlcode"><pre><span class="nx">xiaoming</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span> <span class="c1">// &#39;小明&#39;</span>
+<span class="nx">xiaohong</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span> <span class="c1">// &#39;小红&#39;</span>
+<span class="nx">xiaoming</span><span class="p">.</span><span class="nx">hello</span><span class="p">;</span> <span class="c1">// function: Student.hello()</span>
+<span class="nx">xiaohong</span><span class="p">.</span><span class="nx">hello</span><span class="p">;</span> <span class="c1">// function: Student.hello()</span>
+<span class="nx">xiaoming</span><span class="p">.</span><span class="nx">hello</span> <span class="o">===</span> <span class="nx">xiaohong</span><span class="p">.</span><span class="nx">hello</span><span class="p">;</span> <span class="c1">// false</span>
+</pre></div>
+
+
+<p><code>xiaoming</code>和<code>xiaohong</code>各自的<code>name</code>不同，这是对的，否则我们无法区分谁是谁了。</p>
+<p><code>xiaoming</code>和<code>xiaohong</code>各自的<code>hello</code>是一个函数，但它们是两个不同的函数，虽然函数名称和代码都是相同的！</p>
+<p>如果我们通过<code>new Student()</code>创建了很多对象，这些对象的<code>hello</code>函数实际上只需要共享同一个函数就可以了，这样可以节省很多内存。</p>
+<p>要让创建的对象共享一个<code>hello</code>函数，根据对象的属性查找原则，我们只要把<code>hello</code>函数移动到<code>xiaoming</code>、<code>xiaohong</code>这些对象共同的原型上就可以了，也就是<code>Student.prototype</code>：</p>
+<ul>
+<li>修改代码如下：</li>
+</ul>
+<div class="hlcode"><pre><span class="kd">function</span> <span class="nx">Student</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">Student</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hello</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hello, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;!&#39;</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>用<code>new</code>创建基于原型的JavaScript的对象就是这么简单！</p>
+<h3 id="new">忘记写new怎么办</h3>
+<p>如果一个函数被定义为用于创建对象的构造函数，但是调用时忘记了写<code>new</code>怎么办？</p>
+<p>在strict模式下，<code>this.name = name</code>将报错，因为<code>this</code>绑定为<code>undefined</code>，在非strict模式下，<code>this.name = name</code>不报错，因为<code>this</code>绑定为<code>window</code>，于是无意间创建了全局变量<code>name</code>，并且返回<code>undefined</code>，这个结果更糟糕。</p>
+<p>所以，调用构造函数千万不要忘记写<code>new</code>。为了区分普通函数和构造函数，按照约定，构造函数首字母应当大写，而普通函数首字母应当小写，这样，一些语法检查工具如<a href="http://www.jslint.com/">jslint</a>将可以帮你检测到漏写的<code>new</code>。</p>
+<p>编写一个<code>createStudent()</code>函数，在内部封装所有的<code>new</code>操作。一个常用的编程模式像这样：</p>
+<div class="hlcode"><pre><span class="kd">function</span> <span class="nx">Student</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;匿名&#39;</span><span class="p">;</span> <span class="c1">// 默认值为&#39;匿名&#39;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">grade</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">grade</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 默认值为1</span>
+<span class="p">}</span>
+
+<span class="nx">Student</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hello</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hello, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;!&#39;</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="kd">function</span> <span class="nx">createStudent</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Student</span><span class="p">(</span><span class="nx">props</span> <span class="o">||</span> <span class="p">{})</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>这个<code>createStudent()</code>函数有几个巨大的优点：一是不需要<code>new</code>来调用，二是参数非常灵活，可以不传，也可以这么传：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">xiaoming</span> <span class="o">=</span> <span class="n">createStudent</span><span class="p">({</span>
+    <span class="nl">name:</span> <span class="err">&#39;小明&#39;</span>
+<span class="p">});</span>
+
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">grade</span><span class="p">;</span> <span class="c1">// 1</span>
+</pre></div>
+
+
+<p>如果创建的对象有很多属性，我们只需要传递需要的某些属性，剩下的属性可以用默认值。由于参数是一个Object，我们无需记忆参数的顺序。如果恰好从<code>JSON</code>拿到了一个对象，就可以直接创建出<code>xiaoming</code>。</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

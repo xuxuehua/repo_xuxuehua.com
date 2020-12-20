@@ -1,0 +1,403 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>array 数组 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java">Java</a>&nbsp;&#187;&nbsp;array 数组
+    <span class="updated">Page Updated&nbsp;
+      2019-10-06 21:06
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">array 数组</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#array">Array 数组</a><ul>
+<li><a href="#_1">定义数组</a><ul>
+<li><a href="#_2">字符串数组</a></li>
+</ul>
+</li>
+<li><a href="#_3">匿名数组</a></li>
+</ul>
+</li>
+<li><a href="#_4">多维数组</a><ul>
+<li><a href="#_5">二维数组</a><ul>
+<li><a href="#for">for 循环打印</a></li>
+<li><a href="#deeptostring">deepToString 打印</a></li>
+</ul>
+</li>
+<li><a href="#_6">三维数组 （不常用）</a></li>
+</ul>
+</li>
+<li><a href="#_7">数组操作</a><ul>
+<li><a href="#_8">赋值</a></li>
+<li><a href="#_9">排序</a><ul>
+<li><a href="#_10">冒泡排序</a></li>
+<li><a href="#sort">sort( )</a></li>
+</ul>
+</li>
+<li><a href="#_11">索引访问</a></li>
+<li><a href="#_12">遍历数组</a><ul>
+<li><a href="#for_1">for</a></li>
+<li><a href="#for-each">for each</a></li>
+</ul>
+</li>
+<li><a href="#_13">打印数组内容</a><ul>
+<li><a href="#tostring">toString()</a></li>
+</ul>
+</li>
+<li><a href="#length">length 获取长度</a></li>
+<li><a href="#copyof">copyOf 复制</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="array">Array 数组</h1>
+<p>数组所有元素初始化为默认值，整型都是<code>0</code>，浮点型是<code>0.0</code>，布尔型是<code>false</code>；</p>
+<p>数组一旦创建后，大小就不可改变。</p>
+<h2 id="_1">定义数组</h2>
+<p>元素个数必须是整数</p>
+<p>元素个数必须给出</p>
+<p>元素个数可以是变量</p>
+<div class="hlcode"><pre><span class="err">&lt;</span>类型&gt;<span class="cp">[]</span> <span class="err">&lt;</span>名称&gt; = new <span class="err">&lt;</span>类型&gt;<span class="cp">[</span><span class="nx">元素个数</span><span class="cp">]</span>
+
+int<span class="cp">[]</span> grades = new int<span class="cp">[</span><span class="mi">100</span><span class="cp">]</span>;
+double<span class="cp">[]</span> averages = new double<span class="cp">[</span><span class="mi">20</span><span class="cp">]</span>;
+</pre></div>
+
+
+<h3 id="_2">字符串数组</h3>
+<div class="hlcode"><pre><span class="n">String</span><span class="p">[]</span> <span class="n">names</span> <span class="o">=</span> <span class="n">new</span> <span class="n">String</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
+</pre></div>
+
+
+<blockquote>
+<p>创建了一个包含10个字符串数组，所有字符串都为null</p>
+<p>可以为其内部元素指定空串</p>
+</blockquote>
+<p>如果数组元素不是基本类型，而是一个引用类型，字符串是引用类型</p>
+<div class="hlcode"><pre><span class="n">String</span><span class="p">[]</span> <span class="n">names</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&quot;ABC&quot;</span><span class="p">,</span> <span class="s">&quot;XYZ&quot;</span><span class="p">,</span> <span class="s">&quot;zoo&quot;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>对于<code>String[]</code>类型的数组变量<code>names</code>，它实际上包含3个元素，但每个元素都指向某个字符串对象：</p>
+<p><img alt="image-20200121102140138" src="array.assets/image-20200121102140138.png" /></p>
+<p>对<code>names[1]</code>进行赋值，例如<code>names[1] = "cat";</code>，效果如下：</p>
+<p><img alt="image-20200121102200212" src="array.assets/image-20200121102200212.png" /></p>
+<p>这里注意到原来<code>names[1]</code>指向的字符串<code>"XYZ"</code>并没有改变，仅仅是将<code>names[1]</code>的引用从指向<code>"XYZ"</code>改成了指向<code>"cat"</code>，其结果是字符串<code>"XYZ"</code>再也无法通过<code>names[1]</code>访问到了</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">String</span><span class="p">[]</span> <span class="n">names</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;ABC&quot;</span><span class="p">,</span> <span class="s">&quot;XYZ&quot;</span><span class="p">,</span> <span class="s">&quot;zoo&quot;</span><span class="p">};</span>
+        <span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+        <span class="n">names</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;cat&quot;</span><span class="p">;</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">XYZ</span>
+</pre></div>
+
+
+<h2 id="_3">匿名数组</h2>
+<p>即创建数组对象并同时赋值初始值的简化写法</p>
+<div class="hlcode"><pre><span class="n">smallPrimes</span> <span class="o">=</span> <span class="n">new</span> <span class="kt">int</span><span class="p">[]</span> <span class="p">{</span><span class="mi">17</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">37</span><span class="p">};</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="kt">int</span> <span class="p">[]</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">new</span> <span class="kt">int</span><span class="p">[]</span> <span class="p">{</span><span class="mi">68</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">62</span> <span class="p">};</span>
+<span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">ns</span><span class="p">.</span><span class="n">length</span><span class="p">);</span>
+</pre></div>
+
+
+<p>还可以进一步简写为：</p>
+<div class="hlcode"><pre><span class="kt">int</span><span class="p">[]</span> <span class="n">ns</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">68</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">62</span> <span class="p">};</span>
+</pre></div>
+
+
+<h1 id="_4">多维数组</h1>
+<h2 id="_5">二维数组</h2>
+<p>二维数组就是数组的数组</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span><span class="p">[][]</span> <span class="n">ns</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">},</span>
+                <span class="p">{</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">},</span>
+                <span class="p">{</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">}</span>
+        <span class="p">};</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">ns</span><span class="p">.</span><span class="n">length</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">3</span>
+</pre></div>
+
+
+<h3 id="for">for 循环打印</h3>
+<p>for each循环不能自动处理二维数组的每一个元素， 需要使用两个嵌套循环</p>
+<div class="hlcode"><pre><span class="k">for</span> <span class="p">(</span><span class="kt">double</span><span class="p">[]</span> <span class="n">row</span><span class="o">:</span> <span class="n">a</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">double</span> <span class="n">value</span><span class="o">:</span> <span class="n">row</span><span class="p">)</span>
+            <span class="k">do</span> <span class="n">something</span> <span class="n">with</span> <span class="n">value</span>
+</pre></div>
+
+
+<h3 id="deeptostring">deepToString 打印</h3>
+<p>使用Java标准库的<code>Arrays.deepToString()</code>打印一个二维数组</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">util</span><span class="p">.</span><span class="n">Arrays</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span><span class="p">[][]</span> <span class="n">ns</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">},</span>
+                <span class="p">{</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">},</span>
+                <span class="p">{</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">}</span>
+        <span class="p">};</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">Arrays</span><span class="p">.</span><span class="n">deepToString</span><span class="p">(</span><span class="n">ns</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]]</span>
+</pre></div>
+
+
+<h2 id="_6">三维数组 （不常用）</h2>
+<p>三维数组就是二维数组的数组</p>
+<p>定义</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span><span class="p">[][][]</span> <span class="n">ns</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="p">{</span>
+                        <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">},</span>
+                        <span class="p">{</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">},</span>
+                        <span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">}</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                        <span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">},</span>
+                        <span class="p">{</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">}</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                        <span class="p">{</span><span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">},</span>
+                        <span class="p">{</span><span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">}</span>
+                <span class="p">}</span>
+        <span class="p">};</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">ns</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h1 id="_7">数组操作</h1>
+<h2 id="_8">赋值</h2>
+<div class="hlcode"><pre><span class="kt">int</span> <span class="p">[]</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
+<span class="n">ns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">69</span><span class="p">;</span>
+<span class="n">ns</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">80</span><span class="p">;</span>
+</pre></div>
+
+
+<p>也可以在定义数组时直接指定初始化的元素，这样就不必写出数组大小，而是由编译器自动推算数组大小。</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span><span class="p">[]</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">new</span> <span class="kt">int</span><span class="p">[]</span> <span class="p">{</span><span class="mi">68</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">81</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">62</span><span class="p">};</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">ns</span><span class="p">.</span><span class="n">length</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">5</span>
+</pre></div>
+
+
+<p>也可以进一步简写为</p>
+<div class="hlcode"><pre><span class="kt">int</span><span class="p">[]</span> <span class="n">ns</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">68</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">62</span> <span class="p">};</span>
+</pre></div>
+
+
+<h2 id="_9">排序</h2>
+<h3 id="_10">冒泡排序</h3>
+<p>冒泡排序的特点是，每一轮循环后，最大的一个数被交换到末尾，因此，下一轮循环就可以“刨除”最后的数，每一轮循环都比上一轮循环的结束位置靠前一位</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">util</span><span class="p">.</span><span class="n">Arrays</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span><span class="p">[]</span> <span class="n">ns</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> <span class="mi">73</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">36</span> <span class="p">};</span>
+        <span class="c1">// 排序前:</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">Arrays</span><span class="p">.</span><span class="n">toString</span><span class="p">(</span><span class="n">ns</span><span class="p">));</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">ns</span><span class="p">.</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">ns</span><span class="p">.</span><span class="n">length</span> <span class="o">-</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">ns</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">ns</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="c1">// 交换ns[j]和ns[j+1]:</span>
+                    <span class="kt">int</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">ns</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+                    <span class="n">ns</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">ns</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+                    <span class="n">ns</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">// 排序后:</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">Arrays</span><span class="p">.</span><span class="n">toString</span><span class="p">(</span><span class="n">ns</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">[</span><span class="mi">28</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> <span class="mi">73</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">36</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">73</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> <span class="mi">96</span><span class="p">]</span>
+</pre></div>
+
+
+<h3 id="sort">sort( )</h3>
+<p>修改了每个数组元素的指向变化</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">util</span><span class="p">.</span><span class="n">Arrays</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span><span class="p">[]</span> <span class="n">ns</span> <span class="o">=</span> <span class="p">{</span><span class="mi">28</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> <span class="mi">73</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">36</span><span class="p">};</span>
+        <span class="n">Arrays</span><span class="p">.</span><span class="n">sort</span><span class="p">(</span><span class="n">ns</span><span class="p">);</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">Arrays</span><span class="p">.</span><span class="n">toString</span><span class="p">(</span><span class="n">ns</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">73</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> <span class="mi">96</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="_11">索引访问</h2>
+<p>下标越界，编译器时检查不出来，只有运行的时候会出错，导致程序终止</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="p">[]</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
+        <span class="n">ns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">ns</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">ns</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">0</span>
+</pre></div>
+
+
+<h2 id="_12">遍历数组</h2>
+<h3 id="for_1">for</h3>
+<p>通过<code>for</code>循环就可以遍历数组。因为数组的每个元素都可以通过索引来访问，因此，使用标准的<code>for</code>循环可以完成一个数组的遍历</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="p">[]</span> <span class="n">ns</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">25</span><span class="p">};</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">ns</span><span class="p">.</span><span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">ns</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">1</span>
+<span class="mi">4</span>
+<span class="mi">9</span>
+<span class="mi">16</span>
+<span class="mi">25</span>
+</pre></div>
+
+
+<h3 id="for-each">for each</h3>
+<p>只是获取数组中的value信息，无法修改数组元素内容</p>
+<div class="hlcode"><pre><span class="k">for</span> <span class="p">(</span><span class="n">variable</span><span class="o">:</span> <span class="n">collection</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">statement</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="p">[]</span> <span class="n">ns</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">25</span><span class="p">};</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="o">:</span> <span class="n">ns</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">1</span>
+<span class="mi">4</span>
+<span class="mi">9</span>
+<span class="mi">16</span>
+<span class="mi">25</span>
+</pre></div>
+
+
+<p>也可以使用for 循环获取</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span><span class="p">[]</span> <span class="n">ns</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">25</span><span class="p">};</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">ns</span><span class="p">.</span><span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">ns</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">1</span>
+<span class="mi">4</span>
+<span class="mi">9</span>
+<span class="mi">16</span>
+<span class="mi">25</span>
+</pre></div>
+
+
+<h2 id="_13">打印数组内容</h2>
+<h3 id="tostring">toString()</h3>
+<p>使用标准库中<code>Arrays.toString()</code></p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">util</span><span class="p">.</span><span class="n">Arrays</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="p">[]</span> <span class="n">ns</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">};</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">Arrays</span><span class="p">.</span><span class="n">toString</span><span class="p">(</span><span class="n">ns</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="length">length 获取长度</h2>
+<div class="hlcode"><pre><span class="kt">int</span> <span class="p">[]</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
+<span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">ns</span><span class="p">.</span><span class="n">length</span><span class="p">);</span>
+</pre></div>
+
+
+<h2 id="copyof">copyOf 复制</h2>
+<div class="hlcode"><pre><span class="kt">int</span><span class="p">[]</span> <span class="n">luckyNumbers</span> <span class="o">=</span> <span class="n">smallPrimes</span><span class="p">;</span>
+<span class="kt">int</span><span class="p">[]</span> <span class="n">copiedLuckyNumbers</span> <span class="o">=</span> <span class="n">Arrays</span><span class="p">.</span><span class="n">copyOf</span><span class="p">(</span><span class="n">luckyNumbers</span><span class="p">,</span> <span class="n">luckyNumbers</span><span class="p">.</span><span class="n">length</span><span class="p">);</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

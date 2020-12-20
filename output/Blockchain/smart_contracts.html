@@ -1,0 +1,505 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>Smart_contracts - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Blockchain">Blockchain</a>&nbsp;&#187;&nbsp;Smart_contracts
+    <span class="updated">Page Updated&nbsp;
+      2018-06-17 12:00
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">Smart_contracts</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#smart-contracts">Smart Contracts</a><ul>
+<li><a href="#hello-world">Hello World 代码</a></li>
+<li><a href="#_1">合约方法</a><ul>
+<li><a href="#constant-view">constant（视觉上的警示） -&gt; view</a></li>
+<li><a href="#pure">pure</a></li>
+</ul>
+</li>
+<li><a href="#remix">remix 在线编辑器</a></li>
+<li><a href="#eth-gas">eth gas</a></li>
+<li><a href="#solidity">solidity</a><ul>
+<li><a href="#bool">bool</a></li>
+<li><a href="#uint-int">uint （无符号整型） / int</a></li>
+<li><a href="#address">地址address</a><ul>
+<li><a href="#_2">成员变量函数</a></li>
+</ul>
+</li>
+<li><a href="#ether">ETHER 单位</a></li>
+<li><a href="#block">block 块</a></li>
+<li><a href="#_3">消息</a></li>
+<li><a href="#revert">revert 返回</a></li>
+<li><a href="#_4">数组</a><ul>
+<li><a href="#uint5-a">固定长度(uint[5] a)</a></li>
+<li><a href="#uint-a">动态长度(uint[] a)</a></li>
+</ul>
+</li>
+<li><a href="#struct">struct</a></li>
+<li><a href="#_5">循环</a><ul>
+<li><a href="#for">for</a></li>
+<li><a href="#while">while</a></li>
+</ul>
+</li>
+<li><a href="#data-location">data location</a><ul>
+<li><a href="#_6">强制</a></li>
+<li><a href="#_7">默认</a></li>
+</ul>
+</li>
+<li><a href="#mapping">MAPPING</a><ul>
+<li><a href="#mapping_1">mapping 底层实现</a></li>
+</ul>
+</li>
+<li><a href="#_8">可视度</a></li>
+<li><a href="#_9">继承</a></li>
+</ul>
+</li>
+<li><a href="#design">设计 design</a><ul>
+<li><a href="#_10">单人设计</a><ul>
+<li><a href="#code">code</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_11">错误检测</a><ul>
+<li><a href="#assertbool">assert(bool)</a></li>
+<li><a href="#requirebool">require(bool)</a></li>
+</ul>
+</li>
+<li><a href="#truffle">Truffle</a><ul>
+<li><a href="#truffle-box">truffle box 开发前端应用</a><ul>
+<li><a href="#_12">测试</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#metamask">metamask</a></li>
+<li><a href="#ganache-cli">ganache-cli</a></li>
+<li><a href="#web3js">web3.js</a><ul>
+<li><a href="#web3">web3 调用合约方程</a></li>
+</ul>
+</li>
+<li><a href="#_13">合约部署</a></li>
+<li><a href="#_14">合约安全</a><ul>
+<li><a href="#_15">外部函数调用安全性</a></li>
+<li><a href="#_16">函数可见性</a></li>
+<li><a href="#_17">数学运算</a></li>
+<li><a href="#_18">随机数与系统时间的依赖性</a></li>
+<li><a href="#_19">合约数据可见性</a></li>
+<li><a href="#_20">谨慎使用汇编注入</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="smart-contracts">Smart Contracts</h1>
+<h2 id="hello-world">Hello World 代码</h2>
+<div class="hlcode"><pre><span class="nx">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">21</span><span class="p">;</span> <span class="c1">// 程序版本</span>
+
+<span class="nx">contract</span> <span class="nx">SimpleStorage</span> <span class="p">{</span>       <span class="c1">// 合约声明</span>
+    <span class="nx">uint</span> <span class="nx">storedData</span><span class="p">;</span>    <span class="c1">// 状态变量</span>
+
+    <span class="kd">function</span> <span class="nx">set</span><span class="p">(</span><span class="nx">uint</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>      <span class="c1">// 合约的方法</span>
+        <span class="nx">storedData</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">get</span><span class="p">()</span> <span class="nx">constant</span> <span class="nx">returns</span> <span class="p">(</span><span class="nx">uint</span><span class="p">){</span>     
+        <span class="k">return</span> <span class="nx">storedData</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_1">合约方法</h2>
+<h3 id="constant-view">constant（视觉上的警示） -&gt; view</h3>
+<ul>
+<li>最新版本变成view 方法</li>
+</ul>
+<h3 id="pure">pure</h3>
+<ul>
+<li>比constant警示作用更严格，函数中，成员变量无法读写。在做库的时候会有用</li>
+</ul>
+<h2 id="remix">remix 在线编辑器</h2>
+<ul>
+<li>remix.ethereum.org</li>
+</ul>
+<h2 id="eth-gas">eth gas</h2>
+<ul>
+<li>在函数调用的通过的gas 来完成</li>
+</ul>
+<h2 id="solidity">solidity</h2>
+<ul>
+<li>没有浮点数，不支持非整数声明</li>
+</ul>
+<h3 id="bool">bool</h3>
+<ul>
+<li>true</li>
+<li>false</li>
+<li>! </li>
+<li>&amp;&amp; </li>
+<li>||</li>
+<li>==</li>
+<li>!=</li>
+</ul>
+<h3 id="uint-int">uint （无符号整型） / int</h3>
+<ul>
+<li>比较： &lt;=, &lt;, ==, !=, &gt;=, &gt; </li>
+<li>位操作： &amp;, |, ^,~, &gt;&gt;, &lt;&lt;</li>
+<li>计算： + = * / % **</li>
+</ul>
+<h3 id="address">地址address</h3>
+<ul>
+<li>智能合约也是有唯一地址</li>
+</ul>
+<h4 id="_2">成员变量函数</h4>
+<ul>
+<li>Address.balance</li>
+<li>Address.transfer(value)</li>
+<li>Address.send(value)</li>
+<li>address.call, address.callcode and dress.delegatecall</li>
+</ul>
+<h3 id="ether">ETHER 单位</h3>
+<ul>
+<li>Wei </li>
+<li>szabo = 10 ^ 12 wei</li>
+<li>finney = 10 ^ 15 wei</li>
+<li>Ether = 10 &amp; 18 wei</li>
+</ul>
+<div class="hlcode"><pre><span class="nx">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">14</span><span class="p">;</span>
+
+<span class="nx">contract</span> <span class="nx">Payroll</span> <span class="p">{</span>
+    <span class="nx">uint</span> <span class="nx">salary</span> <span class="o">=</span> <span class="mi">1</span> <span class="nx">ether</span><span class="p">;</span>
+    <span class="nx">address</span> <span class="nx">frank</span> <span class="o">=</span> <span class="mh">0x7eC9938C53e6DE7B4B502B5e6fc388084b934577</span><span class="p">;</span>
+    <span class="nx">uint</span> <span class="nx">payDuration</span> <span class="o">=</span> <span class="mi">30</span> <span class="nx">days</span><span class="p">;</span>
+    <span class="nx">uint</span> <span class="nx">lastPayday</span> <span class="o">=</span> <span class="nx">now</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">test</span><span class="p">()</span> <span class="nx">returns</span> <span class="p">(</span><span class="nx">bool</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="nx">wei</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nx">to</span><span class="o">:</span><span class="nx">Payroll</span><span class="p">.</span><span class="nx">test</span><span class="p">()</span> <span class="mh">0xdc0</span><span class="p">...</span><span class="mi">46222</span><span class="nx">value</span><span class="o">:</span><span class="mi">0</span> <span class="nx">weidata</span><span class="o">:</span><span class="mh">0xf8a</span><span class="p">...</span><span class="mi">8</span><span class="nx">fd6dlogs</span><span class="o">:</span><span class="mi">0</span><span class="nx">hash</span><span class="o">:</span><span class="mh">0x487</span><span class="p">...</span><span class="nx">e0f91</span>
+<span class="nx">Debug</span>
+ <span class="nx">status</span>     <span class="mh">0x1</span> <span class="nx">Transaction</span> <span class="nx">mined</span> <span class="nx">and</span> <span class="nx">execution</span> <span class="nx">succeed</span>
+ <span class="nx">from</span>   <span class="mh">0xca35b7d915458ef540ade6068dfe2f44e8fa733c</span>
+ <span class="nx">to</span>     <span class="nx">Payroll</span><span class="p">.</span><span class="nx">test</span><span class="p">()</span> <span class="mh">0xdc04977a2078c8ffdf086d618d1f961b6c546222</span>
+ <span class="nx">gas</span>    <span class="mi">3000000</span> <span class="nx">gas</span>
+
+ <span class="nx">transaction</span> <span class="nx">cost</span>   <span class="mi">21492</span> <span class="nx">gas</span> 
+ <span class="nx">execution</span> <span class="nx">cost</span>     <span class="mi">220</span> <span class="nx">gas</span> 
+ <span class="nx">input</span>  <span class="mh">0xf8a8fd6d</span>
+ <span class="nx">decoded</span> <span class="nx">input</span>  <span class="p">{}</span>
+ <span class="nx">decoded</span> <span class="nx">output</span>     <span class="p">{</span>
+    <span class="s2">&quot;0&quot;</span><span class="o">:</span> <span class="s2">&quot;bool: true&quot;</span>
+<span class="p">}</span>
+ <span class="nx">logs</span>   <span class="cp">[]</span>
+ <span class="nx">value</span>  <span class="mi">0</span> <span class="nx">wei</span>
+</pre></div>
+
+
+<h3 id="block">block 块</h3>
+<ul>
+<li>Block.blockhash(uint blockNumber) returns (bytes32)</li>
+<li>block.coinbase(address)</li>
+<li>block.difficulty(uint)</li>
+<li>Block.gaslimit(unit)</li>
+<li>block.number(uint)</li>
+<li>block.timestamp(uint)</li>
+<li>now</li>
+</ul>
+<h3 id="_3">消息</h3>
+<ul>
+<li>Msg.data</li>
+<li>msg.gas(uint)</li>
+<li>Msg.sender(address)</li>
+<li>Msg.sig</li>
+<li>Msg.value(uint)</li>
+</ul>
+<h3 id="revert">revert 返回</h3>
+<ul>
+<li>Throw 会消耗掉gas</li>
+<li>revert可以返回gas</li>
+</ul>
+<h3 id="_4">数组</h3>
+<h4 id="uint5-a">固定长度(uint[5] a)</h4>
+<div class="hlcode"><pre><span class="nx">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">14</span><span class="p">;</span>
+
+<span class="nx">contract</span> <span class="nx">Test</span> <span class="p">{</span>
+    <span class="nx">uint</span><span class="cp">[</span><span class="mi">2</span><span class="cp">]</span> <span class="nx">a</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">test</span><span class="p">()</span> <span class="nx">returns</span> <span class="p">(</span><span class="nx">uint</span><span class="p">,</span> <span class="nx">uint</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">a</span><span class="cp">[</span><span class="mi">0</span><span class="cp">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="nx">a</span><span class="cp">[</span><span class="mi">1</span><span class="cp">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="nx">a</span><span class="cp">[</span><span class="mi">0</span><span class="cp">]</span><span class="p">,</span> <span class="nx">a</span><span class="cp">[</span><span class="mi">1</span><span class="cp">]</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h4 id="uint-a">动态长度(uint[] a)</h4>
+<div class="hlcode"><pre><span class="nx">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">14</span><span class="p">;</span>
+
+<span class="nx">contract</span> <span class="nx">Test</span> <span class="p">{</span>
+    <span class="nx">uint</span><span class="cp">[]</span> <span class="nx">a</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">test</span><span class="p">()</span> <span class="nx">returns</span> <span class="p">(</span><span class="nx">uint</span><span class="p">,</span> <span class="nx">uint</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">a</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="nx">a</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+        <span class="nx">a</span><span class="cp">[</span><span class="mi">1</span><span class="cp">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="nx">a</span><span class="cp">[</span><span class="mi">0</span><span class="cp">]</span><span class="p">,</span> <span class="nx">a</span><span class="cp">[</span><span class="mi">1</span><span class="cp">]</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="struct">struct</h3>
+<div class="hlcode"><pre><span class="k">struct</span> <span class="n">Employee</span> <span class="p">{</span>
+    <span class="n">address</span> <span class="n">id</span><span class="p">;</span>
+    <span class="n">uint</span> <span class="n">salary</span><span class="p">;</span>
+    <span class="n">uint</span> <span class="n">lastPayday</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="_5">循环</h3>
+<h4 id="for">for</h4>
+<h4 id="while">while</h4>
+<h3 id="data-location">data location</h3>
+<ul>
+<li>
+<p>storage 永久的，区块链上的</p>
+</li>
+<li>
+<p>memory EVM临时空间，function运行完成后抹除</p>
+</li>
+<li>
+<p>calldata 类似memory</p>
+</li>
+</ul>
+<h4 id="_6">强制</h4>
+<ul>
+<li>状态变量： storage</li>
+<li>function输入参数： calldata</li>
+</ul>
+<h4 id="_7">默认</h4>
+<ul>
+<li>function返回参数 ： memory</li>
+<li>本地变量：storage</li>
+</ul>
+<h3 id="mapping">MAPPING</h3>
+<ul>
+<li>类似于map(C++), dict(python)</li>
+<li>Key 只能是(bool, int, address, string)</li>
+<li>Value (任何类型)</li>
+<li>mapping(address =&gt; Employee) employees</li>
+<li>只能做成员变量，不能做本地的局部变量</li>
+</ul>
+<h4 id="mapping_1">mapping 底层实现</h4>
+<ul>
+<li>不实用数组+链表，不需要扩容</li>
+<li>hash函数为keccak256hash，在storage上存储，理论无限大的hash表</li>
+<li>无法naiive的遍历整个mapping</li>
+<li>赋值 employees[key] = value</li>
+<li>取值 value = employees[key]</li>
+<li>value 是引用，在storage上存储，可以直接修改</li>
+<li>当key不存在，value=type's default</li>
+</ul>
+<h3 id="_8">可视度</h3>
+<ul>
+<li>public 谁都可见</li>
+<li>external 只有外部调用可见</li>
+<li>internal 外部调用不可见，内部和子类可见</li>
+<li>
+<p>private 只有当前合约可见</p>
+</li>
+<li>
+<p>状态变量： public, internal, private </p>
+</li>
+<li>默认为internal</li>
+<li>public 自动定义取值函数</li>
+<li>
+<p>Private 不代表别的无法肉眼看到，只代表别的区块链智能合约无法看到</p>
+</li>
+<li>
+<p>合约的所有成员变量都是肉眼可见的</p>
+</li>
+<li>
+<p>函数public，external，internal，private</p>
+</li>
+<li>默认public</li>
+</ul>
+<h3 id="_9">继承</h3>
+<ul>
+<li>基本语法</li>
+</ul>
+<h2 id="design">设计 design</h2>
+<p><img alt="alt" src="https://cdn.pbrd.co/images/HqsEYgc.png" /></p>
+<ul>
+<li>原生定时器是没有，每一个块需要执行一个完整的函数</li>
+<li>通过外部方式调用定时器</li>
+</ul>
+<h3 id="_10">单人设计</h3>
+<h4 id="code">code</h4>
+<div class="hlcode"><pre><span class="nx">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">14</span><span class="p">;</span>
+
+<span class="nx">contract</span> <span class="nx">Payroll</span> <span class="p">{</span>
+    <span class="nx">uint</span> <span class="nx">constant</span> <span class="nx">payDuration</span> <span class="o">=</span>  <span class="mi">10</span> <span class="nx">seconds</span><span class="p">;</span>
+
+    <span class="nx">address</span> <span class="nx">owner</span><span class="p">;</span>
+    <span class="nx">uint</span> <span class="nx">salary</span><span class="p">;</span>
+    <span class="nx">address</span> <span class="nx">employee</span><span class="p">;</span>
+    <span class="nx">uint</span> <span class="nx">lastPayday</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">Payroll</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">owner</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">sender</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">updateEmployee</span><span class="p">(</span><span class="nx">address</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">uint</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">require</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">sender</span> <span class="o">==</span> <span class="nx">owner</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">employee</span> <span class="o">!=</span> <span class="mh">0x0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">uint</span> <span class="nx">payment</span> <span class="o">=</span> <span class="nx">salary</span> <span class="o">*</span> <span class="p">(</span><span class="nx">now</span> <span class="o">-</span> <span class="nx">lastPayday</span><span class="p">)</span> <span class="o">/</span> <span class="nx">payDuration</span><span class="p">;</span>
+            <span class="nx">employee</span><span class="p">.</span><span class="nx">transfer</span><span class="p">(</span><span class="nx">payment</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">employee</span> <span class="o">=</span> <span class="nx">e</span><span class="p">;</span>
+        <span class="nx">salary</span> <span class="o">=</span> <span class="nx">s</span> <span class="o">*</span> <span class="mi">1</span> <span class="nx">ether</span><span class="p">;</span>
+        <span class="nx">lastPayday</span> <span class="o">=</span> <span class="nx">now</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">addFund</span><span class="p">()</span> <span class="nx">payable</span> <span class="nx">returns</span> <span class="p">(</span><span class="nx">uint</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">balance</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">calculateRunway</span><span class="p">()</span> <span class="nx">returns</span> <span class="p">(</span><span class="nx">uint</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">balance</span> <span class="o">/</span> <span class="nx">salary</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">hasEnoughFund</span><span class="p">()</span> <span class="nx">returns</span> <span class="p">(</span><span class="nx">bool</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">calculateRunway</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">getPaid</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">require</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">sender</span> <span class="o">==</span> <span class="nx">employee</span><span class="p">);</span>
+
+        <span class="nx">uint</span> <span class="nx">nextPayday</span> <span class="o">=</span> <span class="nx">lastPayday</span> <span class="o">+</span> <span class="nx">payDuration</span><span class="p">;</span>
+        <span class="nx">assert</span><span class="p">(</span><span class="nx">nextPayday</span> <span class="o">&lt;</span> <span class="nx">now</span><span class="p">);</span>
+        <span class="nx">lastPayday</span> <span class="o">=</span> <span class="nx">nextPayday</span><span class="p">;</span>
+        <span class="nx">employee</span><span class="p">.</span><span class="nx">transfer</span><span class="p">(</span><span class="nx">salary</span><span class="p">);</span>
+
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_11">错误检测</h2>
+<h3 id="assertbool">assert(bool)</h3>
+<ul>
+<li>在程序运行的时候，是否存在错误</li>
+</ul>
+<h3 id="requirebool">require(bool)</h3>
+<ul>
+<li>在程序输入的时候，是否存在错误</li>
+</ul>
+<h2 id="truffle">Truffle</h2>
+<ul>
+<li>Truffle compile 编译合约</li>
+<li>Truffle migrate</li>
+<li>truffle migrate --reset 重新部署合约</li>
+<li>Truffle console</li>
+<li>Truffle test</li>
+</ul>
+<h3 id="truffle-box">truffle box 开发前端应用</h3>
+<h4 id="_12">测试</h4>
+<ul>
+<li>js</li>
+<li>mocha</li>
+<li>chai</li>
+<li>sodility</li>
+</ul>
+<div class="hlcode"><pre><span class="n">nvm</span> <span class="n">install</span> <span class="n">v8</span>
+<span class="n">nvm</span> <span class="n">alias</span> <span class="k">default</span> <span class="n">v8</span>
+<span class="n">npm</span> <span class="n">install</span> <span class="o">--</span><span class="n">dotenv</span><span class="o">-</span><span class="n">extended</span>
+<span class="n">truffle</span> <span class="n">migrate</span> <span class="o">--</span><span class="n">reset</span> <span class="o">&amp;&amp;</span> <span class="n">truffle</span> <span class="n">compile</span> <span class="o">&amp;&amp;</span> <span class="n">npm</span> <span class="n">start</span>
+</pre></div>
+
+
+<h2 id="metamask">metamask</h2>
+<p>import account 是不受keystone保护，即重装或换电脑回丢失</p>
+<h2 id="ganache-cli">ganache-cli</h2>
+<ul>
+<li>开启test环境</li>
+</ul>
+<h2 id="web3js">web3.js</h2>
+<ul>
+<li>一个js和区块链交互的桥梁</li>
+</ul>
+<h3 id="web3">web3 调用合约方程</h3>
+<ul>
+<li>Function_name.call() （只是在node上执行，并不保存到区块链上）</li>
+<li>Function_name.send()</li>
+</ul>
+<h2 id="_13">合约部署</h2>
+<ul>
+<li>Remix + metamask + Myetherwallet </li>
+<li>Truffle + Infura</li>
+<li>Truffle + Ethereum full node (geth, parity) 最终的版本</li>
+</ul>
+<h2 id="_14">合约安全</h2>
+<h3 id="_15">外部函数调用安全性</h3>
+<ul>
+<li>e.g. re-entry DAO attack 150 loss</li>
+<li>send or call value时候需要做bool 判断 </li>
+</ul>
+<h3 id="_16">函数可见性</h3>
+<ul>
+<li>Parity wallet hack June </li>
+</ul>
+<h3 id="_17">数学运算</h3>
+<ul>
+<li>小心整型溢出。safemath</li>
+</ul>
+<h3 id="_18">随机数与系统时间的依赖性</h3>
+<h3 id="_19">合约数据可见性</h3>
+<ul>
+<li>在没有完全zksnock之前，代码都是完全可见的</li>
+</ul>
+<h3 id="_20">谨慎使用汇编注入</h3>
+<ul>
+<li>parity 钱包被注入攻击</li>
+</ul>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>circulation 循环 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Javascript">Javascript</a>&nbsp;&#187;&nbsp;circulation 循环
+    <span class="updated">Page Updated&nbsp;
+      2018-06-09 22:14
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">circulation 循环</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#circulation">Circulation</a><ul>
+<li><a href="#for">for 循环</a><ul>
+<li><a href="#1">省略语句1</a></li>
+<li><a href="#2">省略语句2</a></li>
+<li><a href="#3">省略语句3</a></li>
+<li><a href="#_1">无限循环</a></li>
+<li><a href="#for_1">for 循环遍历数组</a></li>
+</ul>
+</li>
+<li><a href="#for-in">for ... in 循环</a><ul>
+<li><a href="#for-in_1">for ... in 过滤对象属性</a></li>
+<li><a href="#for-in-array">for ... in 循环Array的索引</a></li>
+<li><a href="#for-in-value">for ... in 循环对象value</a></li>
+</ul>
+</li>
+<li><a href="#while">while 循环</a></li>
+<li><a href="#do-while">do while 循环</a></li>
+<li><a href="#for-of">for ... of 循环</a><ul>
+<li><a href="#for-of_1">for ... of 遍历集合</a></li>
+<li><a href="#for-of-for-in">for ... of 修复 for ... in 问题</a></li>
+</ul>
+</li>
+<li><a href="#foreach">forEach()方法 (更好的方式)</a><ul>
+<li><a href="#set">作用于Set</a></li>
+<li><a href="#map">作用于Map</a></li>
+<li><a href="#array">作用于Array</a></li>
+</ul>
+</li>
+<li><a href="#break">break</a></li>
+<li><a href="#continue">continue</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="circulation">Circulation</h1>
+<h2 id="for">for 循环</h2>
+<div class="hlcode"><pre><span class="k">for</span> <span class="p">(</span><span class="err">语句</span> <span class="mi">1</span><span class="p">;</span> <span class="err">语句</span> <span class="mi">2</span><span class="p">;</span> <span class="err">语句</span> <span class="mi">3</span><span class="p">)</span>
+  <span class="p">{</span>
+  <span class="err">被执行的代码块</span>
+  <span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p>语句 1 在循环（代码块）开始前执行</p>
+<p>语句 2 定义运行循环（代码块）的条件</p>
+<p>语句 3 在循环（代码块）已被执行之后执行 </p>
+</blockquote>
+<p>通过初始条件、结束条件和递增条件来循环执行语句块</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">var</span> <span class="n">i</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;=</span><span class="mi">10000</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">i</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">x</span><span class="p">;</span> <span class="c1">// 50005000</span>
+</pre></div>
+
+
+<h3 id="1">省略语句1</h3>
+<div class="hlcode"><pre><span class="n">cars</span> <span class="o">=</span> <span class="err">[</span><span class="s1">&#39;Benz&#39;</span><span class="p">,</span> <span class="s1">&#39;BMW&#39;</span><span class="p">,</span> <span class="s1">&#39;Audi&#39;</span><span class="p">,</span> <span class="s1">&#39;Ferrari&#39;</span><span class="cp">]</span>;
+var i=2,len=cars.length;
+for (; i<span class="nt">&lt;len</span><span class="err">;</span> <span class="na">i</span><span class="err">++)</span>
+<span class="err">{</span>
+<span class="na">console</span><span class="err">.</span><span class="na">log</span><span class="err">(</span><span class="na">cars</span><span class="cp">[</span><span class="nx">i</span><span class="cp">]</span> <span class="err">+</span> <span class="err">&quot;&lt;</span><span class="na">br</span><span class="nt">&gt;</span>&quot;);
+}
+&gt;&gt;&gt;
+VM73:4 Audi<span class="nt">&lt;br&gt;</span>
+VM73:4 Ferrari<span class="nt">&lt;br&gt;</span>
+</pre></div>
+
+
+<h3 id="2">省略语句2</h3>
+<p>通常语句 2 用于评估初始变量的条件。</p>
+<p>语句 2 同样是可选的。</p>
+<p>如果语句 2 返回 true，则循环再次开始，如果返回 false，则循环将结束。</p>
+<blockquote>
+<p>如果您省略了语句 2，那么必须在循环内提供 break。否则循环就无法停下来。这样有可能令浏览器崩溃</p>
+</blockquote>
+<h3 id="3">省略语句3</h3>
+<p>通常语句 3 会增加初始变量的值。</p>
+<p>语句 3 也是可选的。</p>
+<p>语句 3 有多种用法。增量可以是负数 (i--)，或者更大 (i=i+15)。</p>
+<p>语句 3 也可以省略（比如当循环内部有相应的代码时）</p>
+<div class="hlcode"><pre><span class="n">cars</span><span class="o">=</span><span class="err">[</span><span class="s2">&quot;BMW&quot;</span><span class="p">,</span><span class="s2">&quot;Volvo&quot;</span><span class="p">,</span><span class="s2">&quot;Saab&quot;</span><span class="p">,</span><span class="s2">&quot;Ford&quot;</span><span class="cp">]</span>;
+var i=0,len=cars.length;
+for (; i<span class="nt">&lt;len</span><span class="err">;</span> <span class="err">)</span>
+<span class="err">{</span>
+<span class="na">console</span><span class="err">.</span><span class="na">log</span><span class="err">(</span><span class="na">cars</span><span class="cp">[</span><span class="nx">i</span><span class="cp">]</span> <span class="err">+</span> <span class="err">&quot;&lt;</span><span class="na">br</span><span class="nt">&gt;</span>&quot;);
+i++;
+}
+&gt;&gt;&gt;
+BMW
+Volvo
+Saab
+Ford
+</pre></div>
+
+
+<h3 id="_1">无限循环</h3>
+<ul>
+<li>没有退出循环的判断条件，就必须使用<code>break</code>语句退出循环，否则就是死循环</li>
+</ul>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(;;)</span> <span class="p">{</span> <span class="c1">// 将无限循环下去</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">break</span><span class="p">;</span> <span class="c1">// 通过if判断来退出循环</span>
+    <span class="p">}</span>
+    <span class="n">x</span> <span class="o">++</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="for_1">for 循环遍历数组</h3>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="err">&#39;</span><span class="n">Apple</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Google</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Microsoft</span><span class="err">&#39;</span><span class="p">];</span>
+<span class="n">var</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">arr</span><span class="p">.</span><span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="for-in">for ... in 循环</h2>
+<ul>
+<li>可以把一个对象的所有属性依次循环出来</li>
+</ul>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">o</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nl">name:</span> <span class="s">&quot;Jack&quot;</span><span class="p">,</span>
+    <span class="nl">age:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="nl">city:</span> <span class="s">&quot;Beijing&quot;</span>
+<span class="p">};</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="n">var</span> <span class="n">key</span> <span class="n">in</span> <span class="n">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">key</span><span class="p">);</span> <span class="c1">// &#39;name&#39;, &#39;age&#39;, &#39;city&#39;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="for-in_1">for ... in 过滤对象属性</h3>
+<ul>
+<li>用<code>hasOwnProperty()</code>来实现</li>
+</ul>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">o</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nl">name:</span> <span class="err">&#39;</span><span class="n">Jack</span><span class="err">&#39;</span><span class="p">,</span>
+    <span class="nl">age:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="nl">city:</span> <span class="err">&#39;</span><span class="n">Beijing</span><span class="err">&#39;</span>
+<span class="p">};</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">var</span> <span class="n">key</span> <span class="n">in</span> <span class="n">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">o</span><span class="p">.</span><span class="n">hasOwnProperty</span><span class="p">(</span><span class="n">key</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">key</span><span class="p">);</span> <span class="c1">// &#39;name&#39;, &#39;age&#39;, &#39;city&#39;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="for-in-array">for ... in 循环Array的索引</h3>
+<ul>
+<li>由于<code>Array</code>也是对象，而它的每个元素的索引被视为对象的属性</li>
+</ul>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">];</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">var</span> <span class="n">i</span> <span class="n">in</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">i</span><span class="p">);</span> <span class="c1">// &#39;0&#39;, &#39;1&#39;, &#39;2&#39; 这个是string</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span> <span class="c1">// &#39;A&#39;, &#39;B&#39;, &#39;C&#39;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<ul>
+<li><code>for ... in</code>对<code>Array</code>的循环得到的是<code>String</code>而不是<code>Number</code></li>
+</ul>
+</blockquote>
+<h3 id="for-in-value">for ... in 循环对象value</h3>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">o</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nl">name:</span> <span class="s">&quot;Jack&quot;</span><span class="p">,</span>
+    <span class="nl">age:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="nl">city:</span> <span class="s">&quot;Beijing&quot;</span>
+<span class="p">};</span>
+<span class="n">var</span> <span class="n">i</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="n">o</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">o</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="p">}</span>
+<span class="o">&gt;&gt;</span>
+<span class="nl">VM131:</span><span class="mi">1</span> <span class="n">Jack</span>
+<span class="nl">VM131:</span><span class="mi">1</span> <span class="mi">20</span>
+<span class="nl">VM131:</span><span class="mi">1</span> <span class="n">Beijing</span>
+</pre></div>
+
+
+<h2 id="while">while 循环</h2>
+<p><code>while</code>循环只有一个判断条件，条件满足，就不断循环，条件不满足时则退出循环</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">var</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">99</span><span class="p">;</span>
+<span class="k">while</span> <span class="p">(</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">n</span><span class="p">;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">x</span><span class="p">;</span> <span class="c1">// 2500</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="kd">var</span> <span class="n">myFunc01</span> <span class="o">=</span> <span class="nx">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">(</span><span class="nx">function</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">document.getElementById</span><span class="p">(</span><span class="s1">&#39;d01&#39;</span><span class="p">)</span><span class="bp">.</span><span class="nx">innerHTML</span> <span class="o">+=</span> <span class="mi">100</span> <span class="o">-</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot;&lt;br&gt;&quot;</span><span class="p">;</span>
+      <span class="p">},</span> <span class="mi">1000</span> <span class="o">*</span> <span class="nx">i</span><span class="p">)</span>
+    <span class="p">})(</span><span class="nx">i</span><span class="o">++</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">myFunc01</span><span class="p">();</span>
+</pre></div>
+
+
+<h2 id="do-while">do while 循环</h2>
+<ul>
+<li>和<code>while</code>循环的唯一区别在于，不是在每次循环开始的时候判断条件，而是在每次循环完成的时候判断条件</li>
+</ul>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">do</span> <span class="p">{</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">);</span>
+<span class="n">n</span><span class="p">;</span> <span class="c1">// 100</span>
+</pre></div>
+
+
+<blockquote>
+<p>用<code>do { ... } while()</code>循环要小心，循环体会至少执行1次，而<code>for</code>和<code>while</code>循环则可能一次都不执行</p>
+</blockquote>
+<h2 id="for-of">for ... of 循环</h2>
+<ul>
+<li>具有<code>iterable</code>类型的集合可以通过新的<code>for ... of</code>循环来遍历</li>
+</ul>
+<h3 id="for-of_1">for ... of 遍历集合</h3>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">];</span>
+<span class="n">var</span> <span class="n">s</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Set</span><span class="p">([</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">]);</span>
+<span class="n">var</span> <span class="n">m</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Map</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="sc">&#39;x&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="sc">&#39;y&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="sc">&#39;z&#39;</span><span class="p">]]);</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">var</span> <span class="n">x</span> <span class="n">of</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 遍历Array</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">var</span> <span class="n">x</span> <span class="n">of</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 遍历Set</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">var</span> <span class="n">x</span> <span class="n">of</span> <span class="n">m</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 遍历Map</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="sc">&#39;=&#39;</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="for-of-for-in">for ... of 修复 for ... in 问题</h3>
+<ul>
+<li><code>for ... in</code>循环由于历史遗留问题，它遍历的实际上是对象的属性名称。一个<code>Array</code>数组实际上也是一个对象，它的每个元素的索引被视为一个属性。</li>
+</ul>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">];</span>
+<span class="n">a</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">Hello</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">var</span> <span class="n">x</span> <span class="n">in</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="c1">// &#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;name&#39;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<ul>
+<li><code>for ... in</code>循环将把<code>name</code>包括在内，但<code>Array</code>的<code>length</code>属性却不包括在内。</li>
+<li><code>for ... of</code>循环则完全修复了这些问题，它只循环集合本身的元素：</li>
+</ul>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">];</span>
+<span class="n">a</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">Hello</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">var</span> <span class="n">x</span> <span class="n">of</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="c1">// &#39;A&#39;, &#39;B&#39;, &#39;C&#39;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="foreach">forEach()方法 (更好的方式)</h2>
+<ul>
+<li><code>forEach</code>方法是iterable`内置的，它接收一个函数，每次迭代就自动回调该函数</li>
+</ul>
+<div class="hlcode"><pre><span class="s1">&#39;use strict&#39;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="cp">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="cp">]</span><span class="p">;</span>
+<span class="nx">a</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">array</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// element: 指向当前元素的值</span>
+    <span class="c1">// index: 指向当前索引</span>
+    <span class="c1">// array: 指向Array对象本身</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">element</span> <span class="o">+</span> <span class="s1">&#39;, index = &#39;</span> <span class="o">+</span> <span class="nx">index</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nx">A</span><span class="p">,</span> <span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nx">B</span><span class="p">,</span> <span class="nx">index</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="nx">C</span><span class="p">,</span> <span class="nx">index</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+
+
+<h3 id="set">作用于Set</h3>
+<ul>
+<li><code>Set</code>与<code>Array</code>类似，但<code>Set</code>没有索引，因此回调函数的前两个参数都是元素本身：</li>
+</ul>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Set</span><span class="p">(</span><span class="cp">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="cp">]</span><span class="p">);</span>
+<span class="nx">s</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">sameElement</span><span class="p">,</span> <span class="nx">set</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nx">A</span>
+<span class="nx">B</span>
+<span class="nx">C</span>
+</pre></div>
+
+
+<h3 id="map">作用于Map</h3>
+<ul>
+<li><code>Map</code>的回调函数参数依次为<code>value</code>、<code>key</code>和<code>map</code>本身：</li>
+</ul>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Map</span><span class="p">(</span><span class="cp">[</span><span class="err">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="cp">]</span><span class="p">,</span> <span class="cp">[</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="cp">]</span><span class="p">,</span> <span class="cp">[</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="cp">]</span><span class="p">]);</span>
+<span class="nx">m</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">map</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nx">x</span>
+<span class="nx">y</span>
+<span class="nx">z</span>
+</pre></div>
+
+
+<h3 id="array">作用于Array</h3>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="cp">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="cp">]</span><span class="p">;</span>
+<span class="nx">a</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nx">A</span>
+<span class="nx">B</span>
+<span class="nx">C</span><span class="err">Á</span>
+</pre></div>
+
+
+<h2 id="break">break</h2>
+<p><strong>break 语句用于跳出循环。</strong></p>
+<h2 id="continue">continue</h2>
+<p><strong>continue 用于跳过循环中的一个迭代。</strong></p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

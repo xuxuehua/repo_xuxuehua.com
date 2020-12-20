@@ -1,0 +1,224 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>sqlalchemy - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Flask">Flask</a>&nbsp;&#187;&nbsp;sqlalchemy
+    <span class="updated">Page Updated&nbsp;
+      2019-08-28 08:58
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">sqlalchemy</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#sqlalchemy">SQLAlchemy</a><ul>
+<li><a href="#orm">ORM</a></li>
+<li><a href="#uri">URI</a></li>
+</ul>
+</li>
+<li><a href="#flask-sqlalchemy">Flask-SQLAlchemy</a><ul>
+<li><a href="#_1">数据类型</a><ul>
+<li><a href="#_2">字段参数</a></li>
+</ul>
+</li>
+<li><a href="#_3">查询方法</a><ul>
+<li><a href="#_4">查询过滤器</a></li>
+<li><a href="#_5">关系属性</a></li>
+<li><a href="#_6">关系记录加载方式</a></li>
+</ul>
+</li>
+<li><a href="#_7">删除操作</a></li>
+</ul>
+</li>
+<li><a href="#_8">上下文数据库操作</a></li>
+</ul>
+</div>
+<h1 id="sqlalchemy">SQLAlchemy</h1>
+<h2 id="orm">ORM</h2>
+<p>ORM 把底层的SQL数据实体转化成高层的Python对象</p>
+<p>表 -&gt; Python 类</p>
+<p>字段（列） -&gt; 类属性</p>
+<p>记录（行） -&gt; 类实例</p>
+<h2 id="uri">URI</h2>
+<p>Uniform Resource Identifier 统一资源标识符，包含各种属性的字符串，用于连接数据库的信息</p>
+<p><img alt="image-20200329201022493" src="sqlalchemy.assets/image-20200329201022493.png" /></p>
+<h1 id="flask-sqlalchemy">Flask-SQLAlchemy</h1>
+<p>扩展Flask-SQLAlchemy 集成了SQLAlchemy，简化了连接数据库服务器，管理数据库操作会话等工作， 但是底层还是sqlalchemy，提供了更加人性的API</p>
+<p>Flask-SQLAlchemy 使用事物会话，可通过db.session 属性获取</p>
+<p>默认Flask-SQLAlchemy会自动为模型类生成一个<code>__repr__()</code> 方法，可以重新定义返回有用的信息  </p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">Note</span><span class="p">(</span><span class="n">db</span><span class="p">.</span><span class="n">Model</span><span class="p">)</span><span class="o">:</span>
+        <span class="p">...</span>
+        <span class="n">def</span> <span class="n">__repr__</span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="o">:</span>
+            <span class="k">return</span> <span class="err">&#39;</span><span class="o">&lt;</span><span class="n">Note</span> <span class="o">%</span><span class="n">r</span><span class="o">&gt;</span> <span class="o">%</span> <span class="n">self</span><span class="p">.</span><span class="n">body</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="_1">数据类型</h2>
+<p><img alt="image-20200329201038707" src="sqlalchemy.assets/image-20200329201038707.png" /></p>
+<h3 id="_2">字段参数</h3>
+<p><img alt="image-20200329201053097" src="sqlalchemy.assets/image-20200329201053097.png" /></p>
+<h2 id="_3">查询方法</h2>
+<p><img alt="image-20200329201110428" src="sqlalchemy.assets/image-20200329201110428.png" /></p>
+<div class="hlcode"><pre><span class="n">Note</span><span class="p">.</span><span class="n">query</span><span class="p">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+
+
+<h3 id="_4">查询过滤器</h3>
+<p><img alt="image-20200329201124366" src="sqlalchemy.assets/image-20200329201124366.png" /></p>
+<h3 id="_5">关系属性</h3>
+<p><img alt="image-20200329201139407" src="sqlalchemy.assets/image-20200329201139407.png" /></p>
+<h3 id="_6">关系记录加载方式</h3>
+<p><img alt="image-20200329201151780" src="sqlalchemy.assets/image-20200329201151780.png" /></p>
+<p>dynamic 选项仅用于集合关系属性，不可用于多对一，一对一或是在关系函数中将uselist参数设置为False的情况，避免使用dynamic动态加载所有集合的关系属性对应记录，意味着每次操作关系都会执行一次SQL查询，会有潜在的性能问题。</p>
+<p>大多数情况只需要使用默认的select，返回大量的记录，只有需要对关系属性返回的结果附加额外的查询时才需要使用动态加载(lazy='dynamic')</p>
+<h2 id="_7">删除操作</h2>
+<p>为了防范CSRF攻击，删除修改数据的操作不能通过GET请求实现，正确的做法是为了删除操作创建一个表单</p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">DeleteNoteForm</span><span class="p">(</span><span class="n">FlaskForm</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">submit</span> <span class="o">=</span> <span class="n">SubmitField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Delete</span><span class="err">&#39;</span><span class="p">)</span>
+
+
+<span class="err">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">delete</span><span class="o">/&lt;</span><span class="kt">int</span><span class="o">:</span><span class="n">note_id</span><span class="o">&gt;</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="p">[</span><span class="err">&#39;</span><span class="n">POST</span><span class="err">&#39;</span><span class="p">])</span>    <span class="err">#这里仅填入</span><span class="n">POST</span>
+<span class="n">def</span> <span class="n">delete_node</span><span class="p">(</span><span class="n">note_id</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">DeleteForm</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">form</span><span class="p">.</span><span class="n">validate_on_submit</span><span class="p">()</span><span class="o">:</span>
+                <span class="n">note</span> <span class="o">=</span> <span class="n">Note</span><span class="p">.</span><span class="n">query</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">note_id</span><span class="p">)</span>
+                <span class="n">db</span><span class="p">.</span><span class="n">session</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+                <span class="n">db</span><span class="p">.</span><span class="n">session</span><span class="p">.</span><span class="n">commit</span><span class="p">()</span>
+                <span class="n">flash</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Your</span> <span class="n">note</span> <span class="n">is</span> <span class="n">deleted</span><span class="p">.</span><span class="err">&#39;</span><span class="p">)</span>
+        <span class="nl">else:</span>
+                <span class="n">abort</span><span class="p">(</span><span class="mi">400</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="err">&#39;</span><span class="n">index</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="p">{</span><span class="o">%</span> <span class="nb">for</span> <span class="n">note</span> <span class="k">in</span> <span class="nx">notes</span> <span class="o">%</span><span class="p">}</span>
+<span class="o">&lt;</span><span class="nb">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;note&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nx">note.body</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nx">a</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;btn&quot;</span> <span class="n">href</span><span class="o">=</span><span class="s2">&quot;{{ url_for(&#39;edit_note&#39;, note_id=note.id) }}&quot;</span><span class="o">&gt;</span><span class="nx">Edit</span><span class="o">&lt;/</span><span class="nx">a</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nb">form</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;post&quot;</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;{{ url_for(&#39;delete_note&#39;, note_id=note.id) }}&quot;</span><span class="o">&gt;</span>
+        <span class="p">{{</span> <span class="nx">form.csrf_token</span> <span class="p">}}</span>
+        <span class="p">{{</span> <span class="nx">form.submit</span><span class="p">(</span><span class="n">class</span><span class="o">=</span><span class="s2">&quot;btn&quot;</span><span class="p">)</span> <span class="p">}}</span>
+    <span class="o">&lt;/</span><span class="nb">form</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nb">div</span><span class="o">&gt;</span>
+<span class="p">{</span><span class="o">%</span> <span class="nx">endfor</span> <span class="o">%</span><span class="p">}</span>
+</pre></div>
+
+
+<h1 id="_8">上下文数据库操作</h1>
+<p>As a general rule, the application should manage the lifecycle of the session <em>externally</em> to functions that deal with specific data. This is a fundamental separation of concerns which keeps data-specific operations agnostic of the context in which they access and manipulate that data.</p>
+<p>E.g. <strong>don’t do this</strong>:</p>
+<div class="hlcode"><pre><span class="cp">### this is the **wrong way to do it** ###</span>
+
+<span class="n">class</span> <span class="n">ThingOne</span><span class="p">(</span><span class="n">object</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">def</span> <span class="n">go</span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
+        <span class="nl">try:</span>
+            <span class="n">session</span><span class="p">.</span><span class="n">query</span><span class="p">(</span><span class="n">FooBar</span><span class="p">).</span><span class="n">update</span><span class="p">({</span><span class="s">&quot;x&quot;</span><span class="o">:</span> <span class="mi">5</span><span class="p">})</span>
+            <span class="n">session</span><span class="p">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="nl">except:</span>
+            <span class="n">session</span><span class="p">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="n">raise</span>
+
+<span class="n">class</span> <span class="n">ThingTwo</span><span class="p">(</span><span class="n">object</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">def</span> <span class="n">go</span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
+        <span class="nl">try:</span>
+            <span class="n">session</span><span class="p">.</span><span class="n">query</span><span class="p">(</span><span class="n">Widget</span><span class="p">).</span><span class="n">update</span><span class="p">({</span><span class="s">&quot;q&quot;</span><span class="o">:</span> <span class="mi">18</span><span class="p">})</span>
+            <span class="n">session</span><span class="p">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="nl">except:</span>
+            <span class="n">session</span><span class="p">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="n">raise</span>
+
+<span class="n">def</span> <span class="n">run_my_program</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">ThingOne</span><span class="p">().</span><span class="n">go</span><span class="p">()</span>
+    <span class="n">ThingTwo</span><span class="p">().</span><span class="n">go</span><span class="p">()</span>
+</pre></div>
+
+
+<p>Keep the lifecycle of the session (and usually the transaction) <strong>separate and external</strong>:</p>
+<div class="hlcode"><pre><span class="cp">### this is a **better** (but not the only) way to do it ###</span>
+
+<span class="n">class</span> <span class="n">ThingOne</span><span class="p">(</span><span class="n">object</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">def</span> <span class="n">go</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">session</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">session</span><span class="p">.</span><span class="n">query</span><span class="p">(</span><span class="n">FooBar</span><span class="p">).</span><span class="n">update</span><span class="p">({</span><span class="s">&quot;x&quot;</span><span class="o">:</span> <span class="mi">5</span><span class="p">})</span>
+
+<span class="n">class</span> <span class="n">ThingTwo</span><span class="p">(</span><span class="n">object</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">def</span> <span class="n">go</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">session</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">session</span><span class="p">.</span><span class="n">query</span><span class="p">(</span><span class="n">Widget</span><span class="p">).</span><span class="n">update</span><span class="p">({</span><span class="s">&quot;q&quot;</span><span class="o">:</span> <span class="mi">18</span><span class="p">})</span>
+
+<span class="n">def</span> <span class="n">run_my_program</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
+    <span class="nl">try:</span>
+        <span class="n">ThingOne</span><span class="p">().</span><span class="n">go</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+        <span class="n">ThingTwo</span><span class="p">().</span><span class="n">go</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+
+        <span class="n">session</span><span class="p">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="nl">except:</span>
+        <span class="n">session</span><span class="p">.</span><span class="n">rollback</span><span class="p">()</span>
+        <span class="n">raise</span>
+    <span class="nl">finally:</span>
+        <span class="n">session</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<p>The most comprehensive approach, recommended for more substantial applications, will try to keep the details of session, transaction and exception management as far as possible from the details of the program doing its work. For example, we can further separate concerns using a <a href="http://docs.python.org/3/library/contextlib.html#contextlib.contextmanager">context manager</a>:</p>
+<div class="hlcode"><pre><span class="cp">### another way (but again *not the only way*) to do it ###</span>
+
+<span class="n">from</span> <span class="n">contextlib</span> <span class="n">import</span> <span class="n">contextmanager</span>
+
+<span class="err">@</span><span class="n">contextmanager</span>
+<span class="n">def</span> <span class="n">session_scope</span><span class="p">()</span><span class="o">:</span>
+    <span class="s">&quot;&quot;&quot;Provide a transactional scope around a series of operations.&quot;&quot;&quot;</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
+    <span class="nl">try:</span>
+        <span class="n">yield</span> <span class="n">session</span>
+        <span class="n">session</span><span class="p">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="nl">except:</span>
+        <span class="n">session</span><span class="p">.</span><span class="n">rollback</span><span class="p">()</span>
+        <span class="n">raise</span>
+    <span class="nl">finally:</span>
+        <span class="n">session</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="n">class</span> <span class="n">ThingOne</span><span class="p">(</span><span class="n">object</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">def</span> <span class="n">go</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">session</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">session</span><span class="p">.</span><span class="n">query</span><span class="p">(</span><span class="n">FooBar</span><span class="p">).</span><span class="n">update</span><span class="p">({</span><span class="s">&quot;x&quot;</span><span class="o">:</span> <span class="mi">5</span><span class="p">})</span>
+
+<span class="n">class</span> <span class="n">ThingTwo</span><span class="p">(</span><span class="n">object</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">def</span> <span class="n">go</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">session</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">session</span><span class="p">.</span><span class="n">query</span><span class="p">(</span><span class="n">Widget</span><span class="p">).</span><span class="n">update</span><span class="p">({</span><span class="s">&quot;q&quot;</span><span class="o">:</span> <span class="mi">18</span><span class="p">})</span>
+
+
+<span class="n">def</span> <span class="n">run_my_program</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">with</span> <span class="n">session_scope</span><span class="p">()</span> <span class="n">as</span> <span class="n">session</span><span class="o">:</span>
+        <span class="n">ThingOne</span><span class="p">().</span><span class="n">go</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+        <span class="n">ThingTwo</span><span class="p">().</span><span class="n">go</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

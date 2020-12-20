@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>meta_string 元字符 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Shell">Shell</a>&nbsp;&#187;&nbsp;meta_string 元字符
+    <span class="updated">Page Updated&nbsp;
+      2018-10-22 12:12
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">meta_string 元字符</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#meta_string">meta_string 元字符</a><ul>
+<li><a href="#_1">特殊字符</a><ul>
+<li><a href="#_2">|| 或</a></li>
+</ul>
+</li>
+<li><a href="#_3">转义符</a><ul>
+<li><a href="#96">使用$() 替代反引号`</a></li>
+</ul>
+</li>
+<li><a href="#_4">使用[[ ]]代替[ ]</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="meta_string">meta_string 元字符</h1>
+<h2 id="_1">特殊字符</h2>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IFS</td>
+<td>由\<space>或者\<tab>或者\<enter>三者之一组成，space</td>
+</tr>
+<tr>
+<td>CR</td>
+<td>由\<enter></td>
+</tr>
+<tr>
+<td>=</td>
+<td>设定</td>
+</tr>
+<tr>
+<td>$</td>
+<td>作变量或者运算替换</td>
+</tr>
+<tr>
+<td>&gt;</td>
+<td>stdout</td>
+</tr>
+<tr>
+<td>&lt;</td>
+<td>stdin</td>
+</tr>
+<tr>
+<td>|</td>
+<td>命令管道</td>
+</tr>
+<tr>
+<td>&amp;</td>
+<td>重导向file descriptor，或将命令置于后台执行</td>
+</tr>
+<tr>
+<td>( )</td>
+<td>将其内命令置于nested subshell执行，或用于运算和命令替换</td>
+</tr>
+<tr>
+<td></td>
+<td>将其内命令置于non-named function执行，或用在变量替换的界定范围</td>
+</tr>
+<tr>
+<td>;</td>
+<td>在前一个命令结束时，忽略返回值，执行下一条命了</td>
+</tr>
+<tr>
+<td>&amp;&amp;</td>
+<td>命令返回值为true，执行下一条</td>
+</tr>
+<tr>
+<td>||</td>
+<td>命令返回值为false，执行下一条</td>
+</tr>
+<tr>
+<td>!</td>
+<td>执行history命令，以数字开头</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_2">|| 或</h3>
+<div class="hlcode"><pre><span class="nv">$ </span>cat /tmp/1.sh
+particular_script<span class="o">()</span>
+<span class="o">{</span>
+    <span class="nb">false</span>
+<span class="o">}</span>
+
+<span class="nb">set</span> -e
+
+<span class="nb">echo </span>one
+particular_script <span class="o">||</span> <span class="nb">true</span>
+<span class="nb">echo </span>two
+particular_script
+<span class="nb">echo </span>three
+
+<span class="nv">$ </span>bash /tmp/1.sh
+one
+two
+</pre></div>
+
+
+<p><code>three</code> will be never printed.</p>
+<p>Also, I want to add that when <code>pipefail</code> is on, it is enough for shell to think that the entire pipe has non-zero exit code when one of commands in the pipe has non-zero exit code (with <code>pipefail</code> off it must the last one).</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">set</span> <span class="o">-</span><span class="n">o</span> <span class="n">pipefail</span>
+<span class="err">$</span> <span class="nb">false</span> <span class="o">|</span> <span class="nb">true</span> <span class="p">;</span> <span class="n">echo</span> <span class="err">$</span><span class="o">?</span>
+<span class="mi">1</span>
+<span class="err">$</span> <span class="n">set</span> <span class="o">+</span><span class="n">o</span> <span class="n">pipefail</span>
+<span class="err">$</span> <span class="nb">false</span> <span class="o">|</span> <span class="nb">true</span> <span class="p">;</span> <span class="n">echo</span> <span class="err">$</span><span class="o">?</span>
+<span class="mi">0</span>
+</pre></div>
+
+
+<h2 id="_3">转义符</h2>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>' ' 单引号</td>
+<td>硬转译，内部所有shell元字符，通配符都会被关掉，其硬转译内不允许出现单引号</td>
+</tr>
+<tr>
+<td>" " 双引号</td>
+<td>软转译，内只允许特定的元字符，$用于参数替换,  `用于命令替换</td>
+</tr>
+<tr>
+<td>\ 反斜杠</td>
+<td>去除气候紧跟的元字符或通配符的特殊意义</td>
+</tr>
+</tbody>
+</table>
+<h3 id="96">使用<code>$()</code> 替代反引号`</h3>
+<p><code>$()</code> 可以支持嵌套， 而且不用转义，避免和单引号冲突</p>
+<div class="hlcode"><pre><span class="n">echo</span> <span class="s">&quot;A-`echo B-\`echo C-</span><span class="se">\\</span><span class="s">\`echo D</span><span class="se">\\</span><span class="s">\`\``&quot;</span>
+<span class="n">echo</span> <span class="s">&quot;A-$(echo B-$(echo C-$(echo D)))&quot;</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">A</span><span class="o">-</span><span class="n">B</span><span class="o">-</span><span class="n">C</span><span class="o">-</span><span class="n">D</span>
+<span class="n">A</span><span class="o">-</span><span class="n">B</span><span class="o">-</span><span class="n">C</span><span class="o">-</span><span class="n">D</span>
+</pre></div>
+
+
+<h2 id="_4">使用[[ ]]代替[ ]</h2>
+<div class="hlcode"><pre><span class="k">[ &quot;${name}&quot; \&gt; &quot;a&quot; -o &quot;${name}&quot; \&lt; &quot;m&quot; ]</span>
+
+<span class="k">[[ &quot;${name}&quot; &gt; &quot;a&quot; &amp;&amp; &quot;${name}&quot; &lt; &quot;m&quot; ]]</span>
+</pre></div>
+
+
+<p>[[ ]]更符合人性编码, 避免转义问题</p>
+<p>有不少新功能, 包含但不限于：</p>
+<p>|| ：逻辑or</p>
+<p>&amp;&amp; ：逻辑and</p>
+<p>&lt; ：字符串比较（不需要转义）</p>
+<p>== ：通配符(globbing)字符串比较</p>
+<p>=~ ：正则表达式(regular expression, RegEx)字符串比较</p>
+<p>需要注意的是，从bash3.2开始，通配符和正则表达式都不能用引号包裹了</p>
+<div class="hlcode"><pre><span class="n">t</span><span class="o">=</span><span class="s">&quot;abc123&quot;</span>
+<span class="p">[[</span> <span class="s">&quot;$t&quot;</span> <span class="o">==</span> <span class="n">abc</span><span class="o">*</span> <span class="p">]]</span>  <span class="err">#</span><span class="nb">true</span>   <span class="n">globbing</span><span class="err">比较</span>
+<span class="p">[[</span> <span class="s">&quot;$t&quot;</span> <span class="o">==</span> <span class="s">&quot;abc*&quot;</span> <span class="p">]]</span>    <span class="err">#</span><span class="nb">false</span> <span class="err">字面比较</span>
+<span class="p">[[</span> <span class="s">&quot;$t&quot;</span> <span class="o">=~</span> <span class="p">[</span><span class="n">abc</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="mi">123</span><span class="p">]</span><span class="o">+</span> <span class="p">]]</span>  <span class="err">#</span><span class="nb">true</span>   <span class="err">#正则表达式比较</span>
+<span class="p">[[</span> <span class="s">&quot;$t&quot;</span> <span class="o">=~</span> <span class="s">&quot;abc*&quot;</span> <span class="p">]]</span>    <span class="err">#</span><span class="nb">false</span>  <span class="err">#字面比较</span>
+</pre></div>
+
+
+<blockquote>
+<p>这里加了引号就是字面比较</p>
+</blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

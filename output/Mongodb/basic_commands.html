@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>basic_commands - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Mongodb">Mongodb</a>&nbsp;&#187;&nbsp;basic_commands
+    <span class="updated">Page Updated&nbsp;
+      2018-09-27 15:24
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">basic_commands</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#basic_commands">basic_commands</a><ul>
+<li><a href="#show-dbs">show dbs</a></li>
+<li><a href="#db">db</a></li>
+<li><a href="#use">use</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="basic_commands">basic_commands</h1>
+<p>一个mongodb中可以建立多个数据库。</p>
+<p>MongoDB的默认数据库为"db"，该数据库存储在data目录中。</p>
+<p>MongoDB的单个实例可以容纳多个独立的数据库，每一个都有自己的集合和权限，不同的数据库也放置在不同的文件中。</p>
+<h2 id="show-dbs">show dbs</h2>
+<p>命令可以显示所有数据的列表。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="p">.</span><span class="o">/</span><span class="n">mongo</span>
+<span class="n">MongoDB</span> <span class="n">shell</span> <span class="n">version</span><span class="o">:</span> <span class="mf">3.0.6</span>
+<span class="n">connecting</span> <span class="n">to</span><span class="o">:</span> <span class="n">test</span>
+<span class="o">&gt;</span> <span class="n">show</span> <span class="n">dbs</span>
+<span class="n">local</span>  <span class="mf">0.078</span><span class="n">GB</span>
+<span class="n">test</span>   <span class="mf">0.078</span><span class="n">GB</span>
+<span class="o">&gt;</span> 
+</pre></div>
+
+
+<h2 id="db">db</h2>
+<p>命令可以显示当前数据库对象或集合。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="p">.</span><span class="o">/</span><span class="n">mongo</span>
+<span class="n">MongoDB</span> <span class="n">shell</span> <span class="n">version</span><span class="o">:</span> <span class="mf">3.0.6</span>
+<span class="n">connecting</span> <span class="n">to</span><span class="o">:</span> <span class="n">test</span>
+<span class="o">&gt;</span> <span class="n">db</span>
+<span class="n">test</span>
+<span class="o">&gt;</span> 
+</pre></div>
+
+
+<h2 id="use">use</h2>
+<p>可以连接到一个指定的数据库。</p>
+<div class="hlcode"><pre><span class="o">&gt;</span> <span class="n">use</span> <span class="n">local</span>
+<span class="n">switched</span> <span class="n">to</span> <span class="n">db</span> <span class="n">local</span>
+<span class="o">&gt;</span> <span class="n">db</span>
+<span class="n">local</span>
+<span class="o">&gt;</span> 
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>wget - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;wget
+    <span class="updated">Page Updated&nbsp;
+      2018-10-30 02:44
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">wget</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#wget">wget</a><ul>
+<li><a href="#-c">-c 断点续传</a></li>
+<li><a href="#-limit-rate">--limit-rate 限速</a></li>
+<li><a href="#-o">-O 重命名</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="wget">wget</h1>
+<h2 id="-c">-c 断点续传</h2>
+<p><code>--continue</code></p>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="o">-</span><span class="n">c</span> <span class="n">http</span><span class="o">:</span><span class="c1">//mirrors.163.com/ubuntu-releases/9.10/ubuntu-9.10-desktop-amd64.iso</span>
+</pre></div>
+
+
+<h2 id="-limit-rate">--limit-rate 限速</h2>
+<p>k = kb， m = mb</p>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="o">-</span><span class="n">c</span> <span class="o">--</span><span class="n">limit</span><span class="o">-</span><span class="n">rate</span><span class="o">=</span><span class="mi">300</span><span class="n">k</span> <span class="n">http</span><span class="o">:</span><span class="c1">//mirrors.163.com/ubuntu-releases/9.10/ubuntu-9.10-desktop-amd64.iso </span>
+</pre></div>
+
+
+<h2 id="-o">-O 重命名</h2>
+<p><code>--output-document</code></p>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="o">-</span><span class="n">c</span> <span class="n">https</span><span class="o">:</span><span class="c1">//gist.github.com/chales/11359952/archive/25f48802442b7986070036d214a2a37b8486282d.zip -O db-connection-test.zip</span>
+</pre></div>
+
+
+<p>可以执行shell重定向</p>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="o">-</span><span class="n">cO</span> <span class="o">-</span> <span class="n">https</span><span class="o">:</span><span class="c1">//gist.github.com/chales/11359952/archive/25f48802442b7986070036d214a2a37b8486282d.zip &gt; db-connection-test.zip</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

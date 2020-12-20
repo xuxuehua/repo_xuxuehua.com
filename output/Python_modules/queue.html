@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>queue - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;queue
+    <span class="updated">Page Updated&nbsp;
+      2018-09-29 17:21
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">queue</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#queue">queue</a><ul>
+<li><a href="#_1">队列类型</a></li>
+<li><a href="#queueqsize">queue.qsize()</a></li>
+<li><a href="#queueempty">queue.empty()</a></li>
+<li><a href="#queuefull">queue.full()</a></li>
+<li><a href="#queueget">queue.get()</a></li>
+<li><a href="#queueget_nowait">queue.get_nowait()</a></li>
+<li><a href="#queueput">queue.put()</a></li>
+<li><a href="#queueput_nowait">queue.put_nowait()</a></li>
+<li><a href="#example">example</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="queue">queue</h1>
+<p>Python内置的线程安全，提供了同步的，线程安全的队列类，包括FIFO，LIFO</p>
+<h2 id="_1">队列类型</h2>
+<p>FIFO队列先进先出。 queue.Queue(maxsize)</p>
+<p>LIFO类似于堆，即先进后出。 queue.LifoQueue(maxsize)</p>
+<p>优先级队列级别越低越先出来。 queue.PriorityQueue(maxsize)</p>
+<h2 id="queueqsize">queue.qsize()</h2>
+<p>返回队列的大小</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">queue</span> <span class="n">import</span> <span class="n">Queue</span>
+
+<span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">qsize</span><span class="p">())</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">0</span>
+</pre></div>
+
+
+<h2 id="queueempty">queue.empty()</h2>
+<p>如果队列为空，返回True,反之False</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">queue</span> <span class="n">import</span> <span class="n">Queue</span>
+
+<span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">True</span>
+</pre></div>
+
+
+<h2 id="queuefull">queue.full()</h2>
+<p>如果队列满了，返回True,反之False</p>
+<p>queue.full 与 maxsize 大小对应</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">queue</span> <span class="n">import</span> <span class="n">Queue</span>
+
+<span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">full</span><span class="p">())</span>
+<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">q</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="sc">&#39;x&#39;</span><span class="p">)</span>
+
+<span class="n">print</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">full</span><span class="p">())</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">False</span>
+<span class="n">True</span>
+</pre></div>
+
+
+<h2 id="queueget">queue.get()</h2>
+<p>获取队列，立即取出一个元素， timeout超时时间</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">queue</span> <span class="n">import</span> <span class="n">Queue</span>
+
+<span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">q</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="sc">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">get</span><span class="p">())</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">x</span>
+</pre></div>
+
+
+<h2 id="queueget_nowait">queue.get_nowait()</h2>
+<p>等价于get(False) </p>
+<p>成功返回一个元素，或者抛出empty 异常</p>
+<h2 id="queueput">queue.put()</h2>
+<div class="hlcode"><pre><span class="n">Queue</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="n">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">None</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>block=True, timeout=None 一直阻塞直到有空位放出</p>
+<p>block=True, timeout=5 阻塞5s九抛出Full 异常</p>
+<p>block=False, timeout 失效，立即返回</p>
+</blockquote>
+<h2 id="queueput_nowait">queue.put_nowait()</h2>
+<p>等价于put(item, block=False)</p>
+<p>写入队列，立即放入一个元素， timeout超时时间</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">queue</span> <span class="n">import</span> <span class="n">Queue</span>
+
+<span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">full</span><span class="p">())</span>
+<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">q</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="sc">&#39;x&#39;</span><span class="p">)</span>
+
+<span class="n">print</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">full</span><span class="p">())</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">False</span>
+<span class="n">True</span>
+</pre></div>
+
+
+<h2 id="example">example</h2>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">queue</span> <span class="n">import</span> <span class="n">Queue</span>
+<span class="n">import</span> <span class="n">threading</span>
+<span class="n">import</span> <span class="n">time</span>
+
+
+<span class="n">def</span> <span class="n">set_value</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+        <span class="n">q</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+
+<span class="n">def</span> <span class="n">get_value</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+        <span class="n">print</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">get</span><span class="p">())</span>
+
+
+<span class="n">def</span> <span class="n">main</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">threading</span><span class="p">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">set_value</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">q</span><span class="p">])</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">threading</span><span class="p">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">get_value</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">q</span><span class="p">])</span>
+    <span class="n">t1</span><span class="p">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">t2</span><span class="p">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="err">&#39;</span><span class="n">__main__</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>bash - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;bash
+    <span class="updated">Page Updated&nbsp;
+      2018-09-05 15:31
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">bash</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#bash">bash</a><ul>
+<li><a href="#-c">-c</a></li>
+<li><a href="#-i">-i</a></li>
+<li><a href="#-n">-n 语法检查</a></li>
+<li><a href="#-s">-s</a></li>
+<li><a href="#-v">-v 跟踪命令</a></li>
+<li><a href="#-x">-x 跟踪命令并扩展信息</a></li>
+<li><a href="#-">-</a></li>
+<li><a href="#norc">norc</a></li>
+<li><a href="#noprofile">noprofile</a></li>
+<li><a href="#-refile">-refile</a></li>
+<li><a href="#version">version</a></li>
+<li><a href="#quiet">quiet</a></li>
+<li><a href="#login">login</a></li>
+<li><a href="#nobraceexpansion">nobraceexpansion</a></li>
+<li><a href="#nolineediting">nolineediting</a></li>
+<li><a href="#posix">posix</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="bash">bash</h1>
+<p>Bash(GNU Bourne-Again Shell)是许多Linux平台的内定Shell，事实上，还有许多传统UNIX上用的Shell，像tcsh、csh、ash、bsh、ksh等等</p>
+<h2 id="-c">-c</h2>
+<p>c字符串：若用-c参数，则bash从字符串中读入命令，如果字符串后还有变量就被设定为从$0开始的位置参数。</p>
+<h2 id="-i">-i</h2>
+<p>若用-i参数，则bash是交互的。</p>
+<h2 id="-n">-n 语法检查</h2>
+<p>可以对脚本进行检查</p>
+<h2 id="-s">-s</h2>
+<p>若用-s参数，则bash从标准输入中读入命令（在执行完-c带的命令之后。）直到输入exit。</p>
+<h2 id="-v">-v 跟踪命令</h2>
+<p>可以用-v跟踪脚本里的每个命令的执行</p>
+<h2 id="-x">-x 跟踪命令并扩展信息</h2>
+<p>可以用-x跟踪脚本里的每个命令的执行，并附加扩充信息</p>
+<h2 id="-">-</h2>
+<p>单一的<code>-</code>符号表明参数执行完毕，并且屏蔽此后所跟参数，后面的所有变量都被看作是文件名。</p>
+<h2 id="norc">norc</h2>
+<p>如果bash是交互的，则不执行个人初始化文件：-/.bashrc，如果bash作为sh来运行，这个参数缺省是关闭的。</p>
+<h2 id="noprofile">noprofile</h2>
+<p>不执行系统范围的启动文件/etc/profile也不执行个人的启动文件-/.bash_profile，-/.bash_login或-/.profile，缺省情况下，bash作为登录的shell时以这些文件作为启动文件。</p>
+<h2 id="-refile">-refile</h2>
+<p>如果bash是交互的，则以此文件作为bash的启动文件。替代-/.bashrc。</p>
+<h2 id="version">version</h2>
+<p>在bash开始时显示此bash的版本号。</p>
+<h2 id="quiet">quiet</h2>
+<p>不显示版本号和其他信息，这是缺省值。</p>
+<h2 id="login">login</h2>
+<p>激活bash，伪装为登录shell。</p>
+<h2 id="nobraceexpansion">nobraceexpansion</h2>
+<p>不执行大括号扩展。</p>
+<h2 id="nolineediting">nolineediting</h2>
+<p>在交互状态下不使用GNU的readline库去读取命令。即取消了命令行编辑功能。</p>
+<h2 id="posix">posix</h2>
+<p>改变bash的行为，使其符合Posix 1003.2规定的标准。</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>address - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Solidity">Solidity</a>&nbsp;&#187;&nbsp;address
+    <span class="updated">Page Updated&nbsp;
+      2018-08-12 19:53
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">address</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#address">address 类型</a><ul>
+<li><a href="#addresstransfervalue">address.transfer(value)</a></li>
+<li><a href="#addresssendvalue">address.send(value)</a></li>
+<li><a href="#addresscall-addresscallcode-addressdelegatecall">address.call, address.callcode, address.delegatecall</a></li>
+<li><a href="#0x0">0x0</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="address">address 类型</h1>
+<h2 id="addresstransfervalue">address.transfer(value)</h2>
+<p>调用后，可以将异常返回到调用者手中</p>
+<p>建议使用在转钱的过程</p>
+<h2 id="addresssendvalue">address.send(value)</h2>
+<p>只会返回布尔类型，不会有具体的报错信息</p>
+<h2 id="addresscall-addresscallcode-addressdelegatecall">address.call, address.callcode, address.delegatecall</h2>
+<p>常用于智能合约和智能合约之间相互调用彼此函数的时候</p>
+<h2 id="0x0">0x0</h2>
+<p>While the zero address is only intended for contract registration, it sometimes receives payments from various addresses. There are two explanations for this:</p>
+<ul>
+<li>
+<p>either it is by accident, resulting in the loss of ether</p>
+</li>
+<li>
+<p>or it is an intentional ether burn (see [burning_ether]).</p>
+</li>
+</ul>
+<blockquote>
+<p>If you want to do an intentional ether burn, you should make your intention clear to the network and use the specially designated burn address instead</p>
+</blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

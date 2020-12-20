@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>performance - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Postgresql">Postgresql</a>&nbsp;&#187;&nbsp;performance
+    <span class="updated">Page Updated&nbsp;
+      2019-11-25 14:54
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">performance</div>
+
+  <p>[toc]</p>
+<h1 id="performance">Performance</h1>
+<p><img alt="img" src="performance.assets/DE_observability_sticker_100x80_PG13-1-1536x1229.jpg" /></p>
+<h2 id="pg_stat_activity">pg_stat_activity</h2>
+<p>pg_stat_activity是一个非常有用的视图，可以帮助排查pg的一些问题（如连接数目过多问题）。pg_stat_activity每行展示的是一个“process”的相关信息，这里的“process”可以理解为一个DB连接。</p>
+<h3 id="query_start">query_start</h3>
+<p>状态的查询开始时间，如果状态不是active的，那么就是最后一次查询开始的时间</p>
+<h3 id="state">state</h3>
+<p>运行状态，可以为几种值。</p>
+<p>active:正在执行查询；</p>
+<p>idle:等待新的命令；</p>
+<p>idle in transaction:后端是一个事务，但是尚未执行查询；</p>
+<p>idle in transaction(aborted):和idle in transaction类似，除了事务执行出错。</p>
+<p>查询闲置连接数。如果数字过大，可以认为是有问题的（如连接忘记关闭）。<br />
+如果想进一步定位到有问题的SQL，可以如下查询：</p>
+<div class="hlcode"><pre><span class="n">select</span> <span class="n">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="n">from</span> <span class="n">pg_stat_activity</span> <span class="n">where</span> <span class="n">state</span><span class="o">=</span><span class="err">&#39;</span><span class="n">idle</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="n">select</span> <span class="n">query</span><span class="p">,</span><span class="n">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="n">as</span> <span class="n">num</span> <span class="n">from</span> <span class="n">pg_stat_activity</span> <span class="n">where</span> <span class="n">state</span><span class="o">=</span><span class="err">&#39;</span><span class="n">idle</span><span class="err">&#39;</span> <span class="n">group</span> <span class="n">by</span> <span class="n">query</span> <span class="n">order</span> <span class="n">by</span> <span class="n">num</span> <span class="n">desc</span><span class="p">;</span>
+</pre></div>
+
+
+<h3 id="query">query</h3>
+<p>执行的查询文本（即SQL）。</p>
+<p>如果状态是active，那么就是正在执行的SQL；如果是其他状态，则展示最后一次执行的SQL。</p>
+<h1 id="long-query-sql">Long Query SQL</h1>
+<p>long running queries may interfere on the overall database performance and probably they are stuck on some background process.</p>
+<div class="hlcode"><pre><span class="n">SELECT</span>
+  <span class="n">pid</span><span class="p">,</span>
+  <span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">pg_stat_activity</span><span class="p">.</span><span class="n">query_start</span> <span class="n">AS</span> <span class="n">duration</span><span class="p">,</span>
+  <span class="n">query</span><span class="p">,</span>
+  <span class="n">state</span>
+<span class="n">FROM</span> <span class="n">pg_stat_activity</span>
+<span class="n">WHERE</span> <span class="p">(</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">pg_stat_activity</span><span class="p">.</span><span class="n">query_start</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">interval</span> <span class="err">&#39;</span><span class="mi">5</span> <span class="n">minutes</span><span class="err">&#39;</span><span class="p">;</span>
+</pre></div>
+
+
+<p>In order to cancel these long running queries you should execute:</p>
+<div class="hlcode"><pre><span class="n">SELECT</span> <span class="nf">pg_cancel_backend</span><span class="p">(</span><span class="n">__pid__</span><span class="p">);</span>
+</pre></div>
+
+
+<p>If the you find the process is stuck you can kill it by running:</p>
+<div class="hlcode"><pre><span class="n">SELECT</span> <span class="nf">pg_terminate_backend</span><span class="p">(</span><span class="n">__pid__</span><span class="p">);</span>
+</pre></div>
+
+
+<blockquote>
+<p>pg_terminate_backend is the kill -9 in PostgreSQL</p>
+</blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>set 集合 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python">Python</a>&nbsp;&#187;&nbsp;set 集合
+    <span class="updated">Page Updated&nbsp;
+      2018-08-19 10:51
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">set 集合</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">集合</a><ul>
+<li><a href="#_2">特点</a></li>
+<li><a href="#_3">定义集合</a></li>
+<li><a href="#_4">增</a><ul>
+<li><a href="#add">add</a></li>
+<li><a href="#update">update</a></li>
+<li><a href="#_5"></a></li>
+</ul>
+</li>
+<li><a href="#_6">查</a><ul>
+<li><a href="#len">len</a></li>
+<li><a href="#in">in</a></li>
+</ul>
+</li>
+<li><a href="#_7">删</a><ul>
+<li><a href="#remove">remove</a></li>
+<li><a href="#discard">discard</a></li>
+<li><a href="#clear">clear</a></li>
+<li><a href="#pop">pop</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_8">集合运算</a><ul>
+<li><a href="#union">union 并集</a></li>
+<li><a href="#intersection">intersection 交集</a></li>
+<li><a href="#difference">difference 差集</a></li>
+<li><a href="#symmetric_difference">symmetric_difference 对称差集</a></li>
+<li><a href="#symmetric_difference_update">symmetric_difference_update()</a></li>
+<li><a href="#-">运算符计算 (-  &amp;  | )</a></li>
+</ul>
+</li>
+<li><a href="#_9">集合判断</a><ul>
+<li><a href="#issubset">issubset 子集 &lt;=</a></li>
+<li><a href="#_10">真子集 &lt;</a></li>
+<li><a href="#issuperset">issuperset 父集 &gt;=</a></li>
+<li><a href="#isdisjoint">isdisjoint</a></li>
+</ul>
+</li>
+<li><a href="#_11">集合解析</a><ul>
+<li><a href="#_12">基本语法</a></li>
+</ul>
+</li>
+<li><a href="#fronzenset-dict-key">fronzenset （dict key用法）</a></li>
+</ul>
+</div>
+<h1 id="_1">集合</h1>
+<p>集合的含义和数学上的含义相同<br />
+集合不是线性的<br />
+集合的元素是唯一的<br />
+集合的元素是可以hash 的</p>
+<h2 id="_2">特点</h2>
+<p>字典和集合的内部结构都是一张哈希表。 </p>
+<p>而对集合来说，区别就是哈希表内没有键和值的配对，只有单一的元素了。 </p>
+<p>性能很高</p>
+<p>初始化了含有100,000个元素的产品，并分别计算了使用列表和集合来统计产品价格数量的运行时间</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">find_unique_price_using_list</span><span class="p">(</span><span class="n">products</span><span class="p">)</span><span class="o">:</span>
+      <span class="n">unique_price_list</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">price</span> <span class="n">in</span> <span class="n">products</span><span class="o">:</span> <span class="err">#</span> <span class="n">A</span>
+          <span class="k">if</span> <span class="n">price</span> <span class="n">not</span> <span class="n">in</span> <span class="n">unique_price_list</span><span class="o">:</span> <span class="err">#</span><span class="n">B</span>
+              <span class="n">unique_price_list</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">price</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">len</span><span class="p">(</span><span class="n">unique_price_list</span><span class="p">)</span>
+
+<span class="n">def</span> <span class="n">find_unique_price_using_set</span><span class="p">(</span><span class="n">products</span><span class="p">)</span><span class="o">:</span>
+      <span class="n">unique_price_set</span> <span class="o">=</span> <span class="n">set</span><span class="p">()</span>
+      <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">price</span> <span class="n">in</span> <span class="n">products</span><span class="o">:</span>
+          <span class="n">unique_price_set</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">price</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">len</span><span class="p">(</span><span class="n">unique_price_set</span><span class="p">)</span>
+
+<span class="n">import</span> <span class="n">time</span>
+<span class="n">id</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)]</span>
+<span class="n">price</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">200000</span><span class="p">,</span> <span class="mi">300000</span><span class="p">)]</span>
+<span class="n">products</span> <span class="o">=</span> <span class="n">list</span><span class="p">(</span><span class="n">zip</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">price</span><span class="p">))</span>
+
+<span class="cp"># 计算列表版本的时间</span>
+<span class="n">start_using_list</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="n">find_unique_price_using_list</span><span class="p">(</span><span class="n">products</span><span class="p">)</span>
+<span class="n">end_using_list</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="n">print</span><span class="p">(</span><span class="s">&quot;time elapse using list: {}&quot;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="n">end_using_list</span> <span class="o">-</span> <span class="n">start_using_list</span><span class="p">))</span> <span class="err">##</span> <span class="err">输出</span>
+<span class="n">time</span> <span class="n">elapse</span> <span class="n">using</span> <span class="n">list</span><span class="o">:</span> <span class="mf">41.61519479751587</span>
+
+<span class="cp"># 计算集合版本的时间</span>
+<span class="n">start_using_set</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="n">find_unique_price_using_set</span><span class="p">(</span><span class="n">products</span><span class="p">)</span>
+<span class="n">end_using_set</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="n">print</span><span class="p">(</span><span class="s">&quot;time elapse using set: {}&quot;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="n">end_using_set</span> <span class="o">-</span> <span class="n">start_using_set</span><span class="p">))</span> <span class="err">#</span> <span class="err">输出</span>
+<span class="n">time</span> <span class="n">elapse</span> <span class="n">using</span> <span class="n">set</span><span class="o">:</span> <span class="mf">0.008238077163696289</span>
+</pre></div>
+
+
+<h2 id="_3">定义集合</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">73</span><span class="p">]:</span> <span class="n">s</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">74</span><span class="p">]:</span> <span class="n">s</span> <span class="o">=</span> <span class="nb">set</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">})</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">75</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">75</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_4">增</h2>
+<h3 id="add">add</h3>
+<p>若元素存在，就什么都不做</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">76</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">76</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">77</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">78</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">78</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">79</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="update">update</h3>
+<p>参数必须是可迭代对象</p>
+<p>修改后立即生效</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">80</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">80</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">81</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">82</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">82</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+</pre></div>
+
+
+<h3 id="_5"></h3>
+<h2 id="_6">查</h2>
+<h3 id="len">len</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="n">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="mi">3</span>
+</pre></div>
+
+
+<h3 id="in">in</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">:</span> <span class="mi">3</span> <span class="n">in</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="mi">4</span> <span class="n">not</span> <span class="n">in</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+</pre></div>
+
+
+<h2 id="_7">删</h2>
+<h3 id="remove">remove</h3>
+<p>key不存在抛出异常</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">84</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">84</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">85</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">86</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">86</span><span class="p">]:</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">87</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="o">---------------------------------------------------------------------------</span>
+<span class="ne">KeyError</span>                                  <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">87</span><span class="o">-</span><span class="mi">99</span><span class="n">f2b84d3df8</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">s</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="ne">KeyError</span><span class="p">:</span> <span class="mi">10</span>
+</pre></div>
+
+
+<h3 id="discard">discard</h3>
+<p>移除一个元素</p>
+<p>元素不存在，什么都不做</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">88</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">88</span><span class="p">]:</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">89</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">90</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">90</span><span class="p">]:</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">91</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">92</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">92</span><span class="p">]:</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+</pre></div>
+
+
+<h3 id="clear">clear</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">99</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">99</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">100</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">101</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">101</span><span class="p">]:</span> <span class="nb">set</span><span class="p">()</span>
+</pre></div>
+
+
+<h3 id="pop">pop</h3>
+<p>移除并返回任意的元素， 删除集合中最后一个元素，可是集合本身是无序的，你无法知道会删除哪 </p>
+<p>个元素 </p>
+<p>空集会返回key error异常</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">s</span> <span class="o">=</span> <span class="nb">set</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">})</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="mi">1</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+</pre></div>
+
+
+<h1 id="_8">集合运算</h1>
+<h2 id="union">union 并集</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">s1</span> <span class="o">=</span> <span class="nb">set</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">})</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">s1</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">s2</span> <span class="o">=</span> <span class="nb">set</span><span class="p">({</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">})</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">s2</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">s1</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+</pre></div>
+
+
+<h2 id="intersection">intersection 交集</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">s1</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="n">s2</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="n">s1</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+</pre></div>
+
+
+<h2 id="difference">difference 差集</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="n">s1</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="n">s2</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="n">s1</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]:</span> <span class="n">s2</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">15</span><span class="p">]:</span> <span class="p">{</span><span class="mi">4</span><span class="p">}</span>
+</pre></div>
+
+
+<h2 id="symmetric_difference">symmetric_difference 对称差集</h2>
+<p>两个集合中不重复的元素集合</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">12</span><span class="p">]:</span> <span class="n">s1</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">12</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]:</span> <span class="n">s2</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">13</span><span class="p">]:</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]:</span> <span class="n">s1</span><span class="o">.</span><span class="n">symmetric_difference</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">14</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">16</span><span class="p">]:</span> <span class="n">s2</span><span class="o">.</span><span class="n">symmetric_difference</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">16</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+</pre></div>
+
+
+<h2 id="symmetric_difference_update">symmetric_difference_update()</h2>
+<p>移除当前集合中在另外一个指定集合相同的元素，并将另外一个指定集合中不同的元素插入到当前集合中</p>
+<h2 id="-">运算符计算 (-  &amp;  | )</h2>
+<div class="hlcode"><pre><span class="n">s1</span> <span class="o">=</span> <span class="n">set</span><span class="p">([</span><span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="sc">&#39;b&#39;</span><span class="p">,</span> <span class="sc">&#39;c&#39;</span><span class="p">])</span>
+
+<span class="n">s2</span> <span class="o">=</span> <span class="n">set</span><span class="p">(</span><span class="s">&quot;cdefg&quot;</span><span class="p">)</span>
+
+<span class="n">ret</span> <span class="o">=</span> <span class="n">s1</span><span class="p">.</span><span class="n">difference</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+
+<span class="n">print</span><span class="p">(</span><span class="n">s1</span> <span class="o">-</span> <span class="n">s2</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">s1</span> <span class="o">&amp;</span> <span class="n">s2</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">s1</span> <span class="o">|</span> <span class="n">s2</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">{</span><span class="sc">&#39;b&#39;</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="sc">&#39;b&#39;</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="sc">&#39;c&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="sc">&#39;g&#39;</span><span class="p">,</span> <span class="sc">&#39;f&#39;</span><span class="p">,</span> <span class="sc">&#39;e&#39;</span><span class="p">,</span> <span class="sc">&#39;d&#39;</span><span class="p">,</span> <span class="sc">&#39;b&#39;</span><span class="p">,</span> <span class="sc">&#39;c&#39;</span><span class="p">}</span>
+</pre></div>
+
+
+<h1 id="_9">集合判断</h1>
+<h2 id="issubset">issubset 子集 &lt;=</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">20</span><span class="p">]:</span> <span class="p">{</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">21</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">issubset</span><span class="p">({</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">})</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">21</span><span class="p">]:</span> <span class="bp">True</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">75</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span> <span class="o">=</span> <span class="p">({</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">})</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">76</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">76</span><span class="p">]</span><span class="o">:</span> <span class="p">{</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">77</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span> <span class="o">&lt;=</span> <span class="p">({</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">})</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">77</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+</pre></div>
+
+
+<h2 id="_10">真子集 &lt;</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">78</span><span class="p">]</span><span class="o">:</span> <span class="n">s1</span> <span class="o">=</span> <span class="p">({</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">})</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">79</span><span class="p">]</span><span class="o">:</span> <span class="n">s2</span> <span class="o">=</span> <span class="p">({</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">})</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">80</span><span class="p">]</span><span class="o">:</span> <span class="n">s1</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">80</span><span class="p">]</span><span class="o">:</span> <span class="p">{</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">81</span><span class="p">]</span><span class="o">:</span> <span class="n">s2</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">81</span><span class="p">]</span><span class="o">:</span> <span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">82</span><span class="p">]</span><span class="o">:</span> <span class="n">s1</span> <span class="o">&lt;</span> <span class="n">s2</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">82</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+</pre></div>
+
+
+<h2 id="issuperset">issuperset 父集 &gt;=</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">22</span><span class="p">]:</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span><span class="o">.</span><span class="n">issuperset</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">22</span><span class="p">]:</span> <span class="bp">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">23</span><span class="p">]:</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span><span class="o">.</span><span class="n">issuperset</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">23</span><span class="p">]:</span> <span class="bp">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">24</span><span class="p">]:</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span><span class="o">.</span><span class="n">issuperset</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">24</span><span class="p">]:</span> <span class="bp">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">25</span><span class="p">]:</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span><span class="o">.</span><span class="n">issuperset</span><span class="p">(())</span>
+
+<span class="n">Out</span><span class="p">[</span><span class="mi">25</span><span class="p">]:</span> <span class="bp">True</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">83</span><span class="p">]</span><span class="o">:</span> <span class="p">({</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">})</span> <span class="o">&gt;=</span> <span class="p">({</span><span class="mi">1</span><span class="p">})</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">83</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+</pre></div>
+
+
+<h2 id="isdisjoint">isdisjoint</h2>
+<p>当前集合和另一个集合没有交集</p>
+<p>无交集返回真</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="bp">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="bp">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="bp">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(())</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="bp">True</span>
+</pre></div>
+
+
+<h1 id="_11">集合解析</h1>
+<h2 id="_12">基本语法</h2>
+<div class="hlcode"><pre><span class="p">{</span><span class="n">expression</span> <span class="k">for</span> <span class="n">item</span> <span class="n">in</span> <span class="n">iterator</span><span class="p">}</span>
+</pre></div>
+
+
+<p>等价于</p>
+<div class="hlcode"><pre><span class="n">ret</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
+    <span class="n">ret</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]:</span> <span class="n">s</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">21</span><span class="p">]:</span> <span class="p">{</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">s</span><span class="p">}</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">21</span><span class="p">]:</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">22</span><span class="p">]:</span> <span class="p">{</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)}</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">22</span><span class="p">]:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">23</span><span class="p">]:</span> <span class="p">{</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]}</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">23</span><span class="p">]:</span> <span class="p">{</span><span class="mi">3</span><span class="p">}</span>
+</pre></div>
+
+
+<h1 id="fronzenset-dict-key">fronzenset （dict key用法）</h1>
+<p>不可变集合，无序，不重复</p>
+<p>可以作为dict的key</p>
+<div class="hlcode"><pre><span class="n">s</span> <span class="o">=</span> <span class="n">set</span><span class="p">([</span><span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="sc">&#39;b&#39;</span><span class="p">])</span>
+<span class="n">s</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">frozenset</span><span class="p">(</span><span class="s">&quot;abcdefg&quot;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">{</span><span class="sc">&#39;b&#39;</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">}</span>
+<span class="n">frozenset</span><span class="p">({</span><span class="sc">&#39;b&#39;</span><span class="p">,</span> <span class="sc">&#39;f&#39;</span><span class="p">,</span> <span class="sc">&#39;d&#39;</span><span class="p">,</span> <span class="sc">&#39;c&#39;</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="sc">&#39;e&#39;</span><span class="p">,</span> <span class="sc">&#39;g&#39;</span><span class="p">})</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

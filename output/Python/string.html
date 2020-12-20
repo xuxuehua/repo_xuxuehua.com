@@ -1,0 +1,1237 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>string - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python">Python</a>&nbsp;&#187;&nbsp;string
+    <span class="updated">Page Updated&nbsp;
+      2018-08-18 09:48
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">string</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#python-string-files">字符串与文本操作 (python-string-files)</a><ul>
+<li><a href="#_1">特点</a></li>
+<li><a href="#r">非特殊处理 r前缀</a></li>
+<li><a href="#_2">元素访问 下标</a><ul>
+<li><a href="#_3">线性结构</a></li>
+<li><a href="#_4">不可变类型</a><ul>
+<li><a href="#_5">变量引用</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_6">字符串的格式化</a><ul>
+<li><a href="#s">%s 推荐的方法</a><ul>
+<li><a href="#unsupported-format-character-0xa">unsupported format character '?' (0xa)</a></li>
+</ul>
+</li>
+<li><a href="#d">%d</a></li>
+<li><a href="#e">%E</a></li>
+<li><a href="#g">%g</a></li>
+<li><a href="#flags">flags</a></li>
+<li><a href="#format">format</a></li>
+<li><a href="#format_map">format_map</a></li>
+<li><a href="#f-strings-python36">f-strings   Python3.6新的字符串格式化</a></li>
+</ul>
+</li>
+<li><a href="#_7"></a></li>
+<li><a href="#_8">字符串连接</a><ul>
+<li><a href="#join">join</a></li>
+<li><a href="#43">+ 连接</a></li>
+</ul>
+</li>
+<li><a href="#_9">字符串分割</a><ul>
+<li><a href="#split">split</a><ul>
+<li><a href="#_10">多种分隔符分割</a></li>
+</ul>
+</li>
+<li><a href="#rsplit">rsplit</a></li>
+<li><a href="#splitlines">splitlines</a></li>
+<li><a href="#partition">partition</a></li>
+<li><a href="#rpartition">rpartition</a></li>
+</ul>
+</li>
+<li><a href="#_11">字符串修改</a><ul>
+<li><a href="#replace">replace</a></li>
+<li><a href="#capitalize">capitalize</a></li>
+<li><a href="#titile">titile</a></li>
+<li><a href="#upper">upper</a></li>
+<li><a href="#lower">lower</a></li>
+<li><a href="#swapcase">swapcase</a></li>
+<li><a href="#center">center</a></li>
+<li><a href="#ljust">ljust</a></li>
+<li><a href="#rjust">rjust</a></li>
+<li><a href="#zfill">zfill</a></li>
+<li><a href="#strip">strip</a></li>
+<li><a href="#rstrip">rstrip</a></li>
+<li><a href="#lstrip">lstrip</a></li>
+<li><a href="#expandtabs">expandtabs</a></li>
+</ul>
+</li>
+<li><a href="#_12">字符串判断</a><ul>
+<li><a href="#len">len</a></li>
+<li><a href="#startswith">startswith</a></li>
+<li><a href="#endswith">endswith</a></li>
+<li><a href="#count">count</a></li>
+<li><a href="#index">index</a></li>
+<li><a href="#rindex">rindex</a></li>
+<li><a href="#find">find</a></li>
+<li><a href="#rfind">rfind</a></li>
+<li><a href="#isalnum">isalnum</a></li>
+<li><a href="#isalpha">isalpha</a></li>
+<li><a href="#isdecimal">isdecimal</a></li>
+<li><a href="#isdigit">isdigit</a></li>
+<li><a href="#isidentifier">isidentifier</a></li>
+<li><a href="#isnumeric">isnumeric</a></li>
+<li><a href="#istitle">istitle</a></li>
+<li><a href="#isupper">isupper</a></li>
+<li><a href="#islower">islower</a></li>
+<li><a href="#isspace">isspace</a></li>
+</ul>
+</li>
+<li><a href="#str-bytes">STR 与 BYTES</a></li>
+<li><a href="#_13">转换</a><ul>
+<li><a href="#string-to-dict">string to dict</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_14">优化</a></li>
+</ul>
+</div>
+<h1 id="python-string-files">字符串与文本操作 (python-string-files)</h1>
+<p>python2中的字符串是byte的有序序列<br />
+python3中的字符串是unicode的有序序列<br />
+字符串是不可变的<br />
+字符串支持下标于切片</p>
+<h2 id="_1">特点</h2>
+<p>改变字符串，往往需要O(n)的时间复杂度，其中，n为新字符串的长度。</p>
+<div class="hlcode"><pre><span class="n">s</span> <span class="o">=</span> <span class="err">&#39;&#39;</span>
+<span class="k">for</span> <span class="n">n</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)</span><span class="o">:</span>
+      <span class="n">s</span> <span class="o">+=</span> <span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>自从Python2.5开始，每次处理字符串的拼接操作时(str1 += str2)，Python首先会检测str1还有没有其他的引用。如果没有的话，就会尝试原地扩充字符串buffer的大小，而不是重新分配一块内存来创建新的字符串并拷贝。这样的话，上述例子中的时间复杂度就仅为O(n)了。</p>
+</blockquote>
+<h2 id="r">非特殊处理 r前缀</h2>
+<p>在字符串前面加上r或者R前缀，表示该字符串不做特殊处理</p>
+<div class="hlcode"><pre><span class="n">r</span><span class="err">&#39;\</span><span class="n">r</span> <span class="err">\</span><span class="n">t</span> <span class="err">\</span><span class="n">n</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<blockquote>
+<p>里面所有的转译自负当作普通字符对待</p>
+</blockquote>
+<p>​   </p>
+<h2 id="_2">元素访问 下标</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;I love Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="s">&#39;I&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="s">&#39;n&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="s">&#39;ove P&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">s</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="s">&#39;nohtyP evol I&#39;</span>
+</pre></div>
+
+
+<h3 id="_3">线性结构</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="s">&#39;I love Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+   <span class="o">...</span><span class="p">:</span>     <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+   <span class="o">...</span><span class="p">:</span>     
+<span class="n">I</span>
+
+<span class="n">l</span>
+<span class="n">o</span>
+<span class="n">v</span>
+<span class="n">e</span>
+
+<span class="n">P</span>
+<span class="n">y</span>
+<span class="n">t</span>
+<span class="n">h</span>
+<span class="n">o</span>
+<span class="n">n</span>
+</pre></div>
+
+
+<h3 id="_4">不可变类型</h3>
+<p>字符串是不可变的 (元组也不可变)</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="s">&#39;I love Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="s">&#39; &#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;_&#39;</span>
+<span class="o">---------------------------------------------------------------------------</span>
+<span class="ne">TypeError</span>                                 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">8</span><span class="n">ab2d301e01f</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;_&#39;</span>
+
+<span class="ne">TypeError</span><span class="p">:</span> <span class="s">&#39;str&#39;</span> <span class="nb">object</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">support</span> <span class="n">item</span> <span class="n">assignment</span>
+</pre></div>
+
+
+<h4 id="_5">变量引用</h4>
+<p>对象被多个变量所指向或者引用，由于int 和string 类型是不可变的，所以新创建的变量为新的，不会影响其他变量的值</p>
+<p>变量的赋值，只是表示让变量指向了某个对象，并不表示拷贝对象给变量;而一个对象，可以被多个变量所指向。</p>
+<p>对于不可变对象(字符串，整型，元祖等等)，所有指向该对象的变量的值总是一样的，也不会改变。但是通过某些操作(+=等等)更新不可变对象的值时，会返回一个新的对象</p>
+<p>变量可以被删除，但是对象无法被删除</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>                                                                                                                                                                                         
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">:</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span>                                                                                                                                                                                         
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span>                                                                                                                                                                                     
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="n">a</span>                                                                                                                                                                                             
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="mi">2</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">b</span>                                                                                                                                                                                             
+<span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="mi">1</span>
+</pre></div>
+
+
+<h2 id="_6">字符串的格式化</h2>
+<p>print style format<br />
+format 方法</p>
+<p>Print Style Format<br />
+<code>template % tunple 
+template % dict</code></p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="s">&#39;I love </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s">&#39;python&#39;</span><span class="p">,)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="s">&#39;I love python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">12</span><span class="p">]:</span> <span class="s">&#39;I love </span><span class="si">%(name)s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span><span class="s">&#39;python&#39;</span><span class="p">}</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">12</span><span class="p">]:</span> <span class="s">&#39;I love python&#39;</span>
+</pre></div>
+
+
+<p>Print Styple Format Conversation</p>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%d</td>
+<td>整数</td>
+</tr>
+<tr>
+<td>%i</td>
+<td>整数</td>
+</tr>
+<tr>
+<td>%o</td>
+<td>八进制数</td>
+</tr>
+<tr>
+<td>%x</td>
+<td>小写16进制整数</td>
+</tr>
+<tr>
+<td>%X</td>
+<td>大写16进制整数</td>
+</tr>
+<tr>
+<td>%f</td>
+<td>浮点数</td>
+</tr>
+<tr>
+<td>%F</td>
+<td>浮点数</td>
+</tr>
+<tr>
+<td>%e</td>
+<td>小写科学计数法</td>
+</tr>
+<tr>
+<td>%E</td>
+<td>大写科学计数法</td>
+</tr>
+<tr>
+<td>%c</td>
+<td>字符，接收unicode编码或者单字符串</td>
+</tr>
+<tr>
+<td>%a</td>
+<td>字符串，使用ascii函数转换</td>
+</tr>
+<tr>
+<td>%r</td>
+<td>字符串，使用repr函数转换</td>
+</tr>
+<tr>
+<td>%s</td>
+<td>字符串，使用str函数转换</td>
+</tr>
+<tr>
+<td>％s</td>
+<td>字符 %</td>
+</tr>
+</tbody>
+</table>
+<h3 id="s">%s 推荐的方法</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">31</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">Hello</span> <span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="n">s</span><span class="o">!</span><span class="err">&#39;</span> <span class="o">%</span> <span class="p">{</span><span class="err">&#39;</span><span class="n">name</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">Rick</span><span class="err">&#39;</span><span class="p">}</span>                                                                                                                              <span class="n">Out</span><span class="p">[</span><span class="mi">31</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">Hello</span> <span class="n">Rick</span><span class="o">!</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h4 id="unsupported-format-character-0xa">unsupported format character '?' (0xa)</h4>
+<p>结尾没有s导致该报错</p>
+<div class="hlcode"><pre><span class="n">ValueError</span><span class="o">:</span> <span class="n">unsupported</span> <span class="n">format</span> <span class="n">character</span> <span class="s1">&#39;?&#39;</span> <span class="o">(</span><span class="mh">0xa</span><span class="o">)</span> <span class="n">at</span> <span class="n">index</span> <span class="mi">447</span>
+</pre></div>
+
+
+<h3 id="d">%d</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]:</span> <span class="s">&#39;</span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="mf">3.4</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">13</span><span class="p">]:</span> <span class="s">&#39;3&#39;</span>
+</pre></div>
+
+
+<h3 id="e">%E</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]:</span> <span class="s">&#39;</span><span class="si">%E</span><span class="s">&#39;</span> <span class="o">%</span> <span class="mf">0.00000000001</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">14</span><span class="p">]:</span> <span class="s">&#39;1.000000E-11&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]:</span> <span class="s">&#39;</span><span class="si">%E</span><span class="s">&#39;</span> <span class="o">%</span> <span class="mi">1000000000000</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">15</span><span class="p">]:</span> <span class="s">&#39;1.000000E+12&#39;</span>
+</pre></div>
+
+
+<h3 id="g">%g</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">16</span><span class="p">]:</span> <span class="s">&#39;</span><span class="si">%g</span><span class="s">&#39;</span> <span class="o">%</span> <span class="mf">0.001</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">16</span><span class="p">]:</span> <span class="s">&#39;0.001&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]:</span> <span class="s">&#39;</span><span class="si">%g</span><span class="s">&#39;</span> <span class="o">%</span> <span class="mf">0.00000001</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">17</span><span class="p">]:</span> <span class="s">&#39;1e-08&#39;</span>
+</pre></div>
+
+
+<h3 id="flags">flags</h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#</td>
+<td>#代表一个数字，指定宽度，如果宽度不够，会根据一下进行填充</td>
+</tr>
+<tr>
+<td>0</td>
+<td>使用0填充，仅适用于数字</td>
+</tr>
+<tr>
+<td>.</td>
+<td>使用空格填充，默认为行</td>
+</tr>
+<tr>
+<td>-</td>
+<td>右边使用空格填充</td>
+</tr>
+<tr>
+<td>+</td>
+<td>填充之前增加+，仅仅对于正数</td>
+</tr>
+</tbody>
+</table>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]:</span> <span class="s">&#39;</span><span class="si">%10d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="mi">1</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">20</span><span class="p">]:</span> <span class="s">&#39;         1&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">21</span><span class="p">]:</span> <span class="s">&#39;</span><span class="si">%010d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="mi">1</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">21</span><span class="p">]:</span> <span class="s">&#39;0000000001&#39;</span>
+</pre></div>
+
+
+<h3 id="format">format</h3>
+<div class="hlcode"><pre><span class="n">template</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>template 使用{} 表示变量<br />
+{}或{\d+} 使用<em>args 按顺序填充<br />
+{key} 使用</em>*kwargs 按key填充<br />
+Format String Syntax</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">24</span><span class="p">]:</span> <span class="s">&#39;{0}, {name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;World&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">24</span><span class="p">]:</span> <span class="s">&#39;Hello, World&#39;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">44</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="p">{</span><span class="n">server</span><span class="p">}{</span><span class="mi">1</span><span class="p">}</span><span class="o">:</span><span class="p">{</span><span class="mi">0</span><span class="p">}</span><span class="err">&#39;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="mi">8888</span><span class="p">,</span> <span class="err">&#39;</span><span class="mf">192.168.1.1</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">server</span><span class="o">=</span><span class="err">&#39;</span><span class="n">Web</span> <span class="n">Server</span><span class="o">:</span> <span class="err">&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">44</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">Web</span> <span class="n">Server</span><span class="o">:</span> <span class="mf">192.168.1.1</span><span class="o">:</span><span class="mi">8888</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">45</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="p">{</span><span class="mi">0</span><span class="p">}</span><span class="o">*</span><span class="p">{</span><span class="mi">1</span><span class="p">}</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="o">:&lt;</span><span class="mi">2</span><span class="p">}</span><span class="err">&#39;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">45</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">3</span><span class="o">*</span><span class="mi">2</span><span class="o">=</span><span class="mi">6</span> <span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">46</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="p">{</span><span class="mi">0</span><span class="p">}</span><span class="o">*</span><span class="p">{</span><span class="mi">1</span><span class="p">}</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="o">:&lt;</span><span class="mo">02</span><span class="p">}</span><span class="err">&#39;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">46</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">3</span><span class="o">*</span><span class="mi">2</span><span class="o">=</span><span class="mi">60</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">47</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="p">{</span><span class="mi">0</span><span class="p">}</span><span class="o">*</span><span class="p">{</span><span class="mi">1</span><span class="p">}</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="o">:&gt;</span><span class="mo">02</span><span class="p">}</span><span class="err">&#39;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">47</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">3</span><span class="o">*</span><span class="mi">2</span><span class="o">=</span><span class="mo">06</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">48</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="p">{</span><span class="o">:^</span><span class="mi">30</span><span class="p">}</span><span class="err">&#39;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="err">&#39;</span><span class="n">centered</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">48</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span>           <span class="n">centered</span>           <span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">49</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="p">{</span><span class="o">:*^</span><span class="mi">30</span><span class="p">}</span><span class="err">&#39;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="err">&#39;</span><span class="n">centered</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">49</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="o">***********</span><span class="n">centered</span><span class="o">***********</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">50</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="kt">int</span><span class="o">:</span><span class="p">{</span><span class="mi">0</span><span class="o">:</span><span class="n">d</span><span class="p">};</span> <span class="n">hex</span><span class="o">:</span><span class="p">{</span><span class="mi">0</span><span class="o">:</span><span class="n">x</span><span class="p">};</span> <span class="n">oct</span><span class="o">:</span><span class="p">{</span><span class="mi">0</span><span class="o">:</span><span class="n">o</span><span class="p">};</span> <span class="n">bin</span><span class="o">:</span><span class="p">{</span><span class="mi">0</span><span class="o">:</span><span class="n">b</span><span class="p">}</span><span class="err">&#39;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">50</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="kt">int</span><span class="o">:</span><span class="mi">42</span><span class="p">;</span> <span class="n">hex</span><span class="o">:</span><span class="mi">2</span><span class="n">a</span><span class="p">;</span> <span class="n">oct</span><span class="o">:</span><span class="mi">52</span><span class="p">;</span> <span class="n">bin</span><span class="o">:</span><span class="mi">101010</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">52</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="p">{</span><span class="o">:</span><span class="mo">02</span><span class="n">X</span><span class="p">}{</span><span class="o">:</span><span class="mo">02</span><span class="n">X</span><span class="p">}{</span><span class="o">:</span><span class="mo">02</span><span class="n">X</span><span class="p">}{</span><span class="o">:</span><span class="mo">02</span><span class="n">X</span><span class="p">}</span><span class="err">&#39;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="mi">192</span><span class="p">,</span><span class="mi">168</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">52</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">C0A80101</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h3 id="format_map">format_map</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">Rick</span> <span class="n">Xu</span> <span class="p">{</span><span class="n">age</span><span class="p">}</span> <span class="n">years</span> <span class="n">old</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span><span class="p">.</span><span class="n">format_map</span><span class="p">({</span><span class="err">&#39;</span><span class="n">age</span><span class="err">&#39;</span><span class="o">:</span> <span class="mi">29</span><span class="p">})</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">Rick</span> <span class="n">Xu</span> <span class="mi">29</span> <span class="n">years</span> <span class="n">old</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h3 id="f-strings-python36">f-strings   Python3.6新的字符串格式化</h3>
+<div class="hlcode"><pre><span class="nb">f</span> <span class="s1">&#39; &lt;text&gt; { &lt;expression&gt; &lt;optional !s, !r, or !a&gt; &lt;optional : format specifier&gt; } &lt;text&gt; ... &#39;</span>
+</pre></div>
+
+
+<ul>
+<li>基本用法</li>
+</ul>
+<div class="hlcode"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Tom&quot;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="s">&quot;His name is {name}, he&#39;s {age} years old.&quot;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="s">&quot;His name is Tom, he&#39;s 3 years old.&quot;</span>
+</pre></div>
+
+
+<ul>
+<li>支持表达式</li>
+</ul>
+<div class="hlcode"><pre><span class="cp"># 数学运算</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="err">&#39;</span><span class="n">He</span> <span class="n">will</span> <span class="n">be</span> <span class="p">{</span> <span class="n">age</span><span class="o">+</span><span class="mi">1</span> <span class="p">}</span> <span class="n">years</span> <span class="n">old</span> <span class="n">next</span> <span class="n">year</span><span class="p">.</span><span class="err">&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="err">&#39;</span><span class="n">He</span> <span class="n">will</span> <span class="n">be</span> <span class="mi">4</span> <span class="n">years</span> <span class="n">old</span> <span class="n">next</span> <span class="n">year</span><span class="p">.</span><span class="err">&#39;</span>
+
+<span class="cp"># 对象操作</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">spurs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;Guard&quot;</span><span class="o">:</span> <span class="s">&quot;Parker&quot;</span><span class="p">,</span> <span class="s">&quot;Forward&quot;</span><span class="o">:</span> <span class="s">&quot;Duncan&quot;</span><span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="s">&quot;The {len(spurs)} players are: {spurs[&#39;Guard&#39;]} the guard, and {spurs[&#39;Forward&#39;]} the forward.&quot;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="err">&#39;</span><span class="n">The</span> <span class="mi">2</span> <span class="n">players</span> <span class="n">are</span><span class="o">:</span> <span class="n">Parker</span> <span class="n">the</span> <span class="n">guard</span><span class="p">,</span> <span class="n">and</span> <span class="n">Duncan</span> <span class="n">the</span> <span class="n">forward</span><span class="p">.</span><span class="err">&#39;</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="err">&#39;</span><span class="n">Numbers</span> <span class="n">from</span> <span class="mi">1</span><span class="o">-</span><span class="mi">10</span> <span class="n">are</span> <span class="p">{[</span><span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)]}</span><span class="err">&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="err">&#39;</span><span class="n">Numbers</span> <span class="n">from</span> <span class="mi">1</span><span class="o">-</span><span class="mi">10</span> <span class="n">are</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<ul>
+<li>排版格式</li>
+</ul>
+<div class="hlcode"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">def</span> <span class="n">show_players</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">&quot;{&#39;Position&#39;:^10}{&#39;Name&#39;:^10}&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">player</span> <span class="n">in</span> <span class="n">spurs</span><span class="o">:</span>
+        <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="s">&quot;{player:^10}{spurs[player]:^10}&quot;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">show_players</span><span class="p">()</span>
+ <span class="n">Position</span>    <span class="n">Name</span>   
+  <span class="n">Guard</span>     <span class="n">Parker</span>  
+ <span class="n">Forward</span>    <span class="n">Duncan</span>
+</pre></div>
+
+
+<ul>
+<li>数字操作</li>
+</ul>
+<div class="hlcode"><pre><span class="cp"># 小数精度</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">PI</span> <span class="o">=</span> <span class="mf">3.141592653</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="s">&quot;Pi is {PI:.2f}&quot;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="err">&#39;</span><span class="n">Pi</span> <span class="n">is</span> <span class="mf">3.14</span><span class="err">&#39;</span>
+
+<span class="cp"># 进制转换</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="err">&#39;</span><span class="kt">int</span><span class="o">:</span> <span class="mi">31</span><span class="p">,</span> <span class="n">hex</span><span class="o">:</span> <span class="p">{</span><span class="mi">31</span><span class="o">:</span><span class="n">x</span><span class="p">},</span> <span class="n">oct</span><span class="o">:</span> <span class="p">{</span><span class="mi">31</span><span class="o">:</span><span class="n">o</span><span class="p">}</span><span class="err">&#39;</span>
+<span class="err">&#39;</span><span class="kt">int</span><span class="o">:</span> <span class="mi">31</span><span class="p">,</span> <span class="n">hex</span><span class="o">:</span> <span class="mf">1f</span><span class="p">,</span> <span class="n">oct</span><span class="o">:</span> <span class="mi">37</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<ul>
+<li>与原始字符串联合使用</li>
+</ul>
+<div class="hlcode"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">fr</span><span class="err">&#39;</span><span class="n">hello</span><span class="err">\</span><span class="n">nworld</span><span class="err">&#39;</span>
+<span class="err">&#39;</span><span class="n">hello</span><span class="err">\\</span><span class="n">nworld</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="_7"></h2>
+<ul>
+<li><code>{}</code>内不能包含反斜杠<code>\</code></li>
+</ul>
+<div class="hlcode"><pre><span class="n">f</span><span class="err">&#39;</span><span class="n">His</span> <span class="n">name</span> <span class="n">is</span> <span class="p">{</span><span class="err">\&#39;</span><span class="n">Tom</span><span class="err">\</span><span class="sc">&#39;}&#39;</span>
+<span class="nl">SyntaxError:</span> <span class="n">f</span><span class="o">-</span><span class="n">string</span> <span class="n">expression</span> <span class="n">part</span> <span class="n">cannot</span> <span class="n">include</span> <span class="n">a</span> <span class="n">backslash</span>
+
+<span class="cp"># 而应该使用不同的引号，或使用三引号。</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="s">&quot;His name is {&#39;Tom&#39;}&quot;</span>
+<span class="err">&#39;</span><span class="n">His</span> <span class="n">name</span> <span class="n">is</span> <span class="n">Tom</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<ul>
+<li>不能与<code>'u'</code>联合使用</li>
+</ul>
+<p><code>'u'</code>是为了与Python2.7兼容的，而Python2.7不会支持f-strings，因此与<code>'u'</code>联合使用不会有任何效果。</p>
+<ul>
+<li>如何插入大括号？</li>
+</ul>
+<div class="hlcode"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="s">&quot;{{ {10 * 8} }}&quot;</span>
+<span class="err">&#39;</span><span class="p">{</span> <span class="mi">80</span> <span class="p">}</span><span class="err">&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="s">&quot;{{ 10 * 8 }}&quot;</span>
+<span class="err">&#39;</span><span class="p">{</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">8</span> <span class="p">}</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<ul>
+<li>与<code>str.format()</code>的一点不同</li>
+</ul>
+<p>使用<code>str.format()</code>，非数字索引将自动转化为字符串，而f-strings则不会。</p>
+<div class="hlcode"><pre><span class="o">&gt;&gt;&gt;</span> <span class="s2">&quot;Guard is {spurs[Guard]}&quot;</span><span class="bp">.</span><span class="nb">format</span><span class="p">(</span><span class="n">spurs</span><span class="o">=</span><span class="nx">spurs</span><span class="p">)</span>
+<span class="s1">&#39;Guard is Parker&#39;</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">f</span><span class="s2">&quot;Guard is {spurs[Guard]}&quot;</span>
+<span class="nx">Traceback</span> <span class="p">(</span><span class="nx">most</span> <span class="nx">recent</span> <span class="nb">call</span> <span class="nb">last</span><span class="p">):</span>
+  <span class="nb">File</span> <span class="s2">&quot;&lt;pyshell#34&gt;&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">1</span><span class="p">,</span> <span class="k">in</span> <span class="o">&lt;</span><span class="nx">module</span><span class="o">&gt;</span>
+    <span class="nb">f</span><span class="s2">&quot;Guard is {spurs[Guard]}&quot;</span>
+<span class="nx">NameError</span><span class="p">:</span> <span class="nb">name</span> <span class="s1">&#39;Guard&#39;</span> <span class="nx">is</span> <span class="ow">not</span> <span class="nx">defined</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">f</span><span class="s2">&quot;Guard is {spurs[&#39;Guard&#39;]}&quot;</span>
+<span class="s1">&#39;Guard is Parker&#39;</span>
+</pre></div>
+
+
+<h2 id="_8">字符串连接</h2>
+<h3 id="join">join</h3>
+<p>将s中的元素，以str为分割符，合并成为一个字符串</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">26</span><span class="p">]:</span> <span class="n">L</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">26</span><span class="p">]:</span> <span class="p">[</span><span class="s">&#39;I&#39;</span><span class="p">,</span> <span class="s">&#39;love&#39;</span><span class="p">,</span> <span class="s">&#39;Python&#39;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">27</span><span class="p">]:</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">27</span><span class="p">]:</span> <span class="s">&#39;IlovePython&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">28</span><span class="p">]:</span> <span class="s">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">28</span><span class="p">]:</span> <span class="s">&#39;I_love_Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">30</span><span class="p">]:</span> <span class="n">L</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">30</span><span class="p">]:</span> <span class="p">[</span><span class="s">&#39;I&#39;</span><span class="p">,</span> <span class="s">&#39;love&#39;</span><span class="p">,</span> <span class="s">&#39;Python&#39;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">31</span><span class="p">]:</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">L</span><span class="p">:</span>
+    <span class="o">...</span><span class="p">:</span>     <span class="n">ret</span> <span class="o">+=</span> <span class="n">i</span>
+    <span class="o">...</span><span class="p">:</span>     <span class="n">ret</span> <span class="o">+=</span> <span class="s">&#39;&#39;</span>
+    <span class="o">...</span><span class="p">:</span> <span class="n">ret</span>
+    <span class="o">...</span><span class="p">:</span> 
+<span class="n">Out</span><span class="p">[</span><span class="mi">31</span><span class="p">]:</span> <span class="s">&#39;IlovePython&#39;</span>
+</pre></div>
+
+
+<h3 id="43">+ 连接</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">27</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">Hello</span><span class="err">&#39;</span> <span class="o">+</span> <span class="err">&#39;</span><span class="n">World</span><span class="err">&#39;</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">HelloWorld</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="_9">字符串分割</h2>
+<h3 id="split">split</h3>
+<p>sep 指分隔符，默认为空格</p>
+<p>maxsplit 指分割次数， -1表示遍历整个字符串</p>
+<div class="hlcode"><pre><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="n">None</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+
+<p>分割成列表</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">32</span><span class="p">]:</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;I Love Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">33</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">33</span><span class="p">]:</span> <span class="p">[</span><span class="s">&#39;I&#39;</span><span class="p">,</span> <span class="s">&#39;Love&#39;</span><span class="p">,</span> <span class="s">&#39;Python&#39;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">34</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">34</span><span class="p">]:</span> <span class="p">[</span><span class="s">&#39;I L&#39;</span><span class="p">,</span> <span class="s">&#39;ve Pyth&#39;</span><span class="p">,</span> <span class="s">&#39;n&#39;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">37</span><span class="p">]:</span> <span class="n">S</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">37</span><span class="p">]:</span> <span class="s">&#39;root:*:0:0:System Administrator:/var/root:/bin/sh&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">38</span><span class="p">]:</span> <span class="n">S</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">38</span><span class="p">]:</span> <span class="p">[</span><span class="s">&#39;root&#39;</span><span class="p">,</span> <span class="s">&#39;*&#39;</span><span class="p">,</span> <span class="s">&#39;0&#39;</span><span class="p">,</span> <span class="s">&#39;0&#39;</span><span class="p">,</span> <span class="s">&#39;System Administrator&#39;</span><span class="p">,</span> <span class="s">&#39;/var/root&#39;</span><span class="p">,</span> <span class="s">&#39;/bin/sh&#39;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">39</span><span class="p">]:</span> <span class="n">S</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">39</span><span class="p">]:</span> <span class="s">&#39;root&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">40</span><span class="p">]:</span> <span class="n">username</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">41</span><span class="p">]:</span> <span class="n">username</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">41</span><span class="p">]:</span> <span class="s">&#39;root&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">42</span><span class="p">]:</span> <span class="n">new_s</span> <span class="o">=</span> <span class="s">&#39;URL:http://xuxuehua.com&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">43</span><span class="p">]:</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">new_s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">44</span><span class="p">]:</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">44</span><span class="p">]:</span> <span class="p">(</span><span class="s">&#39;URL&#39;</span><span class="p">,</span> <span class="s">&#39;http://xuxuehua.com&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h4 id="_10">多种分隔符分割</h4>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">80</span><span class="p">]</span><span class="o">:</span> <span class="n">import</span> <span class="n">re</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">81</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">81</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">ab</span><span class="p">;</span><span class="n">cd</span><span class="o">|</span><span class="n">efg</span><span class="o">|</span><span class="n">hi</span><span class="p">,</span><span class="n">jkl</span><span class="o">|</span><span class="n">mn</span><span class="err">\</span><span class="n">topq</span><span class="p">;</span><span class="n">rst</span><span class="p">,</span><span class="n">uvw</span><span class="err">\</span><span class="n">txyz</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">82</span><span class="p">]</span><span class="o">:</span> <span class="n">re</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="n">r</span><span class="err">&#39;</span><span class="p">[,;</span><span class="err">\</span><span class="n">t</span><span class="o">|</span><span class="p">]</span><span class="o">+</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">82</span><span class="p">]</span><span class="o">:</span> <span class="p">[</span><span class="err">&#39;</span><span class="n">ab</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">cd</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">efg</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">hi</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">jkl</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">mn</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">opq</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">rst</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">uvw</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">xyz</span><span class="err">&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<h3 id="rsplit">rsplit</h3>
+<div class="hlcode"><pre><span class="n">rsplit</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="n">None</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>sep 指分隔符，默认为空格</p>
+<p>maxsplit 指分割次数， -1表示遍历整个字符串</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">45</span><span class="p">]:</span> <span class="n">new_s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">45</span><span class="p">]:</span> <span class="s">&#39;URL:http://xuxuehua.com&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">46</span><span class="p">]:</span> <span class="n">new_s</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">46</span><span class="p">]:</span> <span class="p">[</span><span class="s">&#39;URL&#39;</span><span class="p">,</span> <span class="s">&#39;http&#39;</span><span class="p">,</span> <span class="s">&#39;//xuxuehua.com&#39;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">47</span><span class="p">]:</span> <span class="n">new_s</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">47</span><span class="p">]:</span> <span class="p">[</span><span class="s">&#39;URL:http&#39;</span><span class="p">,</span> <span class="s">&#39;//xuxuehua.com&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<h3 id="splitlines">splitlines</h3>
+<div class="hlcode"><pre><span class="n">splitlines</span><span class="p">([</span><span class="n">keepends</span><span class="p">])</span>
+</pre></div>
+
+
+<blockquote>
+<p>按照行来切分字符串</p>
+<p>keepends表示是否保留行分隔符</p>
+<p>行分隔符包括: \n, \r\n, \r 等</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">51</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">51</span><span class="p">]:</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">I Love Python</span><span class="se">\n</span><span class="s"> I love Linux either</span><span class="se">\n</span><span class="s">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">52</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">52</span><span class="p">]:</span> <span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;I Love Python&#39;</span><span class="p">,</span> <span class="s">&#39; I love Linux either&#39;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">53</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">53</span><span class="p">]:</span> <span class="p">[</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;I Love Python</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39; I love Linux either</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">54</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">54</span><span class="p">]:</span> <span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;I Love Python&#39;</span><span class="p">,</span> <span class="s">&#39; I love Linux either&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<h3 id="partition">partition</h3>
+<div class="hlcode"><pre><span class="n">partition</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span> 
+<span class="o">-&gt;</span> <span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">tail</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>从左至右，遇到分隔符就把字符串分隔成: 头，分隔符，尾三元组</p>
+<p>若没有分隔符，返回头和两个空元组</p>
+<p>sep为分隔符，必须指定</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">58</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">58</span><span class="p">]:</span> <span class="s">&#39;root:*:0:0:System Administrator:/var/root:/bin/sh&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">59</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">59</span><span class="p">]:</span> <span class="p">(</span><span class="s">&#39;root&#39;</span><span class="p">,</span> <span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="s">&#39;*:0:0:System Administrator:/var/root:/bin/sh&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">60</span><span class="p">]:</span> <span class="n">h</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">61</span><span class="p">]:</span> <span class="n">t</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">61</span><span class="p">]:</span> <span class="s">&#39;*:0:0:System Administrator:/var/root:/bin/sh&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">62</span><span class="p">]:</span> <span class="n">h</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">63</span><span class="p">]:</span> <span class="n">t</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">63</span><span class="p">]:</span> <span class="s">&#39;0:0:System Administrator:/var/root:/bin/sh&#39;</span>
+</pre></div>
+
+
+<h3 id="rpartition">rpartition</h3>
+<div class="hlcode"><pre><span class="n">rpartition</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span> 
+<span class="o">-&gt;</span> <span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">tail</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>从右至左，遇到分隔符就把字符串分隔成: 头，分隔符，尾三元组</p>
+<p>若没有分隔符，返回头和两个空元组</p>
+<p>sep为分隔符，必须指定</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">64</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">64</span><span class="p">]:</span> <span class="s">&#39;root:*:0:0:System Administrator:/var/root:/bin/sh&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">65</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">rpartition</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">65</span><span class="p">]:</span> <span class="p">(</span><span class="s">&#39;root:*:0:0:System Administrator:/var/root&#39;</span><span class="p">,</span> <span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="s">&#39;/bin/sh&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">66</span><span class="p">]:</span> <span class="n">h</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">rpartition</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">67</span><span class="p">]:</span> <span class="n">t</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">67</span><span class="p">]:</span> <span class="s">&#39;/bin/sh&#39;</span>
+</pre></div>
+
+
+<h2 id="_11">字符串修改</h2>
+<p>(字符串是不可修改的，这里是返回一个新的字符串)</p>
+<h3 id="replace">replace</h3>
+<div class="hlcode"><pre><span class="n">replace</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">[,</span> <span class="n">count</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">str</span>
+</pre></div>
+
+
+<p>负数操作会替换所有</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">146</span><span class="p">]:</span> <span class="n">s</span> 
+<span class="n">Out</span><span class="p">[</span><span class="mi">146</span><span class="p">]:</span> <span class="s">&#39;I love Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">147</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">147</span><span class="p">]:</span> <span class="s">&#39;I lxve Pythxn&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">148</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">148</span><span class="p">]:</span> <span class="s">&#39;I lxve Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">149</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">149</span><span class="p">]:</span> <span class="s">&#39;I lxve Pythxn&#39;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span>                                                                                                                                             
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">I</span> <span class="n">love</span> <span class="n">Python</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="err">&#39;</span><span class="n">love</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">hate</span><span class="err">&#39;</span><span class="p">).</span><span class="n">replace</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Python</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">C</span><span class="err">#&#39;</span><span class="p">)</span>                                                                                             
+<span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">I</span> <span class="n">hate</span> <span class="n">C</span><span class="err">#&#39;π</span>
+</pre></div>
+
+
+<h3 id="capitalize">capitalize</h3>
+<p>首单词的首字母大写</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">68</span><span class="p">]:</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;i love python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">69</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">69</span><span class="p">]:</span> <span class="s">&#39;I love python&#39;</span>
+</pre></div>
+
+
+<h3 id="titile">titile</h3>
+<p>每个单词首字母大写</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">70</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">70</span><span class="p">]:</span> <span class="s">&#39;i love python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">71</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">71</span><span class="p">]:</span> <span class="s">&#39;I Love Python&#39;</span>
+</pre></div>
+
+
+<h3 id="upper">upper</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">72</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">72</span><span class="p">]:</span> <span class="s">&#39;i love python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">73</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">73</span><span class="p">]:</span> <span class="s">&#39;I LOVE PYTHON&#39;</span>
+</pre></div>
+
+
+<h3 id="lower">lower</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">77</span><span class="p">]:</span> <span class="n">S</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">77</span><span class="p">]:</span> <span class="s">&#39;I love python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">78</span><span class="p">]:</span> <span class="n">S</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">78</span><span class="p">]:</span> <span class="s">&#39;i love python&#39;</span>
+</pre></div>
+
+
+<h3 id="swapcase">swapcase</h3>
+<p>互换大小写</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">82</span><span class="p">]:</span> <span class="n">S</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">82</span><span class="p">]:</span> <span class="s">&#39;I Love Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">83</span><span class="p">]:</span> <span class="n">S</span><span class="o">.</span><span class="n">swapcase</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">83</span><span class="p">]:</span> <span class="s">&#39;i lOVE pYTHON&#39;</span>
+</pre></div>
+
+
+<h3 id="center">center</h3>
+<div class="hlcode"><pre><span class="n">center</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="p">[</span><span class="n">fillchar</span><span class="p">])</span>
+</pre></div>
+
+
+<blockquote>
+<p>width 打印宽度</p>
+<p>fillchar 填充字符</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">87</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">87</span><span class="p">]:</span> <span class="s">&#39;Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">88</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">88</span><span class="p">]:</span> <span class="s">&#39;       Python       &#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">89</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s">&#39;*&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">89</span><span class="p">]:</span> <span class="s">&#39;*******Python*******&#39;</span>
+</pre></div>
+
+
+<h3 id="ljust">ljust</h3>
+<div class="hlcode"><pre><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="p">[</span><span class="n">fillchar</span><span class="p">])</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">91</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">91</span><span class="p">]:</span> <span class="s">&#39;Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">92</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">92</span><span class="p">]:</span> <span class="s">&#39;Python              &#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">93</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s">&#39;*&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">93</span><span class="p">]:</span> <span class="s">&#39;Python**************&#39;</span>
+</pre></div>
+
+
+<h3 id="rjust">rjust</h3>
+<div class="hlcode"><pre><span class="n">rjust</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="p">[</span><span class="n">fillchar</span><span class="p">])</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">96</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">96</span><span class="p">]:</span> <span class="s">&#39;Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">97</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">97</span><span class="p">]:</span> <span class="s">&#39;              Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">98</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s">&#39;*&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">98</span><span class="p">]:</span> <span class="s">&#39;**************Python&#39;</span>
+</pre></div>
+
+
+<h3 id="zfill">zfill</h3>
+<div class="hlcode"><pre><span class="n">zfill</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>width 打印宽度，居右，左边用0填充</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">103</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">103</span><span class="p">]:</span> <span class="s">&#39;Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">104</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">104</span><span class="p">]:</span> <span class="s">&#39;0000Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">105</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">105</span><span class="p">]:</span> <span class="s">&#39;00000Python&#39;</span>
+</pre></div>
+
+
+<h3 id="strip">strip</h3>
+<p>常用于处理文本, 去除空格和去掉首尾的str字符串换行符</p>
+<div class="hlcode"><pre><span class="n">strip</span><span class="p">([</span><span class="n">chars</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">str</span>
+</pre></div>
+
+
+<blockquote>
+<p>chars 不指定，默认为空白字符</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">25</span><span class="p">]:</span> <span class="n">a</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s"> abc </span><span class="se">\n</span><span class="s">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">26</span><span class="p">]:</span> <span class="n">a</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">26</span><span class="p">]:</span> <span class="s">&#39;abc&#39;</span>
+</pre></div>
+
+
+<h3 id="rstrip">rstrip</h3>
+<p>表示只去掉尾部的str字符串。</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">113</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">113</span><span class="p">]:</span> <span class="s">&#39;abc </span><span class="se">\n</span><span class="s">  &#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">114</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">114</span><span class="p">]:</span> <span class="s">&#39;abc&#39;</span>
+</pre></div>
+
+
+<h3 id="lstrip">lstrip</h3>
+<p>表示只去掉开头的str字符串</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">24</span><span class="p">]:</span> <span class="n">a</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s"> abc </span><span class="se">\n</span><span class="s">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">25</span><span class="p">]:</span> <span class="n">a</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">25</span><span class="p">]:</span> <span class="s">&#39;abc </span><span class="se">\n</span><span class="s">&#39;</span>
+</pre></div>
+
+
+<h3 id="expandtabs">expandtabs</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">Rick</span> <span class="err">\</span><span class="n">t</span> <span class="n">Xu</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span><span class="p">.</span><span class="n">expandtabs</span><span class="p">(</span><span class="n">tabsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">Rick</span>                 <span class="n">Xu</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="_12">字符串判断</h2>
+<h3 id="len">len</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">41</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">41</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">this</span> <span class="n">is</span> <span class="n">Rick</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">42</span><span class="p">]</span><span class="o">:</span> <span class="n">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">42</span><span class="p">]</span><span class="o">:</span> <span class="mi">12</span>
+</pre></div>
+
+
+<h3 id="startswith">startswith</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">124</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">124</span><span class="p">]:</span> <span class="s">&#39;I love Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">125</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;I&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">125</span><span class="p">]:</span> <span class="bp">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">126</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;l&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">126</span><span class="p">]:</span> <span class="bp">False</span>
+</pre></div>
+
+
+<h3 id="endswith">endswith</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">127</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">127</span><span class="p">]:</span> <span class="s">&#39;I love Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">128</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;n&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">128</span><span class="p">]:</span> <span class="bp">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">129</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">129</span><span class="p">]:</span> <span class="bp">False</span>
+</pre></div>
+
+
+<h3 id="count">count</h3>
+<div class="hlcode"><pre><span class="n">count</span><span class="p">(</span><span class="n">sub</span><span class="p">[,</span> <span class="n">start</span><span class="p">[,</span> <span class="n">end</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">130</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">130</span><span class="p">]:</span> <span class="s">&#39;I love Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">131</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&#39;l&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">131</span><span class="p">]:</span> <span class="mi">1</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">132</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">132</span><span class="p">]:</span> <span class="mi">2</span>
+</pre></div>
+
+
+<h3 id="index">index</h3>
+<div class="hlcode"><pre><span class="n">index</span><span class="p">(</span><span class="n">sub</span><span class="p">[,</span> <span class="n">start</span><span class="p">[,</span> <span class="n">end</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+</pre></div>
+
+
+<p>从左开始，查找sub在str中第一次出现的位置。如果str中不包含sub，出错</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">135</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">135</span><span class="p">]:</span> <span class="s">&#39;I love Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">136</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">136</span><span class="p">]:</span> <span class="mi">3</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">145</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+<span class="o">---------------------------------------------------------------------------</span>
+<span class="ne">ValueError</span>                                <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">145</span><span class="o">-</span><span class="n">a677ba2c36a5</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">s</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+
+<span class="ne">ValueError</span><span class="p">:</span> <span class="n">substring</span> <span class="ow">not</span> <span class="n">found</span>
+</pre></div>
+
+
+<h3 id="rindex">rindex</h3>
+<div class="hlcode"><pre><span class="n">rindex</span><span class="p">(</span><span class="n">sub</span><span class="p">[,</span> <span class="n">start</span><span class="p">[,</span> <span class="n">end</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+</pre></div>
+
+
+<p>从右开始，查找sub在str中第一次出现的位置。如果str中不包含sub，返回 -1</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">137</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">137</span><span class="p">]:</span> <span class="s">&#39;I love Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">138</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">rindex</span><span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">138</span><span class="p">]:</span> <span class="mi">11</span>
+</pre></div>
+
+
+<h3 id="find">find</h3>
+<div class="hlcode"><pre><span class="n">find</span><span class="p">(</span><span class="n">sub</span><span class="p">[,</span> <span class="n">start</span><span class="p">[,</span> <span class="n">end</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+</pre></div>
+
+
+<p>从左开始，查找sub在str中第一次出现的位置。如果str中不包含sub，返回-1</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">139</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">139</span><span class="p">]:</span> <span class="s">&#39;I love Python&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">140</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;l&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">140</span><span class="p">]:</span> <span class="mi">2</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">141</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">141</span><span class="p">]:</span> <span class="mi">3</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">142</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;Python&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">142</span><span class="p">]:</span> <span class="mi">7</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">143</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;xuxu&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">143</span><span class="p">]:</span> <span class="o">-</span><span class="mi">1</span>
+</pre></div>
+
+
+<h3 id="rfind">rfind</h3>
+<div class="hlcode"><pre><span class="n">rfind</span><span class="p">(</span><span class="n">sub</span><span class="p">[,</span> <span class="n">start</span><span class="p">[,</span> <span class="n">end</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+</pre></div>
+
+
+<p>从右开始，查找sub在str中第一次出现的位置。如果str中不包含sub，返回 -1</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">I</span> <span class="n">love</span> <span class="n">Python</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span><span class="p">.</span><span class="n">rfind</span><span class="p">(</span><span class="sc">&#39;I&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="mi">0</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span><span class="p">.</span><span class="n">rfind</span><span class="p">(</span><span class="sc">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">:</span> <span class="mi">11</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span><span class="p">.</span><span class="n">rfind</span><span class="p">(</span><span class="err">&#39;</span><span class="n">xxh</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span>
+</pre></div>
+
+
+<h3 id="isalnum">isalnum</h3>
+<p>如果所有的字符都是字母或数字</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">ab23</span><span class="err">&#39;</span><span class="p">.</span><span class="n">isalnum</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+</pre></div>
+
+
+<h3 id="isalpha">isalpha</h3>
+<p>如果所有的字符都是字母</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">abA</span><span class="err">&#39;</span><span class="p">.</span><span class="n">isalpha</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+</pre></div>
+
+
+<h3 id="isdecimal">isdecimal</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">1</span><span class="n">A</span><span class="err">&#39;</span><span class="p">.</span><span class="n">isdecimal</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+</pre></div>
+
+
+<h3 id="isdigit">isdigit</h3>
+<p>如果所有的字符都是数字</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">1</span><span class="n">A</span><span class="err">&#39;</span><span class="p">.</span><span class="n">isdigit</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+</pre></div>
+
+
+<h3 id="isidentifier">isidentifier</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">a1A</span><span class="err">&#39;</span><span class="p">.</span><span class="n">isidentifier</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">1</span><span class="n">A</span><span class="err">&#39;</span><span class="p">.</span><span class="n">isidentifier</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+</pre></div>
+
+
+<h3 id="isnumeric">isnumeric</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">11</span><span class="n">A</span><span class="err">&#39;</span><span class="p">.</span><span class="n">isnumeric</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+</pre></div>
+
+
+<h3 id="istitle">istitle</h3>
+<p>如果所有的词的首字母都是大写</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">My</span> <span class="n">name</span><span class="err">&#39;</span><span class="p">.</span><span class="n">istitle</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">My</span> <span class="n">Name</span><span class="err">&#39;</span><span class="p">.</span><span class="n">istitle</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+</pre></div>
+
+
+<h3 id="isupper">isupper</h3>
+<p>如果所有的字符都是大写字母</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">aA</span><span class="err">&#39;</span><span class="p">.</span><span class="n">isupper</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+</pre></div>
+
+
+<h3 id="islower">islower</h3>
+<p>如果所有的字符都是小写字母</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">abc</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span><span class="p">.</span><span class="n">islower</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+</pre></div>
+
+
+<h3 id="isspace">isspace</h3>
+<p>如果所有的字符都是空格</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot; &quot;</span> 
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span><span class="p">.</span><span class="n">isspace</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+</pre></div>
+
+
+<h2 id="str-bytes">STR 与 BYTES</h2>
+<p>Python3 中严格区分了文本和二进制数据<br />
+Python2 中并没有严格区分<br />
+文本数据使用str类型，底层实现是unicode<br />
+二进制数据使用bytes类型，底层是bytes<br />
+str使用encode 方法转化为bytes<br />
+bytes使用decode方法转化为str</p>
+<ul>
+<li>python2</li>
+</ul>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;中文&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="s">&#39;</span><span class="se">\xe4\xb8\xad\xe6\x96\x87</span><span class="s">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+<span class="o">---------------------------------------------------------------------------</span>
+<span class="ne">UnicodeDecodeError</span>                        <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">2</span><span class="o">-</span><span class="mi">1194</span><span class="n">a7b23c15</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+<span class="ne">UnicodeDecodeError</span><span class="p">:</span> <span class="s">&#39;ascii&#39;</span> <span class="n">codec</span> <span class="n">can</span><span class="s">&#39;t decode byte 0xe4 in position 0: ordinal not in range(128)</span>
+</pre></div>
+
+
+<ul>
+<li>python3</li>
+</ul>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="s">&#39;中文&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">b</span><span class="s">&#39;</span><span class="se">\xe4\xb8\xad\xe6\x96\x87</span><span class="s">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="n">b</span><span class="s">&#39;</span><span class="se">\xe4\xb8\xad\xe6\x96\x87</span><span class="s">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="n">b</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="n">b</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="s">&#39;中文&#39;</span>
+</pre></div>
+
+
+<h2 id="_13">转换</h2>
+<h3 id="string-to-dict">string to dict</h3>
+<p>Starting in Python 2.6 you can use the built-in <a href="https://docs.python.org/library/ast.html#ast.literal_eval"><code>ast.literal_eval</code></a>:</p>
+<div class="hlcode"><pre><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">ast</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="s">&quot;{&#39;muffin&#39; : &#39;lolz&#39;, &#39;foo&#39; : &#39;kitty&#39;}&quot;</span><span class="p">)</span>
+<span class="p">{</span><span class="s">&#39;muffin&#39;</span><span class="p">:</span> <span class="s">&#39;lolz&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">:</span> <span class="s">&#39;kitty&#39;</span><span class="p">}</span>
+</pre></div>
+
+
+<p>This is safer than using <code>eval</code>. As its own docs say:</p>
+<div class="hlcode"><pre><span class="o">&gt;&gt;&gt;</span> <span class="nx">help</span><span class="p">(</span><span class="nx">ast</span><span class="p">.</span><span class="nx">literal_eval</span><span class="p">)</span>
+<span class="nx">Help</span> <span class="nx">on</span> <span class="kd">function</span> <span class="nx">literal_eval</span> <span class="k">in</span> <span class="nx">module</span> <span class="nx">ast</span><span class="o">:</span>
+
+<span class="nx">literal_eval</span><span class="p">(</span><span class="nx">node_or_string</span><span class="p">)</span>
+    <span class="nx">Safely</span> <span class="nx">evaluate</span> <span class="nx">an</span> <span class="nx">expression</span> <span class="nx">node</span> <span class="nx">or</span> <span class="nx">a</span> <span class="nx">string</span> <span class="nx">containing</span> <span class="nx">a</span> <span class="nx">Python</span>
+    <span class="nx">expression</span><span class="p">.</span>  <span class="nx">The</span> <span class="nx">string</span> <span class="nx">or</span> <span class="nx">node</span> <span class="nx">provided</span> <span class="nx">may</span> <span class="nx">only</span> <span class="nx">consist</span> <span class="nx">of</span> <span class="nx">the</span> <span class="nx">following</span>
+    <span class="nx">Python</span> <span class="nx">literal</span> <span class="nx">structures</span><span class="o">:</span> <span class="nx">strings</span><span class="p">,</span> <span class="nx">numbers</span><span class="p">,</span> <span class="nx">tuples</span><span class="p">,</span> <span class="nx">lists</span><span class="p">,</span> <span class="nx">dicts</span><span class="p">,</span> <span class="nx">booleans</span><span class="p">,</span>
+    <span class="nx">and</span> <span class="nx">None</span><span class="p">.</span>
+</pre></div>
+
+
+<p>For example:</p>
+<div class="hlcode"><pre><span class="o">&gt;&gt;&gt;</span> <span class="nb">eval</span><span class="p">(</span><span class="s">&quot;shutil.rmtree(&#39;mongo&#39;)&quot;</span><span class="p">)</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+  <span class="n">File</span> <span class="s">&quot;&lt;string&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+  <span class="n">File</span> <span class="s">&quot;/opt/Python-2.6.1/lib/python2.6/shutil.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">208</span><span class="p">,</span> <span class="ow">in</span> <span class="n">rmtree</span>
+    <span class="n">onerror</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">())</span>
+  <span class="n">File</span> <span class="s">&quot;/opt/Python-2.6.1/lib/python2.6/shutil.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">206</span><span class="p">,</span> <span class="ow">in</span> <span class="n">rmtree</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="ne">OSError</span><span class="p">:</span> <span class="p">[</span><span class="n">Errno</span> <span class="mi">2</span><span class="p">]</span> <span class="n">No</span> <span class="n">such</span> <span class="nb">file</span> <span class="ow">or</span> <span class="n">directory</span><span class="p">:</span> <span class="s">&#39;mongo&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="s">&quot;shutil.rmtree(&#39;mongo&#39;)&quot;</span><span class="p">)</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+  <span class="n">File</span> <span class="s">&quot;/opt/Python-2.6.1/lib/python2.6/ast.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">68</span><span class="p">,</span> <span class="ow">in</span> <span class="n">literal_eval</span>
+    <span class="k">return</span> <span class="n">_convert</span><span class="p">(</span><span class="n">node_or_string</span><span class="p">)</span>
+  <span class="n">File</span> <span class="s">&quot;/opt/Python-2.6.1/lib/python2.6/ast.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">67</span><span class="p">,</span> <span class="ow">in</span> <span class="n">_convert</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;malformed string&#39;</span><span class="p">)</span>
+<span class="ne">ValueError</span><span class="p">:</span> <span class="n">malformed</span> <span class="n">string</span>
+</pre></div>
+
+
+<h1 id="_14">优化</h1>
+<div class="hlcode"><pre><span class="n">s</span> <span class="o">=</span> <span class="err">&#39;&#39;</span>
+<span class="k">for</span> <span class="n">n</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">s</span> <span class="o">+=</span> <span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">l</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">n</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">l</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">str</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+<span class="n">s</span> <span class="o">=</span> <span class="sc">&#39; &#39;</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+</pre></div>
+
+
+<p>直观上看似乎第二种方法的复杂度高一倍，但实际运行了下，第二种方法效率略高，当调高到50万的时候第二种的效率比第一种高出两倍以上。</p>
+<p>join的运行时间只占了很小一部分，不到10%，复杂度推测大致是O(logn)。综上，list的扩充速度优于str，且join的速度在大数面前可忽略。</p>
+<p>推荐方法</p>
+<div class="hlcode"><pre><span class="n">s</span> <span class="o">=</span> <span class="s">&quot; &quot;</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">map</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)))</span> 
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

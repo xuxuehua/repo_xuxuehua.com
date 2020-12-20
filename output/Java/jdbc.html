@@ -1,0 +1,640 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>jdbc - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java">Java</a>&nbsp;&#187;&nbsp;jdbc
+    <span class="updated">Page Updated&nbsp;
+      2020-02-02 15:45
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">jdbc</div>
+
+  <p>[toc]</p>
+<h1 id="jdbc">JDBC</h1>
+<p>Java DataBase Connectivity</p>
+<p>驱动程序jar包</p>
+<h2 id="_1">架构</h2>
+<p><img alt="image-20200202154801491" src="jdbc.assets/image-20200202154801491.png" /></p>
+<h2 id="_2">安装</h2>
+<p>JDBC的API默认包含在JDK中</p>
+<h2 id="jdbc-api">JDBC API</h2>
+<p><img alt="image-20200202172655771" src="jdbc.assets/image-20200202172655771.png" /></p>
+<h2 id="jdbc-url">JDBC URL</h2>
+<p><img alt="image-20200202172512384" src="jdbc.assets/image-20200202172512384.png" /></p>
+<h2 id="hello-world">Hello World</h2>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="n">https</span><span class="o">:</span><span class="c1">//cdn.mysql.com/archives/mysql-connector-java-8.0/mysql-connector-java-8.0.18.zip</span>
+</pre></div>
+
+
+<p>将解压出的jar包放到目录下，配置project的module settings， 添加Dependencies</p>
+<div class="hlcode"><pre><span class="n">package</span> <span class="n">jdbc_example</span><span class="p">;</span>
+
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">sql</span><span class="p">.</span><span class="n">Connection</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">sql</span><span class="p">.</span><span class="n">DriverManager</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">sql</span><span class="p">.</span><span class="n">ResultSet</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">sql</span><span class="p">.</span><span class="n">SQLException</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">sql</span><span class="p">.</span><span class="n">Statement</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">HelloJDBC</span> <span class="p">{</span>
+
+    <span class="k">static</span> <span class="n">final</span> <span class="n">String</span> <span class="n">JDBC_DRIVER</span> <span class="o">=</span> <span class="s">&quot;com.mysql.cj.jdbc.Driver&quot;</span><span class="p">;</span>
+    <span class="k">static</span> <span class="n">final</span> <span class="n">String</span> <span class="n">DB_URL</span> <span class="o">=</span> <span class="s">&quot;jdbc:mysql://127.0.0.1:8889/ginger&quot;</span><span class="p">;</span>
+    <span class="k">static</span> <span class="n">final</span> <span class="n">String</span> <span class="n">USER</span> <span class="o">=</span> <span class="s">&quot;root&quot;</span><span class="p">;</span>
+    <span class="k">static</span> <span class="n">final</span> <span class="n">String</span> <span class="n">PASSWORD</span> <span class="o">=</span> <span class="s">&quot;root&quot;</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">helloworld</span><span class="p">()</span> <span class="n">throws</span> <span class="n">ClassNotFoundException</span> <span class="p">{</span>
+        <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">Statement</span> <span class="n">stmt</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">ResultSet</span> <span class="n">rs</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+
+        <span class="c1">// 装载驱动</span>
+        <span class="n">Class</span><span class="p">.</span><span class="n">forName</span><span class="p">(</span><span class="n">JDBC_DRIVER</span><span class="p">);</span>
+        <span class="c1">// 建立数据库连接</span>
+        <span class="n">try</span> <span class="p">{</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="p">.</span><span class="n">getConnection</span><span class="p">(</span><span class="n">DB_URL</span><span class="p">,</span> <span class="n">USER</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">);</span>
+            <span class="c1">//执行SQL</span>
+            <span class="n">stmt</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">createStatement</span><span class="p">();</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">stmt</span><span class="p">.</span><span class="n">executeQuery</span><span class="p">(</span><span class="s">&quot;select nickname from user&quot;</span><span class="p">);</span>
+            <span class="c1">// 获取执行结果</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">next</span><span class="p">())</span> <span class="p">{</span>
+                <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">getString</span><span class="p">(</span><span class="s">&quot;nickname&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+        <span class="p">}</span> <span class="n">finally</span> <span class="p">{</span>
+            <span class="c1">// 清理环境</span>
+            <span class="n">try</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">conn</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">conn</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">stmt</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">stmt</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">rs</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">rs</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="n">throws</span> <span class="n">ClassNotFoundException</span><span class="p">{</span>
+        <span class="n">helloworld</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p>等同于执行 use ginger; select nickname from user; 获取nickname的结果</p>
+</blockquote>
+<h1 id="_3">连接池</h1>
+<p>连接复用， 限制连接</p>
+<p>本质上就是一组Java jar包</p>
+<h2 id="dbcp">DBCP</h2>
+<p>apache 开源项目，Tomcat的连接池组件</p>
+<p>包括三个jar包</p>
+<div class="hlcode"><pre><span class="n">commons</span><span class="o">-</span><span class="n">dbcp</span><span class="p">.</span><span class="n">jar</span>
+<span class="n">commons</span><span class="o">-</span><span class="n">pool</span><span class="p">.</span><span class="n">jar</span>
+<span class="n">commons</span><span class="o">-</span><span class="n">logging</span><span class="p">.</span><span class="n">jar</span>
+</pre></div>
+
+
+<h3 id="_4">创建连接池</h3>
+<p>使用BasicDataSource对象来创建连接池</p>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="n">http</span><span class="o">:</span><span class="c1">//mirror.bit.edu.cn/apache//commons/dbcp/binaries/commons-dbcp2-2.7.0-bin.tar.gz</span>
+<span class="n">wget</span> <span class="n">https</span><span class="o">:</span><span class="c1">//mirrors.tuna.tsinghua.edu.cn/apache//commons/pool/binaries/commons-pool2-2.8.0-bin.tar.gz</span>
+<span class="n">wget</span> <span class="n">https</span><span class="o">:</span><span class="c1">//mirrors.tuna.tsinghua.edu.cn/apache//commons/logging/binaries/commons-logging-1.2-bin.tar.gz</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">package</span> <span class="n">jdbc_example</span><span class="p">;</span>
+
+
+<span class="n">import</span> <span class="n">org</span><span class="p">.</span><span class="n">apache</span><span class="p">.</span><span class="n">commons</span><span class="p">.</span><span class="n">dbcp2</span><span class="p">.</span><span class="n">BasicDataSource</span><span class="p">;</span>
+
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">sql</span><span class="p">.</span><span class="n">Connection</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">sql</span><span class="p">.</span><span class="n">ResultSet</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">sql</span><span class="p">.</span><span class="n">SQLException</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">sql</span><span class="p">.</span><span class="n">Statement</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">DBPoolTest</span> <span class="p">{</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="n">BasicDataSource</span> <span class="n">ds</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="n">final</span> <span class="k">static</span> <span class="n">String</span> <span class="n">DRIVER_NAME</span> <span class="o">=</span> <span class="s">&quot;com.mysql.cj.jdbc.Driver&quot;</span><span class="p">;</span>
+    <span class="n">public</span> <span class="n">final</span> <span class="k">static</span> <span class="n">String</span> <span class="n">USER_NAME</span> <span class="o">=</span> <span class="s">&quot;root&quot;</span><span class="p">;</span>
+    <span class="n">public</span> <span class="n">final</span> <span class="k">static</span> <span class="n">String</span> <span class="n">PASSWORD</span> <span class="o">=</span> <span class="s">&quot;root&quot;</span><span class="p">;</span>
+    <span class="n">public</span> <span class="n">final</span> <span class="k">static</span> <span class="n">String</span> <span class="n">DB_URL</span> <span class="o">=</span> <span class="s">&quot;jdbc:mysql://127.0.0.1:8889/ginger&quot;</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="nf">dbpoolInit</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">new</span> <span class="n">BasicDataSource</span><span class="p">();</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">setUrl</span><span class="p">(</span><span class="n">DB_URL</span><span class="p">);</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">setDriverClassName</span><span class="p">(</span><span class="n">DRIVER_NAME</span><span class="p">);</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">setUsername</span><span class="p">(</span><span class="n">USER_NAME</span><span class="p">);</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">setPassword</span><span class="p">(</span><span class="n">PASSWORD</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="kt">void</span> <span class="nf">dbPoolTest</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">Statement</span> <span class="n">stmt</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">ResultSet</span> <span class="n">rs</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+
+        <span class="n">try</span> <span class="p">{</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">ds</span><span class="p">.</span><span class="n">getConnection</span><span class="p">();</span>
+            <span class="n">stmt</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">createStatement</span><span class="p">();</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">stmt</span><span class="p">.</span><span class="n">executeQuery</span><span class="p">(</span><span class="s">&quot;select * from user&quot;</span><span class="p">);</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">next</span><span class="p">())</span> <span class="p">{</span>
+                <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">getString</span><span class="p">(</span><span class="s">&quot;email&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+        <span class="p">}</span> <span class="n">finally</span> <span class="p">{</span>
+            <span class="n">try</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">conn</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">conn</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">stmt</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">stmt</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">rs</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">rs</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">dbpoolInit</span><span class="p">();</span>
+        <span class="n">new</span> <span class="n">DBPoolTest</span><span class="p">().</span><span class="n">dbPoolTest</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="_5">高级配置</h3>
+<p>setInitialSize() 预制一些连接，加快第一次访问</p>
+<p>setMaxTotal() 连接池最大的连接数，新来的连接需要等待</p>
+<div class="hlcode"><pre><span class="n">ds</span> <span class="o">=</span> <span class="n">new</span> <span class="n">BasicDataSource</span><span class="p">();</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">setUrl</span><span class="p">(</span><span class="n">DB_URL</span><span class="p">);</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">setDriverClassName</span><span class="p">(</span><span class="n">DRIVER_NAME</span><span class="p">);</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">setUsername</span><span class="p">(</span><span class="n">USER_NAME</span><span class="p">);</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">setPassword</span><span class="p">(</span><span class="n">PASSWORD</span><span class="p">);</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">setMaxTotal</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</pre></div>
+
+
+<p>setsetMaxWaitMillis() 设置最大等待时间，超过回抛出异常</p>
+<p>setMaxIdle() 空闲连接超过了这个值，连接池会销毁连接</p>
+<p>setMinIdle() 低于这个值会创建，保证连接池有足够的连接</p>
+<h3 id="_6">定期检查</h3>
+<p>MySQL默认会清除超过8个小时的数据库连接，连接池会讲即将失效的连接租借给应用程序，需保证连接池中的连接都是有效的</p>
+<p>setTestWhileIdle(True) 开启这个功能</p>
+<p>setMinEvictableIdleTimeMillis() 销毁连接的最小空闲时间，超过该值会被销毁</p>
+<p>setTimeBetweenEvictionRunsMillis() 检查运行时间的间隔</p>
+<h1 id="_7">事务控制</h1>
+<p>默认Connection 对象都是以非事务来运行的</p>
+<ul>
+<li>开启事务</li>
+</ul>
+<p>.setAutoCommit(false)</p>
+<ul>
+<li>提交事务</li>
+</ul>
+<p>.commit()</p>
+<ul>
+<li>回滚事务</li>
+</ul>
+<p>.rollback()</p>
+<div class="hlcode"><pre><span class="n">package</span> <span class="n">jdbc_example</span><span class="p">;</span>
+
+
+<span class="n">import</span> <span class="n">org</span><span class="p">.</span><span class="n">apache</span><span class="p">.</span><span class="n">commons</span><span class="p">.</span><span class="n">dbcp2</span><span class="p">.</span><span class="n">BasicDataSource</span><span class="p">;</span>
+
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">sql</span><span class="p">.</span><span class="o">*</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">DBPoolTest</span> <span class="p">{</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="n">BasicDataSource</span> <span class="n">ds</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="n">final</span> <span class="k">static</span> <span class="n">String</span> <span class="n">DRIVER_NAME</span> <span class="o">=</span> <span class="s">&quot;com.mysql.cj.jdbc.Driver&quot;</span><span class="p">;</span>
+    <span class="n">public</span> <span class="n">final</span> <span class="k">static</span> <span class="n">String</span> <span class="n">USER_NAME</span> <span class="o">=</span> <span class="s">&quot;root&quot;</span><span class="p">;</span>
+    <span class="n">public</span> <span class="n">final</span> <span class="k">static</span> <span class="n">String</span> <span class="n">PASSWORD</span> <span class="o">=</span> <span class="s">&quot;root&quot;</span><span class="p">;</span>
+    <span class="n">public</span> <span class="n">final</span> <span class="k">static</span> <span class="n">String</span> <span class="n">DB_URL</span> <span class="o">=</span> <span class="s">&quot;jdbc:mysql://127.0.0.1:8889/ginger&quot;</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="nf">dbpoolInit</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">new</span> <span class="n">BasicDataSource</span><span class="p">();</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">setUrl</span><span class="p">(</span><span class="n">DB_URL</span><span class="p">);</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">setDriverClassName</span><span class="p">(</span><span class="n">DRIVER_NAME</span><span class="p">);</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">setUsername</span><span class="p">(</span><span class="n">USER_NAME</span><span class="p">);</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">setPassword</span><span class="p">(</span><span class="n">PASSWORD</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="kt">void</span> <span class="nf">dbPoolTest</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">PreparedStatement</span> <span class="n">ptmt</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+
+        <span class="n">try</span> <span class="p">{</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">ds</span><span class="p">.</span><span class="n">getConnection</span><span class="p">();</span>
+            <span class="n">conn</span><span class="p">.</span><span class="n">setAutoCommit</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
+            <span class="n">ptmt</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">prepareStatement</span><span class="p">(</span><span class="s">&quot;update user set email = ? where id = ?&quot;</span><span class="p">);</span>
+            <span class="n">ptmt</span><span class="p">.</span><span class="n">setInt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="n">ptmt</span><span class="p">.</span><span class="n">setString</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&quot;rxu@xurick.com&quot;</span><span class="p">);</span>
+            <span class="n">ptmt</span><span class="p">.</span><span class="n">execute</span><span class="p">();</span>
+            <span class="n">conn</span><span class="p">.</span><span class="n">commit</span><span class="p">();</span>
+        <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">conn</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">try</span> <span class="p">{</span>
+                    <span class="n">conn</span><span class="p">.</span><span class="n">rollback</span><span class="p">();</span>
+                <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">e1</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="n">finally</span> <span class="p">{</span>
+            <span class="n">try</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">conn</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">conn</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">ptmt</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">ptmt</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">dbpoolInit</span><span class="p">();</span>
+        <span class="n">new</span> <span class="n">DBPoolTest</span><span class="p">().</span><span class="n">dbPoolTest</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_8">检查点</h2>
+<p>Connection.setSavePoint() </p>
+<p>Connection.rollback(SavePoint)</p>
+<p>在执行到某一个点的时候保存状态，当执行错误的时候，在从这个点执行其他的操作</p>
+<div class="hlcode"><pre><span class="n">package</span> <span class="n">jdbc_example</span><span class="p">;</span>
+
+
+<span class="n">import</span> <span class="n">org</span><span class="p">.</span><span class="n">apache</span><span class="p">.</span><span class="n">commons</span><span class="p">.</span><span class="n">dbcp2</span><span class="p">.</span><span class="n">BasicDataSource</span><span class="p">;</span>
+
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">sql</span><span class="p">.</span><span class="o">*</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">DBPoolTest</span> <span class="p">{</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="n">BasicDataSource</span> <span class="n">ds</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="n">final</span> <span class="k">static</span> <span class="n">String</span> <span class="n">DRIVER_NAME</span> <span class="o">=</span> <span class="s">&quot;com.mysql.cj.jdbc.Driver&quot;</span><span class="p">;</span>
+    <span class="n">public</span> <span class="n">final</span> <span class="k">static</span> <span class="n">String</span> <span class="n">USER_NAME</span> <span class="o">=</span> <span class="s">&quot;root&quot;</span><span class="p">;</span>
+    <span class="n">public</span> <span class="n">final</span> <span class="k">static</span> <span class="n">String</span> <span class="n">PASSWORD</span> <span class="o">=</span> <span class="s">&quot;root&quot;</span><span class="p">;</span>
+    <span class="n">public</span> <span class="n">final</span> <span class="k">static</span> <span class="n">String</span> <span class="n">DB_URL</span> <span class="o">=</span> <span class="s">&quot;jdbc:mysql://127.0.0.1:8889/ginger&quot;</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="nf">dbpoolInit</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">new</span> <span class="n">BasicDataSource</span><span class="p">();</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">setUrl</span><span class="p">(</span><span class="n">DB_URL</span><span class="p">);</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">setDriverClassName</span><span class="p">(</span><span class="n">DRIVER_NAME</span><span class="p">);</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">setUsername</span><span class="p">(</span><span class="n">USER_NAME</span><span class="p">);</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">setPassword</span><span class="p">(</span><span class="n">PASSWORD</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="kt">void</span> <span class="nf">dbPoolTest</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">PreparedStatement</span> <span class="n">ptmt</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">Savepoint</span> <span class="n">sp</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+
+        <span class="n">try</span> <span class="p">{</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">ds</span><span class="p">.</span><span class="n">getConnection</span><span class="p">();</span>
+            <span class="n">conn</span><span class="p">.</span><span class="n">setAutoCommit</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
+            <span class="n">ptmt</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">prepareStatement</span><span class="p">(</span><span class="s">&quot;update user set email = ? where id = ?&quot;</span><span class="p">);</span>
+            <span class="n">ptmt</span><span class="p">.</span><span class="n">setInt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="n">ptmt</span><span class="p">.</span><span class="n">setString</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&quot;rxu@xurick.com&quot;</span><span class="p">);</span>
+            <span class="n">ptmt</span><span class="p">.</span><span class="n">execute</span><span class="p">();</span>
+            <span class="n">sp</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">setSavepoint</span><span class="p">();</span>
+        <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">conn</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">try</span> <span class="p">{</span>
+                    <span class="n">conn</span><span class="p">.</span><span class="n">rollback</span><span class="p">(</span><span class="n">sp</span><span class="p">);</span>
+                    <span class="n">ptmt</span><span class="p">.</span><span class="n">setInt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+                    <span class="n">ptmt</span><span class="p">.</span><span class="n">setString</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&quot;rxu@xuxuehua.com&quot;</span><span class="p">);</span>
+                    <span class="n">ptmt</span><span class="p">.</span><span class="n">execute</span><span class="p">();</span>
+                    <span class="n">conn</span><span class="p">.</span><span class="n">commit</span><span class="p">();</span>
+                <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">e1</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="n">finally</span> <span class="p">{</span>
+            <span class="n">try</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">conn</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">conn</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">ptmt</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">ptmt</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">dbpoolInit</span><span class="p">();</span>
+        <span class="n">new</span> <span class="n">DBPoolTest</span><span class="p">().</span><span class="n">dbPoolTest</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_9">事务并发</h2>
+<h3 id="_10">死锁</h3>
+<p>两个或这两个以上的事务在执行过程中，因争夺锁资源而造成的一种相互等待的现象</p>
+<h1 id="_11">内存溢出问题</h1>
+<p>查询结果超过了JVM的内存限制， 一次性载入太多的数据导致的</p>
+<p>配置游标Fetch Size 来持续获取部分处理</p>
+<h2 id="fetch-size">游标 Fetch Size</h2>
+<h3 id="_12">激活游标</h3>
+<p>useCursorFetch=true </p>
+<div class="hlcode"><pre><span class="n">jdbc</span><span class="o">:</span><span class="n">mysql</span><span class="o">://&lt;</span><span class="n">IP</span><span class="o">&gt;:&lt;</span><span class="n">PORT</span><span class="o">&gt;/&lt;</span><span class="n">database</span><span class="o">&gt;?</span><span class="n">useCursorFetch</span><span class="o">=</span><span class="kc">true</span>
+</pre></div>
+
+
+<h3 id="_13">使用游标</h3>
+<p>PreparedStatement 替换statement</p>
+<div class="hlcode"><pre><span class="n">package</span> <span class="n">jdbc_example</span><span class="p">;</span>
+
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">sql</span><span class="p">.</span><span class="o">*</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">HelloJDBC</span> <span class="p">{</span>
+
+    <span class="k">static</span> <span class="n">final</span> <span class="n">String</span> <span class="n">JDBC_DRIVER</span> <span class="o">=</span> <span class="s">&quot;com.mysql.cj.jdbc.Driver&quot;</span><span class="p">;</span>
+    <span class="k">static</span> <span class="n">final</span> <span class="n">String</span> <span class="n">DB_URL</span> <span class="o">=</span> <span class="s">&quot;jdbc:mysql://127.0.0.1:8889/ginger&quot;</span><span class="p">;</span>
+    <span class="k">static</span> <span class="n">final</span> <span class="n">String</span> <span class="n">USER</span> <span class="o">=</span> <span class="s">&quot;root&quot;</span><span class="p">;</span>
+    <span class="k">static</span> <span class="n">final</span> <span class="n">String</span> <span class="n">PASSWORD</span> <span class="o">=</span> <span class="s">&quot;root&quot;</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">helloworld</span><span class="p">()</span> <span class="n">throws</span> <span class="n">ClassNotFoundException</span> <span class="p">{</span>
+        <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">Statement</span> <span class="n">stmt</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">ResultSet</span> <span class="n">rs</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">PreparedStatement</span> <span class="n">ptmt</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+
+        <span class="c1">// 装载驱动</span>
+        <span class="n">Class</span><span class="p">.</span><span class="n">forName</span><span class="p">(</span><span class="n">JDBC_DRIVER</span><span class="p">);</span>
+        <span class="c1">// 建立数据库连接</span>
+        <span class="n">try</span> <span class="p">{</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="p">.</span><span class="n">getConnection</span><span class="p">(</span><span class="n">DB_URL</span><span class="p">,</span> <span class="n">USER</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">);</span>
+            <span class="c1">//执行SQL</span>
+<span class="c1">//            stmt = conn.createStatement();</span>
+<span class="c1">//            rs = stmt.executeQuery(&quot;select nickname from user&quot;);</span>
+            <span class="n">ptmt</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">prepareStatement</span><span class="p">(</span><span class="s">&quot;select nickname from user&quot;</span><span class="p">);</span>
+            <span class="n">ptmt</span><span class="p">.</span><span class="n">setFetchSize</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">ptmt</span><span class="p">.</span><span class="n">executeQuery</span><span class="p">();</span>
+
+            <span class="c1">// 获取执行结果</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">next</span><span class="p">())</span> <span class="p">{</span>
+                <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">getString</span><span class="p">(</span><span class="s">&quot;nickname&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+        <span class="p">}</span> <span class="n">finally</span> <span class="p">{</span>
+            <span class="c1">// 清理环境</span>
+            <span class="n">try</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">conn</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">conn</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">stmt</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">stmt</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">rs</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">rs</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="n">throws</span> <span class="n">ClassNotFoundException</span><span class="p">{</span>
+        <span class="n">helloworld</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h1 id="_14">大字段读取问题</h1>
+<p>读取一条很大的记录，JVM放不下导致内存溢出</p>
+<h2 id="_15">流方式处理</h2>
+<p>将大字段的内容以二进制的形式，按照区间进行划分</p>
+<p>使用getBinaryStream()</p>
+<div class="hlcode"><pre><span class="n">package</span> <span class="n">jdbc_example</span><span class="p">;</span>
+
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">File</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">FileOutputStream</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">InputStream</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">OutputStream</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">sql</span><span class="p">.</span><span class="o">*</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">HelloJDBC</span> <span class="p">{</span>
+
+    <span class="k">static</span> <span class="n">final</span> <span class="n">String</span> <span class="n">JDBC_DRIVER</span> <span class="o">=</span> <span class="s">&quot;com.mysql.cj.jdbc.Driver&quot;</span><span class="p">;</span>
+    <span class="k">static</span> <span class="n">final</span> <span class="n">String</span> <span class="n">DB_URL</span> <span class="o">=</span> <span class="s">&quot;jdbc:mysql://127.0.0.1:8889/ginger&quot;</span><span class="p">;</span>
+    <span class="k">static</span> <span class="n">final</span> <span class="n">String</span> <span class="n">USER</span> <span class="o">=</span> <span class="s">&quot;root&quot;</span><span class="p">;</span>
+    <span class="k">static</span> <span class="n">final</span> <span class="n">String</span> <span class="n">PASSWORD</span> <span class="o">=</span> <span class="s">&quot;root&quot;</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">helloworld</span><span class="p">()</span> <span class="n">throws</span> <span class="n">ClassNotFoundException</span> <span class="p">{</span>
+        <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">Statement</span> <span class="n">stmt</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">ResultSet</span> <span class="n">rs</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">PreparedStatement</span> <span class="n">ptmt</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+
+        <span class="c1">// 装载驱动</span>
+        <span class="n">Class</span><span class="p">.</span><span class="n">forName</span><span class="p">(</span><span class="n">JDBC_DRIVER</span><span class="p">);</span>
+        <span class="c1">// 建立数据库连接</span>
+        <span class="n">try</span> <span class="p">{</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="p">.</span><span class="n">getConnection</span><span class="p">(</span><span class="n">DB_URL</span><span class="p">,</span> <span class="n">USER</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">);</span>
+            <span class="c1">//执行SQL</span>
+<span class="c1">//            stmt = conn.createStatement();</span>
+<span class="c1">//            rs = stmt.executeQuery(&quot;select nickname from user&quot;);</span>
+            <span class="n">ptmt</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">prepareStatement</span><span class="p">(</span><span class="s">&quot;select nickname from user&quot;</span><span class="p">);</span>
+            <span class="n">ptmt</span><span class="p">.</span><span class="n">setFetchSize</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">ptmt</span><span class="p">.</span><span class="n">executeQuery</span><span class="p">();</span>
+
+            <span class="k">while</span> <span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">next</span><span class="p">())</span> <span class="p">{</span>
+                <span class="c1">// 获取对象流</span>
+                <span class="n">InputStream</span> <span class="n">in</span> <span class="o">=</span> <span class="n">rs</span><span class="p">.</span><span class="n">getBinaryStream</span><span class="p">(</span><span class="s">&quot;nickname&quot;</span><span class="p">);</span>
+                <span class="c1">//将对象流写入文件</span>
+                <span class="n">File</span> <span class="n">f</span> <span class="o">=</span> <span class="n">new</span> <span class="n">File</span><span class="p">(</span><span class="s">&quot;streamFile&quot;</span><span class="p">);</span>
+                <span class="n">OutputStream</span> <span class="n">out</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">new</span> <span class="n">FileOutputStream</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+                <span class="kt">int</span> <span class="n">temp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+                <span class="c1">//边读边写</span>
+                <span class="k">while</span> <span class="p">((</span><span class="n">temp</span> <span class="o">=</span> <span class="n">in</span><span class="p">.</span><span class="n">read</span><span class="p">())</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">out</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">temp</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+        <span class="p">}</span> <span class="n">finally</span> <span class="p">{</span>
+            <span class="c1">// 清理环境</span>
+            <span class="n">try</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">conn</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">conn</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">stmt</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">stmt</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">rs</span> <span class="o">!=</span> <span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">rs</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="n">throws</span> <span class="n">ClassNotFoundException</span><span class="p">{</span>
+        <span class="n">helloworld</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p>不完整代码</p>
+</blockquote>
+<h1 id="_16">大量数据插入问题</h1>
+<p>循环插入的速度效率太低</p>
+<p>采用批处理方式，发送一次sql，插入多条数据</p>
+<h2 id="_17">批处理方式</h2>
+<p>addBatch()</p>
+<p>executeBatch()</p>
+<p>clearBatch()</p>
+<div class="hlcode"><pre><span class="nx">package</span> <span class="nx">jdbc_example</span><span class="p">;</span>
+
+<span class="k">import</span> <span class="nx">java.sql.</span><span class="o">*</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">java.util.HashSet</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">java.util.Set</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="nf">class</span> <span class="nx">HelloJDBC</span> <span class="p">{</span>
+
+    <span class="nx">static</span> <span class="nx">final</span> <span class="kt">String</span> <span class="n">JDBC_DRIVER</span> <span class="o">=</span> <span class="s2">&quot;com.mysql.cj.jdbc.Driver&quot;</span><span class="p">;</span>
+    <span class="nx">static</span> <span class="nx">final</span> <span class="kt">String</span> <span class="n">DB_URL</span> <span class="o">=</span> <span class="s2">&quot;jdbc:mysql://127.0.0.1:8889/ginger&quot;</span><span class="p">;</span>
+    <span class="nx">static</span> <span class="nx">final</span> <span class="kt">String</span> <span class="n">USER</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span><span class="p">;</span>
+    <span class="nx">static</span> <span class="nx">final</span> <span class="kt">String</span> <span class="n">PASSWORD</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">static</span> <span class="bp">void</span> <span class="nx">helloworld</span><span class="p">(</span><span class="nb">Set</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span> <span class="nx">users</span><span class="p">)</span> <span class="nx">throws</span> <span class="nx">ClassNotFoundException</span> <span class="p">{</span>
+        <span class="nb">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="kt">null</span><span class="p">;</span>
+        <span class="nb">Statement</span> <span class="n">stmt</span> <span class="o">=</span> <span class="kt">null</span><span class="p">;</span>
+
+        <span class="c1">// 装载驱动</span>
+        <span class="nx">Class.forName</span><span class="p">(</span><span class="nx">JDBC_DRIVER</span><span class="p">);</span>
+        <span class="c1">// 建立数据库连接</span>
+        <span class="nx">try</span> <span class="p">{</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="nx">DriverManager.getConnection</span><span class="p">(</span><span class="nx">DB_URL</span><span class="p">,</span> <span class="nb">USER</span><span class="p">,</span> <span class="nx">PASSWORD</span><span class="p">);</span>
+            <span class="c1">//执行SQL</span>
+            <span class="n">stmt</span> <span class="o">=</span> <span class="nx">conn.createStatement</span><span class="p">();</span>
+            <span class="nb">for</span> <span class="p">(</span><span class="kt">String</span> <span class="nb">user</span><span class="p">:</span> <span class="nx">users</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">stmt.addBatch</span><span class="p">(</span><span class="s2">&quot;insert into users (userName) values(&quot;</span> <span class="o">+</span> <span class="nb">user</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">stmt.executeBatch</span><span class="p">();</span>
+            <span class="nx">stmt.clearBatch</span><span class="p">();</span>
+        <span class="p">}</span> <span class="nx">catch</span> <span class="p">(</span><span class="nx">SQLException</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">e.printStackTrace</span><span class="p">();</span>
+        <span class="p">}</span> <span class="nx">finally</span> <span class="p">{</span>
+            <span class="c1">// 清理环境</span>
+            <span class="nx">try</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">conn</span> <span class="o">!=</span> <span class="kt">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">conn.close</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">stmt</span> <span class="o">!=</span> <span class="kt">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">stmt.close</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="nx">catch</span> <span class="p">(</span><span class="nx">SQLException</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">e.printStackTrace</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="nf">static</span> <span class="bp">void</span> <span class="nx">main</span><span class="p">(</span><span class="kt">String</span><span class="err">[</span><span class="cp">]</span> args) throws ClassNotFoundException{
+        Set<span class="nt">&lt;String&gt;</span> users = new HashSet<span class="nt">&lt;String&gt;</span>();
+        users.add(&quot;rxu1&quot;);
+        users.add(&quot;rxu2&quot;);
+        users.add(&quot;rxu3&quot;);
+        users.add(&quot;rxu4&quot;);
+        users.add(&quot;rxu5&quot;);
+        users.add(&quot;rxu6&quot;);
+        users.add(&quot;rxu7&quot;);
+        users.add(&quot;rxu8&quot;);
+        helloworld(users);
+    }
+}
+</pre></div>
+
+
+<blockquote>
+<p>报错<br />
+java.sql.BatchUpdateException: Unknown column 'rxu7' in 'field list'<br />
+  at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)<br />
+  at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)<br />
+  at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)<br />
+  at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500)<br />
+  at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:481)<br />
+  at com.mysql.cj.util.Util.handleNewInstance(Util.java:192)<br />
+  at com.mysql.cj.util.Util.getInstance(Util.java:167)<br />
+  at com.mysql.cj.util.Util.getInstance(Util.java:174)<br />
+  at com.mysql.cj.jdbc.exceptions.SQLError.createBatchUpdateException(SQLError.java:224)<br />
+  at com.mysql.cj.jdbc.StatementImpl.executeBatchInternal(StatementImpl.java:893)<br />
+  at com.mysql.cj.jdbc.StatementImpl.executeBatch(StatementImpl.java:796)<br />
+  at jdbc_example.HelloJDBC.helloworld(HelloJDBC.java:28)<br />
+  at jdbc_example.HelloJDBC.main(HelloJDBC.java:57)<br />
+Caused by: java.sql.SQLSyntaxErrorException: Unknown column 'rxu7' in 'field list'<br />
+  at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:120)<br />
+  at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:97)<br />
+  at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122)<br />
+  at com.mysql.cj.jdbc.StatementImpl.executeUpdateInternal(StatementImpl.java:1335)<br />
+  at com.mysql.cj.jdbc.StatementImpl.executeBatchInternal(StatementImpl.java:859)<br />
+  ... 3 more</p>
+<p>Process finished with exit code 0</p>
+</blockquote>
+<h1 id="_18">中文显示问题</h1>
+<p>设置jdbc编码</p>
+<p>characterEncoding=utf8</p>
+<h1 id="sql">SQL 注入问题</h1>
+<p>使用格式化参数 PreparedStatement</p>
+<p>.setInt</p>
+<p>.setString</p>
+<p>.setBoolean</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

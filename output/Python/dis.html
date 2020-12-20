@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>dis - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python">Python</a>&nbsp;&#187;&nbsp;dis
+    <span class="updated">Page Updated&nbsp;
+      2020-08-16 09:04
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">dis</div>
+
+  <p>[toc]</p>
+<h1 id="python">python字节码</h1>
+<p>Python 代码先被编译为字节码后，再由Python虚拟机来执行字节码， Python的字节码是一种类似汇编指令的中间语言， 一个Python语句会对应若干字节码指令，虚拟机一条一条执行字节码指令， 从而完成程序执行。 Python dis 模块支持对Python代码进行反汇编， 生成字节码指令。</p>
+<h1 id="dis">dis</h1>
+<p>Dis模块来对代码进行性能剖析</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">dis</span>
+
+
+<span class="n">def</span> <span class="n">test1</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">a</span> <span class="n">and</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="o">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="n">def</span> <span class="n">test2</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="o">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="n">dis</span><span class="p">.</span><span class="n">dis</span><span class="p">(</span><span class="n">test1</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="sc">&#39;-&#39;</span><span class="o">*</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">dis</span><span class="p">.</span><span class="n">dis</span><span class="p">(</span><span class="n">test2</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+  <span class="mi">5</span>           <span class="mi">0</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">LOAD_FAST</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+              <span class="mi">4</span> <span class="n">COMPARE_OP</span>               <span class="mi">0</span> <span class="p">(</span><span class="o">&lt;</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">20</span>
+              <span class="mi">8</span> <span class="n">LOAD_FAST</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+             <span class="mi">10</span> <span class="n">LOAD_CONST</span>               <span class="mi">2</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+             <span class="mi">12</span> <span class="n">COMPARE_OP</span>               <span class="mi">0</span> <span class="p">(</span><span class="o">&lt;</span><span class="p">)</span>
+             <span class="mi">14</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">20</span>
+
+  <span class="mi">6</span>          <span class="mi">16</span> <span class="n">LOAD_CONST</span>               <span class="mi">2</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+             <span class="mi">18</span> <span class="n">RETURN_VALUE</span>
+
+  <span class="mi">7</span>     <span class="o">&gt;&gt;</span>   <span class="mi">20</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+             <span class="mi">22</span> <span class="n">RETURN_VALUE</span>
+<span class="o">--------------------</span>
+ <span class="mi">11</span>           <span class="mi">0</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">LOAD_FAST</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+              <span class="mi">4</span> <span class="n">DUP_TOP</span>
+              <span class="mi">6</span> <span class="n">ROT_THREE</span>
+              <span class="mi">8</span> <span class="n">COMPARE_OP</span>               <span class="mi">0</span> <span class="p">(</span><span class="o">&lt;</span><span class="p">)</span>
+             <span class="mi">10</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">20</span>
+             <span class="mi">12</span> <span class="n">LOAD_CONST</span>               <span class="mi">2</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+             <span class="mi">14</span> <span class="n">COMPARE_OP</span>               <span class="mi">0</span> <span class="p">(</span><span class="o">&lt;</span><span class="p">)</span>
+             <span class="mi">16</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">28</span>
+             <span class="mi">18</span> <span class="n">JUMP_FORWARD</span>             <span class="mi">4</span> <span class="p">(</span><span class="n">to</span> <span class="mi">24</span><span class="p">)</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">20</span> <span class="n">POP_TOP</span>
+             <span class="mi">22</span> <span class="n">JUMP_FORWARD</span>             <span class="mi">4</span> <span class="p">(</span><span class="n">to</span> <span class="mi">28</span><span class="p">)</span>
+
+ <span class="mi">12</span>     <span class="o">&gt;&gt;</span>   <span class="mi">24</span> <span class="n">LOAD_CONST</span>               <span class="mi">2</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+             <span class="mi">26</span> <span class="n">RETURN_VALUE</span>
+
+ <span class="mi">13</span>     <span class="o">&gt;&gt;</span>   <span class="mi">28</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+             <span class="mi">30</span> <span class="n">RETURN_VALUE</span>
+</pre></div>
+
+
+<blockquote>
+<p>第一列：对应的源代码行数。<br />
+第二列：对应的内存字节码的索引位置。<br />
+第三列：内部机器代码的操作。<br />
+第四列：指令参数。<br />
+第五列：实际参数。<br />
+<code>&gt;&gt;</code>： 表示跳转目标</p>
+<p>第二个函数的字节码索引最大到了30，而第一个函数的字节码索引最大仅到了22，因此，第一个函数耗得内存比第二个函数少</p>
+</blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

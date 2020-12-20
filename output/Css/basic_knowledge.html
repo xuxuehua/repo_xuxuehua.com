@@ -1,0 +1,281 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>basic_knowledge - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Css">Css</a>&nbsp;&#187;&nbsp;basic_knowledge
+    <span class="updated">Page Updated&nbsp;
+      2018-11-11 13:35
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">basic_knowledge</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#basic_knowledge">basic_knowledge</a><ul>
+<li><a href="#_1">定义</a></li>
+<li><a href="#_2">语法</a></li>
+<li><a href="#_3">注释</a></li>
+<li><a href="#_4">样式</a><ul>
+<li><a href="#important">Important 样式 （优先级最高）（少用）</a></li>
+<li><a href="#_5">内联样式 （优先级其次高）</a></li>
+<li><a href="#_6">嵌入样式/页内样式 （优先级再其次）</a></li>
+<li><a href="#_7">外部样式 （优先级再其次）</a></li>
+<li><a href="#_8">继承样式 （优先级再其次）</a></li>
+<li><a href="#_9">默认样式 （优先级最低）</a></li>
+</ul>
+</li>
+<li><a href="#_10">特性</a><ul>
+<li><a href="#_11">层叠性</a></li>
+<li><a href="#_12">继承性</a></li>
+</ul>
+</li>
+<li><a href="#_13">简单属性</a></li>
+</ul>
+</li>
+<li><a href="#_14">响应式布局</a><ul>
+<li><a href="#_15">支持移动端</a></li>
+</ul>
+</li>
+<li><a href="#px">px</a></li>
+<li><a href="#em">em</a></li>
+<li><a href="#rem">rem</a></li>
+<li><a href="#_16">转换工具</a></li>
+</ul>
+</div>
+<h1 id="basic_knowledge">basic_knowledge</h1>
+<h2 id="_1">定义</h2>
+<p>层叠样式表(英文全称：Cascading Style Sheets)</p>
+<p>用于设置HTML页面中的文字内容（字体，大小，对齐方式），图片外形（宽高，边框样式）及页面布局等外观显示样式</p>
+<h2 id="_2">语法</h2>
+<div class="hlcode"><pre><span class="n">p</span> <span class="p">{</span><span class="n">color</span><span class="o">:</span><span class="n">red</span><span class="p">;}</span>
+</pre></div>
+
+
+<blockquote>
+<p>选择符号p， 大小敏感</p>
+<p>属性声明color， 大小不敏感，一般为小写</p>
+<p>换行和空格不敏感</p>
+</blockquote>
+<p>属性大于1个，使用分号隔开</p>
+<div class="hlcode"><pre><span class="n">h1</span> <span class="p">{</span><span class="n">color</span><span class="o">:</span><span class="n">red</span><span class="p">;</span> <span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span> <span class="mi">14</span><span class="n">px</span><span class="p">}</span>
+</pre></div>
+
+
+<p>大于一个单词，加上引号</p>
+<div class="hlcode"><pre><span class="n">p</span> <span class="p">{</span><span class="n">font</span><span class="o">-</span><span class="n">family</span><span class="o">:</span> <span class="s">&quot;sans serif&quot;</span><span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_3">注释</h2>
+<div class="hlcode"><pre><span class="cm">/* .... */</span> 
+</pre></div>
+
+
+<h2 id="_4">样式</h2>
+<p>优先级自上往下</p>
+<h3 id="important">Important 样式 （优先级最高）（少用）</h3>
+<div class="hlcode"><pre><span class="n">p</span> <span class="p">{</span>
+    <span class="n">color</span><span class="p">;</span> <span class="n">red</span> <span class="o">!</span><span class="n">important</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="_5">内联样式 （优先级其次高）</h3>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">div</span> <span class="n">style</span><span class="o">=</span><span class="s">&quot;color: red; font-size:24px;border: 1px solid black;&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h3 id="_6">嵌入样式/页内样式 （优先级再其次）</h3>
+<ul>
+<li>
+<p>和外部样式重复时，依据就近原则</p>
+</li>
+<li>
+<p><code>&lt;style&gt;</code></p>
+</li>
+</ul>
+<div class="hlcode"><pre><span class="nt">&lt;style&gt;</span>
+    p {
+        color: yellowgreen;
+    }
+<span class="nt">&lt;/style&gt;</span>
+</pre></div>
+
+
+<h3 id="_7">外部样式 （优先级再其次）</h3>
+<ul>
+<li>
+<p>和嵌入样式重复时，依据就近原则</p>
+</li>
+<li>
+<p><code>&lt;link&gt;</code></p>
+</li>
+</ul>
+<p>index.css</p>
+<div class="hlcode"><pre><span class="n">p</span> <span class="p">{</span>
+    <span class="cm">/* define font */</span>
+    <span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span> <span class="mi">50</span><span class="n">px</span><span class="p">;</span>
+    <span class="cm">/* background color */</span>
+    <span class="n">background</span><span class="o">-</span><span class="n">color</span><span class="o">:</span> <span class="n">silver</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Index.html 引入</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">link</span> <span class="n">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;./css/index.css&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h3 id="_8">继承样式 （优先级再其次）</h3>
+<p>继承得到的样式</p>
+<p>a标签除外</p>
+<h3 id="_9">默认样式 （优先级最低）</h3>
+<p>html默认的样式</p>
+<p>a标签除外</p>
+<h2 id="_10">特性</h2>
+<h3 id="_11">层叠性</h3>
+<p>多层样式以最后一层样式为准</p>
+<div class="hlcode"><pre><span class="n">p</span> <span class="p">{</span>
+    <span class="nl">color:</span><span class="n">red</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">p</span> <span class="p">{</span>
+    <span class="nl">color:</span><span class="n">green</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p>以green 为准</p>
+</blockquote>
+<h3 id="_12">继承性</h3>
+<p>父容器设置的样式，子容器也可以享受相同的待遇</p>
+<p>对于字体，文本属性等网页中通用的样式可以统一继承，如字体，字号，颜色，行距等</p>
+<div class="hlcode"><pre><span class="nt">&lt;style&gt;</span>
+    p {
+        color: red
+    }
+<span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;p&gt;</span>
+        this is p
+        <span class="nt">&lt;span&gt;</span>1<span class="nt">&lt;/span&gt;</span>
+        <span class="nt">&lt;span&gt;</span>2<span class="nt">&lt;/span&gt;</span>
+        <span class="nt">&lt;span&gt;</span>3<span class="nt">&lt;/span&gt;</span>
+    <span class="nt">&lt;/p&gt;</span>
+</pre></div>
+
+
+<p>a 标签默认不继承字体颜色</p>
+<div class="hlcode"><pre><span class="nt">&lt;style&gt;</span>
+    p {
+        color: red
+    }
+    a {
+        color: inherit;
+    }
+<span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;p&gt;</span>
+        this is p
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;span&quot;</span><span class="nt">&gt;</span>this is a<span class="nt">&lt;/a&gt;</span>
+        <span class="nt">&lt;span&gt;</span>1<span class="nt">&lt;/span&gt;</span>
+        <span class="nt">&lt;span&gt;</span>2<span class="nt">&lt;/span&gt;</span>
+        <span class="nt">&lt;span&gt;</span>3<span class="nt">&lt;/span&gt;</span>
+    <span class="nt">&lt;/p&gt;</span>
+</pre></div>
+
+
+<h2 id="_13">简单属性</h2>
+<div class="hlcode"><pre><span class="n">width</span><span class="err">：</span> <span class="err">宽度</span> <span class="err">（限制块结构）</span>
+<span class="n">height</span><span class="err">：高度</span> <span class="err">（限制块结构）</span>
+<span class="n">color</span><span class="err">：前景色，文字颜色</span>
+<span class="n">background</span><span class="o">-</span><span class="n">color</span><span class="err">：</span> <span class="err">背景色</span>
+<span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="err">：字体的大小</span>
+</pre></div>
+
+
+<h1 id="_14">响应式布局</h1>
+<h2 id="_15">支持移动端</h2>
+<p>可视区域为屏幕大小</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">meta</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;viewpoint&quot;</span> <span class="n">content</span><span class="o">=</span><span class="s">&quot;width=device-width, initial-scale=1.0&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h1 id="px">px</h1>
+<p>PX特点</p>
+<ol>
+<li>
+<p>IE无法调整那些使用px作为单位的字体大小；</p>
+</li>
+<li>
+<p>国外的大部分网站能够调整的原因在于其使用了em或rem作为字体单位；</p>
+</li>
+<li>
+<p>Firefox能够调整px和em，rem，但是96%以上的中国网民使用IE浏览器(或内核)。</p>
+</li>
+</ol>
+<p>任意浏览器的默认字体高都是16px。所有未经调整的浏览器都符合: 1em=16px。那么12px=0.75em,10px=0.625em。</p>
+<p>为了简化font-size的换算，需要在css中的body选择器中声明Font-size=62.5%，这就使em值变为 16px*62.5%=10px, 这样12px=1.2em, 10px=1em, 也就是说只需要将你的原来的px数值除以10，然后换上em作为单位就行了。</p>
+<h1 id="em">em</h1>
+<p>EM特点 </p>
+<ol>
+<li>
+<p>em的值并不是固定的；</p>
+</li>
+<li>
+<p>em会继承父级元素的字体大小。</p>
+</li>
+</ol>
+<p>所以我们在写CSS的时候，需要注意两点：</p>
+<ol>
+<li>
+<p>body选择器中声明Font-size=62.5%；</p>
+</li>
+<li>
+<p>将你的原来的px数值除以10，然后换上em作为单位；</p>
+</li>
+<li>
+<p>重新计算那些被放大的字体的em数值。避免字体大小的重复声明</p>
+</li>
+</ol>
+<h1 id="rem">rem</h1>
+<p>rem是CSS3新增的一个相对单位（root em，根em）</p>
+<p>使用rem为元素设定字体大小时，仍然是相对大小，但相对的只是HTML根元素。这个单位可谓集相对大小和绝对大小的优点于一身，通过它既可以做到只修改根元素就成比例地调整所有字体大小，又可以避免字体大小逐层复合的连锁反应。</p>
+<p>目前，除了IE8及更早版本外，所有浏览器均已支持rem。对于不支持它的浏览器，应对方法也很简单，就是多写一个绝对单位的声明。这些浏览器会忽略用rem设定的字体大小。</p>
+<p><strong>看下面这个例子：</strong></p>
+<div class="hlcode"><pre><span class="n">p</span> <span class="p">{</span><span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mi">14</span><span class="n">px</span><span class="p">;</span> <span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">:</span><span class="mf">.875</span><span class="n">rem</span><span class="p">;}</span>
+</pre></div>
+
+
+<h1 id="_16">转换工具</h1>
+<p>http://pxtoem.com/</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

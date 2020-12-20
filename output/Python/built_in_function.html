@@ -1,0 +1,545 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>built_in_function - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python">Python</a>&nbsp;&#187;&nbsp;built_in_function
+    <span class="updated">Page Updated&nbsp;
+      2018-08-24 11:04
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">built_in_function</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">内置函数</a><ul>
+<li><a href="#abs">abs 绝对值</a></li>
+<li><a href="#bin">bin 二进制</a></li>
+<li><a href="#bool">bool 布尔计算</a></li>
+<li><a href="#bytes">bytes</a></li>
+<li><a href="#callable">callable</a></li>
+<li><a href="#chr">chr 返回字符</a></li>
+<li><a href="#ceil">ceil</a></li>
+<li><a href="#dir">dir 获取对象属性</a></li>
+<li><a href="#divmod">divmod 取余</a></li>
+<li><a href="#enumerate">enumerate 枚举</a></li>
+<li><a href="#filter">filter</a></li>
+<li><a href="#floor">floor</a></li>
+<li><a href="#float">float</a></li>
+<li><a href="#help">help()</a></li>
+<li><a href="#hex">hex 十六进制</a></li>
+<li><a href="#int">int 整数</a></li>
+<li><a href="#isinstance">isinstance 判断类型</a></li>
+<li><a href="#issubclass">issubclass</a></li>
+<li><a href="#iter">iter 迭代器</a></li>
+<li><a href="#join">join 连接</a></li>
+<li><a href="#len">len 对象长度</a></li>
+<li><a href="#min">min 最小</a></li>
+<li><a href="#max">max 最大</a></li>
+<li><a href="#next">next 获取迭代器</a></li>
+<li><a href="#oct">oct 八进制</a></li>
+<li><a href="#ord">ord 返回整数</a></li>
+<li><a href="#pow">pow 幂</a></li>
+<li><a href="#range">range</a></li>
+<li><a href="#reversed">reversed 翻转</a></li>
+<li><a href="#round">round</a></li>
+<li><a href="#sorted">sorted 排序</a></li>
+<li><a href="#split">split 分割</a></li>
+<li><a href="#splitlines">splitlines</a></li>
+<li><a href="#str">str</a></li>
+<li><a href="#sum">sum 求和</a></li>
+<li><a href="#type">type 类型</a></li>
+<li><a href="#vars">vars</a></li>
+<li><a href="#zip">zip 拉链函数</a><ul>
+<li><a href="#_2">聚合</a></li>
+<li><a href="#_3">分解</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">内置函数</h1>
+<h2 id="abs">abs 绝对值</h2>
+<div class="hlcode"><pre><span class="k">print</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="o">&gt;</span>
+<span class="mi">1</span>
+</pre></div>
+
+
+<h2 id="bin">bin 二进制</h2>
+<p>把十进制数转二进制</p>
+<p>返回值为字符串</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="n">bin</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">0</span><span class="n">b1</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">bin</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">0</span><span class="n">b10</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="n">bin</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">0</span><span class="n">b100</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="n">bin</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">0</span><span class="n">b11111111</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="bool">bool 布尔计算</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="kt">bool</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="kt">bool</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="kt">bool</span><span class="p">(</span><span class="err">&#39;</span><span class="n">abc</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">:</span> <span class="kt">bool</span><span class="p">(</span><span class="err">&#39;&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="kt">bool</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">:</span> <span class="kt">bool</span><span class="p">([])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="kt">bool</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">})</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="kt">bool</span><span class="p">({})</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="kt">bool</span><span class="p">(</span><span class="n">None</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+</pre></div>
+
+
+<h2 id="bytes">bytes</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">:</span> <span class="n">a</span> <span class="o">=</span> <span class="n">bytes</span><span class="p">(</span><span class="err">&#39;</span><span class="n">abc</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="err">&#39;</span><span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="err">&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="n">type</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">a</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="p">(</span><span class="n">bytes</span><span class="p">,</span> <span class="n">b</span><span class="err">&#39;</span><span class="n">abc</span><span class="err">&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">:</span> <span class="n">a</span><span class="p">.</span><span class="n">capitalize</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">:</span> <span class="n">b</span><span class="err">&#39;</span><span class="n">Abc</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">:</span> <span class="n">a</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">:</span> <span class="n">b</span><span class="err">&#39;</span><span class="n">abc</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="callable">callable</h2>
+<p>是否可调用</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">18</span><span class="p">]</span><span class="o">:</span> <span class="n">def</span> <span class="n">a</span><span class="p">()</span><span class="o">:</span>
+    <span class="p">...</span><span class="o">:</span>     <span class="n">pass</span>
+    <span class="p">...</span><span class="o">:</span>
+    <span class="p">...</span><span class="o">:</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="n">callable</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="o">:</span> <span class="n">callable</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+</pre></div>
+
+
+<h2 id="chr">chr 返回字符</h2>
+<p>转换对应的ascii的值， 输入的是数字</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">21</span><span class="p">]</span><span class="o">:</span> <span class="n">chr</span><span class="p">(</span><span class="mi">97</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span><span class="o">:</span> <span class="sc">&#39;a&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">22</span><span class="p">]</span><span class="o">:</span> <span class="n">chr</span><span class="p">(</span><span class="mi">98</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">22</span><span class="p">]</span><span class="o">:</span> <span class="sc">&#39;b&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">23</span><span class="p">]</span><span class="o">:</span> <span class="n">chr</span><span class="p">(</span><span class="mi">99</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">23</span><span class="p">]</span><span class="o">:</span> <span class="sc">&#39;c&#39;</span>
+</pre></div>
+
+
+<h2 id="ceil">ceil</h2>
+<p>向上取整</p>
+<h2 id="dir">dir 获取对象属性</h2>
+<p>列出对象的所有属性， 比<code>__dict__</code> 要更丰富</p>
+<h2 id="divmod">divmod 取余</h2>
+<p>divmod(a, b) 返回a除以b的商和余数，返回一个元组</p>
+<p>其等价于<code>tuple(x//y, x%y)</code></p>
+<div class="hlcode"><pre><span class="k">print</span><span class="p">(</span><span class="nb">divmod</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="o">&gt;</span>
+<span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="enumerate">enumerate 枚举</h2>
+<p>迭代一个序列，返回索引数字和元素构成的二元组</p>
+<div class="hlcode"><pre><span class="n">enumerate</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>start表示索引开始的数字，默认为0</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">151</span><span class="p">]</span><span class="o">:</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">enumerate</span><span class="p">(</span><span class="err">&#39;</span><span class="n">abcdefg</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">:</span>
+     <span class="p">...</span><span class="o">:</span>     <span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+     <span class="p">...</span><span class="o">:</span>
+<span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="sc">&#39;b&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="sc">&#39;c&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="sc">&#39;d&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="sc">&#39;e&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="sc">&#39;f&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="sc">&#39;g&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="filter">filter</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="o">:</span> <span class="n">filter</span><span class="p">(</span><span class="n">lambda</span> <span class="n">n</span><span class="o">:</span> <span class="n">n</span><span class="o">&gt;</span> <span class="mi">5</span><span class="p">,</span> <span class="n">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">In</span> <span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="o">:</span> <span class="n">filter</span><span class="p">(</span><span class="n">lambda</span> <span class="n">n</span><span class="o">:</span> <span class="n">n</span><span class="o">&gt;</span> <span class="mi">5</span><span class="p">,</span> <span class="n">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">filter</span> <span class="n">at</span> <span class="mh">0x10c677da0</span><span class="o">&gt;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">33</span><span class="p">]</span><span class="o">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">filter</span><span class="p">(</span><span class="n">lambda</span> <span class="n">n</span><span class="o">:</span> <span class="n">n</span><span class="o">&gt;</span> <span class="mi">5</span><span class="p">,</span> <span class="n">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">34</span><span class="p">]</span><span class="o">:</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">x</span><span class="o">:</span>
+    <span class="p">...</span><span class="o">:</span>     <span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">...</span><span class="o">:</span>
+<span class="mi">6</span>
+<span class="mi">7</span>
+<span class="mi">8</span>
+<span class="mi">9</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">filter</span><span class="p">(</span><span class="n">lambda</span> <span class="n">x</span><span class="o">:</span> <span class="n">True</span> <span class="k">if</span> <span class="n">x</span> <span class="k">else</span> <span class="n">False</span><span class="p">,</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">author</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">publisher</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">price</span><span class="p">])</span>
+</pre></div>
+
+
+<h2 id="floor">floor</h2>
+<p>向下取整</p>
+<h2 id="float">float</h2>
+<p>将一个字符串转换成浮点数</p>
+<h2 id="help">help()</h2>
+<div class="hlcode"><pre><span class="n">help</span><span class="p">(</span><span class="s">&#39;print&#39;</span><span class="p">)</span>
+<span class="o">&gt;</span> 
+<span class="n">Help</span> <span class="n">on</span> <span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">function</span> <span class="k">print</span> <span class="ow">in</span> <span class="n">module</span> <span class="n">builtins</span><span class="p">:</span>
+
+<span class="k">print</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="n">Prints</span> <span class="n">the</span> <span class="n">values</span> <span class="n">to</span> <span class="n">a</span> <span class="n">stream</span><span class="p">,</span> <span class="ow">or</span> <span class="n">to</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="n">by</span> <span class="n">default</span><span class="o">.</span>
+    <span class="n">Optional</span> <span class="n">keyword</span> <span class="n">arguments</span><span class="p">:</span>
+    <span class="nb">file</span><span class="p">:</span>  <span class="n">a</span> <span class="nb">file</span><span class="o">-</span><span class="n">like</span> <span class="nb">object</span> <span class="p">(</span><span class="n">stream</span><span class="p">);</span> <span class="n">defaults</span> <span class="n">to</span> <span class="n">the</span> <span class="n">current</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span>
+    <span class="n">sep</span><span class="p">:</span>   <span class="n">string</span> <span class="n">inserted</span> <span class="n">between</span> <span class="n">values</span><span class="p">,</span> <span class="n">default</span> <span class="n">a</span> <span class="n">space</span><span class="o">.</span>
+    <span class="n">end</span><span class="p">:</span>   <span class="n">string</span> <span class="n">appended</span> <span class="n">after</span> <span class="n">the</span> <span class="n">last</span> <span class="n">value</span><span class="p">,</span> <span class="n">default</span> <span class="n">a</span> <span class="n">newline</span><span class="o">.</span>
+    <span class="n">flush</span><span class="p">:</span> <span class="n">whether</span> <span class="n">to</span> <span class="n">forcibly</span> <span class="n">flush</span> <span class="n">the</span> <span class="n">stream</span><span class="o">.</span>
+</pre></div>
+
+
+<h2 id="hex">hex 十六进制</h2>
+<p>数字转16进制</p>
+<p>返回值为字符串</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">38</span><span class="p">]</span><span class="o">:</span> <span class="n">hex</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">38</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mh">0xa</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">39</span><span class="p">]</span><span class="o">:</span> <span class="n">hex</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">39</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mh">0xf</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">40</span><span class="p">]</span><span class="o">:</span> <span class="n">hex</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">40</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mh">0xff</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="int">int 整数</h2>
+<p>将一个数值或字符串转换成整数，可以指定进制</p>
+<h2 id="isinstance">isinstance 判断类型</h2>
+<p>判断对象是否数据某种类型或者元组中列出的某个类型</p>
+<p>返回值为布尔类型</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="n">isinstance</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">str</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="o">:</span> <span class="n">isinstance</span><span class="p">(</span><span class="sc">&#39;6&#39;</span><span class="p">,</span> <span class="n">str</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+</pre></div>
+
+
+<h2 id="issubclass">issubclass</h2>
+<p>判断类型是否是某种类型的子类或者元组中列出的某个类型的子类</p>
+<p>返回值为布尔类型</p>
+<h2 id="iter">iter 迭代器</h2>
+<div class="hlcode"><pre><span class="n">iter</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="k">In</span> <span class="err">[</span><span class="mi">154</span><span class="cp">]</span>: t = iter(range(5))
+
+In <span class="cp">[</span><span class="mi">155</span><span class="cp">]</span>: next(t)
+Out<span class="cp">[</span><span class="mi">155</span><span class="cp">]</span>: 0
+
+In <span class="cp">[</span><span class="mi">156</span><span class="cp">]</span>: next(t)
+Out<span class="cp">[</span><span class="mi">156</span><span class="cp">]</span>: 1
+
+In <span class="cp">[</span><span class="mi">157</span><span class="cp">]</span>: next(t)
+Out<span class="cp">[</span><span class="mi">157</span><span class="cp">]</span>: 2
+
+In <span class="cp">[</span><span class="mi">158</span><span class="cp">]</span>: next(t)
+Out<span class="cp">[</span><span class="mi">158</span><span class="cp">]</span>: 3
+
+In <span class="cp">[</span><span class="mi">159</span><span class="cp">]</span>: next(t)
+Out<span class="cp">[</span><span class="mi">159</span><span class="cp">]</span>: 4
+
+In <span class="cp">[</span><span class="mi">160</span><span class="cp">]</span>: next(t)
+---------------------------------------------------------------------------
+StopIteration                             Traceback (most recent call last)
+<span class="nt">&lt;ipython</span><span class="na">-input-160-f843efe259be</span><span class="nt">&gt;</span> in <span class="nt">&lt;module&gt;</span>
+----&gt; 1 next(t)
+
+StopIteration:
+</pre></div>
+
+
+<h2 id="join">join 连接</h2>
+<div class="hlcode"><pre><span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Hello&#39;</span><span class="p">,</span> <span class="s">&#39;World&#39;</span><span class="p">]</span>
+<span class="nb">str</span> <span class="o">=</span> <span class="s">&#39;#&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">))</span>
+<span class="o">&gt;</span>
+<span class="n">Hello</span><span class="c">#World</span>
+</pre></div>
+
+
+<h2 id="len">len 对象长度</h2>
+<p>返回一个集合类型的元素个数</p>
+<h2 id="min">min 最小</h2>
+<h2 id="max">max 最大</h2>
+<h2 id="next">next 获取迭代器</h2>
+<p>next 对下一个迭代器取下一个元素，如果元素全都取过了，会抛出异常</p>
+<div class="hlcode"><pre><span class="n">next</span><span class="p">(</span><span class="n">iterable</span><span class="p">[,</span> <span class="k">default</span><span class="p">])</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="k">In</span> <span class="err">[</span><span class="mi">154</span><span class="cp">]</span>: t = iter(range(5))
+
+In <span class="cp">[</span><span class="mi">155</span><span class="cp">]</span>: next(t)
+Out<span class="cp">[</span><span class="mi">155</span><span class="cp">]</span>: 0
+
+In <span class="cp">[</span><span class="mi">156</span><span class="cp">]</span>: next(t)
+Out<span class="cp">[</span><span class="mi">156</span><span class="cp">]</span>: 1
+
+In <span class="cp">[</span><span class="mi">157</span><span class="cp">]</span>: next(t)
+Out<span class="cp">[</span><span class="mi">157</span><span class="cp">]</span>: 2
+
+In <span class="cp">[</span><span class="mi">158</span><span class="cp">]</span>: next(t)
+Out<span class="cp">[</span><span class="mi">158</span><span class="cp">]</span>: 3
+
+In <span class="cp">[</span><span class="mi">159</span><span class="cp">]</span>: next(t)
+Out<span class="cp">[</span><span class="mi">159</span><span class="cp">]</span>: 4
+
+In <span class="cp">[</span><span class="mi">160</span><span class="cp">]</span>: next(t)
+---------------------------------------------------------------------------
+StopIteration                             Traceback (most recent call last)
+<span class="nt">&lt;ipython</span><span class="na">-input-160-f843efe259be</span><span class="nt">&gt;</span> in <span class="nt">&lt;module&gt;</span>
+----&gt; 1 next(t)
+
+StopIteration:
+</pre></div>
+
+
+<h2 id="oct">oct 八进制</h2>
+<p>返回值为字符串</p>
+<h2 id="ord">ord 返回整数</h2>
+<p>将字符串（一个字符）转换成对应的编码（整数）</p>
+<p>转换字符对应的ascii</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">24</span><span class="p">]</span><span class="o">:</span> <span class="n">ord</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">24</span><span class="p">]</span><span class="o">:</span> <span class="mi">97</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">25</span><span class="p">]</span><span class="o">:</span> <span class="n">ord</span><span class="p">(</span><span class="sc">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">25</span><span class="p">]</span><span class="o">:</span> <span class="mi">98</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">26</span><span class="p">]</span><span class="o">:</span> <span class="n">ord</span><span class="p">(</span><span class="sc">&#39;c&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">26</span><span class="p">]</span><span class="o">:</span> <span class="mi">99</span>
+</pre></div>
+
+
+<h2 id="pow">pow 幂</h2>
+<p>pow(x, y) 返回x的y次幂</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">41</span><span class="p">]</span><span class="o">:</span> <span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">41</span><span class="p">]</span><span class="o">:</span> <span class="mi">256</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">42</span><span class="p">]</span><span class="o">:</span> <span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">42</span><span class="p">]</span><span class="o">:</span> <span class="mi">1024</span>
+</pre></div>
+
+
+<h2 id="range">range</h2>
+<div class="hlcode"><pre><span class="n">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">[,</span> <span class="n">step</span><span class="p">])</span>
+</pre></div>
+
+
+<p>range 进行循环控制</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="n">s</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">abcdefghijkl</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">len</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span><span class="o">:</span>
+   <span class="p">...</span><span class="o">:</span>     <span class="n">print</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+   <span class="p">...</span><span class="o">:</span>     
+<span class="n">a</span>
+<span class="n">c</span>
+<span class="n">e</span>
+<span class="n">g</span>
+<span class="n">i</span>
+<span class="n">k</span>
+</pre></div>
+
+
+<h2 id="reversed">reversed 翻转</h2>
+<p>返回一个翻转元素的迭代器</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">149</span><span class="p">]</span><span class="o">:</span> <span class="n">list</span><span class="p">(</span><span class="n">reversed</span><span class="p">(</span><span class="s">&quot;13579&quot;</span><span class="p">))</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">149</span><span class="p">]</span><span class="o">:</span> <span class="p">[</span><span class="sc">&#39;9&#39;</span><span class="p">,</span> <span class="sc">&#39;7&#39;</span><span class="p">,</span> <span class="sc">&#39;5&#39;</span><span class="p">,</span> <span class="sc">&#39;3&#39;</span><span class="p">,</span> <span class="sc">&#39;1&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="round">round</h2>
+<p>小数点精度</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">43</span><span class="p">]</span><span class="o">:</span> <span class="n">round</span><span class="p">(</span><span class="mf">3.1415</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">43</span><span class="p">]</span><span class="o">:</span> <span class="mi">3</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">44</span><span class="p">]</span><span class="o">:</span> <span class="n">round</span><span class="p">(</span><span class="mf">3.1415</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">44</span><span class="p">]</span><span class="o">:</span> <span class="mf">3.14</span>
+</pre></div>
+
+
+<h2 id="sorted">sorted 排序</h2>
+<div class="hlcode"><pre><span class="n">sorted</span><span class="p">(</span><span class="n">iterable</span><span class="p">[,</span> <span class="n">key</span><span class="p">][,</span> <span class="n">reverse</span><span class="p">])</span>
+</pre></div>
+
+
+<p>返回一个新的列表，默认为升序， reverse表示反转</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">45</span><span class="p">]</span><span class="o">:</span> <span class="n">a</span> <span class="o">=</span> <span class="p">{</span><span class="mi">6</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="o">:</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="o">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">11</span><span class="o">:</span><span class="mi">99</span><span class="p">,</span> <span class="mi">51</span><span class="o">:</span><span class="mi">3</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">46</span><span class="p">]</span><span class="o">:</span> <span class="n">sorted</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">lambda</span> <span class="n">x</span><span class="o">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">46</span><span class="p">]</span><span class="o">:</span> <span class="p">[(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">51</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">99</span><span class="p">)]</span>
+</pre></div>
+
+
+<h2 id="split">split 分割</h2>
+<div class="hlcode"><pre><span class="nb">str</span> <span class="o">=</span> <span class="s">&#39;Hello World&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">))</span>
+<span class="o">&gt;</span>
+<span class="p">[</span><span class="s">&#39;Hello&#39;</span><span class="p">,</span> <span class="s">&#39;World&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="splitlines">splitlines</h2>
+<div class="hlcode"><pre><span class="nb">str</span> <span class="o">=</span> <span class="s">&#39;Hello World&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
+<span class="o">&gt;</span>
+<span class="p">[</span><span class="s">&#39;Hello World&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="str">str</h2>
+<p>将指定的对象转换成字符串形式，可以指定编码</p>
+<h2 id="sum">sum 求和</h2>
+<p>对可迭代对象的所有数值元素求和</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">148</span><span class="p">]</span><span class="o">:</span> <span class="n">sum</span><span class="p">(</span><span class="n">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">148</span><span class="p">]</span><span class="o">:</span> <span class="mi">2500</span>
+</pre></div>
+
+
+<h2 id="type">type 类型</h2>
+<p>返回类型，而不是字符串</p>
+<div class="hlcode"><pre><span class="nb">str</span> <span class="o">=</span> <span class="s">&#39;Hello&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+<span class="n">num</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">num</span><span class="p">))</span>
+<span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">list</span><span class="p">))</span>
+<span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">str</span><span class="s">&#39;&gt;</span>
+<span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">int</span><span class="s">&#39;&gt;</span>
+<span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">list</span><span class="s">&#39;&gt;</span>
+</pre></div>
+
+
+<h2 id="vars">vars</h2>
+<p><strong>vars()</strong> 函数返回对象object的属性和属性值的字典对象</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="n">class</span> <span class="n">Rick</span><span class="o">:</span> 
+   <span class="p">...</span><span class="o">:</span>     <span class="n">age</span><span class="o">=</span><span class="mi">18</span> 
+   <span class="p">...</span><span class="o">:</span>                                                                                                 
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="n">print</span><span class="p">(</span><span class="n">vars</span><span class="p">(</span><span class="n">Rick</span><span class="p">))</span>                                                                               
+<span class="p">{</span><span class="err">&#39;</span><span class="n">age</span><span class="err">&#39;</span><span class="o">:</span> <span class="mi">18</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">__weakref__</span><span class="err">&#39;</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">attribute</span> <span class="err">&#39;</span><span class="n">__weakref__</span><span class="err">&#39;</span> <span class="n">of</span> <span class="err">&#39;</span><span class="n">Rick</span><span class="err">&#39;</span> <span class="n">objects</span><span class="o">&gt;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">__module__</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">__main__</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">__dict__</span><span class="err">&#39;</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">attribute</span> <span class="err">&#39;</span><span class="n">__dict__</span><span class="err">&#39;</span> <span class="n">of</span> <span class="err">&#39;</span><span class="n">Rick</span><span class="err">&#39;</span> <span class="n">objects</span><span class="o">&gt;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">__doc__</span><span class="err">&#39;</span><span class="o">:</span> <span class="n">None</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">rick</span> <span class="o">=</span> <span class="n">Rick</span><span class="p">()</span>                                                                                   
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="n">print</span><span class="p">(</span><span class="n">vars</span><span class="p">(</span><span class="n">rick</span><span class="p">))</span>                                                                              
+<span class="p">{}</span>
+</pre></div>
+
+
+<h2 id="zip">zip 拉链函数</h2>
+<p>把多个可迭代对象合并在一起， 返回一个迭代器</p>
+<p>将每次从不同对象中取到的元素合并成一个元组</p>
+<h3 id="_2">聚合</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">47</span><span class="p">]</span><span class="o">:</span> <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">48</span><span class="p">]</span><span class="o">:</span> <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="sc">&#39;b&#39;</span><span class="p">,</span> <span class="sc">&#39;c&#39;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">59</span><span class="p">]</span><span class="o">:</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="o">:</span>
+    <span class="p">...</span><span class="o">:</span>     <span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">...</span><span class="o">:</span>
+<span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="sc">&#39;b&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="sc">&#39;c&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">ta</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">tb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+<span class="n">tc</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ta</span><span class="p">,</span> <span class="n">tb</span><span class="p">,</span> <span class="n">tc</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">1</span> <span class="mi">4</span> <span class="n">a</span> 
+<span class="mi">2</span> <span class="mi">5</span> <span class="n">b</span>
+<span class="mi">3</span> <span class="mi">6</span> <span class="n">c</span>
+</pre></div>
+
+
+<h3 id="_3">分解</h3>
+<div class="hlcode"><pre><span class="n">ta</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">tb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+
+<span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ta</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">zipped</span><span class="p">)</span>
+
+<span class="n">na</span><span class="p">,</span> <span class="n">nb</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">zipped</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">na</span><span class="p">,</span> <span class="n">nb</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="o">&lt;</span><span class="nb">zip</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x1034855c8</span><span class="o">&gt;</span>
+<span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,1091 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>jenkins - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Tools">Tools</a>&nbsp;&#187;&nbsp;jenkins
+    <span class="updated">Page Updated&nbsp;
+      2018-10-16 11:04
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">jenkins</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#jenkins">jenkins</a><ul>
+<li><a href="#requirements">requirements</a></li>
+<li><a href="#_1">安装</a><ul>
+<li><a href="#docker-not-recommended">docker (not recommended)</a></li>
+<li><a href="#ubuntu">Ubuntu</a></li>
+<li><a href="#centos">CentOS</a></li>
+</ul>
+</li>
+<li><a href="#plugins">Plugins</a><ul>
+<li><a href="#email-extension-extended-e-mail-notification">Email extension &amp; Extended E-mail Notification</a></li>
+<li><a href="#role-based-authorization-strategy">Role-based Authorization Strategy (用户权限)</a></li>
+</ul>
+</li>
+<li><a href="#reset-password">reset password</a></li>
+<li><a href="#https">https</a></li>
+</ul>
+</li>
+<li><a href="#pipline">Pipline</a><ul>
+<li><a href="#declarative">Declarative 语法</a><ul>
+<li><a href="#sections">Sections</a><ul>
+<li><a href="#post">post</a></li>
+<li><a href="#stages">stages</a></li>
+<li><a href="#steps">steps</a><ul>
+<li><a href="#multiline-command">multiline-command</a></li>
+<li><a href="#_2">含脚本</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#directives">Directives</a><ul>
+<li><a href="#agent">agent</a></li>
+<li><a href="#environment">environment</a></li>
+<li><a href="#options">options</a></li>
+<li><a href="#parameters">parameters</a></li>
+<li><a href="#triggers">triggers</a></li>
+<li><a href="#stage">stage</a></li>
+<li><a href="#tools">tools</a></li>
+<li><a href="#_3">内置条件</a></li>
+</ul>
+</li>
+<li><a href="#parameterized">parameterized 带参数</a></li>
+<li><a href="#steps_1">Steps</a><ul>
+<li><a href="#_4">全局变量引用</a></li>
+<li><a href="#jenkins-file">Jenkins file</a><ul>
+<li><a href="#step">常用的Step</a><ul>
+<li><a href="#_5">切换当前的目录</a></li>
+<li><a href="#tag">签出指定分支或tag的代码</a></li>
+<li><a href="#_6">修改当前构建的名称和描述</a></li>
+</ul>
+</li>
+<li><a href="#env">ENV 环境变量</a></li>
+<li><a href="#agent_1">使用多个agent</a></li>
+<li><a href="#multibranch-pipeline">Multibranch Pipeline</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#example">Example</a><ul>
+<li><a href="#webhook">webhook</a></li>
+<li><a href="#jenkins-node">jenkins node</a></li>
+<li><a href="#docker-agent">Docker agent</a></li>
+<li><a href="#trigger-build-via-rest-api">Trigger build via REST API</a></li>
+<li><a href="#securing-secret-credential">Securing secret credential</a></li>
+<li><a href="#pipeline-gates">中途中止选项 Pipeline gates</a></li>
+</ul>
+</li>
+<li><a href="#_7">术语</a><ul>
+<li><a href="#scm">SCM</a></li>
+<li><a href="#cicd-concept">CI/CD concept</a></li>
+<li><a href="#global-variable-reference">Global Variable Reference</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="jenkins">jenkins</h1>
+<p>jenkins是一个广泛用于持续构建的可视化web工具，持续构建说得更直白点，就是各种项目的"自动化"编译、打包、分发部署。jenkins可以很好的支持各种语言（比如：java, c#, php等）的项目构建，也完全兼容ant、maven、gradle等多种第三方构建工具，同时跟svn、git能无缝集成，也支持直接与知名源代码托管网站，比如github、bitbucket直接集成。</p>
+<h2 id="requirements">requirements</h2>
+<div class="hlcode"><pre><span class="mi">256</span> <span class="n">MB</span> <span class="n">RAM</span>
+<span class="mi">1</span><span class="n">GB</span> <span class="n">space</span>
+
+<span class="n">Java</span> <span class="mi">8</span>
+<span class="n">Java</span> <span class="n">Runtime</span> <span class="n">Environment</span> <span class="n">or</span> <span class="n">Java</span> <span class="n">Development</span> <span class="n">Kit</span>
+</pre></div>
+
+
+<p>Docker Hardware</p>
+<div class="hlcode"><pre><span class="mi">1</span><span class="n">GB</span> <span class="n">RAM</span>
+<span class="mi">10</span><span class="n">GB</span> <span class="n">space</span>
+</pre></div>
+
+
+<h2 id="_1">安装</h2>
+<h3 id="docker-not-recommended">docker (not recommended)</h3>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">run</span> \
+  <span class="o">-</span><span class="n">u</span> <span class="n">root</span> \
+  <span class="o">--</span><span class="n">restart</span><span class="o">=</span><span class="n">always</span> \
+  <span class="o">-</span><span class="n">d</span> \
+  <span class="o">--</span><span class="n">name</span> <span class="n">jenkins</span> \
+  <span class="o">-</span><span class="n">p</span> <span class="mi">8080</span><span class="o">:</span><span class="mi">8080</span> \
+  <span class="o">-</span><span class="n">p</span> <span class="mi">50000</span><span class="o">:</span><span class="mi">50000</span> \
+  <span class="o">-</span><span class="n">v</span> <span class="n">jenkins</span><span class="o">-</span><span class="n">data</span><span class="o">:/</span><span class="n">var</span><span class="o">/</span><span class="n">jenkins_home</span> \
+  <span class="o">-</span><span class="n">v</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">docker</span><span class="p">.</span><span class="n">sock</span><span class="o">:/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">docker</span><span class="p">.</span><span class="n">sock</span> \
+  <span class="n">jenkinsci</span><span class="o">/</span><span class="n">blueocean</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="c1"># vim /etc/default/docker</span>
+ExecStart<span class="o">=/</span>usr<span class="o">/</span>bin<span class="o">/</span>dockerd <span class="o">-</span>H fd<span class="o">://</span> <span class="o">-</span>H tcp<span class="o">://</span><span class="m">0.0.0.0</span><span class="o">:</span><span class="m">2375</span>
+
+<span class="c1"># vim /lib/systemd/system/docker.service</span>
+ExecStart<span class="o">=/</span>usr<span class="o">/</span>bin<span class="o">/</span>dockerd <span class="o">-</span>H fd<span class="o">://</span>                <span class="o">&lt;---</span> before
+ExecStart<span class="o">=/</span>usr<span class="o">/</span>bin<span class="o">/</span>dockerd <span class="o">-</span>H fd<span class="o">://</span> <span class="o">-</span>H tcp<span class="o">://</span><span class="m">0.0.0.0</span><span class="o">:</span><span class="m">2375</span>    <span class="o">&lt;---</span> After
+
+<span class="c1"># systemctl daemon-reload</span>
+<span class="c1"># systemctl restart docker</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">exec</span> <span class="n">jenkins</span> <span class="n">cat</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">jenkins_home</span><span class="o">/</span><span class="n">secrets</span><span class="o">/</span><span class="n">initialAdminPassword</span>
+</pre></div>
+
+
+<h3 id="ubuntu">Ubuntu</h3>
+<p>WAR file </p>
+<p>The Web application ARchive (WAR) file version of Jenkins can be installed on any operating system or platform that supports Java.</p>
+<div class="hlcode"><pre><span class="n">apt</span> <span class="n">install</span> <span class="k">default</span><span class="o">-</span><span class="n">jre</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">openjdk</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="n">jdk</span>
+<span class="n">sudo</span> <span class="n">update</span><span class="o">-</span><span class="n">alternatives</span> <span class="o">--</span><span class="n">config</span> <span class="n">java</span> <span class="p">(</span><span class="n">set</span> <span class="n">to</span> <span class="n">java</span> <span class="mi">8</span><span class="p">)</span>
+
+<span class="n">wget</span> <span class="n">http</span><span class="o">:</span><span class="c1">//mirrors.jenkins.io/war-stable/latest/jenkins.war</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="k">[Unit]</span>
+<span class="na">Description</span><span class="o">=</span><span class="s">Jenkins Daemon</span>
+
+<span class="k">[Service]</span>
+<span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/bin/java -jar /home/jenkins_user/jenkins.war</span>
+<span class="na">User</span><span class="o">=</span><span class="s">jenkins_user</span>
+
+<span class="k">[Install]</span>
+<span class="na">WantedBy</span><span class="o">=</span><span class="s">multi-user.target</span>
+</pre></div>
+
+
+<p>/etc/systemd/system/jenkins.service</p>
+<div class="hlcode"><pre><span class="k">[Unit]</span>
+<span class="na">Description</span><span class="o">=</span><span class="s">Jenkins Daemon</span>
+
+<span class="k">[Service]</span>
+<span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/bin/java -jar /home/jenkins_user/jenkins.war</span>
+<span class="na">User</span><span class="o">=</span><span class="s">jenkins_user</span>
+
+<span class="k">[Install]</span>
+<span class="na">WantedBy</span><span class="o">=</span><span class="s">multi-user.target</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">systemctl</span> <span class="n">start</span> <span class="n">jenkins</span><span class="p">.</span><span class="n">service</span>     
+<span class="n">systemctl</span> <span class="n">stop</span> <span class="n">jenkins</span><span class="p">.</span><span class="n">service</span>
+<span class="n">systemctl</span> <span class="n">restart</span> <span class="n">jenkins</span><span class="p">.</span><span class="n">service</span>
+<span class="n">systemctl</span> <span class="n">enable</span> <span class="n">jenkins</span><span class="p">.</span><span class="n">service</span>                                      
+<span class="n">systemctl</span> <span class="n">disable</span> <span class="n">jenkins</span><span class="p">.</span><span class="n">service</span> 
+</pre></div>
+
+
+<p>Browse to <code>http://localhost:8080</code> and wait until the <strong>Unlock Jenkins</strong> page appears</p>
+<h3 id="centos">CentOS</h3>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">java</span><span class="o">-</span><span class="mf">1.8.0</span><span class="o">-</span><span class="n">openjdk</span><span class="o">-</span><span class="n">devel</span>
+
+<span class="n">curl</span> <span class="o">--</span><span class="n">silent</span> <span class="o">--</span><span class="n">location</span> <span class="n">http</span><span class="o">:</span><span class="c1">//pkg.jenkins-ci.org/redhat-stable/jenkins.repo | sudo tee /etc/yum.repos.d/jenkins.repo</span>
+<span class="n">sudo</span> <span class="n">rpm</span> <span class="o">--</span><span class="n">import</span> <span class="n">https</span><span class="o">:</span><span class="c1">//jenkins-ci.org/redhat/jenkins-ci.org.key</span>
+<span class="n">sudo</span> <span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">jenkins</span>
+
+<span class="n">systemctl</span> <span class="n">start</span> <span class="n">jenkins</span>
+<span class="n">systemctl</span> <span class="n">enable</span> <span class="n">jenkins</span>
+</pre></div>
+
+
+<h2 id="plugins">Plugins</h2>
+<h3 id="email-extension-extended-e-mail-notification">Email extension &amp; Extended E-mail Notification</h3>
+<div class="hlcode"><pre><span class="n">smtp</span><span class="mf">.163</span><span class="p">.</span><span class="n">com</span>
+<span class="n">username</span>
+<span class="n">password</span>  <span class="err">#这里是</span><span class="mi">163</span><span class="err">的授权码</span>
+<span class="n">smtp</span> <span class="n">port</span> <span class="mi">25</span> 
+</pre></div>
+
+
+<h3 id="role-based-authorization-strategy">Role-based Authorization Strategy (用户权限)</h3>
+<p>Installed and then go to "Configure Global Security"</p>
+<div class="hlcode"><pre><span class="n">Authorization</span> <span class="o">-&gt;</span> <span class="n">Role</span><span class="o">-</span><span class="n">Based</span> <span class="n">Strategy</span> <span class="o">-&gt;</span> <span class="n">Apply</span> <span class="o">-&gt;</span> <span class="n">Save</span>
+</pre></div>
+
+
+<p>Go to 'Manage and Assign Roles'</p>
+<h2 id="reset-password">reset password</h2>
+<p>The simplest solution is to completely disable security - change <code>true</code> to <code>false</code> in <code>/var/lib/jenkins/config.xml</code> file.</p>
+<div class="hlcode"><pre><span class="nt">&lt;useSecurity&gt;</span>true<span class="nt">&lt;/useSecurity&gt;</span>
+</pre></div>
+
+
+<p>Then just restart Jenkins, by</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">service</span> <span class="n">jenkins</span> <span class="n">restart</span>
+</pre></div>
+
+
+<p>And then go to admin panel and set everything once again.</p>
+<h2 id="https">https</h2>
+<p>Securing via HTTPS<br />
+Install nginx if not already done<br />
+replace the contents of /etc/nginx/sites-enabled/default with the following</p>
+<div class="hlcode"><pre><span class="n">server</span> <span class="p">{</span>
+    <span class="n">listen</span> <span class="mi">80</span><span class="p">;</span>
+    <span class="n">server_name</span> <span class="n">jenkins</span><span class="p">.</span><span class="n">xurick</span><span class="p">.</span><span class="n">com</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">301</span> <span class="n">https</span><span class="o">:</span><span class="c1">//$host$request_uri;</span>
+<span class="p">}</span>
+
+<span class="n">server</span> <span class="p">{</span>
+
+    <span class="n">listen</span> <span class="mi">443</span><span class="p">;</span>
+    <span class="n">server_name</span> <span class="n">jenkins</span><span class="p">.</span><span class="n">xurick</span><span class="p">.</span><span class="n">com</span><span class="p">;</span>
+
+    <span class="n">ssl_certificate</span>           <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">jenkins</span><span class="o">/</span><span class="n">xurick</span><span class="p">.</span><span class="n">com</span><span class="p">.</span><span class="n">cer</span><span class="p">;</span>
+    <span class="n">ssl_certificate_key</span>       <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">jenkins</span><span class="o">/</span><span class="n">xurick</span><span class="p">.</span><span class="n">com</span><span class="p">.</span><span class="n">key</span><span class="p">;</span>
+
+    <span class="n">ssl</span> <span class="n">on</span><span class="p">;</span>
+    <span class="n">ssl_session_cache</span>  <span class="n">builtin</span><span class="o">:</span><span class="mi">1000</span>  <span class="n">shared</span><span class="o">:</span><span class="n">SSL</span><span class="o">:</span><span class="mi">10</span><span class="n">m</span><span class="p">;</span>
+    <span class="n">ssl_protocols</span>  <span class="n">TLSv1</span> <span class="n">TLSv1</span><span class="mf">.1</span> <span class="n">TLSv1</span><span class="mf">.2</span><span class="p">;</span>
+    <span class="n">ssl_ciphers</span> <span class="n">HIGH</span><span class="o">:!</span><span class="n">aNULL</span><span class="o">:!</span><span class="n">eNULL</span><span class="o">:!</span><span class="n">EXPORT</span><span class="o">:!</span><span class="n">CAMELLIA</span><span class="o">:!</span><span class="n">DES</span><span class="o">:!</span><span class="n">MD5</span><span class="o">:!</span><span class="n">PSK</span><span class="o">:!</span><span class="n">RC4</span><span class="p">;</span>
+    <span class="n">ssl_prefer_server_ciphers</span> <span class="n">on</span><span class="p">;</span>
+
+    <span class="n">access_log</span>            <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">jenkins</span><span class="p">.</span><span class="n">access</span><span class="p">.</span><span class="n">log</span><span class="p">;</span>
+
+    <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+
+      <span class="n">proxy_set_header</span>        <span class="n">Host</span> <span class="err">$</span><span class="n">host</span><span class="p">;</span>
+      <span class="n">proxy_set_header</span>        <span class="n">X</span><span class="o">-</span><span class="n">Real</span><span class="o">-</span><span class="n">IP</span> <span class="err">$</span><span class="n">remote_addr</span><span class="p">;</span>
+      <span class="n">proxy_set_header</span>        <span class="n">X</span><span class="o">-</span><span class="n">Forwarded</span><span class="o">-</span><span class="n">For</span> <span class="err">$</span><span class="n">proxy_add_x_forwarded_for</span><span class="p">;</span>
+      <span class="n">proxy_set_header</span>        <span class="n">X</span><span class="o">-</span><span class="n">Forwarded</span><span class="o">-</span><span class="n">Proto</span> <span class="err">$</span><span class="n">scheme</span><span class="p">;</span>
+
+      <span class="err">#</span> <span class="n">Fix</span> <span class="n">the</span> <span class="err">“</span><span class="n">It</span> <span class="n">appears</span> <span class="n">that</span> <span class="n">your</span> <span class="n">reverse</span> <span class="n">proxy</span> <span class="n">set</span> <span class="n">up</span> <span class="n">is</span> <span class="n">broken</span><span class="s">&quot; error.</span>
+      <span class="n">proxy_pass</span>          <span class="n">http</span><span class="o">:</span><span class="c1">//localhost:8080;</span>
+      <span class="n">proxy_read_timeout</span>  <span class="mi">90</span><span class="p">;</span>
+
+      <span class="n">proxy_redirect</span>      <span class="n">http</span><span class="o">:</span><span class="c1">//localhost:8080 https://jenkins.xurick.com;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+
+
+<p>Change the /etc/default/jenkins file to include JAVA_ARGS</p>
+<p><code>JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpListenAddress=127.0.0.1 --httpPort=$HTTP_PORT" -ajp13Port=$AJP_PORT"</code></p>
+<h1 id="pipline">Pipline</h1>
+<p>Jenkins 上的工作流程框架，将原本独立运行于单个或者多个节点的任务连接起来，实现单个任务难以完成的复杂流程编排与可视化</p>
+<p>Pipeline的实现方式是一套Groovy DSL，任何发布流程都可以表述为一段Groovy脚本，并且Jenkins支持从代码库直接读取脚本，从而实现了Pipeline as Code的理念。</p>
+<p>Pipeline支持两种形式，一种是<code>Declarative</code>管道，一个是<code>Scripted</code>管道</p>
+<h2 id="declarative">Declarative 语法</h2>
+<p>先讲<code>Declarative Pipeline</code>，所有声明式管道都必须包含在<code>pipeline</code>块中</p>
+<div class="hlcode"><pre><span class="n">pipeline</span> <span class="p">{</span>
+    <span class="cm">/* insert Declarative Pipeline here */</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>块里面的语句和表达式都是Groovy语法，遵循以下规则：</p>
+<ol>
+<li>最顶层规定就是<code>pipeline { }</code></li>
+<li>语句结束不需要分号，一行一条语句</li>
+<li>块中只能包含<code>Sections</code>, <code>Directives</code>, <code>Steps</code>或者赋值语句</li>
+<li>属性引用语句被当成是无参方法调用，比如<code>input</code>实际上就是方法<code>input()</code>调用</li>
+</ol>
+<h3 id="sections">Sections</h3>
+<div class="hlcode"><pre><span class="n">Sections</span> <span class="err">在声明式管道中包含一个或多个</span><span class="n">Directives</span><span class="p">,</span> <span class="n">Steps</span>
+</pre></div>
+
+
+<h4 id="post">post</h4>
+<p><code>post</code> section 定义了管道执行结束后要进行的操作。支持在里面定义很多<code>Conditions</code>块： <code>always</code>, <code>changed</code>, <code>failure</code>, <code>success</code> 和 <code>unstable</code>。 这些条件块会根据不同的返回结果来执行不同的逻辑。</p>
+<ul>
+<li>always：不管返回什么状态都会执行</li>
+<li>changed：如果当前管道返回值和上一次已经完成的管道返回值不同时候执行</li>
+<li>failure：当前管道返回状态值为”failed”时候执行，在Web UI界面上面是红色的标志</li>
+<li>success：当前管道返回状态值为”success”时候执行，在Web UI界面上面是绿色的标志</li>
+<li>unstable：当前管道返回状态值为”unstable”时候执行，通常因为测试失败，代码不合法引起的。在Web UI界面上面是黄色的标志</li>
+</ul>
+<div class="hlcode"><pre><span class="c1">// Declarative //</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Example</span><span class="p">&#39;)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">echo</span> <span class="p">&#39;</span><span class="n">Hello</span> <span class="n">World</span><span class="p">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">post</span> <span class="p">{</span> <span class="err">①</span>
+        <span class="k">always</span> <span class="p">{</span> <span class="err">②</span>
+            <span class="n">echo</span> <span class="p">&#39;</span><span class="no">I</span> <span class="n">will</span> <span class="k">always</span> <span class="n">say</span> <span class="n">Hello</span> <span class="n">again</span><span class="o">!</span><span class="p">&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h4 id="stages">stages</h4>
+<p>由一个或多个<code>stage</code>指令组成，stages块也是核心逻辑的部分。 我们建议对于每个独立的交付部分（比如<code>Build</code>,<code>Test</code>,<code>Deploy</code>）都应该至少定义一个<code>stage</code>指令。比如：</p>
+<div class="hlcode"><pre><span class="c1">// Declarative //</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="n">stages</span> <span class="p">{</span> <span class="err">①</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Example</span><span class="p">&#39;)</span> <span class="p">{</span>
+        <span class="n">steps</span> <span class="p">{</span>
+            <span class="n">echo</span> <span class="p">&#39;</span><span class="n">Hello</span> <span class="n">World</span><span class="p">&#39;</span>
+        <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h4 id="steps">steps</h4>
+<p>在<code>stage</code>中定义一系列的<code>step</code>来执行命令。</p>
+<div class="hlcode"><pre><span class="c1">// Declarative //</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Example</span><span class="p">&#39;)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span> <span class="err">①</span>
+                <span class="n">echo</span> <span class="p">&#39;</span><span class="n">Hello</span> <span class="n">World</span><span class="p">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h5 id="multiline-command">multiline-command</h5>
+<div class="hlcode"><pre><span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Build</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">sh</span> <span class="err">&#39;</span><span class="n">echo</span> <span class="s">&quot;Hello World&quot;</span><span class="err">&#39;</span>
+                <span class="n">sh</span> <span class="err">&#39;&#39;&#39;</span>
+                    <span class="n">echo</span> <span class="s">&quot;Multiline shell steps works too&quot;</span>
+                    <span class="n">ls</span> <span class="o">-</span><span class="n">lah</span>
+                <span class="err">&#39;&#39;&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h5 id="_2">含脚本</h5>
+<div class="hlcode"><pre><span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Deploy</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">timeout</span><span class="p">(</span><span class="n">time</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="n">unit</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">MINUTES</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">sh</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">jenkins_home</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">fibonacci</span><span class="p">.</span><span class="n">sh</span> <span class="mi">5</span><span class="err">&#39;</span>
+                <span class="p">}</span>
+                <span class="n">timeout</span><span class="p">(</span><span class="n">time</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="n">unit</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">MINUTES</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">sh</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">jenkins_home</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">fibonacci</span><span class="p">.</span><span class="n">sh</span> <span class="mi">32</span><span class="err">&#39;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="directives">Directives</h3>
+<p>jenkins中的各种指令</p>
+<h4 id="agent">agent</h4>
+<p><code>agent</code>指令指定整个管道或某个特定的<code>stage</code>的执行环境。它的参数可用使用：</p>
+<ol>
+<li>any - 任意一个可用的agent</li>
+<li>none - 如果放在pipeline顶层，那么每一个<code>stage</code>都需要定义自己的<code>agent</code>指令</li>
+<li>label - 在jenkins环境中指定标签的agent上面执行，比如<code>agent { label 'my-defined-label' }</code></li>
+<li>node - <code>agent { node { label 'labelName' } }</code> 和 label一样，但是可用定义更多可选项</li>
+<li>docker - 指定在docker容器中运行</li>
+<li>dockerfile - 使用源码根目录下面的<code>Dockerfile</code>构建容器来运行</li>
+</ol>
+<h4 id="environment">environment</h4>
+<p><code>environment</code>定义键值对的环境变量</p>
+<div class="hlcode"><pre><span class="c1">// Declarative //</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="n">environment</span> <span class="p">{</span> <span class="err">①</span>
+        <span class="no">CC</span> <span class="o">=</span> <span class="p">&#39;</span><span class="n">clang</span><span class="p">&#39;</span>
+    <span class="p">}</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Example</span><span class="p">&#39;)</span> <span class="p">{</span>
+            <span class="n">environment</span> <span class="p">{</span> <span class="err">②</span>
+                <span class="no">AN_ACCESS_KEY</span> <span class="o">=</span> <span class="n">credentials</span><span class="p">(&#39;</span><span class="n">my</span><span class="o">-</span><span class="n">prefined</span><span class="o">-</span><span class="n">secret</span><span class="o">-</span><span class="n">text</span><span class="p">&#39;)</span> <span class="err">③</span>
+            <span class="p">}</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">sh</span> <span class="p">&#39;</span><span class="n">printenv</span><span class="p">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h4 id="options">options</h4>
+<p>还能定义一些管道特定的选项，介绍几个常用的：</p>
+<ul>
+<li>skipDefaultCheckout - 在<code>agent</code>指令中忽略源码<code>checkout</code>这一步骤。</li>
+<li>timeout - 超时设置<code>options { timeout(time: 1, unit: 'HOURS') }</code></li>
+<li>retry - 直到成功的重试次数<code>options { retry(3) }</code></li>
+<li>timestamps - 控制台输出前面加时间戳<code>options { timestamps() }</code></li>
+</ul>
+<h4 id="parameters">parameters</h4>
+<p>参数指令，触发这个管道需要用户指定的参数，然后在<code>step</code>中通过<code>params</code>对象访问这些参数。</p>
+<div class="hlcode"><pre><span class="c1">// Declarative //</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="kn">parameters</span> <span class="p">{</span>
+        <span class="n">string</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="o">&#39;</span><span class="n">PERSON</span><span class="o">&#39;</span><span class="p">,</span> <span class="n">defaultValue</span><span class="p">:</span> <span class="o">&#39;</span><span class="n">Mr</span> <span class="n">Jenkins</span><span class="o">&#39;</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="o">&#39;</span><span class="n">Who</span> <span class="n">should</span> <span class="n">I</span> <span class="n">say</span> <span class="n">hello</span> <span class="n">to</span><span class="err">?</span><span class="o">&#39;</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(</span><span class="o">&#39;</span><span class="n">Example</span><span class="o">&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">echo</span> <span class="s">&quot;Hello ${params.PERSON}&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h4 id="triggers">triggers</h4>
+<p>触发器指令定义了这个管道何时该执行，一般我们会将管道和GitHub、GitLab、BitBucket关联， 然后使用它们的webhooks来触发，就不需要这个指令了。如果不适用<code>webhooks</code>，就可以定义两种<code>cron</code>和<code>pollSCM</code></p>
+<ul>
+<li>cron - linux的cron格式<code>triggers { cron('H 4/* 0 0 1-5') }</code></li>
+<li>pollSCM - jenkins的<code>poll scm</code>语法，比如<code>triggers { pollSCM('H 4/* 0 0 1-5') }</code></li>
+</ul>
+<div class="hlcode"><pre><span class="c1">// Declarative //</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="n">triggers</span> <span class="p">{</span>
+        <span class="n">cron</span><span class="p">(&#39;</span><span class="no">H</span> <span class="mh">4</span><span class="o">/*</span> <span class="mh">0</span> <span class="mh">0</span> <span class="mh">1</span><span class="o">-</span><span class="mh">5</span><span class="p">&#39;)</span>
+    <span class="p">}</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Example</span><span class="p">&#39;)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">echo</span> <span class="p">&#39;</span><span class="n">Hello</span> <span class="n">World</span><span class="p">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h4 id="stage">stage</h4>
+<p><code>stage</code>指令定义在<code>stages</code>块中，里面必须至少包含一个<code>steps</code>指令，一个可选的<code>agent</code>指令，以及其他stage相关指令。</p>
+<div class="hlcode"><pre><span class="c1">// Declarative //</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Example</span><span class="p">&#39;)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">echo</span> <span class="p">&#39;</span><span class="n">Hello</span> <span class="n">World</span><span class="p">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h4 id="tools">tools</h4>
+<p>定义自动安装并自动放入<code>PATH</code>里面的工具集合</p>
+<div class="hlcode"><pre><span class="c1">// Declarative //</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="n">tools</span> <span class="p">{</span>
+        <span class="n">maven</span> <span class="p">&#39;</span><span class="n">apache</span><span class="o">-</span><span class="n">maven</span><span class="o">-</span><span class="mf">3.0.1</span><span class="p">&#39;</span> <span class="err">①</span>
+    <span class="p">}</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Example</span><span class="p">&#39;)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">sh</span> <span class="p">&#39;</span><span class="n">mvn</span> <span class="o">--</span><span class="n">version</span><span class="p">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>注：① 工具名称必须预先在Jenkins中配置好了 → Global Tool Configuration.</p>
+<h4 id="_3">内置条件</h4>
+<ul>
+<li>branch - 分支匹配才执行 <code>when { branch 'master' }</code></li>
+<li>environment - 环境变量匹配才执行 <code>when { environment name: 'DEPLOY_TO', value: 'production' }</code></li>
+<li>expression - groovy表达式为真才执行 <code>expression { return params.DEBUG_BUILD } }</code></li>
+</ul>
+<div class="hlcode"><pre><span class="c1">// Declarative //</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Example</span> <span class="n">Build</span><span class="p">&#39;)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">echo</span> <span class="p">&#39;</span><span class="n">Hello</span> <span class="n">World</span><span class="p">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Example</span> <span class="n">Deploy</span><span class="p">&#39;)</span> <span class="p">{</span>
+            <span class="n">when</span> <span class="p">{</span>
+                <span class="n">branch</span> <span class="p">&#39;</span><span class="n">production</span><span class="p">&#39;</span>
+            <span class="p">}</span>
+            <span class="n">echo</span> <span class="p">&#39;</span><span class="n">Deploying</span><span class="p">&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="parameterized">parameterized 带参数</h3>
+<div class="hlcode"><pre><span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="kn">parameters</span> <span class="p">{</span>
+        <span class="n">string</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="o">&#39;</span><span class="n">Greeting</span><span class="o">&#39;</span><span class="p">,</span> <span class="n">defaultValue</span><span class="p">:</span> <span class="o">&#39;</span><span class="n">Hello</span><span class="o">&#39;</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="o">&#39;</span><span class="n">How</span> <span class="n">should</span> <span class="n">I</span> <span class="n">greet</span> <span class="n">the</span> <span class="n">world</span><span class="err">?</span><span class="o">&#39;</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(</span><span class="o">&#39;</span><span class="n">Example</span><span class="o">&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">echo</span> <span class="s">&quot;${params.Greeting} World!&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="steps_1">Steps</h3>
+<p>这里就是实实在在的执行步骤了，每个步骤step都具体干些什么东西， 前面的<code>Sections</code>、<code>Directives</code>算控制逻辑和环境准备，这里的就是真实执行步骤。</p>
+<p>这部分内容最多不可能全部讲完，<a href="https://jenkins.io/doc/pipeline/steps/">官方Step指南</a> 包含所有的东西。</p>
+<p><code>Declared Pipeline</code>和<code>Scripted Pipeline</code>都能使用这些step，除了下面这个特殊的<code>script</code>。</p>
+<p>一个特殊的step就是<code>script</code>，它可以让你在声明管道中执行脚本，使用groovy语法，这个非常有用：</p>
+<div class="hlcode"><pre><span class="c1">// Declarative //</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Example</span><span class="p">&#39;)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">echo</span> <span class="p">&#39;</span><span class="n">Hello</span> <span class="n">World</span><span class="p">&#39;</span>
+                <span class="n">script</span> <span class="p">{</span>
+                    <span class="n">def</span> <span class="n">browsers</span> <span class="o">=</span> <span class="p">[&#39;</span><span class="n">chrome</span><span class="p">&#39;,</span> <span class="p">&#39;</span><span class="n">firefox</span><span class="p">&#39;]</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mh">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">browsers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">echo</span> <span class="s">&quot;Testing the ${browsers[i]} browser&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="n">script</span> <span class="p">{</span>
+                    <span class="c1">// 一个优雅的退出pipeline的方法，这里可执行任意逻辑</span>
+                    <span class="k">if</span><span class="p">(</span> <span class="err">$</span><span class="no">VALUE1</span> <span class="o">==</span> <span class="err">$</span><span class="no">VALUE2</span> <span class="p">)</span> <span class="p">{</span>
+                       <span class="n">currentBuild</span><span class="p">.</span><span class="n">result</span> <span class="o">=</span> <span class="p">&#39;</span><span class="no">SUCCESS</span><span class="p">&#39;</span>
+                       <span class="k">return</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>最后列出来一个典型的<code>Scripted Pipeline</code>：</p>
+<div class="hlcode"><pre><span class="n">node</span><span class="p">(</span><span class="err">&#39;</span><span class="n">master</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">checkout</span> <span class="n">scm</span>
+
+    <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Build</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">docker</span><span class="p">.</span><span class="n">image</span><span class="p">(</span><span class="err">&#39;</span><span class="n">maven</span><span class="o">:</span><span class="mf">3.3.3</span><span class="err">&#39;</span><span class="p">).</span><span class="n">inside</span> <span class="p">{</span>
+            <span class="n">sh</span> <span class="err">&#39;</span><span class="n">mvn</span> <span class="o">--</span><span class="n">version</span><span class="err">&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Deploy</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">BRANCH_NAME</span> <span class="o">==</span> <span class="err">&#39;</span><span class="n">master</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">echo</span> <span class="err">&#39;</span><span class="n">I</span> <span class="n">only</span> <span class="n">execute</span> <span class="n">on</span> <span class="n">the</span> <span class="n">master</span> <span class="n">branch</span><span class="err">&#39;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">echo</span> <span class="err">&#39;</span><span class="n">I</span> <span class="n">execute</span> <span class="n">elsewhere</span><span class="err">&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>可以看到，<code>Scripted Pipeline</code>没那么多东西，就是定义一个<code>node</code>， 里面多个<code>stage</code>，里面就是使用Groovy语法执行各个<code>step</code>了，非常简单和清晰，也非常灵活。</p>
+<h4 id="_4">全局变量引用</h4>
+<p>除了代码片段生成器之外，Pipeline还提供了一个内置的“ 全局变量引用”。像Snippet Generator一样，它也是由插件动态填充的。与代码段生成器不同的是，全局变量引用仅包含Pipeline提供的变量的文档，这些变量可用于Pipeline。</p>
+<p>在Pipeline中默认提供的变量是：</p>
+<ul>
+<li>ENV</li>
+</ul>
+<p>脚本化Pipeline可访问的环境变量，例如： <code>env.PATH</code>或<code>env.BUILD_ID</code>。请参阅内置的全局变量参考 ，以获取管道中可用的完整和最新的环境变量列表。</p>
+<ul>
+<li>PARAMS</li>
+</ul>
+<p>将为Pipeline定义的所有参数公开为只读 <a href="http://groovy-lang.org/syntax.html#_maps">地图</a>，例如：<code>params.MY_PARAM_NAME</code>。</p>
+<ul>
+<li>currentBuild</li>
+</ul>
+<p>可用于发现有关当前正在执行的Pipeline信息，与如属性<code>currentBuild.result</code>，<code>currentBuild.displayName</code>等等请教内置的全局变量引用 了一个完整的，而且是最新的，可用的属性列表<code>currentBuild</code>。</p>
+<h4 id="jenkins-file">Jenkins file</h4>
+<p>Node: 节点，一个Node就是一个Jenkins节点，或者是Master，或者是Agent，是执行Step的具体运行期环境。</p>
+<p>Stage: 阶段，一个Pipeline可以划分为若干个Stage，每个Stage代表一组操作。注意，Stage是一个逻辑分组的概念，可以跨多个Node。即Stage实际上是Step的逻辑分组。</p>
+<p>Step: 步骤，可以是创建一个目录、从代码库中checkout代码、执行一个shell命令、构建Docker镜像、将服务发布到Kubernetes集群中。Step由Jenkins和Jenkins各种插件提供。</p>
+<p>Stage和Step可以放到一个Node下面执行，不指定就默认在master节点上面执行。 另外Node和Step也能组合成一个Stage</p>
+<p>通过编写<code>Jenkinsfile</code>将管道代码化，并且纳入到版本管理系统中。比如：</p>
+<div class="hlcode"><pre><span class="c1">// Declarative //</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span> <span class="err">①</span>
+
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Build</span><span class="p">&#39;)</span> <span class="p">{</span> <span class="err">②</span>
+            <span class="n">steps</span> <span class="p">{</span> <span class="err">③</span>
+                <span class="n">sh</span> <span class="p">&#39;</span><span class="n">make</span><span class="p">&#39;</span> <span class="err">④</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Test</span><span class="p">&#39;){</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">sh</span> <span class="p">&#39;</span><span class="n">make</span> <span class="n">check</span><span class="p">&#39;</span>
+                <span class="n">junit</span> <span class="p">&#39;</span><span class="n">reports</span><span class="cm">/**/</span><span class="o">*</span><span class="p">.</span><span class="n">xml</span><span class="p">&#39;</span> <span class="err">⑤</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Deploy</span><span class="p">&#39;)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">sh</span> <span class="p">&#39;</span><span class="n">make</span> <span class="n">publish</span><span class="p">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Script //</span>
+<span class="n">node</span> <span class="p">{</span>
+    <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Build</span><span class="p">&#39;)</span> <span class="p">{</span>
+        <span class="n">sh</span> <span class="p">&#39;</span><span class="n">make</span><span class="p">&#39;</span>
+    <span class="p">}</span>
+    <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Test</span><span class="p">&#39;)</span> <span class="p">{</span>
+        <span class="n">sh</span> <span class="p">&#39;</span><span class="n">make</span> <span class="n">check</span><span class="p">&#39;</span>
+        <span class="n">junit</span> <span class="p">&#39;</span><span class="n">reports</span><span class="cm">/**/</span><span class="o">*</span><span class="p">.</span><span class="n">xml</span><span class="p">&#39;</span>
+    <span class="p">}</span>
+    <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Deploy</span><span class="p">&#39;)</span> <span class="p">{</span>
+        <span class="n">sh</span> <span class="p">&#39;</span><span class="n">make</span> <span class="n">publish</span><span class="p">&#39;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p>① agent 指示Jenkins分配一个执行器和工作空间来执行下面的Pipeline<br />
+② stage 表示这个Pipeline的一个执行阶段<br />
+③ steps 表示在这个stage中每一个步骤<br />
+④ sh 执行指定的命令<br />
+⑤ junit 是插件<code>junit[JUnit plugin]</code>提供的一个管道步骤，用来收集测试报告</p>
+</blockquote>
+<h5 id="step">常用的Step</h5>
+<h6 id="_5">切换当前的目录</h6>
+<div class="hlcode"><pre><span class="n">dir</span><span class="p">(</span><span class="err">&#39;</span><span class="n">dir1</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">sh</span> <span class="err">&#39;</span><span class="n">pwd</span><span class="err">&#39;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>如果切换的目录不存在，将会创建这个目录。</p>
+<h6 id="tag">签出指定分支或tag的代码</h6>
+<p>从git中获取指定分支的代码:</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">url</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">ssh</span><span class="o">:</span><span class="c1">//git@gitlab.frognew.com/demo/apidemo.git&#39;, branch: &#39;develop&#39;</span>
+</pre></div>
+
+
+<p>如果需要获取指定tag的代码，需要使用Pipeline: SCM Step的checkout：</p>
+<div class="hlcode"><pre><span class="n">checkout</span> <span class="n">scm</span><span class="o">:</span> <span class="p">[</span><span class="err">$</span><span class="n">class</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">GitSCM</span><span class="err">&#39;</span><span class="p">,</span> 
+      <span class="n">userRemoteConfigs</span><span class="o">:</span> <span class="p">[[</span><span class="n">url</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">ssh</span><span class="o">:</span><span class="c1">//git@gitlab.frognew.com/demo/apidemo.git&#39;]], </span>
+      <span class="nl">branches:</span> <span class="p">[[</span><span class="n">name</span><span class="o">:</span> <span class="s">&quot;refs/tags/1.1.0&quot;</span><span class="p">]]],</span> <span class="n">changelog</span><span class="o">:</span> <span class="nb">false</span><span class="p">,</span> <span class="n">poll</span><span class="o">:</span> <span class="nb">false</span>
+</pre></div>
+
+
+<h6 id="_6">修改当前构建的名称和描述</h6>
+<div class="hlcode"><pre>script {
+    currentBuild.displayName = &quot;#<span class="cp">${</span><span class="n">BUILD_NUMBER</span><span class="cp">}</span>(apidemo)&quot;
+    currentBuild.description = &quot;publish apidemo&quot;
+}
+</pre></div>
+
+
+<p><code>Jenkinsfile</code>是一个包含Jenkins Pipeline定义的文本文件，并被检入源代码控制。考虑以下Pipeline，实施基本的三阶段连续输送Pipeline。</p>
+<div class="hlcode"><pre><span class="n">Jenkinsfile</span> <span class="p">(</span><span class="n">Declarative</span> <span class="n">Pipeline</span><span class="p">)</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Build</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">echo</span> <span class="err">&#39;</span><span class="n">Building</span><span class="p">..</span><span class="err">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Test</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">echo</span> <span class="err">&#39;</span><span class="n">Testing</span><span class="p">..</span><span class="err">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Deploy</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">echo</span> <span class="err">&#39;</span><span class="n">Deploying</span><span class="p">....</span><span class="err">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p>需要的代理指令指示Jenkins为Pipeline分配一个执行器和工作区。没有agent指令，不仅声明Pipeline无效，所以不能做任何工作！默认情况下，该agent伪指令确保源存储库已被检出并可用于后续阶段的步骤</p>
+</blockquote>
+<p>Toggle Scripted Pipeline <em>(Advanced)</em></p>
+<div class="hlcode"><pre><span class="n">Jenkinsfile</span> <span class="p">(</span><span class="n">Scripted</span> <span class="n">Pipeline</span><span class="p">)</span>
+<span class="n">node</span> <span class="p">{</span>
+    <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Build</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">echo</span> <span class="err">&#39;</span><span class="n">Building</span><span class="p">....</span><span class="err">&#39;</span>
+    <span class="p">}</span>
+    <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Test</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">echo</span> <span class="err">&#39;</span><span class="n">Building</span><span class="p">....</span><span class="err">&#39;</span>
+    <span class="p">}</span>
+    <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Deploy</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">echo</span> <span class="err">&#39;</span><span class="n">Deploying</span><span class="p">....</span><span class="err">&#39;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>并非所有的Pipeline都将具有相同的三个阶段，但是对于大多数项目来说，这是一个很好的起点。</p>
+<h5 id="env">ENV 环境变量</h5>
+<p>Jenkins  Pipeline通过全局变量公开环境变量，该变量<code>env</code>可从任何地方获得<code>Jenkinsfile</code>。假设Jenkins主机正在运行，在本地主机：8080 / pipeline-syntax / globals＃env中记录了可从Jenkins Pipeline中访问的环境变量的完整列表 <code>localhost:8080</code>，其中包括：</p>
+<ul>
+<li>BUILD_ID</li>
+</ul>
+<p>当前版本ID，与Jenkins版本1.597+中创建的构建相同，为BUILD_NUMBER</p>
+<ul>
+<li>JOB_NAME</li>
+</ul>
+<p>此构建项目的名称，如“foo”或“foo / bar”。</p>
+<ul>
+<li>JENKINS_URL</li>
+</ul>
+<p>完整的Jenkins网址，例如example.com:port/jenkins/（注意：只有在“系统配置”中设置了Jenkins网址时才可用）</p>
+<p>参考或使用这些环境变量可以像访问Groovy Map中的任何键一样完成 ，例如：</p>
+<div class="hlcode"><pre>Jenkinsfile (Declarative Pipeline)
+pipeline {
+    agent any
+    stages {
+        stage(&#39;Example&#39;) {
+            steps {
+                echo &quot;Running <span class="cp">${</span><span class="n">env</span><span class="o">.</span><span class="n">BUILD_ID</span><span class="cp">}</span> on <span class="cp">${</span><span class="n">env</span><span class="o">.</span><span class="n">JENKINS_URL</span><span class="cp">}</span>&quot;
+            }
+        }
+    }
+}
+</pre></div>
+
+
+<p>Toggle Scripted Pipeline <em>(Advanced)</em></p>
+<div class="hlcode"><pre>Jenkinsfile (Scripted Pipeline)
+node {
+    echo &quot;Running <span class="cp">${</span><span class="n">env</span><span class="o">.</span><span class="n">BUILD_ID</span><span class="cp">}</span> on <span class="cp">${</span><span class="n">env</span><span class="o">.</span><span class="n">JENKINS_URL</span><span class="cp">}</span>&quot;
+}
+</pre></div>
+
+
+<p>设置环境变量：</p>
+<div class="hlcode"><pre><span class="c1">// Declarative //</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="n">environment</span> <span class="p">{</span>
+        <span class="no">CC</span> <span class="o">=</span> <span class="p">&#39;</span><span class="n">clang</span><span class="p">&#39;</span>
+    <span class="p">}</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Example</span><span class="p">&#39;)</span> <span class="p">{</span>
+            <span class="n">environment</span> <span class="p">{</span>
+                <span class="no">DEBUG_FLAGS</span> <span class="o">=</span> <span class="p">&#39;</span><span class="o">-</span><span class="n">g</span><span class="p">&#39;</span>
+            <span class="p">}</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">sh</span> <span class="p">&#39;</span><span class="n">printenv</span><span class="p">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h5 id="agent_1">使用多个agent</h5>
+<div class="hlcode"><pre><span class="c1">// Declarative //</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">none</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(&#39;</span><span class="n">Build</span><span class="p">&#39;)</span> <span class="p">{</span>
+            <span class="n">agent</span> <span class="n">any</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">checkout</span> <span class="n">scm</span>
+                <span class="n">sh</span> <span class="p">&#39;</span><span class="n">make</span><span class="p">&#39;</span>
+                <span class="n">stash</span> <span class="nl">includes:</span> <span class="p">&#39;</span><span class="o">*</span><span class="err">*/</span><span class="n">target</span><span class="cm">/*.jar&#39;, name: &#39;app&#39; ①</span>
+<span class="cm">            }</span>
+<span class="cm">        }</span>
+<span class="cm">        stage(&#39;Test on Linux&#39;) {</span>
+<span class="cm">            agent { ②</span>
+<span class="cm">                label &#39;linux&#39;</span>
+<span class="cm">            }</span>
+<span class="cm">            steps {</span>
+<span class="cm">                unstash &#39;app&#39; ③</span>
+<span class="cm">                sh &#39;make check&#39;</span>
+<span class="cm">            }</span>
+<span class="cm">            post {</span>
+<span class="cm">                always {</span>
+<span class="cm">                    junit &#39;**/</span><span class="n">target</span><span class="cm">/*.xml&#39;</span>
+<span class="cm">                }</span>
+<span class="cm">            }</span>
+<span class="cm">        }</span>
+<span class="cm">        stage(&#39;Test on Windows&#39;) {</span>
+<span class="cm">            agent {</span>
+<span class="cm">                label &#39;windows&#39;</span>
+<span class="cm">            }</span>
+<span class="cm">            steps {</span>
+<span class="cm">                unstash &#39;app&#39;</span>
+<span class="cm">                bat &#39;make check&#39; ④</span>
+<span class="cm">            }</span>
+<span class="cm">            post {</span>
+<span class="cm">                always {</span>
+<span class="cm">                    junit &#39;**/</span><span class="n">target</span><span class="o">/*</span><span class="p">.</span><span class="n">xml</span><span class="p">&#39;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>上面的例子，在任一台机器上面做Build操作，并通过<code>stash</code>命令保存文件，然后分别在两台agent机器上面做测试。 注意这里所有步骤都是串行执行的。</p>
+<h5 id="multibranch-pipeline">Multibranch Pipeline</h5>
+<p>多分支管道可以让你在同一个项目中，对每个分支定义一个执行管道。Jenkins或自动发现、管理并执行包含<code>Jenkinsfile</code>文件的分支。</p>
+<p>这个在前面一篇已经演示过怎样创建这样的Pipeline了，就不再多讲。</p>
+<h1 id="example">Example</h1>
+<h2 id="webhook">webhook</h2>
+<div class="hlcode"><pre><span class="cp"># We&#39;ll need to get a personal API key from our git repo</span>
+<span class="cp">#1, create a fork of this repository:</span>
+
+<span class="nl">https:</span><span class="c1">//github.com/robertstarmer/jenkins-git.git</span>
+
+<span class="cp"># creating</span>
+
+<span class="nl">https:</span><span class="c1">//github.com/{your_github_user_name}/jenkins-git.git</span>
+<span class="cp">#2, in github, get a personal access token:</span>
+
+<span class="nl">https:</span><span class="c1">//github.com/settings/tokens</span>
+
+<span class="cp">#3, when creating the token, add:</span>
+<span class="nl">admin:</span><span class="n">repo_hook</span>
+<span class="nl">repo:</span><span class="o">*</span>
+<span class="nl">notifications:</span><span class="o">*</span>
+
+<span class="cp">#4 after configuring jenkins, verify that the webhook</span>
+<span class="cp"># was created</span>
+<span class="nl">https:</span><span class="c1">//github.com/{your_github_user_name}/jenkins-git/settings/hooks</span>
+</pre></div>
+
+
+<h2 id="jenkins-node">jenkins node</h2>
+<div class="hlcode"><pre><span class="cp"># Setup jenkins master and slave unix machines</span>
+<span class="cp">#0 launch a new VM or bare metal machine to support</span>
+<span class="cp">#  the agent machine.  This would be in much the same</span>
+<span class="cp">#  way as in module 02_01, and a small Ubuntu 18.04</span>
+<span class="cp">#  VM is recommended (1 core, 1G memory, 10Gdisk is plenty)</span>
+<span class="cp">#  This VM should have docker installed as well, along with</span>
+<span class="cp">#  the Jenkins user using the instructions from module 02_01</span>
+
+<span class="cp">#1 create an ssh public/private key pair on the master</span>
+<span class="cp">#  as the jenkins user</span>
+
+<span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">t</span> <span class="n">rsa</span> <span class="o">-</span><span class="n">N</span> <span class="err">&#39;&#39;</span> <span class="o">-</span><span class="n">f</span> <span class="o">~/</span><span class="p">.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa</span>
+
+<span class="cp">#2 copy the ~/.ssh/id_rsa.pub to the worker node(s)</span>
+
+<span class="cp"># on the master</span>
+<span class="n">cat</span> <span class="o">~/</span><span class="p">.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa</span><span class="p">.</span><span class="n">pub</span>
+
+<span class="cp"># on the worker</span>
+<span class="n">cat</span> <span class="o">&gt;&gt;</span> <span class="o">~/</span><span class="p">.</span><span class="n">ssh</span><span class="o">/</span><span class="n">authorized_keys</span> <span class="o">&lt;&lt;</span><span class="n">EOF</span>
+<span class="n">ssh</span><span class="o">-</span><span class="n">rsa</span> <span class="n">KEY</span><span class="p">...</span>
+<span class="n">EOF</span>
+
+<span class="cp"># confirm that you can log in as the jenkins user on</span>
+<span class="cp"># the worker machine from the master machine</span>
+
+<span class="n">ssh</span> <span class="n">jenkins</span><span class="err">@</span><span class="n">worker</span>
+
+<span class="cp">#3 It may be that Jenkins is unable to install Java on your worker</span>
+<span class="cp">#  node, so we&#39;ll just make sure it&#39;s already installed</span>
+<span class="cp">#  Log in to the worker as root, and add java 8</span>
+
+<span class="n">add</span><span class="o">-</span><span class="n">apt</span><span class="o">-</span><span class="n">repository</span> <span class="n">ppa</span><span class="o">:</span><span class="n">webupd8team</span><span class="o">/</span><span class="n">java</span>
+<span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+<span class="n">apt</span> <span class="n">install</span> <span class="n">oracle</span><span class="o">-</span><span class="n">java8</span><span class="o">-</span><span class="n">installer</span>
+
+<span class="cp"># Note that you have to manually accept the Oracle license</span>
+<span class="cp"># as a part of this process</span>
+</pre></div>
+
+
+<h2 id="docker-agent">Docker agent</h2>
+<div class="hlcode"><pre><span class="cp"># Adding Docker for agents</span>
+<span class="cp">#1 Configure the target system docker for web/REST access</span>
+<span class="cp">#  add the following to the Start or ExecStart parameter of </span>
+<span class="cp">#  /lib/systemd/system/docker.service</span>
+<span class="o">-</span><span class="n">H</span> <span class="n">tcp</span><span class="o">:</span><span class="c1">//0.0.0.0:4243</span>
+
+<span class="cp">#  then restart the docker service</span>
+<span class="n">systemctl</span> <span class="n">daemon</span><span class="o">-</span><span class="n">reload</span>
+<span class="n">systemctl</span> <span class="n">restart</span> <span class="n">docker</span>
+
+<span class="cp">#2 Now we can configure jenkins to reach out to the new</span>
+<span class="cp">#  docker worker. We&#39;ll need a docker image to point to</span>
+<span class="cp">#  for the agent:</span>
+<span class="n">jenkins</span><span class="o">/</span><span class="n">jnlp</span><span class="o">-</span><span class="n">slave</span>
+
+<span class="cp">#3 And then we can create a new project/job and add a docker</span>
+<span class="cp">#  resource to it</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="p">{</span>
+        <span class="n">docker</span> <span class="p">{</span> <span class="n">image</span> <span class="err">&#39;</span><span class="n">node</span><span class="o">:</span><span class="mi">9</span><span class="o">-</span><span class="n">alpine</span><span class="err">&#39;</span> <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Test</span><span class="err">&#39;</span><span class="p">){</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">sh</span> <span class="err">&#39;</span><span class="n">node</span> <span class="o">--</span><span class="n">version</span><span class="err">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="err">#</span><span class="mi">2</span> <span class="n">Now</span> <span class="n">we</span> <span class="n">can</span> <span class="n">configure</span> <span class="n">jenkins</span> <span class="n">to</span> <span class="n">reach</span> <span class="n">out</span> <span class="n">to</span> <span class="n">the</span> <span class="n">new</span>
+<span class="cp">#  docker worker. We&#39;ll need a docker image to point to</span>
+<span class="cp">#  for the agent:</span>
+<span class="n">jenkins</span><span class="o">/</span><span class="n">jnlp</span><span class="o">-</span><span class="n">slave</span>
+
+<span class="cp">#3 And then we can create a new project/job and add a docker</span>
+<span class="cp">#  resource to it</span>
+<span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="p">{</span>
+        <span class="n">docker</span> <span class="p">{</span> <span class="n">image</span> <span class="err">&#39;</span><span class="n">node</span><span class="o">:</span><span class="mi">9</span><span class="o">-</span><span class="n">alpine</span><span class="err">&#39;</span> <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Test</span><span class="err">&#39;</span><span class="p">){</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">sh</span> <span class="err">&#39;</span><span class="n">node</span> <span class="o">--</span><span class="n">version</span><span class="err">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="trigger-build-via-rest-api">Trigger build via REST API</h2>
+<div class="hlcode"><pre><span class="cp"># Triggering a build via REST</span>
+<span class="cp">#1 We need a token from the Jenkins UI:</span>
+<span class="n">Admin</span><span class="o">-&gt;</span><span class="n">Configure</span><span class="o">-&gt;</span><span class="n">Show</span> <span class="n">API</span> <span class="n">Token</span>
+
+<span class="cp">#2 We need a CSRF crumb</span>
+<span class="n">curl</span> <span class="o">--</span><span class="n">user</span> <span class="s">&quot;admin:TOKEN&quot;</span> <span class="err">&#39;</span><span class="n">http</span><span class="o">:</span><span class="c1">//jenkins.kumulus.co:8080/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,&quot;:&quot;,//crumb)&#39;</span>
+<span class="cp"># grab the entire string from Jenkins-Crumb:...</span>
+
+<span class="cp">#3 We can now trigger a build</span>
+<span class="n">curl</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="o">:</span><span class="c1">//jenkins.kumulus.co:8080/job/multi-step/build --user admin:TOKEN --data-urlencode json=&#39;&#39; -H &quot;Jenkins-Crumb:.....&quot;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="cp"># Get job status from REST</span>
+<span class="cp">#1 we need a token from the Jenkins UI:</span>
+<span class="n">Admin</span><span class="o">-&gt;</span><span class="n">Configure</span><span class="o">-&gt;</span><span class="n">Show</span> <span class="n">API</span> <span class="n">Token</span>
+
+<span class="cp">#2 we can now request json formatted output</span>
+<span class="cp">#  for readability, if we have python installed</span>
+<span class="cp">#  we can forward the data through a simple formatter</span>
+<span class="n">curl</span>  <span class="o">-</span><span class="n">s</span> <span class="o">--</span><span class="n">user</span> <span class="n">admin</span><span class="o">:</span><span class="n">TOKEN</span> <span class="n">http</span><span class="o">:</span><span class="c1">//jenkins.kumulus.co:8080/job/multi-step/lastBuild/api/json | python -mjson.tool</span>
+</pre></div>
+
+
+<h2 id="securing-secret-credential">Securing secret credential</h2>
+<div class="hlcode"><pre><span class="n">Credential</span> <span class="o">-&gt;</span> <span class="n">Stores</span> <span class="n">scoped</span> <span class="n">to</span> <span class="n">Jenkins</span> <span class="o">-&gt;</span> <span class="n">Global</span> <span class="p">(</span><span class="n">Domain</span><span class="p">)</span> 
+</pre></div>
+
+
+<blockquote>
+<p>ID 对应 jenkins-secret-text 文件名</p>
+</blockquote>
+<div class="hlcode"><pre>pipeline {
+    agent any
+    environment {
+       SECRET=credentials(&#39;jenkins-secret-text&#39;)
+    }
+    stages {
+        stage(&#39;Build&#39;) {
+            steps {
+                echo &quot;<span class="cp">${</span><span class="n">env</span><span class="o">.</span><span class="n">SECRET</span><span class="cp">}</span>&quot;
+            }
+        }
+    }
+}
+</pre></div>
+
+
+<h2 id="pipeline-gates">中途中止选项 Pipeline gates</h2>
+<div class="hlcode"><pre><span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Build</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">sh</span> <span class="err">&#39;</span><span class="n">echo</span> <span class="s">&quot;Hello World&quot;</span><span class="err">&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">stage</span><span class="p">(</span><span class="err">&#39;</span><span class="n">BuildMore</span><span class="err">&#39;</span><span class="p">){</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">input</span> <span class="n">message</span><span class="o">:</span> <span class="s">&quot;Shall we build more?&quot;</span>
+                <span class="n">sh</span> <span class="err">&#39;&#39;&#39;</span>
+                    <span class="n">echo</span> <span class="s">&quot;We are approved; continue!&quot;</span>
+                    <span class="n">ls</span> <span class="o">-</span><span class="n">lah</span>
+                <span class="err">&#39;&#39;&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h1 id="_7">术语</h1>
+<h2 id="scm">SCM</h2>
+<p>Source control management</p>
+<h2 id="cicd-concept">CI/CD concept</h2>
+<div class="hlcode"><pre><span class="n">Develop</span>       <span class="n">Test</span>       <span class="n">Stage</span>          <span class="n">Production</span>
+<span class="n">Continuous</span> <span class="n">Integration</span>
+<span class="n">Continuous</span>              <span class="n">Delivery</span>
+<span class="n">Continous</span>                               <span class="n">Deployment</span>
+</pre></div>
+
+
+<h2 id="global-variable-reference">Global Variable Reference</h2>
+<div class="hlcode"><pre><span class="nl">http:</span><span class="c1">//sj.xurick.com:8080/job/pipeline/pipeline-syntax/globals</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

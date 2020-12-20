@@ -32,3 +32,13 @@ Encrypted VPN connection
 
 ![image-20200330210007111](vpc.assets/image-20200330210007111.png)
 
+
+
+
+
+
+
+# VPC Endpoint
+
+
+

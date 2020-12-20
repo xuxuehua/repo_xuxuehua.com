@@ -1,0 +1,609 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>tags 标签 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Html">Html</a>&nbsp;&#187;&nbsp;tags 标签
+    <span class="updated">Page Updated&nbsp;
+      2018-11-06 20:08
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">tags 标签</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">标签</a><ul>
+<li><a href="#doctype-html">&lt;!DOCTYPE html&gt;</a></li>
+<li><a href="#html">&lt;html&gt;</a><ul>
+<li><a href="#html-langen">&lt;html lang="en"&gt;</a></li>
+</ul>
+</li>
+<li><a href="#head">&lt;head&gt;</a><ul>
+<li><a href="#title">&lt;title&gt;</a></li>
+<li><a href="#meta">&lt;meta&gt;</a></li>
+</ul>
+</li>
+<li><a href="#body">&lt;body&gt;</a><ul>
+<li><a href="#bgcolor">bgcolor</a></li>
+<li><a href="#background">background</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_2">呈现标签</a><ul>
+<li><a href="#-">&lt;!-- --&gt;注释</a></li>
+<li><a href="#br">&lt;br&gt;换行</a></li>
+<li><a href="#hr">&lt;hr&gt;水平线</a></li>
+</ul>
+</li>
+<li><a href="#_3">文本编辑标签</a><ul>
+<li><a href="#b">&lt;b&gt; 粗体</a></li>
+<li><a href="#big">&lt;big&gt; 大号字</a></li>
+<li><a href="#span">&lt;span&gt;文本节</a></li>
+<li><a href="#em">&lt;em&gt; 强调倾斜</a></li>
+<li><a href="#strong">&lt;strong&gt;加粗</a></li>
+<li><a href="#sup">&lt;sup&gt;上标</a></li>
+<li><a href="#sub">&lt;sub&gt;下标</a></li>
+<li><a href="#ins">&lt;ins&gt; 插入字</a></li>
+<li><a href="#del">&lt;del&gt;删除字</a></li>
+<li><a href="#a">&lt;a&gt;  超链接</a><ul>
+<li><a href="#name">name</a></li>
+<li><a href="#href">href</a><ul>
+<li><a href="#event">指定event</a></li>
+</ul>
+</li>
+<li><a href="#target">target 属性</a></li>
+<li><a href="#_4">锚点链接</a></li>
+</ul>
+</li>
+<li><a href="#img">&lt;img&gt; 图片标记</a><ul>
+<li><a href="#_5">属性</a></li>
+</ul>
+</li>
+<li><a href="#textarea">&lt;textarea&gt; 文本域</a><ul>
+<li><a href="#_6">属性</a></li>
+</ul>
+</li>
+<li><a href="#select">&lt;select&gt; 下拉菜单</a></li>
+<li><a href="#fieldset">&lt;fieldset&gt; 组合表单</a></li>
+<li><a href="#_7">表单练习</a></li>
+<li><a href="#iframe">&lt;iframe&gt; 内联框架 （不常用）</a></li>
+<li><a href="#link">&lt;link&gt; 头部标签</a></li>
+<li><a href="#style">&lt;style&gt; 样式</a></li>
+<li><a href="#meta_1">&lt;meta&gt;</a></li>
+<li><a href="#audio">&lt;audio&gt; 音频</a></li>
+<li><a href="#video">&lt;video&gt; 视频</a></li>
+</ul>
+</li>
+<li><a href="#html_1">HTML 实体名称 特殊标记</a><ul>
+<li><a href="#nbsp">空格 &amp;nbsp</a></li>
+<li><a href="#lt">小于 &amp;lt</a></li>
+<li><a href="#gt">大于 &amp;gt;</a></li>
+</ul>
+</li>
+<li><a href="#_8">通用属性</a><ul>
+<li><a href="#_9">行内元素</a></li>
+<li><a href="#_10">块元素</a></li>
+<li><a href="#_11">自定义属性</a></li>
+</ul>
+</li>
+<li><a href="#html-5">HTML 5 语义化标签 （良好兼容）</a><ul>
+<li><a href="#article">&lt;article&gt; 定义文章</a></li>
+<li><a href="#aside">&lt;aside&gt; 定义侧边栏</a></li>
+<li><a href="#footer">&lt;footer&gt; 定义页脚</a></li>
+<li><a href="#header">&lt;header&gt; 定义页眉</a></li>
+<li><a href="#nav">&lt;nav&gt;  导航</a></li>
+<li><a href="#section">&lt;section&gt;  区块</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">标签</h1>
+<h2 id="doctype-html"><code>&lt;!DOCTYPE html&gt;</code></h2>
+<p>html5版本</p>
+<p>标签位于文档的最前面，用于向浏览器说明当前文档使用哪种HTML或XHTML标准规范</p>
+<p>主要用于浏览器解析文档标签的依据</p>
+<p>其与浏览器兼容性有关，若删除，将由浏览器决定展示权利</p>
+<h2 id="html"><code>&lt;html&gt;</code></h2>
+<h3 id="html-langen"><code>&lt;html lang="en"&gt;</code></h3>
+<p>lang='zh-CN' </p>
+<p>Lang 设定语言，帮助搜素引擎解析页面</p>
+<h2 id="head"><code>&lt;head&gt;</code></h2>
+<p>头部标签，用于封装其他标签内容</p>
+<h3 id="title"><code>&lt;title&gt;</code></h3>
+<p>设置浏览器的标题文字</p>
+<h3 id="meta"><code>&lt;meta&gt;</code></h3>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">meta</span> <span class="n">charset</span><span class="o">=</span><span class="s">&quot;UTF-8&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>字符集设定，当前文档的编码格式是UTF-8</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">meta</span> <span class="n">http</span><span class="o">-</span><span class="n">equiv</span><span class="o">=</span><span class="s">&quot;Content-Type&quot;</span> <span class="n">content</span><span class="o">=</span><span class="s">&quot;text/html;charset=utf-8&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+
+
+<h2 id="body"><code>&lt;body&gt;</code></h2>
+<p>包括实际内容</p>
+<p>一个html中只能有一对body</p>
+<h3 id="bgcolor">bgcolor</h3>
+<p>背景颜色</p>
+<div class="hlcode"><pre><span class="nt">&lt;body</span> <span class="na">bgcolor=</span><span class="s">&quot;#000000&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</pre></div>
+
+
+<h3 id="background">background</h3>
+<p>设置背景图片</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">body</span> <span class="n">background</span><span class="o">=</span><span class="s">&quot;cat.jpg&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h1 id="_2">呈现标签</h1>
+<h2 id="-"><code>&lt;!-- --&gt;</code>注释</h2>
+<h2 id="br"><code>&lt;br&gt;</code>换行</h2>
+<h2 id="hr"><code>&lt;hr&gt;</code>水平线</h2>
+<h1 id="_3">文本编辑标签</h1>
+<h2 id="b"><code>&lt;b&gt;</code> 粗体</h2>
+<p>定义粗体文本</p>
+<h2 id="big"><code>&lt;big&gt;</code> 大号字</h2>
+<h2 id="span"><code>&lt;span&gt;</code>文本节</h2>
+<p>行内标签， 可以一行显示</p>
+<p>内联元素，可以作为文本的容器，而且只是文本的容器</p>
+<h2 id="em"><code>&lt;em&gt;</code> 强调倾斜</h2>
+<p>行内标签， 可以一行显示</p>
+<h2 id="strong"><code>&lt;strong&gt;</code>加粗</h2>
+<h2 id="sup"><code>&lt;sup&gt;</code>上标</h2>
+<p>2的3次方 </p>
+<p><code>2&lt;sup&gt;3&lt;/sup&gt;</code></p>
+<h2 id="sub"><code>&lt;sub&gt;</code>下标</h2>
+<p>水分子</p>
+<div class="hlcode"><pre><span class="nx">H</span><span class="o">&lt;</span><span class="nb">sub</span><span class="o">&gt;</span><span class="mi">2</span><span class="o">&lt;/</span><span class="nb">sub</span><span class="o">&gt;</span><span class="nx">O</span>
+</pre></div>
+
+
+<h2 id="ins"><code>&lt;ins&gt;</code> 插入字</h2>
+<h2 id="del"><code>&lt;del&gt;</code>删除字</h2>
+<h2 id="a"><code>&lt;a&gt;</code>  超链接</h2>
+<p>行内标签， 可以一行显示</p>
+<div class="hlcode"><pre><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;http://www.xuxuehua.com&quot;</span><span class="nt">&gt;</span>content<span class="nt">&lt;/a&gt;</span>
+</pre></div>
+
+
+<h3 id="name">name</h3>
+<p>文档内的的链接，可以用作跳转</p>
+<div class="hlcode"><pre><span class="nt">&lt;a</span> <span class="na">name=</span><span class="s">&quot;#h1&quot;</span><span class="nt">&gt;&lt;/a&gt;</span>
+</pre></div>
+
+
+<h3 id="href">href</h3>
+<p>指向另一个文档链接</p>
+<div class="hlcode"><pre><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;http://xuxuehua.com&quot;</span><span class="nt">&gt;</span>hello<span class="nt">&lt;/a&gt;</span>
+</pre></div>
+
+
+<p>发送邮件</p>
+<div class="hlcode"><pre><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;mailto:emailAddress&quot;</span><span class="nt">&gt;&lt;/a&gt;</span>
+</pre></div>
+
+
+<h4 id="event">指定event</h4>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">a</span>              <span class="n">href</span><span class="o">=</span><span class="s">&quot;javascript:;&quot;</span>
+                <span class="n">class</span><span class="o">=</span><span class="s">&quot;btn btn-white btn-default btn-block&quot;</span>
+                <span class="n">onclick</span><span class="o">=</span><span class="s">&quot;JSalert(&#39;{{ app[&#39;application_name&#39;] }}&#39;)&quot;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="nb">Add</span> <span class="k">if</span> <span class="nx">condition</span>
+
+<span class="o">&lt;</span><span class="nx">button</span> <span class="n">onclick</span><span class="o">=</span><span class="s2">&quot;if(confirm(&#39;Are you sure?&#39;)) saveandsubmit(event);&quot;</span><span class="o">&gt;&lt;/</span><span class="nx">button</span><span class="o">&gt;</span>
+
+<span class="ow">OR</span>
+
+<span class="o">&lt;</span><span class="nx">button</span> <span class="n">onclick</span><span class="o">=</span><span class="s2">&quot;return confirm(&#39;Are you sure?&#39;)?saveandsubmit(event):&#39;&#39;;&quot;</span><span class="o">&gt;&lt;/</span><span class="nx">button</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h3 id="target">target 属性</h3>
+<p><code>_blank</code> 在新页面</p>
+<div class="hlcode"><pre><span class="nt">&lt;a</span> <span class="na">target=</span><span class="s">&quot;_blank&quot;</span> <span class="na">href=</span><span class="s">&quot;http://xuxuehua.com&quot;</span><span class="nt">&gt;</span>xuxuehua<span class="nt">&lt;/a&gt;</span>
+</pre></div>
+
+
+<p><code>_self</code> 在当前页面打开</p>
+<div class="hlcode"><pre><span class="nt">&lt;a</span> <span class="na">target=</span><span class="s">&quot;_self&quot;</span> <span class="na">href=</span><span class="s">&quot;http://xuxuehua.com&quot;</span><span class="nt">&gt;</span>xuxuehua<span class="nt">&lt;/a&gt;</span>
+</pre></div>
+
+
+<h3 id="_4">锚点链接</h3>
+<p>在当前页面滚动到指定位置</p>
+<p>href 为标签的id</p>
+<div class="hlcode"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;UTF-8&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content=</span><span class="s">&quot;width=device-width, initial-scale=1.0&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">&quot;X-UA-Compatible&quot;</span> <span class="na">content=</span><span class="s">&quot;ie=edge&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Document<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>基本特点<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;ul&gt;</span>
+    <span class="nt">&lt;li&gt;</span>
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;#js1&quot;</span><span class="nt">&gt;</span>1.js<span class="nt">&lt;/a&gt;</span>
+    <span class="nt">&lt;/li&gt;</span>
+    <span class="nt">&lt;li&gt;</span>
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;#js2&quot;</span><span class="nt">&gt;</span>2.interactive<span class="nt">&lt;/a&gt;</span>
+    <span class="nt">&lt;/li&gt;</span>
+    <span class="nt">&lt;li&gt;</span>
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;#js3&quot;</span><span class="nt">&gt;</span>3.embeded<span class="nt">&lt;/a&gt;</span>
+    <span class="nt">&lt;/li&gt;</span>
+    <span class="nt">&lt;li&gt;</span>
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;#js4&quot;</span><span class="nt">&gt;</span>4.multiplatform<span class="nt">&lt;/a&gt;</span>
+    <span class="nt">&lt;/li&gt;</span>
+    <span class="nt">&lt;li&gt;</span>
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;#js5&quot;</span><span class="nt">&gt;</span>5.scriptlanguage<span class="nt">&lt;/a&gt;</span>
+    <span class="nt">&lt;/li&gt;</span>
+<span class="nt">&lt;/ul&gt;</span>
+
+
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;js1&quot;</span><span class="nt">&gt;</span>1.JavaScript是一种属于网络的脚本语言,已经被广泛用于Web应用开发,常用来为网页添加各式各样的动态功能,为用户提供更流畅美观的浏览效果。通常JavaScript脚本是通过嵌入在HTML中来实现自身的功能的。 <span class="cp">[</span><span class="mi">3</span><span class="cp">]</span>  <span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>  <span class="nt">&lt;/p&gt;</span>
+是一种解释性脚本语言（代码不进行预编译）。 <span class="cp">[</span><span class="mi">4</span><span class="cp">]</span> 
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;js2&quot;</span><span class="nt">&gt;</span>2.主要用来向HTML（标准通用标记语言下的一个应用）页面添加交互行为。 <span class="cp">[</span><span class="mi">4</span><span class="cp">]</span> <span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span> <span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;js3&quot;</span><span class="nt">&gt;</span>3.可以直接嵌入HTML页面，但写成单独的js文件有利于结构和行为的分离。 <span class="cp">[</span><span class="mi">4</span><span class="cp">]</span> <span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span> <span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;js4&quot;</span><span class="nt">&gt;</span>4.跨平台特性，在绝大多数浏览器的支持下，可以在多种平台下运行（如Windows、Linux、Mac、Android、iOS等）。 <span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span>
+<span class="nt">&lt;br&gt;</span> <span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;js5&quot;</span><span class="nt">&gt;</span>5.Javascript脚本语言同其他语言一样，有它自身的基本数据类型，表达式和算术运算符及程序的基本程序框架。Javascript提供了四种基本的数据类型和两种特殊数据类型用来处理数据和文字。而变量提供存放信息的地方，表达式则可以完成较复杂的信息处理。 <span class="cp">[</span><span class="mi">5</span><span class="cp">]</span> <span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+
+
+<p>不同页面的锚链接</p>
+<div class="hlcode"><pre><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;name#nameOfLocation&quot;</span><span class="nt">&gt;&lt;/a&gt;</span>
+</pre></div>
+
+
+<h2 id="img"><code>&lt;img&gt;</code> 图片标记</h2>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">img</span> <span class="n">src</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="n">alt</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h3 id="_5">属性</h3>
+<p>src 属性: 指定文件路径</p>
+<p>alt属性: 指定不能显示图片时替换的文本</p>
+<p>title: 鼠标悬停的时候显示的内容</p>
+<p>width: 宽</p>
+<p>height： 高</p>
+<p>border：边框宽度</p>
+<p>align left： 左对齐</p>
+<p>align right： 右对齐</p>
+<p>align top：顶端和文本的第一行文字对齐，其他文字居图像下方</p>
+<p>align middle：水平重点和文本的第一行文字对齐，其他文字居图像下方</p>
+<p>align bottom：底部和文本的第一行文字对齐，其他文字居图像下方</p>
+<h2 id="textarea"><code>&lt;textarea&gt;</code> 文本域</h2>
+<p>需要输入大量的信息是来处理</p>
+<div class="hlcode"><pre><span class="nt">&lt;textarea</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">class=</span><span class="s">&quot;form-control&quot;</span> <span class="na">id=</span><span class="s">&quot;schedule_params&quot;</span> <span class="na">name=</span><span class="s">&quot;schedule_params&quot;</span> <span class="na">placeholder=</span><span class="s">&quot;JSON format parameter passed to schedule function: &quot;</span><span class="err">&amp;#123;&quot;range_type&quot;&amp;#58;</span> <span class="err">&quot;WEEK&quot;&amp;#125;&quot;</span> <span class="err">&quot;</span><span class="nt">&gt;&lt;/textarea&gt;</span>                              
+</pre></div>
+
+
+<blockquote>
+<p>placeholder 要求<code>&lt;textarea&gt;</code> 必须在一行，其间不能有空格</p>
+</blockquote>
+<h3 id="_6">属性</h3>
+<p>rows -&gt; rows="4"</p>
+<p>cols -&gt; cols="20"</p>
+<div class="hlcode"><pre><span class="nt">&lt;textarea</span> <span class="na">cols=</span><span class="s">&quot;30&quot;</span> <span class="na">rows=</span><span class="s">&quot;30&quot;</span><span class="nt">&gt;</span>填写大量信息<span class="nt">&lt;/textarea&gt;</span>
+</pre></div>
+
+
+<h2 id="select"><code>&lt;select&gt;</code> 下拉菜单</h2>
+<div class="hlcode"><pre>    <span class="nt">&lt;select</span> <span class="na">name=</span><span class="s">&quot;&quot;</span> <span class="na">id=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>value1<span class="nt">&lt;/option&gt;</span>
+        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>value2<span class="nt">&lt;/option&gt;</span>
+        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;3&quot;</span><span class="nt">&gt;</span>value3<span class="nt">&lt;/option&gt;</span>
+        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;4&quot;</span><span class="nt">&gt;</span>value4<span class="nt">&lt;/option&gt;</span>
+    <span class="nt">&lt;/select&gt;</span>
+    <span class="nt">&lt;hr&gt;</span>
+    <span class="nt">&lt;select</span> <span class="err">multiple</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>value1<span class="nt">&lt;/option&gt;</span>
+        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>value2<span class="nt">&lt;/option&gt;</span>
+        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;3&quot;</span><span class="nt">&gt;</span>value3<span class="nt">&lt;/option&gt;</span>
+        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;4&quot;</span><span class="nt">&gt;</span>value4<span class="nt">&lt;/option&gt;</span>
+    <span class="nt">&lt;/select&gt;</span>
+</pre></div>
+
+
+<h2 id="fieldset"><code>&lt;fieldset&gt;</code> 组合表单</h2>
+<p>将表单内容的一部分打包，生成一组相关表单的字段</p>
+<p><code>&lt;legend&gt;</code> 标签为fieldset 元素定义标题</p>
+<div class="hlcode"><pre>    <span class="nt">&lt;fieldset&gt;</span>
+        <span class="nt">&lt;legend&gt;</span>my value<span class="nt">&lt;/legend&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;radio&quot;</span> <span class="na">name=</span><span class="s">&quot;k&quot;</span> <span class="na">id=</span><span class="s">&quot;k1&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;k1&quot;</span><span class="nt">&gt;</span>value k1<span class="nt">&lt;/label&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;radio&quot;</span> <span class="na">name=</span><span class="s">&quot;k&quot;</span> <span class="na">id=</span><span class="s">&quot;k2&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;k2&quot;</span><span class="nt">&gt;</span>value k1<span class="nt">&lt;/label&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;radio&quot;</span> <span class="na">name=</span><span class="s">&quot;k&quot;</span> <span class="na">id=</span><span class="s">&quot;k3&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;k3&quot;</span><span class="nt">&gt;</span>value k1<span class="nt">&lt;/label&gt;</span>
+    <span class="nt">&lt;/fieldset&gt;</span>
+</pre></div>
+
+
+<h2 id="_7">表单练习</h2>
+<p><img alt="img" src="https://cdn.pbrd.co/images/HMlCTG1.png" /></p>
+<div class="hlcode"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;UTF-8&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content=</span><span class="s">&quot;width=device-width, initial-scale=1.0&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">&quot;X-UA-Compatible&quot;</span> <span class="na">content=</span><span class="s">&quot;ie=edge&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Document<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>New contact<span class="nt">&lt;/h1&gt;</span>
+
+    <span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;table</span> <span class="na">border=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;tr&gt;</span>
+                <span class="nt">&lt;td&gt;</span>Name<span class="nt">&lt;/td&gt;</span>
+                <span class="nt">&lt;td&gt;&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">name=</span><span class="s">&quot;text_name&quot;</span> <span class="na">id=</span><span class="s">&quot;text_id&quot;</span><span class="nt">&gt;&lt;/td&gt;</span>
+            <span class="nt">&lt;/tr&gt;</span>
+            <span class="nt">&lt;tr&gt;</span>
+                <span class="nt">&lt;td&gt;</span>Cellphone<span class="nt">&lt;/td&gt;</span>
+                <span class="nt">&lt;td&gt;&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">name=</span><span class="s">&quot;phone_name&quot;</span> <span class="na">id=</span><span class="s">&quot;phone_id&quot;</span><span class="nt">&gt;&lt;/td&gt;</span>
+            <span class="nt">&lt;/tr&gt;</span>
+            <span class="nt">&lt;tr&gt;</span>
+                <span class="nt">&lt;td&gt;</span>cellphone type<span class="nt">&lt;/td&gt;</span>
+                <span class="nt">&lt;td&gt;</span>
+                    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;radio&quot;</span> <span class="na">name=</span><span class="s">&quot;r_number&quot;</span> <span class="na">id=</span><span class="s">&quot;r_home&quot;</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;r_home&quot;</span><span class="nt">&gt;</span>home number<span class="nt">&lt;/label&gt;</span>
+                    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;radio&quot;</span> <span class="na">name=</span><span class="s">&quot;r_number&quot;</span> <span class="na">id=</span><span class="s">&quot;r_work&quot;</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;r_work&quot;</span><span class="nt">&gt;</span>work number<span class="nt">&lt;/label&gt;</span>
+                <span class="nt">&lt;/td&gt;</span>
+            <span class="nt">&lt;/tr&gt;</span>
+            <span class="nt">&lt;tr&gt;</span>
+                <span class="nt">&lt;td&gt;</span>public info<span class="nt">&lt;/td&gt;</span>
+                <span class="nt">&lt;td&gt;</span>
+                    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span> <span class="na">name=</span><span class="s">&quot;ck_private&quot;</span> <span class="na">id=</span><span class="s">&quot;ck_private&quot;</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;ck_private&quot;</span><span class="nt">&gt;</span>private info<span class="nt">&lt;/label&gt;</span>
+                    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span> <span class="na">name=</span><span class="s">&quot;ck_public&quot;</span> <span class="na">id=</span><span class="s">&quot;ck_public&quot;</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;ck_public&quot;</span><span class="nt">&gt;</span>public info<span class="nt">&lt;/label&gt;</span>
+                <span class="nt">&lt;/td&gt;</span>
+            <span class="nt">&lt;/tr&gt;</span>
+            <span class="nt">&lt;tr&gt;</span>
+                <span class="nt">&lt;td&gt;</span>city<span class="nt">&lt;/td&gt;</span>
+                <span class="nt">&lt;td&gt;</span>
+                    <span class="nt">&lt;select&gt;</span>
+                        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>Beijing<span class="nt">&lt;/option&gt;</span>
+                        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>Shanghai<span class="nt">&lt;/option&gt;</span>
+                        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;3&quot;</span><span class="nt">&gt;</span>Guangzhou<span class="nt">&lt;/option&gt;</span>
+                        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;4&quot;</span><span class="nt">&gt;</span>Shenzhen<span class="nt">&lt;/option&gt;</span>
+                    <span class="nt">&lt;/select&gt;</span>
+                <span class="nt">&lt;/td&gt;</span>
+            <span class="nt">&lt;/tr&gt;</span>
+            <span class="nt">&lt;tr&gt;</span>
+                <span class="nt">&lt;td&gt;</span>comment<span class="nt">&lt;/td&gt;</span>
+                <span class="nt">&lt;td&gt;</span>
+                    <span class="nt">&lt;textarea</span> <span class="na">name=</span><span class="s">&quot;text_remark&quot;</span> <span class="na">id=</span><span class="s">&quot;text_remark&quot;</span> <span class="na">cols=</span><span class="s">&quot;30&quot;</span> <span class="na">rows=</span><span class="s">&quot;10&quot;</span><span class="nt">&gt;&lt;/textarea&gt;</span>
+                <span class="nt">&lt;/td&gt;</span>
+            <span class="nt">&lt;/tr&gt;</span>
+            <span class="nt">&lt;tr&gt;</span>
+                <span class="nt">&lt;td</span> <span class="na">colspan=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;button&quot;</span> <span class="na">value=</span><span class="s">&quot;New&quot;</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;reset&quot;</span> <span class="na">value=</span><span class="s">&quot;reset&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;/td&gt;</span>
+                <span class="nt">&lt;td&gt;&lt;/td&gt;</span>
+            <span class="nt">&lt;/tr&gt;</span>
+        <span class="nt">&lt;/table&gt;</span>
+    <span class="nt">&lt;/form&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+
+
+<h2 id="iframe"><code>&lt;iframe&gt;</code> 内联框架 （不常用）</h2>
+<p>包含另一个页面的内容</p>
+<h2 id="link"><code>&lt;link&gt;</code> 头部标签</h2>
+<p>属于头部标签，需要放入到head标签中</p>
+<p>引入dns预解析 (网站优化的一种方式)</p>
+<p>提前解析域名</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">link</span> <span class="n">rel</span><span class="o">=</span><span class="s">&quot;dns-prefetch&quot;</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;http://tce.taobao.com&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>引入网站icon 图标</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">link</span> <span class="n">rel</span><span class="o">=</span><span class="s">&quot;shortcut icon&quot;</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;http://www.my.com/info.ico&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>引入css样式</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">link</span> <span class="n">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;css/bg.css&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h2 id="style"><code>&lt;style&gt;</code> 样式</h2>
+<p>外部样式标</p>
+<div class="hlcode"><pre><span class="n">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span>
+</pre></div>
+
+
+<p>引入文档的类型</p>
+<div class="hlcode"><pre><span class="n">type</span><span class="o">=</span><span class="s">&quot;text/css&quot;</span>
+</pre></div>
+
+
+<p>边距</p>
+<div class="hlcode"><pre><span class="n">margin</span><span class="o">-</span><span class="n">left</span>
+</pre></div>
+
+
+<h2 id="meta_1"><code>&lt;meta&gt;</code></h2>
+<p>页面关键词</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">meta</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;keywords&quot;</span> <span class="n">content</span><span class="o">=</span><span class="s">&quot;SegmentFault,思否,javascript,php,python,java,mysql,ios,android,vue.js,node.js,html,css,ruby,git,docker,前端&quot;</span><span class="o">/&gt;</span>
+</pre></div>
+
+
+<p>页面描述</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">meta</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;description&quot;</span> <span class="n">content</span><span class="o">=</span><span class="s">&quot;SegmentFault 思否 为开发者提供问答、学习与交流编程知识的平台，创造属于开发者的时代！&quot;</span><span class="o">/&gt;</span>
+</pre></div>
+
+
+<p>搜索方式</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">meta</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;robots&quot;</span> <span class="n">content</span><span class="o">=</span><span class="s">&quot;index,follow&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>页面刷新和重定向</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">meta</span> <span class="n">http</span><span class="o">-</span><span class="n">equiv</span><span class="o">=</span><span class="s">&quot;refresh&quot;</span> <span class="n">content</span><span class="o">=</span><span class="s">&quot;1;url=&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>优先使用chrome</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">meta</span> <span class="n">http</span><span class="o">-</span><span class="n">equiv</span><span class="o">=</span><span class="s">&quot;X-UA-Compatible&quot;</span> <span class="n">content</span><span class="o">=</span><span class="s">&quot;IE=edge,chrome=1&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+
+
+<p>禁用本地缓存</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">meta</span> <span class="n">http</span><span class="o">-</span><span class="n">equiv</span><span class="o">=</span><span class="s">&quot;Pragma&quot;</span> <span class="n">content</span><span class="o">=</span><span class="s">&quot;no-cache&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h2 id="audio"><code>&lt;audio&gt;</code> 音频</h2>
+<div class="hlcode"><pre><span class="nt">&lt;audio</span> <span class="na">src=</span><span class="s">&quot;music/1.mp3&quot;</span> <span class="err">controls</span> <span class="err">autoplay</span> <span class="err">muted</span><span class="nt">&gt;&lt;/audio&gt;</span>
+</pre></div>
+
+
+<h2 id="video"><code>&lt;video&gt;</code> 视频</h2>
+<div class="hlcode"><pre><span class="nt">&lt;video</span> <span class="na">src=</span><span class="s">&quot;video/1.mp4&quot;</span> <span class="err">muted</span> <span class="err">controls</span> <span class="err">autoplay</span> <span class="err">loop</span><span class="nt">&gt;&lt;/video&gt;</span>
+</pre></div>
+
+
+<h1 id="html_1">HTML 实体名称 特殊标记</h1>
+<p>html为特殊符号准备了专门的替代码</p>
+<h2 id="nbsp">空格 <code>&amp;nbsp</code></h2>
+<h2 id="lt">小于 <code>&amp;lt</code></h2>
+<h2 id="gt">大于 <code>&amp;gt</code>;</h2>
+<p><a href="https://ascii.cl/htmlcodes.htm">https://ascii.cl/htmlcodes.htm</a></p>
+<h1 id="_8">通用属性</h1>
+<p>id：唯一表识元素，在同一页面不能重复</p>
+<p>name：用于定义一组标签，可以重复</p>
+<p>style：定义标签的样式</p>
+<p>class：定义标签的样式类</p>
+<p>id，class，都是css选择器和js的dom都是开发的必备基础</p>
+<p>img标签和a标签一般都会有title属性</p>
+<h2 id="_9">行内元素</h2>
+<p>不占有独立的区域，仅仅靠自身的字体大小和图像尺寸来支持结构。</p>
+<p>一般不可以设置宽度，高度，对齐等属性</p>
+<p>strong, b, em, i, del, s, ins, u, a, span</p>
+<p>span最典型</p>
+<h2 id="_10">块元素</h2>
+<p>通常独自占据一整行或者多整行，可以对其设置高度，宽度，对齐等属性</p>
+<p>h1~h6, p, div, ul, ol, li</p>
+<h2 id="_11">自定义属性</h2>
+<p>自定义dataset属性</p>
+<div class="hlcode"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;dv&quot;</span> <span class="na">data-name=</span><span class="s">&quot;Rick&quot;</span> <span class="na">data-age=</span><span class="s">&quot;18&quot;</span> <span class="na">data-user-gender=</span><span class="s">&quot;male&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+
+
+<span class="nt">&lt;script&gt;</span>
+    var dt=document.querySelector(&quot;#dv&quot;).dataset;
+    console.log(dt.name);
+    console.log(dt<span class="cp">[</span><span class="s2">&quot;age&quot;</span><span class="cp">]</span>);
+    console.log(dt.userGender);
+
+    dt.height=&quot;180&quot;;
+    dt.userWeight=&quot;55&quot;;
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+
+
+<h1 id="html-5">HTML 5 语义化标签 （良好兼容）</h1>
+<p>很多标签有兼容问题，还有自带样式无法设置</p>
+<p>下面的标签兼容性问题不大</p>
+<div class="hlcode"><pre> <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;header&gt;</span>This is header<span class="nt">&lt;/header&gt;</span>
+
+    <span class="nt">&lt;article&gt;</span>
+        <span class="nt">&lt;h1&gt;</span>H1 title<span class="nt">&lt;/h1&gt;</span>
+        <span class="nt">&lt;p&gt;</span>This is p info<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;/article&gt;</span>
+    <span class="nt">&lt;aside&gt;</span>
+        aside info
+    <span class="nt">&lt;/aside&gt;</span>
+
+    <span class="nt">&lt;footer&gt;</span>
+        <span class="nt">&lt;hr&gt;</span>
+        This is footer info.
+    <span class="nt">&lt;/footer&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</pre></div>
+
+
+<h2 id="article"><code>&lt;article&gt;</code> 定义文章</h2>
+<h2 id="aside"><code>&lt;aside&gt;</code> 定义侧边栏</h2>
+<h2 id="footer"><code>&lt;footer&gt;</code> 定义页脚</h2>
+<h2 id="header"><code>&lt;header&gt;</code> 定义页眉</h2>
+<h2 id="nav"><code>&lt;nav&gt;</code>  导航</h2>
+<h2 id="section"><code>&lt;section&gt;</code>  区块</h2>
+<p>定义文档中的节</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>gunicorn - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;gunicorn
+    <span class="updated">Page Updated&nbsp;
+      2019-10-24 22:16
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">gunicorn</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#gunicorn">gunicorn</a></li>
+<li><a href="#_1">参数定义</a><ul>
+<li><a href="#-c-config-configconfig">-c CONFIG, --config=CONFIG</a></li>
+<li><a href="#-b-bind-bindbind">-b BIND, --bind=BIND</a></li>
+<li><a href="#-w-workers-workersworkers">-w WORKERS, --workers=WORKERS</a></li>
+<li><a href="#-k-workerclass-worker-classworkerclass">-k WORKERCLASS, --worker-class=WORKERCLASS</a></li>
+<li><a href="#-n-app_name-nameapp_name">-n APP_NAME, --name=APP_NAME</a></li>
+</ul>
+</li>
+<li><a href="#worker-type">worker type</a><ul>
+<li><a href="#sync">sync</a></li>
+<li><a href="#gthread">gthread</a></li>
+<li><a href="#eventletgeventtarnado">eventlet/gevent/tarnado</a><ul>
+<li><a href="#gevent">gevent</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#example">example</a><ul>
+<li><a href="#gunicorn_config">gunicorn_config</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="gunicorn">gunicorn</h1>
+<p><a href="http://gunicorn.org/">Gunicorn</a> 是一个 Python 的 WSGI HTTP 服务器。它所在的位置通常是在<a href="https://en.wikipedia.org/wiki/Reverse_proxy">反向代理</a>（如 <a href="https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/">Nginx</a>）或者 <a href="https://f5.com/glossary/load-balancer">负载均衡</a>（如 <a href="https://aws.amazon.com/elasticloadbalancing/">AWS ELB</a>）和一个 web 应用（比如 Django 或者 Flask）之间。</p>
+<p>Gunicorn 启动了被分发到的一个主线程，然后因此产生的子线程就是对应的 worker。</p>
+<p>主进程的作用是确保 worker 数量与设置中定义的数量相同。因此如果任何一个 worker 挂掉，主线程都可以通过分发它自身而另行启动。</p>
+<p>worker 的角色是处理 HTTP 请求。</p>
+<p>预分发意味着主线程在处理 HTTP 请求之前就创建了 worker。</p>
+<p>操作系统的内核就负责处理 worker 进程之间的负载均衡。</p>
+<h1 id="_1">参数定义</h1>
+<h2 id="-c-config-configconfig"><code>-c CONFIG, --config=CONFIG</code></h2>
+<p>Specify a config file in the form <code>$(PATH)</code>, <code>file:$(PATH)</code>, or <code>python:$(MODULE_NAME)</code>.</p>
+<h2 id="-b-bind-bindbind"><code>-b BIND, --bind=BIND</code></h2>
+<p>Specify a server socket to bind. Server sockets can be any of <code>$(HOST)</code>, <code>$(HOST):$(PORT)</code>, or <code>unix:$(PATH)</code>. An IP is a valid <code>$(HOST)</code>.</p>
+<h2 id="-w-workers-workersworkers"><code>-w WORKERS, --workers=WORKERS</code></h2>
+<p>The number of worker processes. This number should generally be between 2-4 workers per core in the server. Check the <a href="http://docs.gunicorn.org/en/latest/faq.html#faq">FAQ</a> for ideas on tuning this parameter.</p>
+<p>Gunicorn relies on the operating system to provide all of the load balancing when handling requests. Generally we recommend <code>(2 x $num_cores) + 1</code> as the number of workers to start off with. While not overly scientific, the formula is based on the assumption that for a given core, one worker will be reading or writing from the socket while the other worker is processing a request.</p>
+<h2 id="-k-workerclass-worker-classworkerclass"><code>-k WORKERCLASS, --worker-class=WORKERCLASS</code></h2>
+<p>The type of worker process to run. You’ll definitely want to read the production page for the implications of this parameter. You can set this to <code>$(NAME)</code> where <code>$(NAME)</code> is one of <code>sync</code>, <code>eventlet</code>, <code>gevent</code>, <code>tornado</code>, <code>gthread</code>, <code>gaiohttp</code> (deprecated). <code>sync</code> is the default. See the <a href="http://docs.gunicorn.org/en/latest/settings.html#worker-class">worker_class</a> documentation for more information.</p>
+<h2 id="-n-app_name-nameapp_name"><code>-n APP_NAME, --name=APP_NAME</code></h2>
+<p>If <a href="https://pypi.python.org/pypi/setproctitle">setproctitle</a> is installed you can adjust the name of Gunicorn process as they appear in the process system table (which affects tools like <code>ps</code> and <code>top</code>).</p>
+<h1 id="worker-type">worker type</h1>
+<p>flask_app.py</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">flask</span> <span class="n">import</span> <span class="n">Flask</span>
+<span class="n">import</span> <span class="n">time</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<span class="err">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">io_task</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">def</span> <span class="n">io_task</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="err">&#39;</span><span class="n">io_task</span> <span class="n">has</span> <span class="n">completed</span><span class="p">.</span><span class="err">\</span><span class="n">n</span><span class="err">&#39;</span>
+
+
+<span class="err">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">cpu_task</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">def</span> <span class="n">cpu_task</span><span class="p">()</span><span class="o">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">1000000000</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="n">i</span><span class="o">*</span><span class="n">i</span>
+    <span class="k">return</span> <span class="s">&quot;CPU task has finished.</span><span class="se">\n</span><span class="s">&quot;</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="err">&#39;</span><span class="n">__main__</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+
+<h2 id="sync">sync</h2>
+<p>sync 底層實作是每個請求都由一個 process 處理。</p>
+<p>if your service process is not thread-safe, you should use sync</p>
+<p>當 gunicorn worker type 使用 sync 時，web 啟動時會預先開好對應數量的 process 處理請求，理論上 concurrency 的上限等同於 worker 數量。</p>
+<p>這種類型的好處是錯誤隔離高，一個 process 掛掉只會影響該 process 當下服務的請求，而不會影響其他請求。</p>
+<p>壞處則為 process 資源開銷較大，開太多 worker 時對記憶體或 CPU 的影響很大，因此 concurrency 理論上限極低。</p>
+<p>每个 worker 都是一个加载 Python 应用程序的 UNIX 进程。worker 之间没有共享内存。</p>
+<p>建议的 <a href="http://docs.gunicorn.org/en/latest/design.html#how-many-workers"><code>workers</code> 数量</a>是 <code>(2*CPU)+1</code></p>
+<p>如下gunicorn 啟動時開了一個 pid 為 569 的 process 來處理請求，理論上每次只能處理一個請求：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">gunicorn</span> <span class="o">-</span><span class="n">w</span> <span class="mi">1</span> <span class="o">-</span><span class="n">k</span> <span class="n">sync</span> <span class="n">flask_app</span><span class="o">:</span><span class="n">app</span> <span class="o">-</span><span class="n">b</span> <span class="mf">0.0.0.0</span><span class="o">:</span><span class="mi">8888</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">34</span><span class="o">:</span><span class="mi">52</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">74297</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Starting</span> <span class="n">gunicorn</span> <span class="mf">20.0.4</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">34</span><span class="o">:</span><span class="mi">52</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">74297</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Listening</span> <span class="n">at</span><span class="o">:</span> <span class="n">http</span><span class="o">:</span><span class="c1">//0.0.0.0:8888 (74297)</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">34</span><span class="o">:</span><span class="mi">52</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">74297</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Using</span> <span class="n">worker</span><span class="o">:</span> <span class="n">sync</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">34</span><span class="o">:</span><span class="mi">52</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">74314</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Booting</span> <span class="n">worker</span> <span class="n">with</span> <span class="n">pid</span><span class="o">:</span> <span class="mi">74314</span>
+</pre></div>
+
+
+<p>用 siege 分別對 IO bound task </p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">siege</span> <span class="o">-</span><span class="n">c</span> <span class="mi">2</span> <span class="o">-</span><span class="n">r</span> <span class="mi">1</span> <span class="n">http</span><span class="o">:</span><span class="c1">//127.0.0.1:8888/io_task -v</span>
+
+<span class="p">{</span>   <span class="s">&quot;transactions&quot;</span><span class="o">:</span>                    <span class="mi">2</span><span class="p">,</span>
+    <span class="s">&quot;availability&quot;</span><span class="o">:</span>               <span class="mf">100.00</span><span class="p">,</span>
+    <span class="s">&quot;elapsed_time&quot;</span><span class="o">:</span>                 <span class="mf">4.01</span><span class="p">,</span>
+    <span class="s">&quot;data_transferred&quot;</span><span class="o">:</span>             <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;response_time&quot;</span><span class="o">:</span>                <span class="mf">3.01</span><span class="p">,</span>
+    <span class="s">&quot;transaction_rate&quot;</span><span class="o">:</span>             <span class="mf">0.50</span><span class="p">,</span>
+    <span class="s">&quot;throughput&quot;</span><span class="o">:</span>                   <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;concurrency&quot;</span><span class="o">:</span>                  <span class="mf">1.50</span><span class="p">,</span>
+    <span class="s">&quot;successful_transactions&quot;</span><span class="o">:</span>             <span class="mi">2</span><span class="p">,</span>
+    <span class="s">&quot;failed_transactions&quot;</span><span class="o">:</span>                 <span class="mi">0</span><span class="p">,</span>
+    <span class="s">&quot;longest_transaction&quot;</span><span class="o">:</span>              <span class="mf">4.01</span><span class="p">,</span>
+    <span class="s">&quot;shortest_transaction&quot;</span><span class="o">:</span>             <span class="mf">2.01</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>CPU bound task 發出 2 個請求</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">gunicorn</span> <span class="o">-</span><span class="n">w</span> <span class="mi">1</span> <span class="o">-</span><span class="n">k</span> <span class="n">sync</span> <span class="n">flask_app</span><span class="o">:</span><span class="n">app</span> <span class="o">-</span><span class="n">b</span> <span class="mf">0.0.0.0</span><span class="o">:</span><span class="mi">8888</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">35</span><span class="o">:</span><span class="mi">29</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">74443</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Starting</span> <span class="n">gunicorn</span> <span class="mf">20.0.4</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">35</span><span class="o">:</span><span class="mi">29</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">74443</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Listening</span> <span class="n">at</span><span class="o">:</span> <span class="n">http</span><span class="o">:</span><span class="c1">//0.0.0.0:8888 (74443)</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">35</span><span class="o">:</span><span class="mi">29</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">74443</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Using</span> <span class="n">worker</span><span class="o">:</span> <span class="n">sync</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">35</span><span class="o">:</span><span class="mi">29</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">74460</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Booting</span> <span class="n">worker</span> <span class="n">with</span> <span class="n">pid</span><span class="o">:</span> <span class="mi">74460</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">40</span><span class="o">:</span><span class="mi">37</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">74443</span><span class="p">]</span> <span class="p">[</span><span class="n">CRITICAL</span><span class="p">]</span> <span class="n">WORKER</span> <span class="n">TIMEOUT</span> <span class="p">(</span><span class="n">pid</span><span class="o">:</span><span class="mi">74460</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">40</span><span class="o">:</span><span class="mi">37</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">74460</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Worker</span> <span class="n">exiting</span> <span class="p">(</span><span class="n">pid</span><span class="o">:</span> <span class="mi">74460</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">40</span><span class="o">:</span><span class="mi">37</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">75388</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Booting</span> <span class="n">worker</span> <span class="n">with</span> <span class="n">pid</span><span class="o">:</span> <span class="mi">75388</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">41</span><span class="o">:</span><span class="mi">08</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">74443</span><span class="p">]</span> <span class="p">[</span><span class="n">CRITICAL</span><span class="p">]</span> <span class="n">WORKER</span> <span class="n">TIMEOUT</span> <span class="p">(</span><span class="n">pid</span><span class="o">:</span><span class="mi">75388</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">41</span><span class="o">:</span><span class="mi">08</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">75388</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Worker</span> <span class="n">exiting</span> <span class="p">(</span><span class="n">pid</span><span class="o">:</span> <span class="mi">75388</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">41</span><span class="o">:</span><span class="mi">08</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">75421</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Booting</span> <span class="n">worker</span> <span class="n">with</span> <span class="n">pid</span><span class="o">:</span> <span class="mi">75421</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">siege</span> <span class="o">-</span><span class="n">c</span> <span class="mi">2</span> <span class="o">-</span><span class="n">r</span> <span class="mi">1</span> <span class="n">http</span><span class="o">:</span><span class="c1">//127.0.0.1:8888/cpu_task -v</span>
+
+<span class="p">{</span>   <span class="s">&quot;transactions&quot;</span><span class="o">:</span>                    <span class="mi">0</span><span class="p">,</span>
+    <span class="s">&quot;availability&quot;</span><span class="o">:</span>                 <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;elapsed_time&quot;</span><span class="o">:</span>                <span class="mf">61.91</span><span class="p">,</span>
+    <span class="s">&quot;data_transferred&quot;</span><span class="o">:</span>             <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;response_time&quot;</span><span class="o">:</span>                <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;transaction_rate&quot;</span><span class="o">:</span>             <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;throughput&quot;</span><span class="o">:</span>                   <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;concurrency&quot;</span><span class="o">:</span>                  <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;successful_transactions&quot;</span><span class="o">:</span>             <span class="mi">0</span><span class="p">,</span>
+    <span class="s">&quot;failed_transactions&quot;</span><span class="o">:</span>                 <span class="mi">2</span><span class="p">,</span>
+    <span class="s">&quot;longest_transaction&quot;</span><span class="o">:</span>              <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;shortest_transaction&quot;</span><span class="o">:</span>             <span class="mf">0.00</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="gthread">gthread</h2>
+<p>gthread 則是每個請求都由一個 thread 處理。</p>
+<p>當 gunicorn worker type 用 gthread 時，可額外加參數 --thread 指定每個 process 能開的 thread 數量，此時 concurrency 的上限為 worker 數量乘以給個 worker 能開的 thread 數量。</p>
+<p>這種類型的 worker 好處是 concurrency 理論上限會比 process 高，壞處依然是 thread 數量，OS 中 thread 數量是有限的，過多的 thread 依然會造成系統負擔</p>
+<p>Gunicorn 还允许每个 worker 拥有多个线程。在这种场景下，Python 应用程序每个 worker 都会加载一次，同一个 worker 生成的每个线程共享相同的内存空间。</p>
+<p>最大的并发请求数就是 <code>worker * 线程</code>，也就是10</p>
+<p>为了在 Gunicorn 中使用多线程。我们使用了 <code>threads</code> 模式。每一次我们使用 <code>threads</code> 模式，worker 的类就会是 <code>gthread</code>：</p>
+<div class="hlcode"><pre><span class="n">gunicorn</span> <span class="o">--</span><span class="n">workers</span><span class="o">=</span><span class="mi">5</span> <span class="o">--</span><span class="n">threads</span><span class="o">=</span><span class="mi">2</span> <span class="n">main</span><span class="o">:</span><span class="n">app</span>
+</pre></div>
+
+
+<p>等同于：</p>
+<div class="hlcode"><pre><span class="n">gunicorn</span> <span class="o">--</span><span class="n">workers</span><span class="o">=</span><span class="mi">5</span> <span class="o">--</span><span class="n">threads</span><span class="o">=</span><span class="mi">2</span> <span class="o">--</span><span class="n">worker</span><span class="o">-</span><span class="n">class</span><span class="o">=</span><span class="n">gthread</span> <span class="n">main</span><span class="o">:</span><span class="n">app</span>
+</pre></div>
+
+
+<p>io_task</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">gunicorn</span> <span class="o">-</span><span class="n">w</span> <span class="mi">1</span> <span class="o">-</span><span class="n">k</span> <span class="n">gthread</span> <span class="o">--</span><span class="kr">thread</span><span class="o">=</span><span class="mi">2</span> <span class="n">flask_app</span><span class="o">:</span><span class="n">app</span> <span class="o">-</span><span class="n">b</span> <span class="mf">0.0.0.0</span><span class="o">:</span><span class="mi">8888</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">33</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">76463</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Starting</span> <span class="n">gunicorn</span> <span class="mf">20.0.4</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">33</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">76463</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Listening</span> <span class="n">at</span><span class="o">:</span> <span class="n">http</span><span class="o">:</span><span class="c1">//0.0.0.0:8888 (76463)</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">33</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">76463</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Using</span> <span class="n">worker</span><span class="o">:</span> <span class="n">gthread</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">33</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">76480</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Booting</span> <span class="n">worker</span> <span class="n">with</span> <span class="n">pid</span><span class="o">:</span> <span class="mi">76480</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">siege</span> <span class="o">-</span><span class="n">c</span> <span class="mi">2</span> <span class="o">-</span><span class="n">r</span> <span class="mi">1</span> <span class="n">http</span><span class="o">:</span><span class="c1">//127.0.0.1:8888/io_task -v</span>
+
+<span class="p">{</span>   <span class="s">&quot;transactions&quot;</span><span class="o">:</span>                    <span class="mi">2</span><span class="p">,</span>
+    <span class="s">&quot;availability&quot;</span><span class="o">:</span>               <span class="mf">100.00</span><span class="p">,</span>
+    <span class="s">&quot;elapsed_time&quot;</span><span class="o">:</span>                 <span class="mf">2.01</span><span class="p">,</span>
+    <span class="s">&quot;data_transferred&quot;</span><span class="o">:</span>             <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;response_time&quot;</span><span class="o">:</span>                <span class="mf">2.01</span><span class="p">,</span>
+    <span class="s">&quot;transaction_rate&quot;</span><span class="o">:</span>             <span class="mf">1.00</span><span class="p">,</span>
+    <span class="s">&quot;throughput&quot;</span><span class="o">:</span>                   <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;concurrency&quot;</span><span class="o">:</span>                  <span class="mf">2.00</span><span class="p">,</span>
+    <span class="s">&quot;successful_transactions&quot;</span><span class="o">:</span>             <span class="mi">2</span><span class="p">,</span>
+    <span class="s">&quot;failed_transactions&quot;</span><span class="o">:</span>                 <span class="mi">0</span><span class="p">,</span>
+    <span class="s">&quot;longest_transaction&quot;</span><span class="o">:</span>              <span class="mf">2.01</span><span class="p">,</span>
+    <span class="s">&quot;shortest_transaction&quot;</span><span class="o">:</span>             <span class="mf">2.01</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>cpu_task</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">gunicorn</span> <span class="o">-</span><span class="n">w</span> <span class="mi">1</span> <span class="o">-</span><span class="n">k</span> <span class="n">gthread</span> <span class="o">--</span><span class="kr">thread</span><span class="o">=</span><span class="mi">2</span> <span class="n">flask_app</span><span class="o">:</span><span class="n">app</span> <span class="o">-</span><span class="n">b</span> <span class="mf">0.0.0.0</span><span class="o">:</span><span class="mi">8888</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">33</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">76463</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Starting</span> <span class="n">gunicorn</span> <span class="mf">20.0.4</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">33</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">76463</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Listening</span> <span class="n">at</span><span class="o">:</span> <span class="n">http</span><span class="o">:</span><span class="c1">//0.0.0.0:8888 (76463)</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">33</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">76463</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Using</span> <span class="n">worker</span><span class="o">:</span> <span class="n">gthread</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span> <span class="mi">11</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">33</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">76480</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Booting</span> <span class="n">worker</span> <span class="n">with</span> <span class="n">pid</span><span class="o">:</span> <span class="mi">76480</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">siege</span> <span class="o">-</span><span class="n">c</span> <span class="mi">2</span> <span class="o">-</span><span class="n">r</span> <span class="mi">1</span> <span class="n">http</span><span class="o">:</span><span class="c1">//127.0.0.1:8888/cpu_task -v</span>
+
+<span class="p">{</span>   <span class="s">&quot;transactions&quot;</span><span class="o">:</span>                    <span class="mi">2</span><span class="p">,</span>
+    <span class="s">&quot;availability&quot;</span><span class="o">:</span>               <span class="mf">100.00</span><span class="p">,</span>
+    <span class="s">&quot;elapsed_time&quot;</span><span class="o">:</span>               <span class="mf">198.00</span><span class="p">,</span>
+    <span class="s">&quot;data_transferred&quot;</span><span class="o">:</span>             <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;response_time&quot;</span><span class="o">:</span>              <span class="mf">197.99</span><span class="p">,</span>
+    <span class="s">&quot;transaction_rate&quot;</span><span class="o">:</span>             <span class="mf">0.01</span><span class="p">,</span>
+    <span class="s">&quot;throughput&quot;</span><span class="o">:</span>                   <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;concurrency&quot;</span><span class="o">:</span>                  <span class="mf">2.00</span><span class="p">,</span>
+    <span class="s">&quot;successful_transactions&quot;</span><span class="o">:</span>             <span class="mi">2</span><span class="p">,</span>
+    <span class="s">&quot;failed_transactions&quot;</span><span class="o">:</span>                 <span class="mi">0</span><span class="p">,</span>
+    <span class="s">&quot;longest_transaction&quot;</span><span class="o">:</span>            <span class="mf">198.00</span><span class="p">,</span>
+    <span class="s">&quot;shortest_transaction&quot;</span><span class="o">:</span>           <span class="mf">197.99</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="eventletgeventtarnado">eventlet/gevent/tarnado</h2>
+<p>當 gunicorn worker type 用 eventlet、gevent、tarnado 等類型時，每個請求都由同一個 process 處理，而當遇到 IO 時該 process 不會等 IO 回應，會繼續處理下個請求直到該 IO 完成，理論上 concurrency 無上限。</p>
+<p>使用非同步類型的 worker 好處和壞處非常明顯，對 IO bound task 的高效能，但在 CPU bound task 會不如 thread。</p>
+<p><code>(2*CPU)+1</code> 仍然是建议的<code>workers</code> 数量。因为我们仅有一核，我们将会使用 3 个worker。</p>
+<p>在这种情况下，最大的并发请求数量是 3000。（3 个 worker * 1000 个连接/worker）</p>
+<p>io_task</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">gunicorn</span> <span class="o">-</span><span class="n">w</span> <span class="mi">1</span> <span class="o">-</span><span class="n">k</span> <span class="n">gevent</span> <span class="n">flask_app</span><span class="o">:</span><span class="n">app</span> <span class="o">-</span><span class="n">b</span> <span class="mf">0.0.0.0</span><span class="o">:</span><span class="mi">8888</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">23</span> <span class="mo">01</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">18</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">15822</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Starting</span> <span class="n">gunicorn</span> <span class="mf">20.0.4</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">23</span> <span class="mo">01</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">18</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">15822</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Listening</span> <span class="n">at</span><span class="o">:</span> <span class="n">http</span><span class="o">:</span><span class="c1">//0.0.0.0:8888 (15822)</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">23</span> <span class="mo">01</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">18</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">15822</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Using</span> <span class="n">worker</span><span class="o">:</span> <span class="n">gevent</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">23</span> <span class="mo">01</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">18</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">15847</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Booting</span> <span class="n">worker</span> <span class="n">with</span> <span class="n">pid</span><span class="o">:</span> <span class="mi">15847</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">siege</span> <span class="o">-</span><span class="n">c</span> <span class="mi">2</span> <span class="o">-</span><span class="n">r</span> <span class="mi">1</span> <span class="n">http</span><span class="o">:</span><span class="c1">//127.0.0.1:8888/io_task -v</span>
+
+<span class="p">{</span>   <span class="s">&quot;transactions&quot;</span><span class="o">:</span>                    <span class="mi">2</span><span class="p">,</span>
+    <span class="s">&quot;availability&quot;</span><span class="o">:</span>               <span class="mf">100.00</span><span class="p">,</span>
+    <span class="s">&quot;elapsed_time&quot;</span><span class="o">:</span>                 <span class="mf">2.01</span><span class="p">,</span>
+    <span class="s">&quot;data_transferred&quot;</span><span class="o">:</span>             <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;response_time&quot;</span><span class="o">:</span>                <span class="mf">2.01</span><span class="p">,</span>
+    <span class="s">&quot;transaction_rate&quot;</span><span class="o">:</span>             <span class="mf">1.00</span><span class="p">,</span>
+    <span class="s">&quot;throughput&quot;</span><span class="o">:</span>                   <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;concurrency&quot;</span><span class="o">:</span>                  <span class="mf">2.00</span><span class="p">,</span>
+    <span class="s">&quot;successful_transactions&quot;</span><span class="o">:</span>             <span class="mi">2</span><span class="p">,</span>
+    <span class="s">&quot;failed_transactions&quot;</span><span class="o">:</span>                 <span class="mi">0</span><span class="p">,</span>
+    <span class="s">&quot;longest_transaction&quot;</span><span class="o">:</span>              <span class="mf">2.01</span><span class="p">,</span>
+    <span class="s">&quot;shortest_transaction&quot;</span><span class="o">:</span>             <span class="mf">2.01</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>cpu_task</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">gunicorn</span> <span class="o">-</span><span class="n">w</span> <span class="mi">1</span> <span class="o">-</span><span class="n">k</span> <span class="n">gevent</span> <span class="n">flask_app</span><span class="o">:</span><span class="n">app</span> <span class="o">-</span><span class="n">b</span> <span class="mf">0.0.0.0</span><span class="o">:</span><span class="mi">8888</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">23</span> <span class="mo">01</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">18</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">15822</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Starting</span> <span class="n">gunicorn</span> <span class="mf">20.0.4</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">23</span> <span class="mo">01</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">18</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">15822</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Listening</span> <span class="n">at</span><span class="o">:</span> <span class="n">http</span><span class="o">:</span><span class="c1">//0.0.0.0:8888 (15822)</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">23</span> <span class="mo">01</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">18</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">15822</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Using</span> <span class="n">worker</span><span class="o">:</span> <span class="n">gevent</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">23</span> <span class="mo">01</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">18</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">15847</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Booting</span> <span class="n">worker</span> <span class="n">with</span> <span class="n">pid</span><span class="o">:</span> <span class="mi">15847</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">23</span> <span class="mo">01</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">57</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">15822</span><span class="p">]</span> <span class="p">[</span><span class="n">CRITICAL</span><span class="p">]</span> <span class="n">WORKER</span> <span class="n">TIMEOUT</span> <span class="p">(</span><span class="n">pid</span><span class="o">:</span><span class="mi">15847</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">2020</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">23</span> <span class="mo">01</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">58</span> <span class="o">+</span><span class="mi">0800</span><span class="p">]</span> <span class="p">[</span><span class="mi">16433</span><span class="p">]</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">Booting</span> <span class="n">worker</span> <span class="n">with</span> <span class="n">pid</span><span class="o">:</span> <span class="mi">16433</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">siege</span> <span class="o">-</span><span class="n">c</span> <span class="mi">2</span> <span class="o">-</span><span class="n">r</span> <span class="mi">1</span> <span class="n">http</span><span class="o">:</span><span class="c1">//127.0.0.1:8888/cpu_task -v</span>
+
+<span class="p">{</span>   <span class="s">&quot;transactions&quot;</span><span class="o">:</span>                    <span class="mi">0</span><span class="p">,</span>
+    <span class="s">&quot;availability&quot;</span><span class="o">:</span>                 <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;elapsed_time&quot;</span><span class="o">:</span>                <span class="mf">31.01</span><span class="p">,</span>
+    <span class="s">&quot;data_transferred&quot;</span><span class="o">:</span>             <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;response_time&quot;</span><span class="o">:</span>                <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;transaction_rate&quot;</span><span class="o">:</span>             <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;throughput&quot;</span><span class="o">:</span>                   <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;concurrency&quot;</span><span class="o">:</span>                  <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;successful_transactions&quot;</span><span class="o">:</span>             <span class="mi">0</span><span class="p">,</span>
+    <span class="s">&quot;failed_transactions&quot;</span><span class="o">:</span>                 <span class="mi">2</span><span class="p">,</span>
+    <span class="s">&quot;longest_transaction&quot;</span><span class="o">:</span>              <span class="mf">0.00</span><span class="p">,</span>
+    <span class="s">&quot;shortest_transaction&quot;</span><span class="o">:</span>             <span class="mf">0.00</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="gevent">gevent</h3>
+<p>Async workers like Gevent create new greenlets (lightweight pseudo threads). Every time a new request comes they are handled by greenlets spawned by the worker threads. </p>
+<p>The core idea is when there is IO bound action in your code the greenlet will yield and give a handle to another greenlet to use the CPU. So when many requests are coming to your app, it can handle them concurrently, the IO-bound calls are not going to block the CPU and throughput will improve.</p>
+<p>The most of these examples don’t talk about the issues you would face when using it in the actual production-grade app.</p>
+<ul>
+<li>Using Gevent needs <em>all of your code to be co-operative in nature or all libraries you use should be monkey-patchable</em>. Now this line may sound simple but it’s a big ask. This means either ensuring all the DB drivers, clients, 3rd party libraries used all of these are either pure python, which would ensure they can be monkey-patched OR they are written specifically with Gevent support. If any of your library or part of code does not yield while doing IO then all your greenlets in that worker are blocked and this will result in long halts. You will need to find any such code and fix it.</li>
+<li>Using greenlets, your connections to your backend services will explode and needs to be handled. You need to have connection pools that can be reused and at the same time ensure that your app and backend service can create and maintain that many socket connections.</li>
+<li>CPU blocking operations are going to stop all of your greenlets so if your requests have some CPU bound task it’s not going to help much. Of course, you can explicitly yield in between these tasks but you will need to ensure that part of code is greenlet safe.</li>
+</ul>
+<h1 id="example">example</h1>
+<h2 id="gunicorn_config">gunicorn_config</h2>
+<div class="hlcode"><pre><span class="cp"># file of deployment/gunicorn_config.py</span>
+
+<span class="n">worker_class</span> <span class="o">=</span> <span class="s">&quot;gthread&quot;</span>
+
+<span class="n">workers</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">threads</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="n">max_requests</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">max_requests_jitter</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">timeout</span> <span class="o">=</span> <span class="mi">120</span>
+<span class="n">graceful_timeout</span> <span class="o">=</span> <span class="mi">120</span>
+<span class="n">keepalive</span> <span class="o">=</span> <span class="mi">600</span>
+</pre></div>
+
+
+<blockquote>
+<p><strong>worker_class</strong>: use sync if your service does not support gthread, if your service process is not thread-safe, you should use sync</p>
+<p><strong>workers &amp; threads</strong>: the total workers (workers x threads) should not be too high</p>
+<p><strong>max_requests &amp; jitter</strong>: set max_requests to 0 means we do not restart workers. </p>
+<p><strong>timeout &amp; graceful_timeout</strong>:  better use 120 by default</p>
+</blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

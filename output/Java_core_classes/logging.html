@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>logging - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java_core_classes">Java_core_classes</a>&nbsp;&#187;&nbsp;logging
+    <span class="updated">Page Updated&nbsp;
+      2019-10-23 09:12
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">logging</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#logging">Logging (不常用)</a><ul>
+<li><a href="#_1">日志级别</a></li>
+<li><a href="#logging_1">logging初始化</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="logging">Logging (不常用)</h1>
+<p>日志就是Logging，它的目的是为了取代<code>System.out.println()</code></p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">util</span><span class="p">.</span><span class="n">logging</span><span class="p">.</span><span class="n">Logger</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">.</span><span class="n">getGlobal</span><span class="p">();</span>
+        <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Start process&quot;</span><span class="p">);</span>
+        <span class="n">logger</span><span class="p">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Memory is running out&quot;</span><span class="p">);</span>
+        <span class="n">logger</span><span class="p">.</span><span class="n">fine</span><span class="p">(</span><span class="s">&quot;ignore&quot;</span><span class="p">);</span>
+        <span class="n">logger</span><span class="p">.</span><span class="n">severe</span><span class="p">(</span><span class="s">&quot;Process will be terminated...&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">Oct</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">2019</span> <span class="mi">9</span><span class="o">:</span><span class="mo">00</span><span class="o">:</span><span class="mi">25</span> <span class="n">AM</span> <span class="n">Main</span> <span class="n">main</span>
+<span class="nl">INFO:</span> <span class="n">Start</span> <span class="n">process</span>
+<span class="n">Oct</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">2019</span> <span class="mi">9</span><span class="o">:</span><span class="mo">00</span><span class="o">:</span><span class="mi">25</span> <span class="n">AM</span> <span class="n">Main</span> <span class="n">main</span>
+<span class="nl">WARNING:</span> <span class="n">Memory</span> <span class="n">is</span> <span class="n">running</span> <span class="n">out</span>
+<span class="n">Oct</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">2019</span> <span class="mi">9</span><span class="o">:</span><span class="mo">00</span><span class="o">:</span><span class="mi">25</span> <span class="n">AM</span> <span class="n">Main</span> <span class="n">main</span>
+<span class="nl">SEVERE:</span> <span class="n">Process</span> <span class="n">will</span> <span class="n">be</span> <span class="n">terminated</span><span class="p">...</span>
+</pre></div>
+
+
+<h2 id="_1">日志级别</h2>
+<p>从严重到普通, 默认级别是INFO，因此，INFO级别以下的日志，不会被打印出来。使用日志级别的好处在于，调整级别，就可以屏蔽掉很多调试相关的日志输出。</p>
+<ul>
+<li>SEVERE</li>
+<li>WARNING</li>
+<li>INFO</li>
+<li>CONFIG</li>
+<li>FINE</li>
+<li>FINER</li>
+<li>FINEST</li>
+</ul>
+<p></p>
+<h2 id="logging_1">logging初始化</h2>
+<p>Logging系统在JVM启动时读取配置文件并完成初始化，一旦开始运行<code>main()</code>方法，就无法修改配置；</p>
+<p>需要在JVM启动时传递参数<code>-Djava.util.logging.config.file=&lt;config-file-name&gt;</code></p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

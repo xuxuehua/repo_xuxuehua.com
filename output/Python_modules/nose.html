@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>nose - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;nose
+    <span class="updated">Page Updated&nbsp;
+      2020-06-16 11:46
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">nose</div>
+
+  <p>[toc]</p>
+<h1 id="nose">nose</h1>
+<p>nose可以自动识别继承于unittest.TestCase的测试单元，并执行测试，而且，nose也可以测试非继承于unittest.TestCase的测试单元。nose提供了丰富的API便于编写测试代码。</p>
+<p>只要遵循一些简单的规则去组织你的类库和测试代码，nose是可以自动识别单元测试的。执行测试是非常耗资源的，但是，一段第一个测试模块被加载后，nose就开始执行测试。</p>
+<p>nose 是一个比 unittest 更加先进的测试框架</p>
+<h2 id="_1">特点</h2>
+<p>不需要编写继承unittest.TestCase方法的测试类。你甚至可以将测试作为独立的函数来编写</p>
+<p>自动查找和搜集测试，不需要自己手动搭建测试集；</p>
+<p>支持插件，可以搭配其他非常实用的标准化插件（coverage, output capture, drop into debugger on errors, doctests support, profiler）</p>
+<p>为测试打标签，并且可以根据标签非常灵活的选择测试集；</p>
+<p>并行测试；</p>
+<p>更好的支持fixtures；</p>
+<p>产生器测试。</p>
+<p>包的测试收集按照树的层级级别一级一级进行，因此package.tests、package.sub.tests、package.sub.sub2.tests将会被收集。</p>
+<p>匹配的正则表达式默认值为：</p>
+<div class="hlcode"><pre><span class="p">(</span><span class="err">`</span><span class="p">(</span><span class="o">?:^|</span><span class="p">[</span><span class="err">\\</span><span class="n">b_</span><span class="err">\\</span><span class="p">.</span><span class="o">-</span><span class="p">])[</span><span class="n">Tt</span><span class="p">]</span><span class="n">est</span><span class="p">.</span>
+</pre></div>
+
+
+<p>所以最好是以Test开头，或者test开头。当然也可以修改默认的匹配的正则表达式。</p>
+<p>匹配成功的包、任何python的源文件都会当做测试用例。</p>
+<h2 id="installation">installation</h2>
+<div class="hlcode"><pre><span class="n">pip</span> <span class="n">install</span> <span class="n">nose</span>
+</pre></div>
+
+
+<h1 id="nosetests">nosetests</h1>
+<div class="hlcode"><pre> <span class="n">nosetests</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="p">[(</span><span class="n">optional</span><span class="p">)</span> <span class="n">test</span> <span class="n">files</span> <span class="n">or</span> <span class="n">directories</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="_2">选择测试用例</h2>
+<p>将需要测试的名称传递给nose的命令行。格式如下：</p>
+<div class="hlcode"><pre><span class="n">nosetests</span> <span class="n">only_test_this</span><span class="p">.</span><span class="n">py</span>
+</pre></div>
+
+
+<p>测试的名称可以是脚本文件的名称或者模块的名称，也可以使用colon表达式表达的测试名称。路径可以是相对的路径也可以是绝对的路径。如下所示：</p>
+<div class="hlcode"><pre><span class="nx">nosetests</span> <span class="nx">test</span><span class="p">.</span><span class="nx">module</span>
+<span class="nx">nosetests</span> <span class="nx">another</span><span class="p">.</span><span class="nx">test</span><span class="o">:</span><span class="nx">TestCase</span><span class="p">.</span><span class="nx">test_method</span>
+<span class="nx">nosetests</span> <span class="nx">a</span><span class="p">.</span><span class="nx">test</span><span class="o">:</span><span class="nx">TestCase</span>
+<span class="nx">nosetests</span> <span class="o">/</span><span class="nx">path</span><span class="o">/</span><span class="nx">to</span><span class="o">/</span><span class="nx">test</span><span class="o">/</span><span class="nx">file</span><span class="p">.</span><span class="nx">py</span><span class="o">:</span><span class="nx">test_function</span>
+</pre></div>
+
+
+<p>同样可以使用-w开关来切换当前的工作路径，从而改变nose查找测试用例的根路径。</p>
+<div class="hlcode"><pre><span class="n">nosetests</span> <span class="o">-</span><span class="n">w</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">tests</span>
+</pre></div>
+
+
+<h2 id="_3">配置</h2>
+<p>除了使用命令行这种方式之外，还可以在根目录下放置配置文件，配置文件的类型为.noserc或nose.cfg文件。配置文件都是标准的ini内容格式</p>
+<div class="hlcode"><pre><span class="k">[nosetests]</span>
+<span class="na">verbosity</span><span class="o">=</span><span class="s">3</span>
+<span class="na">with-doctest</span><span class="o">=</span><span class="s">1</span>
+</pre></div>
+
+
+<h1 id="example">example</h1>
+<h2 id="_4">测试代码</h2>
+<div class="hlcode"><pre><span class="nb">from</span> <span class="nx">nose.tools</span> <span class="k">import</span> <span class="nx">eq_</span>
+<span class="nb">from</span> <span class="nx">nose.tools</span> <span class="k">import</span> <span class="nx">assert_equal</span>
+
+
+<span class="nb">class</span> <span class="nx">NoseTest</span><span class="p">:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="err">#</span> <span class="nx">assert_equal</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="s1">&#39;%a != %a&#39;</span><span class="o">%</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">))</span>
+    <span class="nx">eq_</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nx">Failure</span><span class="p">:</span> <span class="nx">AssertionError</span> <span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span> <span class="nx">...</span> <span class="nb">FAIL</span>
+
+<span class="o">======================================================================</span>
+<span class="nb">FAIL</span><span class="p">:</span> <span class="nx">Failure</span><span class="p">:</span> <span class="nx">AssertionError</span> <span class="p">(</span><span class="mi">1</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span>
+<span class="o">----------------------------------------------------------------------</span>
+<span class="nx">Traceback</span> <span class="p">(</span><span class="nx">most</span> <span class="nx">recent</span> <span class="nb">call</span> <span class="nb">last</span><span class="p">):</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/.local/share/virtualenvs/test_only-bQB_6HEy/lib/python3.7/site-packages/nose/failure.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">39</span><span class="p">,</span> <span class="k">in</span> <span class="nx">runTest</span>
+    <span class="nx">raise</span> <span class="bp">self.</span><span class="nx">exc_val.with_traceback</span><span class="p">(</span><span class="bp">self.</span><span class="nb">tb</span><span class="p">)</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/.local/share/virtualenvs/test_only-bQB_6HEy/lib/python3.7/site-packages/nose/loader.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">418</span><span class="p">,</span> <span class="k">in</span> <span class="nx">loadTestsFromName</span>
+    <span class="nx">addr.filename</span><span class="p">,</span> <span class="nx">addr.module</span><span class="p">)</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/.local/share/virtualenvs/test_only-bQB_6HEy/lib/python3.7/site-packages/nose/importer.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">47</span><span class="p">,</span> <span class="k">in</span> <span class="nx">importFromPath</span>
+    <span class="k">return</span> <span class="bp">self.</span><span class="nx">importFromDir</span><span class="p">(</span><span class="nx">dir_path</span><span class="p">,</span> <span class="nx">fqname</span><span class="p">)</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/.local/share/virtualenvs/test_only-bQB_6HEy/lib/python3.7/site-packages/nose/importer.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">94</span><span class="p">,</span> <span class="k">in</span> <span class="nx">importFromDir</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="nx">load_module</span><span class="p">(</span><span class="nx">part_fqname</span><span class="p">,</span> <span class="nx">fh</span><span class="p">,</span> <span class="nb">filename</span><span class="p">,</span> <span class="nx">desc</span><span class="p">)</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/.local/share/virtualenvs/test_only-bQB_6HEy/lib/python3.7/imp.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">234</span><span class="p">,</span> <span class="k">in</span> <span class="nx">load_module</span>
+    <span class="k">return</span> <span class="nx">load_source</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="nb">filename</span><span class="p">,</span> <span class="nb">file</span><span class="p">)</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/.local/share/virtualenvs/test_only-bQB_6HEy/lib/python3.7/imp.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">171</span><span class="p">,</span> <span class="k">in</span> <span class="nx">load_source</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="nx">_load</span><span class="p">(</span><span class="nx">spec</span><span class="p">)</span>
+  <span class="nb">File</span> <span class="s2">&quot;&lt;frozen importlib._bootstrap&gt;&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">696</span><span class="p">,</span> <span class="k">in</span> <span class="nx">_load</span>
+  <span class="nb">File</span> <span class="s2">&quot;&lt;frozen importlib._bootstrap&gt;&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">677</span><span class="p">,</span> <span class="k">in</span> <span class="nx">_load_unlocked</span>
+  <span class="nb">File</span> <span class="s2">&quot;&lt;frozen importlib._bootstrap_external&gt;&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">728</span><span class="p">,</span> <span class="k">in</span> <span class="nx">exec_module</span>
+  <span class="nb">File</span> <span class="s2">&quot;&lt;frozen importlib._bootstrap&gt;&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">219</span><span class="p">,</span> <span class="k">in</span> <span class="nx">_call_with_frames_removed</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/coding/python/python3/test_only/my_nose.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">5</span><span class="p">,</span> <span class="k">in</span> <span class="o">&lt;</span><span class="nx">module</span><span class="o">&gt;</span>
+    <span class="nb">class</span> <span class="nx">NoseTest</span><span class="p">:</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/coding/python/python3/test_only/my_nose.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">9</span><span class="p">,</span> <span class="k">in</span> <span class="nx">NoseTest</span>
+    <span class="nx">eq_</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+<span class="nx">AssertionError</span><span class="p">:</span> <span class="mi">1</span> <span class="o">!=</span> <span class="mi">2</span>
+
+<span class="o">----------------------------------------------------------------------</span>
+<span class="nx">Ran</span> <span class="mi">1</span> <span class="n">test</span> <span class="k">in</span> <span class="mf">0.001</span><span class="nb">s</span>
+
+<span class="nx">FAILED</span> <span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

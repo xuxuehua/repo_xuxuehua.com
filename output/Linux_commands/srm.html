@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>srm Secure Delete - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;srm Secure Delete
+    <span class="updated">Page Updated&nbsp;
+      2018-12-23 16:44
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">srm Secure Delete</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#srm">SRM</a><ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#options">Options</a><ul>
+<li><a href="#-d-directory">-d, --directory</a></li>
+<li><a href="#-f-force">-f, --force</a></li>
+<li><a href="#-i-interactive">-i, --interactive</a></li>
+<li><a href="#-x-one-file-system">-x, --one-file-system</a></li>
+<li><a href="#-s-simple">-s, --simple</a></li>
+<li><a href="#-p-openbsd">-P, --openbsd</a></li>
+<li><a href="#-d-dod">-D, --dod</a></li>
+<li><a href="#-e-doe">-E, --doe</a></li>
+<li><a href="#-g-gutmann">-G, --gutmann</a></li>
+<li><a href="#-c-rcmp">-C, --rcmp</a></li>
+<li><a href="#-r-r-recursive">-r, -R, --recursive</a></li>
+<li><a href="#-v-verbose">-v, --verbose</a></li>
+<li><a href="#-h-help">-h, --help</a></li>
+<li><a href="#-v-version">-V, --version</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="srm">SRM</h1>
+<p>Overwrite and remove (unlink) the files. By default use the 35-pass Gutmann<br />
+method to overwrite files.</p>
+<h2 id="installation">Installation</h2>
+<div class="hlcode"><pre><span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">epel</span><span class="o">-</span><span class="n">release</span> <span class="o">&amp;&amp;</span> <span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">srm</span>
+</pre></div>
+
+
+<h2 id="usage">Usage</h2>
+<div class="hlcode"><pre><span class="n">Usage</span><span class="o">:</span> <span class="n">srm</span> <span class="o">[</span><span class="n">OPTION</span><span class="o">]...</span> <span class="o">[</span><span class="n">FILE</span><span class="o">]...</span>
+</pre></div>
+
+
+<h2 id="options">Options</h2>
+<h3 id="-d-directory">-d, --directory</h3>
+<p>ignored (for compatability with rm(1))</p>
+<h3 id="-f-force">-f, --force</h3>
+<p>ignore nonexistant files, never prompt</p>
+<h3 id="-i-interactive">-i, --interactive</h3>
+<p>prompt before any removal</p>
+<h3 id="-x-one-file-system">-x, --one-file-system</h3>
+<p>do not cross file system boundaries</p>
+<h3 id="-s-simple">-s, --simple</h3>
+<p>overwrite with single pass using 0x00 (default)</p>
+<h3 id="-p-openbsd">-P, --openbsd</h3>
+<p>overwrite with three passes like OpenBSD rm</p>
+<h3 id="-d-dod">-D, --dod</h3>
+<p>overwrite with 7 US DoD compliant passes</p>
+<h3 id="-e-doe">-E, --doe</h3>
+<p>overwrite with 3 US DoE compliant passes</p>
+<h3 id="-g-gutmann">-G, --gutmann</h3>
+<p>overwrite with 35-pass Gutmann method</p>
+<h3 id="-c-rcmp">-C, --rcmp</h3>
+<p>overwrite with Royal Canadian Mounted Police passes</p>
+<h3 id="-r-r-recursive">-r, -R, --recursive</h3>
+<p>remove the contents of directories</p>
+<h3 id="-v-verbose">-v, --verbose</h3>
+<p>explain what is being done</p>
+<h3 id="-h-help">-h, --help</h3>
+<p>display this help and exit</p>
+<h3 id="-v-version">-V, --version</h3>
+<p>display version information and exit</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

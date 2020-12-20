@@ -1,0 +1,342 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>wireguard - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;wireguard
+    <span class="updated">Page Updated&nbsp;
+      2018-11-30 21:31
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">wireguard</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#wireguard">wireguard</a><ul>
+<li><a href="#_1">安装</a><ul>
+<li><a href="#ubuntu">Ubuntu</a></li>
+</ul>
+</li>
+<li><a href="#centos">CentOS</a></li>
+<li><a href="#_2">部署</a><ul>
+<li><a href="#ubuntu_1">Ubuntu</a><ul>
+<li><a href="#server">server</a></li>
+<li><a href="#client">client</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#wg-quick">wg-quick</a><ul>
+<li><a href="#server-side">server side</a><ul>
+<li><a href="#example">example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#example_1">example</a><ul>
+<li><a href="#traffic-forwarding">traffic forwarding</a></li>
+<li><a href="#server_1">server</a></li>
+<li><a href="#client_1">client</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="wireguard">wireguard</h1>
+<h2 id="_1">安装</h2>
+<h3 id="ubuntu">Ubuntu</h3>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">add</span><span class="o">-</span><span class="n">apt</span><span class="o">-</span><span class="n">repository</span> <span class="n">ppa</span><span class="o">:</span><span class="n">wireguard</span><span class="o">/</span><span class="n">wireguard</span> <span class="o">&amp;&amp;</span> 
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span> <span class="o">&amp;&amp;</span> 
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">wireguard</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+
+
+<h2 id="centos">CentOS</h2>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">curl</span> <span class="o">-</span><span class="n">Lo</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="p">.</span><span class="n">repos</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">wireguard</span><span class="p">.</span><span class="n">repo</span> <span class="n">https</span><span class="o">:</span><span class="c1">//copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-7/jdoss-wireguard-epel-7.repo &amp;&amp; </span>
+<span class="n">sudo</span> <span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">epel</span><span class="o">-</span><span class="n">release</span> <span class="o">&amp;&amp;</span> 
+<span class="n">sudo</span> <span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">wireguard</span><span class="o">-</span><span class="n">dkms</span> <span class="n">wireguard</span><span class="o">-</span><span class="n">tools</span>
+</pre></div>
+
+
+<h2 id="_2">部署</h2>
+<h3 id="ubuntu_1">Ubuntu</h3>
+<h4 id="server">server</h4>
+<p>需要配置Ip转发，默认ubuntu是关闭的</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">vi</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysctl</span><span class="p">.</span><span class="n">conf</span>
+<span class="err">添加：</span>
+<span class="n">net</span><span class="p">.</span><span class="n">ipv4</span><span class="p">.</span><span class="n">ip_forward</span><span class="o">=</span><span class="mi">1</span>
+<span class="err">运行：</span>
+<span class="n">sudo</span> <span class="n">sysctl</span> <span class="o">-</span><span class="n">p</span>
+</pre></div>
+
+
+<p>生成密钥</p>
+<div class="hlcode"><pre><span class="n">wg</span> <span class="n">genkey</span> <span class="o">|</span> <span class="n">tee</span> <span class="n">privatekey</span> <span class="o">|</span> <span class="n">wg</span> <span class="n">pubkey</span> <span class="o">&gt;</span> <span class="n">publickey</span>
+<span class="cp">#查看私钥</span>
+<span class="n">cat</span> <span class="n">privatekey</span>
+<span class="cp">#查看公钥</span>
+<span class="n">cat</span> <span class="n">publickey</span>
+</pre></div>
+
+
+<p>配置文件设置/etc/wireguard/wg0.conf</p>
+<div class="hlcode"><pre><span class="k">[Interface]</span>
+<span class="na">Address</span> <span class="o">=</span> <span class="s">192.168.2.1/24</span>
+<span class="na">SaveConfig</span> <span class="o">=</span> <span class="s">true</span>
+<span class="na">PostUp</span> <span class="o">=</span> <span class="s">iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o ens3 -j MASQUERADE</span>
+<span class="na">PostDown</span> <span class="o">=</span> <span class="s">iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o ens3 -j MASQUERADE</span>
+<span class="na">ListenPort</span> <span class="o">=</span> <span class="s">23334    #这里是公网机器打开的监听端口</span>
+<span class="na">PrivateKey</span> <span class="o">=</span> <span class="s">xxxxxxxxxxxxxx(用自己的公网机器上生成的私钥来替换)</span>
+<span class="k">[Peer]</span>
+<span class="na">PublicKey</span> <span class="o">=</span> <span class="s">xxxxxxxxxxxxxxx（用内网机器的公钥来替换）</span>
+<span class="na">AllowedIPs</span> <span class="o">=</span> <span class="s">192.168.2.2/32 #把内网机的ip设置为192.168.2.2</span>
+<span class="na">Endpoint</span> <span class="o">=</span> <span class="s">218.75.123.186:39055 # 者个部分由于内网机器没有公网IP可以百度看下自己的ip地址贴上，端口号可以先随意写，等内网机器连接上后端口会自动更新。</span>
+</pre></div>
+
+
+<blockquote>
+<p>公网机器的ip配置成192.168.2.1。里面的PostUp，和PostDown分别来配置iptables转发规则</p>
+<p>里面的ens3根据查看自己的ifconfig来修改</p>
+<p>AllowedIPs设置在发送时充当路由表，在接收时充当ACL。当对等方尝试将数据包发送到IP时，它将检查AllowedIPs，如果IP出现在列表中，它将通过WireGuard接口发送它。当它通过接口接收数据包时，它将再次检查AllowedIPs，如果数据包的源地址不在列表中，它将被丢弃。</p>
+</blockquote>
+<p>wireGuard quick start后会默认所有的流量都走wg0</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">wg</span><span class="o">-</span><span class="n">quick</span> <span class="n">up</span> <span class="n">wg0</span>
+</pre></div>
+
+
+<ul>
+<li>配置路由问题</li>
+</ul>
+<div class="hlcode"><pre><span class="c"># ip route del default  #删除默认网关</span>
+<span class="c"># ip route add default dev wg0  #设置wg0为默认网关</span>
+<span class="c"># ip route add xx.xx.xx.xx/32 via yy.yy.yy.yy dev eth0   #把你公网ip的地址替换xx.xx.xx.xx ,用你的原来的网关替换yy.yy.yy.yy</span>
+</pre></div>
+
+
+<ul>
+<li>配置路由表</li>
+</ul>
+<p>中国Ip走国内路线，外国Ip走国外路线，在github上找到一个项目<a href="https://github.com/greensea/cnips">地址</a> git地址<a href="https://github.com/greensea/cnips.git">https://github.com/greensea/cnips.git</a></p>
+<div class="hlcode"><pre><span class="n">gcc</span> <span class="n">cnips</span><span class="p">.</span><span class="n">c</span> <span class="o">-</span><span class="n">O2</span> <span class="o">-</span><span class="n">o</span> <span class="n">cnipswget</span> <span class="n">http</span><span class="o">:</span><span class="c1">//ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latestcat delegated-apnic-latest | ./cnips</span>
+</pre></div>
+
+
+<ul>
+<li>写一个bash脚本</li>
+</ul>
+<div class="hlcode"><pre><span class="k">for</span> <span class="n">net</span> <span class="n">in</span> <span class="err">`</span><span class="n">cat</span> <span class="n">delegated</span><span class="o">-</span><span class="n">apnic</span><span class="o">-</span><span class="n">latest</span> <span class="o">|</span> <span class="p">.</span><span class="o">/</span><span class="n">cnips</span><span class="err">`</span><span class="k">do</span>         <span class="n">route</span> <span class="n">add</span> <span class="o">-</span><span class="n">net</span> <span class="err">$</span><span class="n">net</span> <span class="n">gw</span> <span class="mf">10.1.70.254</span>  <span class="err">#这里的</span><span class="mf">10.1.70.254</span><span class="err">用原来的网关进行替换</span><span class="n">done</span>
+</pre></div>
+
+
+<ul>
+<li>配置DNS</li>
+</ul>
+<p>配置好后还发现有问题，类似百度，B站等都有海外服务器用海外的DNS解析出来后都是海外地址，访问很慢。所以还需要自己搭建一个DNS。可以用docker现成项目来做<a href="https://github.com/jpillora/docker-dnsmasq">地址</a>接下来还有国内常用域名git<a href="https://github.com/zizhengwu/GFW_DNS_SMART_RESOLVE">地址</a>里面的dnsmasq.conf文件复制到Dns的配置里。</p>
+<h4 id="client">client</h4>
+<p>生成密钥</p>
+<div class="hlcode"><pre><span class="n">wg</span> <span class="n">genkey</span> <span class="o">|</span> <span class="n">tee</span> <span class="n">privatekey</span> <span class="o">|</span> <span class="n">wg</span> <span class="n">pubkey</span> <span class="o">&gt;</span> <span class="n">publickey</span>
+<span class="cp">#查看私钥</span>
+<span class="n">cat</span> <span class="n">privatekey</span>
+<span class="cp">#查看公钥</span>
+<span class="n">cat</span> <span class="n">publickey</span>
+</pre></div>
+
+
+<p>配置文件设置/etc/wireguard/wg0.conf</p>
+<div class="hlcode"><pre><span class="k">[Interface]</span>
+<span class="na">PrivateKey</span> <span class="o">=</span> <span class="s">xxxxxxxxxxxxxx (用内网机器的私钥)</span>
+<span class="na">Address</span> <span class="o">=</span> <span class="s">192.168.2.2/24    (和上面公网机器配置的保持一直)</span>
+<span class="k">[Peer]</span>
+<span class="na">PublicKey</span> <span class="o">=</span> <span class="s">xxxxxxxxxxxxxx (填写公网主机的公钥)</span>
+<span class="na">Endpoint</span> <span class="o">=</span> <span class="s">x.x.x.x:23334   (x.x.x.x用你的公网ip来填写，后面的公网机器的监听端口号)</span>
+<span class="na">AllowedIPs</span> <span class="o">=</span> <span class="s">0.0.0.0/0, 192.168.2.1/32 （表示允许什么ip地址访问你的wireguard，前面的0.0.0.0/0很重要不添加的会不能访问一直显示网关不可达）</span>
+</pre></div>
+
+
+<p>wireGuard quick start后会默认所有的流量都走wg0</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">wg</span><span class="o">-</span><span class="n">quick</span> <span class="n">up</span> <span class="n">wg0</span>
+</pre></div>
+
+
+<h2 id="wg-quick">wg-quick</h2>
+<p>wg-quick是用bash写的一个脚本</p>
+<h3 id="server-side">server side</h3>
+<p>服务器端配的WireGuard配置文件是 /etc/wireguard/wg0.conf</p>
+<div class="hlcode"><pre><span class="k">[Interface]</span>
+<span class="na">Address</span> <span class="o">=</span> <span class="s">192.168.10.1/24</span>
+<span class="na">MTU</span> <span class="o">=</span> <span class="s">1500</span>
+<span class="na">ListenPort</span> <span class="o">=</span> <span class="s">12345</span>
+<span class="na">PrivateKey</span> <span class="o">=</span> <span class="s">xxxx</span>
+
+<span class="k">[Peer]</span>
+<span class="na">PublicKey</span> <span class="o">=</span> <span class="s">xxxx</span>
+<span class="na">AllowedIPs</span> <span class="o">=</span> <span class="s">192.168.10.40/32, 192.168.1.0/24</span>
+</pre></div>
+
+
+<blockquote>
+<p><strong>[Interface]</strong> 这里定义的是虚拟网络设备的配置。<br />
+<strong>Address</strong> 是网络设备的地址，IP地址。<br />
+<strong>MTU</strong> 默认MTU是1420。改MTU的原因最后边会解释的。<br />
+<strong>ListenPort</strong> 监听的UDP端口。<br />
+<strong>PrivateKey</strong> 私钥，用 <em>wg genkey &gt; private.key</em> 生成的文件内容。</p>
+<p><strong>[Peer]</strong> 对端的地址，如果这里是C，对面就是S，如果这里是S，对面就是C。至于谁是C谁是S，鉴于是UDP，那姑且认为先发请求的是C。<br />
+<strong>PublicKey</strong> 对端PrivateKey对应的私钥，用 <em>wg pubkey &lt; private.key</em> 生成。<br />
+<strong>AllowedIPs</strong> 这里解释一下，不管上边谁是C谁是S，想像一下传统的VPN需求，如果你要把流量全量转发到设备里，那直接配 0.0.0.0/0，而此时对端的设备就是S了，那对端的配置，把你的Interface.Address 和你本地的网段填入，不过后边这个理论上不是必须。<br />
+<strong>Endpoint</strong> 上边的例子里没有，但是，作为C要连到S，那就需要告诉C连到哪个<strong>IP:PORT</strong>，至于S会自动生成对应C的Endpoint。</p>
+</blockquote>
+<h4 id="example">example</h4>
+<p>假定的网络环境如下：<br />
+服务器：IP 1.1.1.1，WireGuard内网 IP 192.168.10.1，公网环境<br />
+节点1: IP 2.2.2.2，WireGuard内网 IP 192.168.10.40，LAN IP 192.168.1.0/24<br />
+节点2: IP 3.3.3.3，WireGuard内网 IP 192.168.10.50，LAN IP 192.168.2.0/24</p>
+<p>此处，服务器、节点1、节点2均有<strong>公网IP</strong>。</p>
+<div class="hlcode"><pre><span class="k">[Interface]</span>
+<span class="na">Address</span> <span class="o">=</span> <span class="s">192.168.10.1/24</span>
+<span class="na">MTU</span> <span class="o">=</span> <span class="s">1500</span>
+<span class="na">PrivateKey</span> <span class="o">=</span> <span class="s">xxx</span>
+<span class="na">PostUp</span> <span class="o">=</span> <span class="s">echo -n &quot;hello&quot; &gt; /dev/udp/192.168.1.1/80; echo -n &quot;hello&quot; &gt; /dev/udp/192.168.2.1/80</span>
+
+<span class="k">[Peer]</span>
+<span class="na">PublicKey</span> <span class="o">=</span> <span class="s">xxx</span>
+<span class="na">AllowedIPs</span> <span class="o">=</span> <span class="s">192.168.10.40/32, 192.168.1.0/24</span>
+<span class="na">Endpoint</span> <span class="o">=</span> <span class="s">peer1:12345</span>
+
+<span class="k">[Peer]</span>
+<span class="na">PublicKey</span> <span class="o">=</span> <span class="s">xxx</span>
+<span class="na">AllowedIPs</span> <span class="o">=</span> <span class="s">192.168.10.50/32, 192.168.2.0/24</span>
+<span class="na">Endpoint</span> <span class="o">=</span> <span class="s">peer2:12345</span>
+</pre></div>
+
+
+<p>如果节点IP不固定，或者是没有公网IP，那就改为如下配置</p>
+<div class="hlcode"><pre><span class="k">[Interface]</span>
+<span class="na">Address</span> <span class="o">=</span> <span class="s">192.168.10.1/24</span>
+<span class="na">MTU</span> <span class="o">=</span> <span class="s">1500</span>
+<span class="na">PrivateKey</span> <span class="o">=</span> <span class="s">xxx</span>
+<span class="na">ListenPort</span> <span class="o">=</span> <span class="s">54321</span>
+
+<span class="k">[Peer]</span>
+<span class="na">PublicKey</span> <span class="o">=</span> <span class="s">xxx</span>
+<span class="na">AllowedIPs</span> <span class="o">=</span> <span class="s">192.168.10.40/32, 192.168.1.0/24</span>
+
+<span class="k">[Peer]</span>
+<span class="na">PublicKey</span> <span class="o">=</span> <span class="s">xxx</span>
+<span class="na">AllowedIPs</span> <span class="o">=</span> <span class="s">192.168.10.50/32, 192.168.2.0/24</span>
+</pre></div>
+
+
+<p>启用Wireguard</p>
+<div class="hlcode"><pre><span class="n">wg</span><span class="o">-</span><span class="n">quick</span> <span class="n">up</span> <span class="n">wg0</span>
+</pre></div>
+
+
+<p>为了让网络正常工作，还需要在VPS的公网接口上启用NAT</p>
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">F</span> <span class="n">FORWARD</span>
+<span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">FORWARD</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+
+<span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">POSTROUTING</span> <span class="o">-</span><span class="n">t</span> <span class="n">nat</span> <span class="o">-</span><span class="n">o</span> <span class="n">eth0</span> <span class="o">-</span><span class="n">j</span> <span class="n">MASQUERADE</span>
+</pre></div>
+
+
+<p>修改 /etc/sysctl.conf，</p>
+<div class="hlcode"><pre><span class="err">启用</span> 
+<span class="n">net</span><span class="p">.</span><span class="n">ipv4</span><span class="p">.</span><span class="n">ip_forward</span><span class="o">=</span><span class="mi">1</span>
+<span class="err">然后执行</span> 
+<span class="n">sysctl</span> <span class="o">-</span><span class="n">p</span>
+</pre></div>
+
+
+<h2 id="example_1">example</h2>
+<h3 id="traffic-forwarding">traffic forwarding</h3>
+<p>要转发所有流量，只需将客户端上的AllowedIPs行更改为：</p>
+<p>AllowedIPs = 0.0.0.0/0, ::/0</p>
+<p>这是整个客户端配置：</p>
+<div class="hlcode"><pre><span class="k">[Interface]</span>
+<span class="na">Address</span> <span class="o">=</span> <span class="s">192.168.2.2</span>
+<span class="na">PrivateKey</span> <span class="o">=</span> <span class="s">&lt;client&#39;s privatekey&gt;</span>
+<span class="na">ListenPort</span> <span class="o">=</span> <span class="s">21841</span>
+
+<span class="k">[Peer]</span>
+<span class="na">PublicKey</span> <span class="o">=</span> <span class="s">&lt;server&#39;s publickey&gt;</span>
+<span class="na">Endpoint</span> <span class="o">=</span> <span class="s">&lt;server&#39;s ip&gt;:51820</span>
+<span class="na">AllowedIPs</span> <span class="o">=</span> <span class="s">0.0.0.0/0, ::/0</span>
+</pre></div>
+
+
+<p>这将使wg0接口负责路由所有IP地址（因此为0.0.0.0/0），并且应该通过服务器路由所有流量。 您可以通过加载我的IP网站之一来检查您的服务器的IP是否被检测到。</p>
+<p>完成后，运行以下命令使目录和文件只能由管理员读取（它确实包含密钥）：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">chown</span> <span class="o">-</span><span class="n">R</span> <span class="n">root</span><span class="o">:</span><span class="n">root</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">wireguard</span><span class="o">/</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">chmod</span> <span class="o">-</span><span class="n">R</span> <span class="n">og</span><span class="o">-</span><span class="n">rwx</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">wireguard</span><span class="o">/*</span>
+</pre></div>
+
+
+<p>创建并保护文件后，如果操作系统使用systemd，则可以轻松设置WireGuard以在启动时初始化</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">enable</span> <span class="n">wg</span><span class="o">-</span><span class="n">quick</span><span class="err">@</span><span class="n">wg0</span><span class="p">.</span><span class="n">service</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">start</span> <span class="n">wg</span><span class="o">-</span><span class="n">quick</span><span class="err">@</span><span class="n">wg0</span><span class="p">.</span><span class="n">service</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">stop</span> <span class="n">wg</span><span class="o">-</span><span class="n">quick</span><span class="err">@</span><span class="n">wg0</span><span class="p">.</span><span class="n">service</span>
+</pre></div>
+
+
+<h3 id="server_1">server</h3>
+<div class="hlcode"><pre><span class="k">[Interface]</span>
+<span class="na">Address</span> <span class="o">=</span> <span class="s">10.0.0.1/24</span>
+<span class="na">PostUp</span> <span class="o">=</span> <span class="s">iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</span>
+<span class="na">PostDown</span> <span class="o">=</span> <span class="s">iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE</span>
+<span class="na">ListenPort</span> <span class="o">=</span> <span class="s">51820</span>
+<span class="na">PrivateKey</span> <span class="o">=</span> <span class="s">server_private_key</span>
+
+<span class="k">[Peer]</span>
+
+<span class="na">PublicKey</span> <span class="o">=</span> <span class="s">client_public_key</span>
+<span class="na">AllowedIPs</span> <span class="o">=</span> <span class="s">10.0.2.0/24</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">wg</span><span class="o">-</span><span class="n">quick</span> <span class="n">down</span> <span class="n">wg0</span> <span class="o">&amp;&amp;</span> <span class="n">wg</span><span class="o">-</span><span class="n">quick</span> <span class="n">up</span> <span class="n">wg0</span>
+
+<span class="n">GCE</span> <span class="n">mtu</span> <span class="mi">1420</span> 
+</pre></div>
+
+
+<h3 id="client_1">client</h3>
+<div class="hlcode"><pre><span class="k">[Interface]</span>
+<span class="na">PrivateKey</span> <span class="o">=</span> <span class="s">client_private_key</span>
+<span class="na">ListenPort</span> <span class="o">=</span> <span class="s">51820</span>
+<span class="na">DNS</span> <span class="o">=</span> <span class="s">8.8.8.8 </span>
+<span class="na">Address</span> <span class="o">=</span> <span class="s">10.0.2.1/24</span>
+
+<span class="k">[Peer]</span>
+<span class="na">PublicKey</span> <span class="o">=</span> <span class="s">server_public_key</span>
+<span class="na">AllowedIPs</span> <span class="o">=</span> <span class="s">0.0.0.0/0</span>
+<span class="na">Endpoint</span> <span class="o">=</span> <span class="s">208.73.201.156:51820</span>
+<span class="na">PersistentKeepalive</span> <span class="o">=</span> <span class="s">25</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>cloudwatch - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Aws">Aws</a>&nbsp;&#187;&nbsp;cloudwatch
+    <span class="updated">Page Updated&nbsp;
+      2019-06-25 09:59
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">cloudwatch</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#cloudwatch">CloudWatch</a><ul>
+<li><a href="#supported-services">Supported Services</a></li>
+</ul>
+</li>
+<li><a href="#cloudwatch-insight">CloudWatch Insight</a><ul>
+<li><a href="#message-content">message content</a></li>
+<li><a href="#like-or">like or</a></li>
+<li><a href="#not-like">not like</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="cloudwatch">CloudWatch</h1>
+<h2 id="supported-services">Supported Services</h2>
+<p><img alt="image-20200316144155634" src="cloudwatch.assets/image-20200316144155634.png" /></p>
+<h1 id="cloudwatch-insight">CloudWatch Insight</h1>
+<p>If <code>@message</code> is</p>
+<div class="hlcode"><pre><span class="n">I</span><span class="p">,</span> <span class="p">[</span><span class="mi">2018</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">11</span><span class="n">T13</span><span class="o">:</span><span class="mi">20</span><span class="o">:</span><span class="mi">27</span><span class="p">]</span> <span class="n">INFO</span> <span class="o">--</span> <span class="o">:</span> <span class="p">{</span><span class="s">&quot;method&quot;</span><span class="o">:</span><span class="s">&quot;GET&quot;</span><span class="p">}</span>
+</pre></div>
+
+
+<p>Then you extract the fields like so:</p>
+<div class="hlcode"><pre><span class="n">fields</span> <span class="err">@</span><span class="n">timestamp</span><span class="p">,</span> <span class="err">@</span><span class="n">message</span>
+<span class="o">|</span> <span class="n">parse</span> <span class="s">&quot;I, [*T*] INFO -- : {&quot;</span><span class="n">method</span><span class="s">&quot;:&quot;</span><span class="o">*</span><span class="s">&quot;}&quot;</span> <span class="n">as</span> <span class="err">@</span><span class="n">date</span><span class="p">,</span> <span class="err">@</span><span class="n">time</span><span class="p">,</span> <span class="err">@</span><span class="n">method</span>
+<span class="o">|</span> <span class="n">filter</span> <span class="n">method</span><span class="o">=</span><span class="n">GET</span>
+<span class="o">|</span> <span class="n">sort</span> <span class="err">@</span><span class="n">timestamp</span> <span class="n">desc</span>
+<span class="o">|</span> <span class="n">limit</span> <span class="mi">20</span>
+</pre></div>
+
+
+<h2 id="message-content">message content</h2>
+<div class="hlcode"><pre><span class="p">{</span>
+    <span class="s2">&quot;message&quot;</span><span class="o">:</span><span class="s2">&quot;Exception on / </span><span class="cp">[</span><span class="nx">POST</span><span class="cp">]</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;exc_info&quot;</span><span class="o">:</span><span class="s2">&quot;Traceback (most recent call last):</span>
+<span class="s2"> File &quot;</span><span class="o">/</span><span class="nx">opt</span><span class="o">/</span><span class="nx">bdp</span><span class="o">/</span><span class="nx">venv</span><span class="o">/</span><span class="nx">lib</span><span class="o">/</span><span class="nx">python3</span><span class="p">.</span><span class="mi">7</span><span class="o">/</span><span class="nx">site</span><span class="o">-</span><span class="nx">packages</span><span class="o">/</span><span class="nx">flask</span><span class="o">/</span><span class="nx">app</span><span class="p">.</span><span class="nx">py</span><span class="s2">&quot;, line 1813, in full_dispatch_request</span>
+<span class="s2"> rv = self.dispatch_request()</span>
+<span class="s2"> File &quot;</span><span class="o">/</span><span class="nx">opt</span><span class="o">/</span><span class="nx">bdp</span><span class="o">/</span><span class="nx">venv</span><span class="o">/</span><span class="nx">lib</span><span class="o">/</span><span class="nx">python3</span><span class="p">.</span><span class="mi">7</span><span class="o">/</span><span class="nx">site</span><span class="o">-</span><span class="nx">packages</span><span class="o">/</span><span class="nx">flask</span><span class="o">/</span><span class="nx">app</span><span class="p">.</span><span class="nx">py</span><span class="s2">&quot;, line 1799, in dispatch_request</span>
+<span class="s2"> return self.view_functions</span><span class="cp">[</span><span class="nx">rule.endpoint</span><span class="cp">]</span><span class="s2">(**req.view_args)</span>
+<span class="s2"> File &quot;</span><span class="o">/</span><span class="nx">opt</span><span class="o">/</span><span class="nx">bdp</span><span class="o">/</span><span class="nx">venv</span><span class="o">/</span><span class="nx">lib</span><span class="o">/</span><span class="nx">python3</span><span class="p">.</span><span class="mi">7</span><span class="o">/</span><span class="nx">site</span><span class="o">-</span><span class="nx">packages</span><span class="o">/</span><span class="nx">flask_restful</span><span class="o">/</span><span class="nx">__init__</span><span class="p">.</span><span class="nx">py</span><span class="s2">&quot;, line 458, in wrapper</span>
+<span class="s2"> resp = resource(*args, **kwargs)</span>
+<span class="s2"> File &quot;</span><span class="o">/</span><span class="nx">opt</span><span class="o">/</span><span class="nx">bdp</span><span class="o">/</span><span class="nx">venv</span><span class="o">/</span><span class="nx">lib</span><span class="o">/</span><span class="nx">python3</span><span class="p">.</span><span class="mi">7</span><span class="o">/</span><span class="nx">site</span><span class="o">-</span><span class="nx">packages</span><span class="o">/</span><span class="nx">flask</span><span class="o">/</span><span class="nx">views</span><span class="p">.</span><span class="nx">py</span><span class="s2">&quot;, line 88, in view</span>
+<span class="s2"> return self.dispatch_request(*args, **kwargs)</span>
+<span class="s2"> File &quot;</span><span class="o">/</span><span class="nx">opt</span><span class="o">/</span><span class="nx">bdp</span><span class="o">/</span><span class="nx">venv</span><span class="o">/</span><span class="nx">lib</span><span class="o">/</span><span class="nx">python3</span><span class="p">.</span><span class="mi">7</span><span class="o">/</span><span class="nx">site</span><span class="o">-</span><span class="nx">packages</span><span class="o">/</span><span class="nx">flask_restful</span><span class="o">/</span><span class="nx">__init__</span><span class="p">.</span><span class="nx">py</span><span class="s2">&quot;,  has no attribute &#39;get&#39;&quot;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">fields</span> <span class="err">@</span><span class="n">timestamp</span><span class="p">,</span> <span class="err">@</span><span class="n">message</span>
+<span class="o">|</span> <span class="n">parse</span> <span class="err">@</span><span class="n">message</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&quot;message&quot;</span><span class="o">:</span> <span class="o">*</span><span class="err">&#39;</span> <span class="n">as</span> <span class="err">@</span><span class="n">content</span>
+<span class="o">|</span> <span class="n">filter</span> <span class="err">@</span><span class="n">content</span> <span class="n">like</span> <span class="err">&#39;</span><span class="n">Traceback</span><span class="err">&#39;</span>
+<span class="o">|</span> <span class="n">sort</span> <span class="err">@</span><span class="n">timestamp</span> <span class="n">desc</span>
+<span class="o">|</span> <span class="n">limit</span> <span class="mi">10</span>
+</pre></div>
+
+
+<h2 id="like-or">like or</h2>
+<div class="hlcode"><pre><span class="n">fields</span> <span class="err">@</span><span class="n">timestamp</span><span class="p">,</span> <span class="err">@</span><span class="n">message</span>
+<span class="o">|</span> <span class="n">filter</span> <span class="p">(</span><span class="err">@</span><span class="n">message</span> <span class="n">like</span> <span class="err">&#39;</span><span class="n">error</span><span class="err">&#39;</span> <span class="n">or</span> <span class="err">@</span><span class="n">message</span> <span class="n">like</span> <span class="err">&#39;</span><span class="n">Error</span><span class="err">&#39;</span> <span class="n">or</span> <span class="err">@</span><span class="n">message</span> <span class="n">like</span> <span class="err">&#39;</span><span class="n">Exception</span><span class="err">&#39;</span> <span class="n">or</span> <span class="err">@</span><span class="n">message</span> <span class="n">like</span> <span class="err">&#39;</span><span class="n">exception</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="o">|</span> <span class="n">sort</span> <span class="err">@</span><span class="n">timestamp</span> <span class="n">desc</span>
+</pre></div>
+
+
+<h2 id="not-like">not like</h2>
+<div class="hlcode"><pre><span class="n">fields</span> <span class="err">@</span><span class="n">timestamp</span><span class="p">,</span> <span class="err">@</span><span class="n">message</span>
+<span class="o">|</span> <span class="n">filter</span> <span class="p">(</span><span class="err">@</span><span class="n">message</span> <span class="n">not</span> <span class="n">like</span> <span class="err">&#39;</span><span class="n">error</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="o">|</span> <span class="n">sort</span> <span class="err">@</span><span class="n">timestamp</span> <span class="n">desc</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

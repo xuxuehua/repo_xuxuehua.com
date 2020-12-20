@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>xml - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;xml
+    <span class="updated">Page Updated&nbsp;
+      2018-08-26 19:01
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">xml</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#xml">xml</a><ul>
+<li><a href="#_1">定义</a></li>
+<li><a href="#xml_1">操作xml</a></li>
+<li><a href="#xml_2">修改和删除xml</a></li>
+<li><a href="#xml_3">创建xml</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="xml">xml</h1>
+<p>xml是实现不同语言或程序之间进行数据交换的协议，跟json差不多，但json使用起来更简单，不过，古时候，在json还没诞生的黑暗年代，大家只能选择用xml呀，至今很多传统公司如金融行业的很多系统的接口还主要是xml。</p>
+<h2 id="_1">定义</h2>
+<p>xml的格式如下，就是通过&lt;&gt;节点来区别数据结构的:</p>
+<div class="hlcode"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+<span class="nt">&lt;data&gt;</span>
+    <span class="nt">&lt;country</span> <span class="na">name=</span><span class="s">&quot;Liechtenstein&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;rank</span> <span class="na">updated=</span><span class="s">&quot;yes&quot;</span><span class="nt">&gt;</span>2<span class="nt">&lt;/rank&gt;</span>
+        <span class="nt">&lt;year&gt;</span>2008<span class="nt">&lt;/year&gt;</span>
+        <span class="nt">&lt;gdppc&gt;</span>141100<span class="nt">&lt;/gdppc&gt;</span>
+        <span class="nt">&lt;neighbor</span> <span class="na">name=</span><span class="s">&quot;Austria&quot;</span> <span class="na">direction=</span><span class="s">&quot;E&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;neighbor</span> <span class="na">name=</span><span class="s">&quot;Switzerland&quot;</span> <span class="na">direction=</span><span class="s">&quot;W&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/country&gt;</span>
+    <span class="nt">&lt;country</span> <span class="na">name=</span><span class="s">&quot;Singapore&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;rank</span> <span class="na">updated=</span><span class="s">&quot;yes&quot;</span><span class="nt">&gt;</span>5<span class="nt">&lt;/rank&gt;</span>
+        <span class="nt">&lt;year&gt;</span>2011<span class="nt">&lt;/year&gt;</span>
+        <span class="nt">&lt;gdppc&gt;</span>59900<span class="nt">&lt;/gdppc&gt;</span>
+        <span class="nt">&lt;neighbor</span> <span class="na">name=</span><span class="s">&quot;Malaysia&quot;</span> <span class="na">direction=</span><span class="s">&quot;N&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/country&gt;</span>
+    <span class="nt">&lt;country</span> <span class="na">name=</span><span class="s">&quot;Panama&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;rank</span> <span class="na">updated=</span><span class="s">&quot;yes&quot;</span><span class="nt">&gt;</span>69<span class="nt">&lt;/rank&gt;</span>
+        <span class="nt">&lt;year&gt;</span>2011<span class="nt">&lt;/year&gt;</span>
+        <span class="nt">&lt;gdppc&gt;</span>13600<span class="nt">&lt;/gdppc&gt;</span>
+        <span class="nt">&lt;neighbor</span> <span class="na">name=</span><span class="s">&quot;Costa Rica&quot;</span> <span class="na">direction=</span><span class="s">&quot;W&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;neighbor</span> <span class="na">name=</span><span class="s">&quot;Colombia&quot;</span> <span class="na">direction=</span><span class="s">&quot;E&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/country&gt;</span>
+<span class="nt">&lt;/data&gt;</span>
+</pre></div>
+
+
+<h2 id="xml_1">操作xml</h2>
+<p>xml协议在各个语言里的都 是支持的，在python中可以用以下模块操作xml </p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">xml</span><span class="p">.</span><span class="n">etree</span><span class="p">.</span><span class="n">ElementTree</span> <span class="n">as</span> <span class="n">ET</span>
+
+<span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">&quot;xmltest.xml&quot;</span><span class="p">)</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">tree</span><span class="p">.</span><span class="n">getroot</span><span class="p">()</span>
+<span class="n">print</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">tag</span><span class="p">)</span>
+
+<span class="cp">#遍历xml文档</span>
+<span class="k">for</span> <span class="n">child</span> <span class="n">in</span> <span class="n">root</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">child</span><span class="p">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">child</span><span class="p">.</span><span class="n">attrib</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">child</span><span class="o">:</span>
+        <span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">tag</span><span class="p">,</span><span class="n">i</span><span class="p">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="cp">#只遍历year 节点</span>
+<span class="k">for</span> <span class="n">node</span> <span class="n">in</span> <span class="n">root</span><span class="p">.</span><span class="n">iter</span><span class="p">(</span><span class="err">&#39;</span><span class="n">year</span><span class="err">&#39;</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">tag</span><span class="p">,</span><span class="n">node</span><span class="p">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="xml_2">修改和删除xml</h2>
+<p>修改和删除xml文档内容</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">xml</span><span class="p">.</span><span class="n">etree</span><span class="p">.</span><span class="n">ElementTree</span> <span class="n">as</span> <span class="n">ET</span>
+
+<span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">&quot;xmltest.xml&quot;</span><span class="p">)</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">tree</span><span class="p">.</span><span class="n">getroot</span><span class="p">()</span>
+
+<span class="cp">#修改</span>
+<span class="k">for</span> <span class="n">node</span> <span class="n">in</span> <span class="n">root</span><span class="p">.</span><span class="n">iter</span><span class="p">(</span><span class="err">&#39;</span><span class="n">year</span><span class="err">&#39;</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">new_year</span> <span class="o">=</span> <span class="kt">int</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">text</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">node</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">str</span><span class="p">(</span><span class="n">new_year</span><span class="p">)</span>
+    <span class="n">node</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;updated&quot;</span><span class="p">,</span><span class="s">&quot;yes&quot;</span><span class="p">)</span>
+
+<span class="n">tree</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;xmltest.xml&quot;</span><span class="p">)</span>
+
+
+<span class="cp">#删除node</span>
+<span class="k">for</span> <span class="n">country</span> <span class="n">in</span> <span class="n">root</span><span class="p">.</span><span class="n">findall</span><span class="p">(</span><span class="err">&#39;</span><span class="n">country</span><span class="err">&#39;</span><span class="p">)</span><span class="o">:</span>
+   <span class="n">rank</span> <span class="o">=</span> <span class="kt">int</span><span class="p">(</span><span class="n">country</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="err">&#39;</span><span class="n">rank</span><span class="err">&#39;</span><span class="p">).</span><span class="n">text</span><span class="p">)</span>
+   <span class="k">if</span> <span class="n">rank</span> <span class="o">&gt;</span> <span class="mi">50</span><span class="o">:</span>
+     <span class="n">root</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+
+<span class="n">tree</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="err">&#39;</span><span class="n">output</span><span class="p">.</span><span class="n">xml</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="xml_3">创建xml</h2>
+<p>自己创建xml文档</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">xml</span><span class="p">.</span><span class="n">etree</span><span class="p">.</span><span class="n">ElementTree</span> <span class="n">as</span> <span class="n">ET</span>
+
+
+<span class="n">new_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="p">.</span><span class="n">Element</span><span class="p">(</span><span class="s">&quot;namelist&quot;</span><span class="p">)</span>
+<span class="n">name</span> <span class="o">=</span> <span class="n">ET</span><span class="p">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">new_xml</span><span class="p">,</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;enrolled&quot;</span><span class="o">:</span><span class="s">&quot;yes&quot;</span><span class="p">})</span>
+<span class="n">age</span> <span class="o">=</span> <span class="n">ET</span><span class="p">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;checked&quot;</span><span class="o">:</span><span class="s">&quot;no&quot;</span><span class="p">})</span>
+<span class="n">sex</span> <span class="o">=</span> <span class="n">ET</span><span class="p">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="s">&quot;sex&quot;</span><span class="p">)</span>
+<span class="n">sex</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="err">&#39;</span><span class="mi">33</span><span class="err">&#39;</span>
+<span class="n">name2</span> <span class="o">=</span> <span class="n">ET</span><span class="p">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">new_xml</span><span class="p">,</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;enrolled&quot;</span><span class="o">:</span><span class="s">&quot;no&quot;</span><span class="p">})</span>
+<span class="n">age</span> <span class="o">=</span> <span class="n">ET</span><span class="p">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">name2</span><span class="p">,</span><span class="s">&quot;age&quot;</span><span class="p">)</span>
+<span class="n">age</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="err">&#39;</span><span class="mi">19</span><span class="err">&#39;</span>
+
+<span class="n">et</span> <span class="o">=</span> <span class="n">ET</span><span class="p">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">new_xml</span><span class="p">)</span> <span class="err">#生成文档对象</span>
+<span class="n">et</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;test.xml&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">,</span><span class="n">xml_declaration</span><span class="o">=</span><span class="n">True</span><span class="p">)</span>
+
+<span class="n">ET</span><span class="p">.</span><span class="n">dump</span><span class="p">(</span><span class="n">new_xml</span><span class="p">)</span> <span class="err">#打印生成的格式</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

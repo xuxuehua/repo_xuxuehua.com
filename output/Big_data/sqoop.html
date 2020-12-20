@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>sqoop 数据导入导出 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Big_data">Big_data</a>&nbsp;&#187;&nbsp;sqoop 数据导入导出
+    <span class="updated">Page Updated&nbsp;
+      2019-07-25 08:45
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">sqoop 数据导入导出</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#sqoop">Sqoop</a><ul>
+<li><a href="#_1">操作</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="sqoop">Sqoop</h1>
+<p>Sqoop是一个数据库批量导入导出工具，可以将关系数据库的数据批量导入到Hadoop，也可以将Hadoop的数据导出到关系数据库。</p>
+<h2 id="_1">操作</h2>
+<p>Sqoop数据导入命令示例如下。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sqoop</span> <span class="n">import</span> <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="o">:</span><span class="n">mysql</span><span class="o">:</span><span class="c1">//localhost/db --username foo --password --table TEST</span>
+</pre></div>
+
+
+<p>你需要指定数据库URL、用户名、密码、表名，就可以将数据表的数据导入到Hadoop。</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

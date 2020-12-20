@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>upgrade - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Nginx">Nginx</a>&nbsp;&#187;&nbsp;upgrade
+    <span class="updated">Page Updated&nbsp;
+      2019-01-01 14:59
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">upgrade</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">热升级</a><ul>
+<li><a href="#_2">流程</a></li>
+<li><a href="#_3">特点</a></li>
+<li><a href="#worker">优雅关闭worker进程</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">热升级</h1>
+<h2 id="_2">流程</h2>
+<div class="hlcode"><pre><span class="mf">1.</span> <span class="err">将就的</span><span class="n">Nginx</span><span class="err">文件换成新的</span><span class="n">Nginx</span><span class="err">文件（注意备份）</span>
+<span class="mf">2.</span> <span class="err">向</span><span class="n">master</span> <span class="err">进程发送</span><span class="n">USR2</span><span class="err">信号</span>
+<span class="mf">3.</span> <span class="n">master</span><span class="err">进程修改</span><span class="n">pid</span><span class="err">文件名，加上后缀</span><span class="p">.</span><span class="n">oldbin</span>
+<span class="mf">4.</span> <span class="n">master</span><span class="err">进程用新</span><span class="n">Nginx</span><span class="err">文件启动新</span><span class="n">master</span><span class="err">进程</span>
+<span class="mf">5.</span> <span class="err">向老</span><span class="n">master</span><span class="err">进程发送</span><span class="n">WINCH</span><span class="err">信号，关闭老</span><span class="n">worker</span>
+<span class="mf">6.</span> <span class="err">回滚，向老</span><span class="n">master</span><span class="err">发送</span><span class="n">HUP</span><span class="err">信号，向新</span><span class="n">master</span> <span class="err">发送</span><span class="n">QUIT</span><span class="err">信号</span>
+</pre></div>
+
+
+<h2 id="_3">特点</h2>
+<p>当新老master同时存在的时候，他们都可以接受请求，老master会把listen的句柄通过epoll_ctl从epoll中移除，不再监听80或者443端口</p>
+<h2 id="worker">优雅关闭worker进程</h2>
+<div class="hlcode"><pre><span class="mf">1.</span> <span class="err">设置定时器</span> <span class="n">worker_shutdown_timeout</span>
+<span class="mf">2.</span> <span class="err">关闭监听句柄</span>
+<span class="mf">3.</span> <span class="err">关闭空闲连接</span>
+<span class="mf">4.</span> <span class="err">在循环中等待全部连接关闭</span> <span class="err">（时间可能很长）</span>
+<span class="mf">5.</span> <span class="err">退出进程</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

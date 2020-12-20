@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>kube-proxy - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Kubernetes">Kubernetes</a>&nbsp;&#187;&nbsp;kube-proxy
+    <span class="updated">Page Updated&nbsp;
+      2019-02-28 19:23
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">kube-proxy</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#kube-proxy">Kube-proxy</a><ul>
+<li><a href="#_1">特点</a></li>
+<li><a href="#_2">模式</a><ul>
+<li><a href="#user-space">User space (常用)</a></li>
+<li><a href="#iptables">iptables</a></li>
+<li><a href="#ipvs">ipvs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="kube-proxy">Kube-proxy</h1>
+<p>需要连接至Master节点的API_Server进行交互，获取service 相关的资源变动状态</p>
+<p>service资源发生的变动，kube-proxy都会将其转化为调动service后端pod节点上的iptables或ipvs规则</p>
+<h2 id="_1">特点</h2>
+<p>在所有worker nodes上运行</p>
+<p>反应每一个node的服务状态，以及简单的round-robin 转发到后端服务</p>
+<h2 id="_2">模式</h2>
+<h3 id="user-space">User space (常用)</h3>
+<h3 id="iptables">iptables</h3>
+<h3 id="ipvs">ipvs</h3>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>spark_on_localhost - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Spark">Spark</a>&nbsp;&#187;&nbsp;spark_on_localhost
+    <span class="updated">Page Updated&nbsp;
+      2020-07-18 12:33
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">spark_on_localhost</div>
+
+  <p>[toc]</p>
+<h1 id="spark-standalone">Spark Standalone</h1>
+<p>在Spark Standalone中，Spark集群自己管理资源与调度，在这个模式中，Spark客户端依然存在，作业通过Spark客户端提交到Spark集群</p>
+<p><img alt="image-20200718123427183" src="spark_on_localhost.assets/image-20200718123427183.png" /></p>
+<p>在Mesos与Standalone模式中，Driver承担了计算任务调度与资源调度的工作，而在YARN中，Driver只承担了计算任务调度的工作，其余工作由Application Master完成。造成差异的原因在于，Mesos与Standalone模式可以被认为是Spark原生模式，核心只是ClusterManager实现不同，其余设计思路都高度一致。但在YARN中，就必须按照YARN的规则来实现，对于一个YARN应用来说，Application Master是不可或缺的</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

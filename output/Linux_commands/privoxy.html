@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>privoxy - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;privoxy
+    <span class="updated">Page Updated&nbsp;
+      2019-01-14 17:22
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">privoxy</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#privoxy">privoxy</a><ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#configuration">Configuration</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="privoxy">privoxy</h1>
+<h2 id="installation">Installation</h2>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">apt</span> <span class="n">install</span> <span class="n">privoxy</span>
+</pre></div>
+
+
+<h2 id="configuration">Configuration</h2>
+<div class="hlcode"><pre><span class="n">listen</span><span class="o">-</span><span class="n">address</span>  <span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">8118</span>
+<span class="n">listen</span><span class="o">-</span><span class="n">address</span>  <span class="p">[</span><span class="o">::</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span><span class="mi">8118</span>
+
+<span class="n">forward</span><span class="o">-</span><span class="n">socks5t</span>   <span class="o">/</span>               <span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">1080</span> <span class="p">.</span>
+</pre></div>
+
+
+<p><code>.bash_profile</code></p>
+<div class="hlcode"><pre><span class="kd">function</span> <span class="nx">proxy_off</span><span class="p">(){</span>
+    <span class="nx">unset</span> <span class="nx">http_proxy</span>
+    <span class="nx">unset</span> <span class="nx">https_proxy</span>
+    <span class="nx">echo</span> <span class="o">-</span><span class="nx">e</span> <span class="s2">&quot;proxy_off&quot;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">proxy_on</span><span class="p">()</span> <span class="p">{</span>
+    <span class="err">/usr/local/sbin/privoxy /usr/local/etc/privoxy/config</span>
+    <span class="kr">export</span> <span class="nx">no_proxy</span><span class="o">=</span><span class="s2">&quot;localhost,127.0.0.1,localaddress,.localdomain.com&quot;</span>
+    <span class="kr">export</span> <span class="nx">http_proxy</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:8118&quot;</span>
+    <span class="kr">export</span> <span class="nx">https_proxy</span><span class="o">=</span><span class="nx">$http_proxy</span>
+    <span class="nx">echo</span> <span class="o">-</span><span class="nx">e</span> <span class="s2">&quot;proxy_on&quot;</span>
+<span class="p">}</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

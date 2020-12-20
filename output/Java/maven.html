@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>maven - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java">Java</a>&nbsp;&#187;&nbsp;maven
+    <span class="updated">Page Updated&nbsp;
+      2020-02-01 12:02
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">maven</div>
+
+  <p>[toc]</p>
+<h1 id="maven">Maven</h1>
+<p>管理Java项目构建和依赖管理工具</p>
+<p>使用maven后每个jar包只在本地仓库中保存一份，需要jar包的工程只需要维护一个文本形式的jar包的引用</p>
+<p>maven会自动把当前jar包所依赖的其他所有jar包全部导入进来</p>
+<h2 id="_1">特点</h2>
+<p>maven的核心仅仅定义了抽象的生命周期，具体的任务都是交由插件完成的</p>
+<h2 id="_2">安装</h2>
+<p>依赖JDK，需要保证Java安装完成</p>
+<p>配置环境变量</p>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="n">http</span><span class="o">:</span><span class="c1">//mirrors.tuna.tsinghua.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz</span>
+
+<span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span>
+<span class="n">export</span> <span class="n">M2_HOME</span><span class="o">=/</span><span class="n">root</span><span class="o">/</span><span class="n">java_web</span><span class="o">/</span><span class="n">apache</span><span class="o">-</span><span class="n">maven</span><span class="o">-</span><span class="mf">3.6.3</span>
+<span class="n">PATH</span><span class="o">=</span><span class="err">$</span><span class="n">PATH</span><span class="o">:</span><span class="err">$</span><span class="n">M2_HOME</span><span class="o">/</span><span class="n">bin</span>
+</pre></div>
+
+
+<h1 id="pomxml">pom.xml</h1>
+<p>maven依据这个文件进行管理</p>
+<h2 id="groupid">groupId 组织的域名</h2>
+<p>项目唯一标识符部分，不能重复</p>
+<p>团体的标志，一般使用公司或者组织的域名倒序+当前项目名称</p>
+<div class="hlcode"><pre><span class="nt">&lt;groupId&gt;</span>com.apache<span class="nt">&lt;/groupId&gt;</span>
+</pre></div>
+
+
+<h2 id="artifactid">artifactId 项目标识符</h2>
+<p>项目唯一标识符部分，模块名称，不能重复</p>
+<p>不要加点</p>
+<div class="hlcode"><pre><span class="nt">&lt;artifactId&gt;</span>helloworld<span class="nt">&lt;/artifactId&gt;</span>
+</pre></div>
+
+
+<h2 id="version">version 版本</h2>
+<p>项目唯一标识符部分，不能重复</p>
+<p>可以添加SNAPSHOT表示快照版本</p>
+<div class="hlcode"><pre><span class="nt">&lt;version&gt;</span>1.0.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+</pre></div>
+
+
+<h2 id="gav">文件查找gav</h2>
+<p>以gav三个向量加起来可以查找到对应的jar包</p>
+<div class="hlcode"><pre><span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">rxu</span><span class="o">/</span><span class="p">.</span><span class="n">m2</span><span class="o">/</span><span class="n">repository</span><span class="o">/</span><span class="n">org</span><span class="o">/</span><span class="n">springframework</span><span class="o">/</span><span class="n">boot</span><span class="o">/</span><span class="n">spring</span><span class="o">-</span><span class="n">boot</span><span class="o">-</span><span class="n">starter</span><span class="o">-</span><span class="n">json</span><span class="o">/</span><span class="mf">2.1.12</span><span class="p">.</span><span class="n">RELEASE</span><span class="o">/</span><span class="n">spring</span><span class="o">-</span><span class="n">boot</span><span class="o">-</span><span class="n">starter</span><span class="o">-</span><span class="n">json</span><span class="o">-</span><span class="mf">2.1.12</span><span class="p">.</span><span class="n">RELEASE</span><span class="o">-</span><span class="n">javadoc</span><span class="p">.</span><span class="n">jar</span>
+</pre></div>
+
+
+<h2 id="packaging">packaging 类型</h2>
+<p>项目的一个属性</p>
+<div class="hlcode"><pre><span class="nt">&lt;packaging&gt;</span>war<span class="nt">&lt;/packaging&gt;</span>
+</pre></div>
+
+
+<h2 id="dependencymanagement">dependencyManagement 依赖管理</h2>
+<h3 id="dependencies">dependencies 依赖的项目</h3>
+<h2 id="parent">parent 父工程</h2>
+<div class="hlcode"><pre><span class="nt">&lt;parent&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>com.xurick.maven<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>Parent<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>1.0.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+
+  <span class="c">&lt;!-- 指定从当前子工程的pom.xml文件出发，查找到父工程的pom.xml的路径 --&gt;</span>
+  <span class="nt">&lt;relativePath&gt;</span>../Parent/pom.xml<span class="nt">&lt;/relativePath&gt;</span>
+<span class="nt">&lt;/parent&gt;</span>
+</pre></div>
+
+
+<blockquote>
+<p>如果子工程的groupId和version和父工程重复，可以删除掉</p>
+</blockquote>
+<h2 id="modules">modules 聚合</h2>
+<p>聚合之后可以批量执行maven工程的安装，清理工作</p>
+<p>指定模块工程的相对路径即可</p>
+<div class="hlcode"><pre><span class="nt">&lt;modules&gt;</span>
+  <span class="nt">&lt;module&gt;</span>../Module1<span class="nt">&lt;/module&gt;</span>
+  <span class="nt">&lt;module&gt;</span>../Module2<span class="nt">&lt;/module&gt;</span>
+<span class="nt">&lt;/modules&gt;</span>
+</pre></div>
+
+
+<h1 id="maven_1">Maven 生命周期</h1>
+<p>maven的生命周期与插件的目标target相互绑定，以完成某个具体的构建任务</p>
+<h2 id="clean-lifecycle">Clean Lifecycle</h2>
+<p>在进行真正的构建之前进行的一些清理工作</p>
+<h2 id="default-lifecycle">Default Lifecycle （核心）</h2>
+<p>构建的核心部分，编译，测试，打包，安装，部署等</p>
+<p>重要的常用阶段</p>
+<div class="hlcode"><pre><span class="n">compile</span> <span class="err">编译项目源代码</span>
+
+<span class="n">test</span><span class="o">-</span><span class="n">compile</span> <span class="err">编译测试源代码</span>
+
+<span class="n">test</span> <span class="err">使用合适的单元测试框架运行测试，这些测试代码不会被打包或者部署</span>
+
+<span class="n">package</span> <span class="err">接受编译好的代码，打包可发布的格式，如</span><span class="n">jar</span>
+
+<span class="n">install</span> <span class="err">将包安装至本地仓库，以让其他项目依赖</span>
+</pre></div>
+
+
+<h2 id="site-lifecycle">Site Lifecycle</h2>
+<p>生成项目报告，站点，发布站点</p>
+<h1 id="maven_2">Maven 仓库</h1>
+<p>maven核心程序只负责宏观调度， 默认会到本地仓库中查找插件 <code>~/.m2/repository</code></p>
+<p>如果本地仓库没有，会从远程中央仓库下载  </p>
+<h2 id="localrepository">localRepository</h2>
+<p>设置仓库位置</p>
+<div class="hlcode"><pre><span class="nx">vim</span> <span class="p">/</span><span class="nb">root</span><span class="p">/</span><span class="nx">java_web</span><span class="p">/</span><span class="nx">apache</span><span class="na">-maven</span><span class="o">-</span><span class="mf">3.6.3</span><span class="p">/</span><span class="nx">conf</span><span class="p">/</span><span class="nx">setting.xml</span>
+
+
+<span class="o">&lt;</span><span class="nx">localRepository</span><span class="o">&gt;/</span><span class="nx">opt</span><span class="o">&lt;/</span><span class="nx">localRepository</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h1 id="maven_3">Maven 文件类型</h1>
+<p>配置pom文件的类型</p>
+<h2 id="jar">jar</h2>
+<p>java的包</p>
+<h2 id="war">war</h2>
+<p>web的包</p>
+<h2 id="pom">pom</h2>
+<p>父程序都是pom包</p>
+<p>下面可以继续打jar，war 或pom</p>
+<h1 id="_3">基本命令</h1>
+<div class="hlcode"><pre><span class="n">mvn</span> <span class="n">archetype</span><span class="o">:</span><span class="n">generate</span> <span class="err">使用模板生成项目</span>
+<span class="n">mvn</span> <span class="n">compile</span> <span class="err">编译源代码</span>
+<span class="n">mvn</span> <span class="n">test</span> <span class="err">单元测试</span>
+<span class="n">mvn</span> <span class="n">package</span> <span class="err">打包</span><span class="n">war</span>
+<span class="n">mvn</span> <span class="n">deploy</span>
+<span class="n">mvn</span> <span class="n">site</span> <span class="err">生成项目相关站点，在线文档</span>
+<span class="n">mvn</span> <span class="n">clean</span> <span class="err">清理</span>
+<span class="n">mvn</span> <span class="n">install</span> <span class="err">安装本地仓库</span>
+</pre></div>
+
+
+<h2 id="example">example</h2>
+<div class="hlcode"><pre><span class="n">mvn</span> <span class="n">archetype</span><span class="o">:</span><span class="n">generate</span> <span class="o">-</span><span class="n">DgroupId</span><span class="o">=</span><span class="n">com</span><span class="p">.</span><span class="n">netease</span><span class="p">.</span><span class="n">restaurant</span> <span class="o">-</span><span class="n">DartifactId</span><span class="o">=</span><span class="n">Restaurant</span> <span class="o">-</span><span class="n">Dpackage</span><span class="o">=</span><span class="n">com</span><span class="p">.</span><span class="n">netease</span> <span class="o">-</span><span class="n">Dversion</span><span class="o">=</span><span class="mf">1.0.0</span><span class="o">-</span><span class="n">SNAPSHOT</span> <span class="o">-</span><span class="n">DarchetypeArtifactId</span><span class="o">=</span><span class="n">maven</span><span class="o">-</span><span class="n">archetype</span><span class="o">-</span><span class="n">webapp</span> 
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

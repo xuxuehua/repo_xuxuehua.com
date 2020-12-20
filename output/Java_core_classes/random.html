@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>random - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java_core_classes">Java_core_classes</a>&nbsp;&#187;&nbsp;random
+    <span class="updated">Page Updated&nbsp;
+      2019-10-21 22:06
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">random</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#random">Random</a><ul>
+<li><a href="#_1">指定随机数种子</a></li>
+</ul>
+</li>
+<li><a href="#securerandom">SecureRandom</a></li>
+</ul>
+</div>
+<h1 id="random">Random</h1>
+<p><code>Random</code>用来创建伪随机数。所谓伪随机数，是指只要给定一个初始的种子，产生的随机数序列是完全一样的。</p>
+<p>要生成一个随机数，可以用<code>nextInt()</code>、<code>nextLong()</code>、<code>nextFloat()</code>、<code>nextDouble()</code></p>
+<div class="hlcode"><pre><span class="n">Random</span> <span class="n">r</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Random</span><span class="p">();</span>
+<span class="n">r</span><span class="p">.</span><span class="n">nextInt</span><span class="p">();</span> <span class="c1">// 2071575453,每次都不一样</span>
+<span class="n">r</span><span class="p">.</span><span class="n">nextInt</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span> <span class="c1">// 5,生成一个[0,10)之间的int</span>
+<span class="n">r</span><span class="p">.</span><span class="n">nextLong</span><span class="p">();</span> <span class="c1">// 8811649292570369305,每次都不一样</span>
+<span class="n">r</span><span class="p">.</span><span class="n">nextFloat</span><span class="p">();</span> <span class="c1">// 0.54335...生成一个[0,1)之间的float</span>
+<span class="n">r</span><span class="p">.</span><span class="n">nextDouble</span><span class="p">();</span> <span class="c1">// 0.3716...生成一个[0,1)之间的double</span>
+</pre></div>
+
+
+<h2 id="_1">指定随机数种子</h2>
+<p>每次运行程序，生成的随机数都是不同的，没看出<em>伪随机数</em>的特性来。</p>
+<p>这是因为我们创建<code>Random</code>实例时，如果不给定种子，就使用系统当前时间戳作为种子，因此每次运行时，种子不同，得到的伪随机数序列就不同。</p>
+<p>如果我们在创建<code>Random</code>实例时指定一个种子，就会得到完全确定的随机数序列</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">util</span><span class="p">.</span><span class="n">Random</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Random</span> <span class="n">r</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Random</span><span class="p">(</span><span class="mi">12345</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="mi">10</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">nextInt</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">51</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> 
+</pre></div>
+
+
+<h1 id="securerandom">SecureRandom</h1>
+<p>有伪随机数，就有真随机数。实际上真正的真随机数只能通过量子力学原理来获取，而我们想要的是一个不可预测的安全的随机数，<code>SecureRandom</code>就是用来创建安全的随机数的：</p>
+<div class="hlcode"><pre><span class="n">SecureRandom</span> <span class="n">sr</span> <span class="o">=</span> <span class="n">new</span> <span class="n">SecureRandom</span><span class="p">();</span>
+<span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">sr</span><span class="p">.</span><span class="n">nextInt</span><span class="p">(</span><span class="mi">100</span><span class="p">));</span>
+</pre></div>
+
+
+<p><code>SecureRandom</code>无法指定种子，它使用RNG（random number generator）算法。JDK的<code>SecureRandom</code>实际上有多种不同的底层实现，有的使用安全随机种子加上伪随机数算法来产生安全的随机数，有的使用真正的随机数生成器。实际使用的时候，可以优先获取高强度的安全随机数生成器，如果没有提供，再使用普通等级的安全随机数生成器</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">security</span><span class="p">.</span><span class="n">NoSuchAlgorithmException</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">security</span><span class="p">.</span><span class="n">SecureRandom</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">util</span><span class="p">.</span><span class="n">Arrays</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">SecureRandom</span> <span class="n">sr</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="n">try</span> <span class="p">{</span>
+            <span class="n">sr</span> <span class="o">=</span> <span class="n">SecureRandom</span><span class="p">.</span><span class="n">getInstanceStrong</span><span class="p">();</span> <span class="c1">// 获取高强度安全随机数生成器</span>
+        <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">NoSuchAlgorithmException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">sr</span> <span class="o">=</span> <span class="n">new</span> <span class="n">SecureRandom</span><span class="p">();</span> <span class="c1">// 获取普通的安全随机数生成器</span>
+        <span class="p">}</span>
+        <span class="n">byte</span><span class="p">[]</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">new</span> <span class="n">byte</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span>
+        <span class="n">sr</span><span class="p">.</span><span class="n">nextBytes</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span> <span class="c1">// 用安全随机数填充buffer</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">Arrays</span><span class="p">.</span><span class="n">toString</span><span class="p">(</span><span class="n">buffer</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="o">-</span><span class="mi">74</span><span class="p">,</span> <span class="mi">76</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">126</span><span class="p">,</span> <span class="o">-</span><span class="mi">47</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="o">-</span><span class="mi">68</span><span class="p">,</span> <span class="mi">122</span><span class="p">,</span> <span class="mi">94</span><span class="p">,</span> <span class="o">-</span><span class="mi">82</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="o">-</span><span class="mi">17</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="o">-</span><span class="mi">52</span><span class="p">]</span>
+</pre></div>
+
+
+<p><code>SecureRandom</code>的安全性是通过操作系统提供的安全的随机种子来生成随机数。这个种子是通过CPU的热噪声、读写磁盘的字节、网络流量等各种随机事件产生的“熵”。</p>
+<p>在密码学中，安全的随机数非常重要。如果使用不安全的伪随机数，所有加密体系都将被攻破。因此，时刻牢记必须使用<code>SecureRandom</code>来产生安全的随机数</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

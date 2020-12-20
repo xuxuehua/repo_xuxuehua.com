@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>mybatis - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java">Java</a>&nbsp;&#187;&nbsp;mybatis
+    <span class="updated">Page Updated&nbsp;
+      2020-02-06 00:03
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">mybatis</div>
+
+  <p>[toc]</p>
+<h1 id="orm">ORM</h1>
+<p>Object Relation Mapping</p>
+<p>持久化类与数据库表之间的映射关系</p>
+<h1 id="mybatis">Mybatis</h1>
+<p>实现对象和二元表之间的转换</p>
+<p>本质上是一个ORM框架，但不同于通过Java 对象遍历数据库表之间的对应关系，而是建立对象的操作方法到SQL语句之间的关系</p>
+<p>使用XML或者注解配置</p>
+<p>底层基于JDBC实现数据库访问</p>
+<h2 id="_1">特点</h2>
+<p>优势：门槛低，SQL优化</p>
+<p>劣势：需要自己编写大量SQL，数据库移植性差</p>
+<h2 id="_2">功能架构</h2>
+<p><img alt="image-20200208204433306" src="mybatis.assets/image-20200208204433306.png" /></p>
+<h2 id="_3">工作流机制</h2>
+<p>根据XML或者注解加载SQL语句，参数映射，结果映射到内存中</p>
+<p>应用程序调用API传入的参数和SQL ID</p>
+<p>MyBatis 自动生成SQL语句完成数据库访问，转换执行结果返回应用程序</p>
+<p><img alt="image-20200208204632176" src="mybatis.assets/image-20200208204632176.png" /></p>
+<h1 id="mybatis_1">MyBatis安装</h1>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="n">mybatis</span><span class="o">-</span><span class="mf">3.5.4</span><span class="p">.</span><span class="n">zip</span>
+</pre></div>
+
+
+<h1 id="resultmap">ResultMap</h1>
+<p>MyBatis中强大的元素，可以实现复杂查询结果到负载对象关联关系的转化</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

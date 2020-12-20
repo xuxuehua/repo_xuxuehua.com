@@ -1,0 +1,272 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>promise - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Javascript">Javascript</a>&nbsp;&#187;&nbsp;promise
+    <span class="updated">Page Updated&nbsp;
+      2020-05-10 19:26
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">promise</div>
+
+  <p>[toc]</p>
+<h1 id="promise">Promise 对象</h1>
+<p>在JavaScript的世界中，所有代码都是单线程执行的。</p>
+<p>由于这个“缺陷”，导致JavaScript的所有网络操作，浏览器事件，都必须是异步执行。</p>
+<p>异步执行可以用回调函数实现：</p>
+<div class="hlcode"><pre><span class="kd">function</span> <span class="nx">callback</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Done&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;before setTimeout()&#39;</span><span class="p">);</span>
+<span class="nx">setTimeout</span><span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="mi">1000</span><span class="p">);</span> <span class="c1">// 1秒钟后调用callback函数</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;after setTimeout()&#39;</span><span class="p">);</span>
+
+<span class="o">&gt;</span>
+<span class="nx">before</span> <span class="nx">setTimeout</span><span class="p">()</span>
+<span class="nx">after</span> <span class="nx">setTimeout</span><span class="p">()</span>
+<span class="p">(</span><span class="err">等待</span><span class="mi">1</span><span class="err">秒后</span><span class="p">)</span>
+<span class="nx">Done</span>
+</pre></div>
+
+
+<p>可见，异步操作会在将来的某个时间点触发一个函数调用。</p>
+<p>AJAX就是典型的异步操作</p>
+<div class="hlcode"><pre><span class="nx">request</span><span class="p">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">===</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="mi">200</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">success</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">responseText</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">fail</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">status</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>把回调函数<code>success(request.responseText)</code>和<code>fail(request.status)</code>写到一个AJAX操作里很正常，但是不好看，而且不利于代码复用。</p>
+<p>有没有更好的写法？比如写成这样：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">ajax</span> <span class="o">=</span> <span class="n">ajaxGet</span><span class="p">(</span><span class="err">&#39;</span><span class="n">http</span><span class="o">:</span><span class="c1">//...&#39;);</span>
+<span class="n">ajax</span><span class="p">.</span><span class="n">ifSuccess</span><span class="p">(</span><span class="n">success</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">ifFail</span><span class="p">(</span><span class="n">fail</span><span class="p">);</span>
+</pre></div>
+
+
+<p>这种链式写法的好处在于，先统一执行AJAX逻辑，不关心如何处理结果，然后，根据结果是成功还是失败，在将来的某个时候调用<code>success</code>函数或<code>fail</code>函数。</p>
+<h2 id="hello-world">Hello World</h2>
+<p>生成一个0-2之间的随机数，如果小于1，则等待一段时间后返回成功，否则返回失败：</p>
+<div class="hlcode"><pre><span class="kd">function</span> <span class="nx">test</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">timeOut</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;set timeout to: &#39;</span> <span class="o">+</span> <span class="nx">timeOut</span> <span class="o">+</span> <span class="s1">&#39; seconds.&#39;</span><span class="p">);</span>
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">timeOut</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;call resolve()...&#39;</span><span class="p">);</span>
+            <span class="nx">resolve</span><span class="p">(</span><span class="s1">&#39;200 OK&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;call reject()...&#39;</span><span class="p">);</span>
+            <span class="nx">reject</span><span class="p">(</span><span class="s1">&#39;timeout in &#39;</span> <span class="o">+</span> <span class="nx">timeOut</span> <span class="o">+</span> <span class="s1">&#39; seconds.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span> <span class="nx">timeOut</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p>这个<code>test()</code>函数有两个参数，这两个参数都是函数，如果执行成功，我们将调用<code>resolve('200 OK')</code>，如果执行失败，我们将调用<code>reject('timeout in ' + timeOut + ' seconds.')</code>。可以看出，<code>test()</code>函数只关心自身的逻辑，并不关心具体的<code>resolve</code>和<code>reject</code>将如何处理结果。</p>
+</blockquote>
+<p>有了执行函数，我们就可以用一个Promise对象来执行它，并在将来某个时刻获得成功或失败的结果：</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">p1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="nx">test</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">p2</span> <span class="o">=</span> <span class="nx">p1</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;成功：&#39;</span> <span class="o">+</span> <span class="nx">result</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="kd">var</span> <span class="nx">p3</span> <span class="o">=</span> <span class="nx">p2</span><span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;失败：&#39;</span> <span class="o">+</span> <span class="nx">reason</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>变量<code>p1</code>是一个Promise对象，它负责执行<code>test</code>函数。由于<code>test</code>函数在内部是异步执行的，当<code>test</code>函数执行成功时，我们告诉Promise对象：</p>
+<div class="hlcode"><pre><span class="c1">// 如果成功，执行这个函数：</span>
+<span class="n">p1</span><span class="p">.</span><span class="n">then</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(&#39;</span><span class="err">成功：</span><span class="p">&#39;</span> <span class="o">+</span> <span class="n">result</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>当<code>test</code>函数执行失败时，我们告诉Promise对象：</p>
+<div class="hlcode"><pre><span class="nx">p2</span><span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;失败：&#39;</span> <span class="o">+</span> <span class="nx">reason</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>Promise对象可以串联起来，所以上述代码可以简化为：</p>
+<div class="hlcode"><pre><span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="nx">test</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;成功：&#39;</span> <span class="o">+</span> <span class="nx">result</span><span class="p">);</span>
+<span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">reason</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;失败：&#39;</span> <span class="o">+</span> <span class="nx">reason</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<h2 id="_1">优点</h2>
+<p>Promise还可以做更多的事情，比如，有若干个异步任务，需要先做任务1，如果成功后再做任务2，任何任务失败则不再继续并执行错误处理函数。</p>
+<p>要串行执行这样的异步任务，不用Promise需要写一层一层的嵌套代码。有了Promise，我们只需要简单地写：</p>
+<div class="hlcode"><pre><span class="n">job1</span><span class="p">.</span><span class="n">then</span><span class="p">(</span><span class="n">job2</span><span class="p">).</span><span class="n">then</span><span class="p">(</span><span class="n">job3</span><span class="p">).</span><span class="n">catch</span><span class="p">(</span><span class="n">handleError</span><span class="p">);</span>
+</pre></div>
+
+
+<p>其中，<code>job1</code>、<code>job2</code>和<code>job3</code>都是Promise对象。</p>
+<p>下面的例子演示了如何串行执行一系列需要异步计算获得结果的任务：</p>
+<div class="hlcode"><pre><span class="s1">&#39;use strict&#39;</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">logging</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;test-promise2-log&#39;</span><span class="p">);</span>
+<span class="k">while</span> <span class="p">(</span><span class="nx">logging</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">logging</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">logging</span><span class="p">.</span><span class="nx">children</span><span class="cp">[</span><span class="nx">logging.children.length</span> <span class="o">-</span> <span class="mi">1</span><span class="cp">]</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">log</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">);</span>
+    <span class="nx">p</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">s</span><span class="p">;</span>
+    <span class="nx">logging</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">p</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// 0.5秒后返回input*input的计算结果:</span>
+<span class="kd">function</span> <span class="nx">multiply</span><span class="p">(</span><span class="nx">input</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;calculating &#39;</span> <span class="o">+</span> <span class="nx">input</span> <span class="o">+</span> <span class="s1">&#39; x &#39;</span> <span class="o">+</span> <span class="nx">input</span> <span class="o">+</span> <span class="s1">&#39;...&#39;</span><span class="p">);</span>
+        <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="nx">input</span> <span class="o">*</span> <span class="nx">input</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="c1">// 0.5秒后返回input+input的计算结果:</span>
+<span class="kd">function</span> <span class="nx">add</span><span class="p">(</span><span class="nx">input</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;calculating &#39;</span> <span class="o">+</span> <span class="nx">input</span> <span class="o">+</span> <span class="s1">&#39; + &#39;</span> <span class="o">+</span> <span class="nx">input</span> <span class="o">+</span> <span class="s1">&#39;...&#39;</span><span class="p">);</span>
+        <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="nx">input</span> <span class="o">+</span> <span class="nx">input</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;start new Promise...&#39;</span><span class="p">);</span>
+    <span class="nx">resolve</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">p</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">multiply</span><span class="p">)</span>
+ <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">add</span><span class="p">)</span>
+ <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">multiply</span><span class="p">)</span>
+ <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">add</span><span class="p">)</span>
+ <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Got value: &#39;</span> <span class="o">+</span> <span class="nx">result</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nx">Log</span><span class="o">:</span>
+
+<span class="nx">start</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">...</span>
+
+<span class="nx">calculating</span> <span class="mi">123</span> <span class="nx">x</span> <span class="mi">123</span><span class="p">...</span>
+
+<span class="nx">calculating</span> <span class="mi">15129</span> <span class="o">+</span> <span class="mi">15129</span><span class="p">...</span>
+
+<span class="nx">calculating</span> <span class="mi">30258</span> <span class="nx">x</span> <span class="mi">30258</span><span class="p">...</span>
+
+<span class="nx">calculating</span> <span class="mi">915546564</span> <span class="o">+</span> <span class="mi">915546564</span><span class="p">...</span>
+
+<span class="nx">Got</span> <span class="nx">value</span><span class="o">:</span> <span class="mi">1831093128</span>
+</pre></div>
+
+
+<h2 id="settimeout">setTimeout</h2>
+<p>可以通过setTimeout 实现延迟操作</p>
+<p><code>setTimeout</code>可以看成一个模拟网络等异步执行的函数。现在，我们把上一节的AJAX异步执行函数转换为Promise对象，看看用Promise如何简化异步处理</p>
+<div class="hlcode"><pre><span class="s1">&#39;use strict&#39;</span><span class="p">;</span>
+
+<span class="c1">// ajax函数将返回Promise对象:</span>
+<span class="kd">function</span> <span class="nx">ajax</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">request</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">request</span><span class="p">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">===</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="mi">200</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">resolve</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">responseText</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">reject</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">status</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+        <span class="nx">request</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">url</span><span class="p">);</span>
+        <span class="nx">request</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;test-promise-ajax-result&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">ajax</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;/api/categories&#39;</span><span class="p">);</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 如果AJAX成功，获得响应内容</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="nx">text</span><span class="p">;</span>
+<span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">status</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 如果AJAX失败，获得响应代码</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="s1">&#39;ERROR: &#39;</span> <span class="o">+</span> <span class="nx">status</span><span class="p">;</span>
+<span class="p">});</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="o">:</span><span class="cp">[</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;0013738748415562fee26e070fa4664ad926c8e30146c67000&quot;</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;编程&quot;</span><span class="p">,</span><span class="s2">&quot;tag&quot;</span><span class="p">:</span><span class="s2">&quot;tech&quot;</span><span class="p">,</span><span class="s2">&quot;display_order&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;description&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;created_at&quot;</span><span class="p">:</span><span class="mi">1373874841556</span><span class="p">,</span><span class="s2">&quot;updated_at&quot;</span><span class="p">:</span><span class="mi">1429763779958</span><span class="p">,</span><span class="s2">&quot;version&quot;</span><span class="p">:</span><span class="mi">5</span><span class="p">},{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;0013738748248885ddf38d8cd1b4803aa74bcda32f853fd000&quot;</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;读书&quot;</span><span class="p">,</span><span class="s2">&quot;tag&quot;</span><span class="p">:</span><span class="s2">&quot;other&quot;</span><span class="p">,</span><span class="s2">&quot;display_order&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;description&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;created_at&quot;</span><span class="p">:</span><span class="mi">1373874824888</span><span class="p">,</span><span class="s2">&quot;updated_at&quot;</span><span class="p">:</span><span class="mi">1429763779974</span><span class="p">,</span><span class="s2">&quot;version&quot;</span><span class="p">:</span><span class="mi">5</span><span class="p">}</span><span class="cp">]</span><span class="p">}</span>
+</pre></div>
+
+
+<p>除了串行执行若干异步任务外，Promise还可以并行执行异步任务。</p>
+<p>试想一个页面聊天系统，我们需要从两个不同的URL分别获得用户的个人信息和好友列表，这两个任务是可以并行执行的，用<code>Promise.all()</code>实现如下：</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">p1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;P1&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="kd">var</span> <span class="nx">p2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="s1">&#39;P2&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="c1">// 同时执行p1和p2，并在它们都完成后执行then:</span>
+<span class="nx">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="cp">[</span><span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="cp">]</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span> <span class="c1">// 获得一个Array: </span><span class="cp">[</span><span class="s1">&#39;P1&#39;</span><span class="p">,</span> <span class="s1">&#39;P2&#39;</span><span class="cp">]</span><span class="c1"></span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>有些时候，多个异步任务是为了容错。比如，同时向两个URL读取用户的个人信息，只需要获得先返回的结果即可。这种情况下，用<code>Promise.race()</code>实现：</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">p1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;P1&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="kd">var</span> <span class="nx">p2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="s1">&#39;P2&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="nx">Promise</span><span class="p">.</span><span class="nx">race</span><span class="p">(</span><span class="cp">[</span><span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="cp">]</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span> <span class="c1">// &#39;P1&#39;</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>由于<code>p1</code>执行较快，Promise的<code>then()</code>将获得结果<code>'P1'</code>。<code>p2</code>仍在继续执行，但执行结果将被丢弃。</p>
+<p>如果我们组合使用Promise，就可以把很多异步任务以并行和串行的方式组合起来执行。</p>
+<p>1</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -448,6 +448,28 @@ copyToLocal
 
 
 
+
+
+### ls
+
+```
+# hadoop  fs -ls hdfs://
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/opt/alluxio/client/alluxio-1.8.1-client.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/usr/lib/hadoop/lib/slf4j-log4j12-1.7.10.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]
+Found 5 items
+drwxr-xr-x   - hdfs   hadoop          0 2020-12-04 22:16 hdfs:///apps
+-rw-r--r--   1 hadoop hadoop          6 2020-12-09 09:14 hdfs:///hello.txt
+drwxrwxrwt   - mapred hadoop          0 2020-12-04 22:19 hdfs:///tmp
+drwxrwxrwx   - hdfs   hadoop          0 2020-12-04 22:16 hdfs:///user
+drwxr-xr-x   - hdfs   hadoop          0 2020-12-04 22:16 hdfs:///var
+You have new mail in /var/spool/mail/root
+```
+
+
+
 ## API 操作
 
 ```

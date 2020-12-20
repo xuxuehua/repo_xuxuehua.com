@@ -174,6 +174,22 @@ $ cat 1 | while read line ; do echo $line ; done
 
 
 
+```
+#!/bin/bash
+
+input_file="/Users/rxu/test_purpose/shell_testing/local.txt"
+
+while read line;
+do
+  echo $line
+  aws s3 ls $line
+  if [ $? != 0 ]; then
+    echo "aws cli is failed"
+    exit 1
+  fi
+done < $input_file
+```
+
 
 
 ## break 

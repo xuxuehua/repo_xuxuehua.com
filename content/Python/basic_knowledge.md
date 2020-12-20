@@ -173,9 +173,19 @@ GIL虽然是一个假的多线程，但是在处理一些IO操作(文件读写�
 
 为了解决由此带来的 race condition 等问题，Python 便引入了全局解释器锁，也就是同一时刻，只允许一个线程执行。当然，在执行 I/O 操作时，如果一个线程被 block 了，全局解释器锁便会被释放，从而让另一个线程能够继续执行
 
-一是设计者为了规避类似于内存管理这样的复杂的竞争风险问题（race condition）；
+一是设计者为了规避类似于内存管理这样的复杂的竞争风险问题（race condition）
 
 二是因为 CPython 大量使用 C 语言库，但大部分 C 语言库都不是原生线程安全的（线程安全会降低性能和增加复杂度）
+
+
+
+GIL 保证的是指令级线程安全，而不是语句级线程安全， 也就是说，python 里的一条语句、一个操作并不一定是线程安全的
+
+```
+
+```
+
+
 
 
 
@@ -271,6 +281,10 @@ PyCodeObject和pyc文件。
 
 
 # 安装
+
+版本建议至少选择 3.6（拥有稳定的 asyncio）
+
+ 
 
 ## Python 3
 
@@ -550,6 +564,15 @@ In [43]: del b
 $ python -i script.py
 ```
 
+
+
+
+
+# 资料
+
+- 值得学习的内建包 https://pymotw.com/3/
+- 值得了解的第三方包 https://github.com/vinta/awesome-python
+
 # 编码规范
 
 
@@ -719,9 +742,28 @@ Got:
 
 
 
+## pep8
+
+
+
+[PEP 8 -- Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
+
+
+
+[python代码风格指南：pep8 中文翻译](https://python.freelycode.com/contribution/detail/47)
+
+
+
+
+
+
+
 ## Google Python 风格规范 
 
 Google Python Style Guide, 比PEP8 更严格的编程规范
 
 [http://google.github.io/styleguide/pyguide.html](http://google.github.io/styleguide/pyguide.html)
 
+[Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
+
+[Google: Python语言规范](http://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_language_rules/#lexical-scoping)

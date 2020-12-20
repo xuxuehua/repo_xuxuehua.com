@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>hashlib - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;hashlib
+    <span class="updated">Page Updated&nbsp;
+      2018-08-26 19:22
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">hashlib</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#hashlib">hashlib</a><ul>
+<li><a href="#_1">应用</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="hashlib">hashlib</h1>
+<p>用于加密相关的操作，3.x里代替了md5模块和sha模块，主要提供 SHA1, SHA224, SHA256, SHA384, SHA512 ，MD5 算法</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">hashlib</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">hashlib</span><span class="p">.</span><span class="n">md5</span><span class="p">()</span>
+<span class="n">m</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="n">b</span><span class="s">&quot;Hello&quot;</span><span class="p">)</span>
+<span class="n">m</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="n">b</span><span class="s">&quot;It&#39;s me&quot;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">digest</span><span class="p">())</span>
+<span class="n">m</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="n">b</span><span class="s">&quot;It&#39;s been a long time since last time we ...&quot;</span><span class="p">)</span>
+
+<span class="n">print</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">digest</span><span class="p">())</span> <span class="err">#</span><span class="mi">2</span><span class="err">进制格式</span><span class="n">hash</span>
+<span class="n">print</span><span class="p">(</span><span class="n">len</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">hexdigest</span><span class="p">()))</span> <span class="err">#</span><span class="mi">16</span><span class="err">进制格式</span><span class="n">hash</span>
+<span class="err">&#39;&#39;&#39;</span>
+<span class="n">def</span> <span class="n">digest</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">:</span> <span class="err">#</span> <span class="n">real</span> <span class="n">signature</span> <span class="n">unknown</span>
+    <span class="s">&quot;&quot;&quot; Return the digest value as a string of binary data. &quot;&quot;&quot;</span>
+    <span class="n">pass</span>
+
+<span class="n">def</span> <span class="n">hexdigest</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">:</span> <span class="err">#</span> <span class="n">real</span> <span class="n">signature</span> <span class="n">unknown</span>
+    <span class="s">&quot;&quot;&quot; Return the digest value as a string of hexadecimal digits. &quot;&quot;&quot;</span>
+    <span class="n">pass</span>
+
+<span class="err">&#39;&#39;&#39;</span>
+<span class="n">import</span> <span class="n">hashlib</span>
+
+<span class="cp"># ######## md5 ########</span>
+
+<span class="n">hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="p">.</span><span class="n">md5</span><span class="p">()</span>
+<span class="n">hash</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="err">&#39;</span><span class="n">admin</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">hash</span><span class="p">.</span><span class="n">hexdigest</span><span class="p">())</span>
+
+<span class="cp"># ######## sha1 ########</span>
+
+<span class="n">hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="p">.</span><span class="n">sha1</span><span class="p">()</span>
+<span class="n">hash</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="err">&#39;</span><span class="n">admin</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">hash</span><span class="p">.</span><span class="n">hexdigest</span><span class="p">())</span>
+
+<span class="cp"># ######## sha256 ########</span>
+
+<span class="n">hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="p">.</span><span class="n">sha256</span><span class="p">()</span>
+<span class="n">hash</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="err">&#39;</span><span class="n">admin</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">hash</span><span class="p">.</span><span class="n">hexdigest</span><span class="p">())</span>
+
+
+<span class="cp"># ######## sha384 ########</span>
+
+<span class="n">hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="p">.</span><span class="n">sha384</span><span class="p">()</span>
+<span class="n">hash</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="err">&#39;</span><span class="n">admin</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">hash</span><span class="p">.</span><span class="n">hexdigest</span><span class="p">())</span>
+
+<span class="cp"># ######## sha512 ########</span>
+
+<span class="n">hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="p">.</span><span class="n">sha512</span><span class="p">()</span>
+<span class="n">hash</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="err">&#39;</span><span class="n">admin</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">hash</span><span class="p">.</span><span class="n">hexdigest</span><span class="p">())</span>
+</pre></div>
+
+
+<h2 id="_1">应用</h2>
+<p>网页防篡改，将目标网页源码hash后进行对比</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

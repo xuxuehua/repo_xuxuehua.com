@@ -1,0 +1,557 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>states_management - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Saltstack">Saltstack</a>&nbsp;&#187;&nbsp;states_management
+    <span class="updated">Page Updated&nbsp;
+      2019-06-19 13:40
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">states_management</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#states">States</a><ul>
+<li><a href="#_1">激活目录</a></li>
+</ul>
+</li>
+<li><a href="#state">State 模块控制</a><ul>
+<li><a href="#file">file 管理文件状态</a><ul>
+<li><a href="#filemanaged">file.managed</a></li>
+<li><a href="#filerecurse">file.recurse</a></li>
+<li><a href="#fileabsent">file.absent</a></li>
+</ul>
+</li>
+<li><a href="#pkg">pkg  管理软件包状态</a><ul>
+<li><a href="#pkginstalled">pkg.installed</a></li>
+<li><a href="#pkgremove">pkg.remove</a></li>
+<li><a href="#pkgpurge">pkg.purge</a></li>
+<li><a href="#pkglatest">pkg.latest</a></li>
+</ul>
+</li>
+<li><a href="#service">service 管理服务状态</a><ul>
+<li><a href="#servicerunning">service.running</a></li>
+<li><a href="#servicedead">service.dead</a></li>
+<li><a href="#serviceenabled">service.enabled</a></li>
+<li><a href="#servicedisabled">service.disabled</a></li>
+</ul>
+</li>
+<li><a href="#cmd">cmd 远程执行命令</a></li>
+<li><a href="#state_1">state之间的关系</a><ul>
+<li><a href="#requirerequire_in">require/require_in</a></li>
+<li><a href="#watchwatch_in">watch/watch_in</a></li>
+<li><a href="#unlessonlyif">unless/onlyif</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_2">常用方法</a><ul>
+<li><a href="#_3">目录管理</a></li>
+<li><a href="#_4">远程判断执行</a></li>
+<li><a href="#_5">远程执行脚本</a></li>
+<li><a href="#_6">计划任务</a><ul>
+<li><a href="#_7">添加计划任务</a></li>
+<li><a href="#_8">删除计划任务</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#example">example</a><ul>
+<li><a href="#dns">dns</a></li>
+<li><a href="#lamp">lamp</a></li>
+<li><a href="#init-template">init template</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="states">States</h1>
+<p>Salt使用State模块文件进行配置管理，使用YAML编写，以.sls结尾</p>
+<p>在salt中可以通过salt://代替根路径，例如你可以通过salt://top.sls访问/srv/salt/top.sls</p>
+<p>如果进行配置管理首先需要再Master的配置文件中指定”file roots”的选项，Salt支持环境的配置，比如开发环节、测试环境、生产环境，但是base环境是必须的。而且Base环境必须包含入口文件top.sls。</p>
+<p>一个简单的sls文件</p>
+<div class="hlcode"><pre><span class="n">apache</span><span class="o">:</span>
+  <span class="n">pkg</span><span class="o">.</span><span class="na">installed</span>
+    <span class="o">-</span> <span class="n">httpd</span>
+    <span class="o">-</span> <span class="n">httpd</span><span class="o">-</span><span class="n">devel</span>
+  <span class="n">service</span><span class="o">.</span><span class="na">running</span>
+  <span class="o">-</span> <span class="n">require</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">pkg</span><span class="o">:</span> <span class="n">apache</span>
+</pre></div>
+
+
+<blockquote>
+<p>此SLS数据确保叫做”apache”的软件包(package)已经安装,并且”apache”服务(service)正在运行中</p>
+</blockquote>
+<h2 id="_1">激活目录</h2>
+<p>file_roots ： 设置状态文件的位置。 需要/etc/salt/master 先启用这个目录，并设置自己目录。</p>
+<p>env环境 。base环境和开发、测试、预生产、生产环境，我们可以配置文件给不同的环境指定不同的目录。然后到/srv/salt 下边针对性创建这些目录。</p>
+<div class="hlcode"><pre><span class="n">file_roots</span><span class="o">:</span>
+<span class="n">base</span><span class="o">:</span>              <span class="err">默认环境。</span>
+<span class="o">-</span> <span class="sr">/srv/s</span><span class="n">alt</span>    
+
+<span class="n">dev</span><span class="o">:</span>
+<span class="o">-</span> <span class="sr">/srv/salt/</span><span class="n">dev</span>    <span class="err">开发环境</span>
+
+<span class="n">test</span><span class="o">:</span>
+<span class="o">-</span> <span class="sr">/srv/salt/</span><span class="n">test</span>   <span class="err">测试环境（功能测试、性能测试）</span>
+
+<span class="n">prod</span><span class="o">:</span>
+<span class="o">-</span> <span class="sr">/srv/salt/</span><span class="n">prod</span>   <span class="err">生产环境</span>
+</pre></div>
+
+
+<h1 id="state">State 模块控制</h1>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">Master</span> <span class="n">salt</span><span class="p">]</span><span class="err">#</span> <span class="n">cat</span> <span class="n">top</span><span class="p">.</span><span class="n">sls</span> 
+<span class="nl">base:</span>
+  <span class="sc">&#39;*&#39;</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">init</span><span class="p">.</span><span class="n">dns</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">Master</span> <span class="n">init</span><span class="p">]</span><span class="err">#</span> <span class="n">cat</span> <span class="n">dns</span><span class="p">.</span><span class="n">sls</span> 
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">resolv</span><span class="p">.</span><span class="n">conf</span><span class="o">:</span>
+  <span class="n">file</span><span class="p">.</span><span class="n">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">:</span><span class="c1">//init/resolv.conf</span>
+    <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">group</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">mode</span><span class="o">:</span> <span class="mi">644</span>
+</pre></div>
+
+
+<h2 id="file">file 管理文件状态</h2>
+<h3 id="filemanaged">file.managed</h3>
+<p>保证文件存在并且为对应的状态，不一样就根据source指定文件进行修改。比如上边的resolv.conf。</p>
+<div class="hlcode"><pre><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">http</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span><span class="n">http</span><span class="p">.</span><span class="n">conf</span><span class="o">:</span>
+  <span class="n">file</span><span class="p">.</span><span class="n">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">:</span><span class="c1">//apache/http.conf</span>
+    <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">group</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">mode</span><span class="o">:</span> <span class="mi">644</span>
+    <span class="o">-</span> <span class="n">template</span><span class="o">:</span> <span class="n">jinja</span>
+    <span class="o">-</span> <span class="n">defaults</span><span class="o">:</span>
+        <span class="nl">custom_var:</span> <span class="s">&quot;default value&quot;</span>
+        <span class="nl">other_var:</span> <span class="mi">123</span>
+<span class="p">{</span><span class="o">%</span> <span class="k">if</span> <span class="n">grains</span><span class="p">[</span><span class="err">&#39;</span><span class="n">os</span><span class="err">&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="err">&#39;</span><span class="n">Ubuntu</span><span class="err">&#39;</span> <span class="o">%</span><span class="p">}</span>
+    <span class="o">-</span> <span class="n">context</span><span class="o">:</span>
+        <span class="nl">custom_var:</span> <span class="s">&quot;override&quot;</span>
+<span class="p">{</span><span class="o">%</span> <span class="n">endif</span> <span class="o">%</span><span class="p">}</span>
+</pre></div>
+
+
+<h3 id="filerecurse">file.recurse</h3>
+<p>保证目录存在并且为对应状态，否则change。</p>
+<div class="hlcode"><pre><span class="n">minion_yum</span><span class="o">:</span>
+  <span class="n">file</span><span class="o">.</span><span class="na">recurse</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="sr">/etc/</span><span class="n">yum</span><span class="o">.</span><span class="na">repos</span><span class="o">.</span><span class="na">d</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">://</span><span class="n">minions</span><span class="o">/</span><span class="n">yum</span><span class="o">.</span><span class="na">repos</span><span class="o">.</span><span class="na">d</span> <span class="err">##提前准备的</span><span class="n">yum</span><span class="err">文件路径</span>
+    <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">group</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">file_mode</span><span class="o">:</span> <span class="mi">644</span>
+    <span class="o">-</span> <span class="n">dir_mode</span><span class="o">:</span> <span class="mi">755</span>
+    <span class="o">-</span> <span class="n">include_empty</span><span class="o">:</span> <span class="n">True</span>
+<span class="n">minion_install</span><span class="o">:</span>
+  <span class="n">pkg</span><span class="o">.</span><span class="na">installed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">pkgs</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">salt</span><span class="o">-</span><span class="n">minion</span>
+    <span class="o">-</span> <span class="n">require</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">file</span><span class="o">:</span> <span class="n">minion_yum</span>
+    <span class="o">-</span> <span class="n">unless</span><span class="o">:</span> <span class="n">rpm</span> <span class="o">-</span><span class="n">qa</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">salt</span><span class="o">-</span><span class="n">minion</span>
+<span class="n">minion_conf</span><span class="o">:</span>
+  <span class="n">file</span><span class="o">.</span><span class="na">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="sr">/etc/salt/</span><span class="n">minion</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">://</span><span class="n">minions</span><span class="sr">/conf/</span><span class="n">minion</span>  <span class="err">##</span><span class="n">minion</span><span class="err">端需要配置的</span><span class="n">minion</span><span class="err">主配置文件</span>
+    <span class="o">-</span><span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">group</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">mode</span><span class="o">:</span> <span class="mi">640</span>
+    <span class="o">-</span> <span class="n">template</span><span class="o">:</span> <span class="n">jinja</span>
+    <span class="o">-</span> <span class="n">defaults</span><span class="o">:</span>
+      <span class="n">minion_id</span><span class="o">:</span> <span class="o">{{</span> <span class="n">grains</span><span class="o">[</span><span class="s1">&#39;fqdn_ip4&#39;</span><span class="o">][</span><span class="mi">0</span><span class="o">]}}</span>        <span class="err">##这里</span><span class="n">grains</span><span class="err">是收集</span><span class="n">minion</span><span class="err">端</span><span class="sr">/etc/</span><span class="n">hosts</span><span class="err">文件</span><span class="n">IP</span><span class="err">和主机名的</span>
+    <span class="o">-</span> <span class="n">require</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">pkg</span><span class="o">:</span> <span class="n">minion_install</span>
+<span class="n">minion_service</span><span class="o">:</span>
+  <span class="n">service</span><span class="o">.</span><span class="na">running</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">salt</span><span class="o">-</span><span class="n">minion</span>
+    <span class="o">-</span> <span class="n">enable</span><span class="o">:</span> <span class="n">True</span>
+    <span class="o">-</span> <span class="n">require</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">file</span><span class="o">:</span> <span class="n">minion_conf</span>
+</pre></div>
+
+
+<h3 id="fileabsent">file.absent</h3>
+<p>确保文件不存在，如果存在就删除。</p>
+<h2 id="pkg">pkg  管理软件包状态</h2>
+<h3 id="pkginstalled">pkg.installed</h3>
+<p>确保软件包已经安装，如果没有安装就安装。</p>
+<div class="hlcode"><pre><span class="n">dotdeb</span><span class="p">.</span><span class="n">repo</span><span class="o">:</span>
+  <span class="n">pkgrepo</span><span class="p">.</span><span class="n">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">humanname</span><span class="o">:</span> <span class="n">Dotdeb</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">deb</span> <span class="n">http</span><span class="o">:</span><span class="c1">//packages.dotdeb.org wheezy-php55 all</span>
+    <span class="o">-</span> <span class="n">dist</span><span class="o">:</span> <span class="n">wheezy</span><span class="o">-</span><span class="n">php55</span>
+    <span class="o">-</span> <span class="n">file</span><span class="o">:</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">sources</span><span class="p">.</span><span class="n">list</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">dotbeb</span><span class="p">.</span><span class="n">list</span>
+    <span class="o">-</span> <span class="n">keyid</span><span class="o">:</span> <span class="mi">89</span><span class="n">DF5277</span>
+    <span class="o">-</span> <span class="n">keyserver</span><span class="o">:</span> <span class="n">keys</span><span class="p">.</span><span class="n">gnupg</span><span class="p">.</span><span class="n">net</span>
+    <span class="o">-</span> <span class="n">refresh_db</span><span class="o">:</span> <span class="nb">true</span>
+
+<span class="n">php</span><span class="p">.</span><span class="n">packages</span><span class="o">:</span>
+  <span class="n">pkg</span><span class="p">.</span><span class="n">installed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">fromrepo</span><span class="o">:</span> <span class="n">wheezy</span><span class="o">-</span><span class="n">php55</span>
+    <span class="o">-</span> <span class="n">pkgs</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">php5</span><span class="o">-</span><span class="n">fpm</span>
+      <span class="o">-</span> <span class="n">php5</span><span class="o">-</span><span class="n">cli</span>
+      <span class="o">-</span> <span class="n">php5</span><span class="o">-</span><span class="n">curl</span>
+</pre></div>
+
+
+<h3 id="pkgremove">pkg.remove</h3>
+<p>确保软件包已卸载，如果还是安装的，就卸载。</p>
+<h3 id="pkgpurge">pkg.purge</h3>
+<p>除remove外，还会删除其配置文件。</p>
+<h3 id="pkglatest">pkg.latest</h3>
+<p>确保软件包是最近版本，如果不是就升级。</p>
+<h2 id="service">service 管理服务状态</h2>
+<h3 id="servicerunning">service.running</h3>
+<p>确保服务处理运行状态，如果没有运行就启动。</p>
+<div class="hlcode"><pre><span class="n">redis</span><span class="o">:</span>
+  <span class="n">service</span><span class="o">.</span><span class="na">running</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">enable</span><span class="o">:</span> <span class="n">True</span>
+    <span class="o">-</span> <span class="n">reload</span><span class="o">:</span> <span class="n">True</span>
+    <span class="o">-</span> <span class="n">watch</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">pkg</span><span class="o">:</span> <span class="n">redis</span>
+</pre></div>
+
+
+<h3 id="servicedead">service.dead</h3>
+<p>确保服务没有在运行，如果运行就停止。</p>
+<h3 id="serviceenabled">service.enabled</h3>
+<p>设置服务保持开机启动。False或True</p>
+<h3 id="servicedisabled">service.disabled</h3>
+<p>设置服务不开机启动。</p>
+<h2 id="cmd">cmd 远程执行命令</h2>
+<h2 id="state_1">state之间的关系</h2>
+<p>每个state之间有可能涉及到达一些依赖，我们需要sls做一些指定。就好比我们要yum一个<a href="http://www.21yunwei.com/archives/category/database/mysql">mysql</a>-server，需要gcc先安装。</p>
+<h3 id="requirerequire_in">require/require_in</h3>
+<p>require依赖某个状态</p>
+<p>require_in 被某个状态所依赖</p>
+<h3 id="watchwatch_in">watch/watch_in</h3>
+<p>watch关注某个状态</p>
+<p>watch_in被某个状态所关注</p>
+<div class="hlcode"><pre><span class="n">salt</span><span class="o">-</span><span class="n">minion</span><span class="o">-</span><span class="n">install</span><span class="o">:</span>
+  <span class="n">pkg</span><span class="p">.</span><span class="n">installed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">salt</span><span class="o">-</span><span class="n">minion</span>
+
+<span class="n">salt</span><span class="o">-</span><span class="n">minion</span><span class="o">-</span><span class="n">conf</span><span class="o">:</span>
+  <span class="n">file</span><span class="p">.</span><span class="n">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">minion</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">:</span><span class="c1">//init/files/minion</span>
+    <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">group</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">mode</span><span class="o">:</span> <span class="mi">644</span>
+    <span class="o">-</span> <span class="n">template</span><span class="o">:</span> <span class="n">jinja</span>
+    <span class="o">-</span> <span class="k">default</span><span class="o">:</span>
+      <span class="nl">ID:</span> <span class="p">{{</span> <span class="n">grains</span><span class="p">[</span><span class="err">‘</span><span class="n">ipv4</span><span class="err">‘</span><span class="p">]</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">}}</span>
+    <span class="o">-</span> <span class="n">require</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">pkg</span><span class="o">:</span> <span class="n">salt</span><span class="o">-</span><span class="n">minion</span><span class="o">-</span><span class="n">install</span>
+
+<span class="n">salt</span><span class="o">-</span><span class="n">minion</span><span class="o">-</span><span class="n">service</span><span class="o">:</span>
+  <span class="n">service</span><span class="p">.</span><span class="n">running</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">salt</span><span class="o">-</span><span class="n">minion</span>
+    <span class="o">-</span> <span class="n">enable</span><span class="o">:</span> <span class="n">True</span>
+    <span class="o">-</span> <span class="n">watch</span><span class="o">:</span>
+       <span class="o">-</span> <span class="n">file</span><span class="o">:</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">minion</span>
+</pre></div>
+
+
+<h3 id="unlessonlyif">unless/onlyif</h3>
+<h1 id="_2">常用方法</h1>
+<h2 id="_3">目录管理</h2>
+<p>服务器端配置， 并配置入口文件top.sls</p>
+<div class="hlcode"><pre><span class="cp"># cat /srv/salt/top.sls</span>
+<span class="nl">base:</span>
+  <span class="err">&#39;</span><span class="n">nb1</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">apache</span>
+  <span class="err">&#39;</span><span class="n">nb2</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">filetest</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="cp"># cat /srv/salt/filetest.sls</span>
+<span class="n">file</span><span class="o">-</span><span class="n">test</span><span class="o">:</span>
+  <span class="n">file</span><span class="p">.</span><span class="n">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">filetest</span><span class="p">.</span><span class="n">txt</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">:</span><span class="c1">//test/123/1.txt</span>
+    <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">group</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">mode</span><span class="o">:</span> <span class="mi">644</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="c"># mkdir -p /srv/salt/test/123/</span>
+<span class="c"># echo &quot;file test&quot; &gt; /srv/salt/test/123/1.txt</span>
+<span class="c"># salt &#39;nb2&#39; state.highstate</span>
+</pre></div>
+
+
+<h2 id="_4">远程判断执行</h2>
+<p>服务器端配置</p>
+<div class="hlcode"><pre><span class="cp"># cat /srv/salt/top.sls</span>
+<span class="nl">base:</span>
+  <span class="err">&#39;</span><span class="n">nb1</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">cmdtest</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="cp"># cat /srv/salt/cmdtest.sls</span>
+<span class="n">cmd</span><span class="o">-</span><span class="n">test</span><span class="o">:</span>  
+  <span class="n">cmd</span><span class="p">.</span><span class="n">run</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">onlyif</span><span class="o">:</span> <span class="n">test</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="mf">1.</span><span class="n">txt</span>
+    <span class="o">-</span> <span class="n">names</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">touch</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">cmdtest</span><span class="p">.</span><span class="n">txt</span>
+      <span class="o">-</span> <span class="n">mkdir</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">cmdtest</span>
+    <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+</pre></div>
+
+
+<blockquote>
+<p>条件 onlyif 表示若 /tmp/1.txt文件存在，则执行后面的命令；可以使用 unless，两者正好相反。</p>
+</blockquote>
+<p>客户端配置</p>
+<div class="hlcode"><pre><span class="cp"># cat /tmp/1.txt </span>
+<span class="n">hello</span>
+</pre></div>
+
+
+<p>服务端调用</p>
+<div class="hlcode"><pre><span class="c"># salt &#39;*&#39; state.highstate</span>
+</pre></div>
+
+
+<h2 id="_5">远程执行脚本</h2>
+<p>服务器端配置</p>
+<div class="hlcode"><pre><span class="cp"># cat /srv/salt/top.sls</span>
+<span class="nl">base:</span>
+  <span class="err">&#39;</span><span class="n">nb2</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">shelltest</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="cp"># cat /srv/salt/shelltest.sls</span>
+<span class="n">shell</span><span class="o">-</span><span class="n">test</span><span class="o">:</span>
+  <span class="n">cmd</span><span class="p">.</span><span class="n">script</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">:</span><span class="c1">//test/1.sh</span>
+    <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="cp"># cat /srv/salt/test/1.sh</span>
+<span class="cp">#!/bin/bash</span>
+<span class="n">touch</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">shelltest</span><span class="p">.</span><span class="n">txt</span>
+<span class="k">if</span> <span class="p">[</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">shelltest</span> <span class="p">]</span>
+<span class="n">then</span>
+    <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">shelltest</span>
+<span class="k">else</span>
+    <span class="n">mkdir</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">shelltest</span>
+<span class="n">fi</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="c"># salt &#39;*&#39; state.highstate</span>
+</pre></div>
+
+
+<h2 id="_6">计划任务</h2>
+<h3 id="_7">添加计划任务</h3>
+<p>服务器端配置</p>
+<div class="hlcode"><pre><span class="cp"># cat /srv/salt/top.sls</span>
+<span class="nl">base:</span>
+  <span class="err">&#39;</span><span class="n">nb1</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">crontest</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="cp"># cat /srv/salt/crontest.sls</span>
+<span class="n">cron</span><span class="o">-</span><span class="n">test</span><span class="o">:</span>
+  <span class="n">cron</span><span class="p">.</span><span class="n">present</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">touch</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="mf">111.</span><span class="n">txt</span>
+    <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">minute</span><span class="o">:</span> <span class="sc">&#39;*&#39;</span>
+    <span class="o">-</span> <span class="n">hour</span><span class="o">:</span> <span class="mi">20</span>
+    <span class="o">-</span> <span class="n">daymonth</span><span class="o">:</span> <span class="mi">1</span><span class="o">-</span><span class="mi">10</span>
+    <span class="o">-</span> <span class="n">month</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="err">&#39;</span>
+    <span class="o">-</span> <span class="n">dayweek</span><span class="o">:</span> <span class="sc">&#39;*&#39;</span>
+</pre></div>
+
+
+<blockquote>
+<p><code>*</code>需要用单引号引起来。当然我们还可以使用 file.managed 模块来管理 cron，因为系统的 cron都是以配置文件的形式存在的。</p>
+</blockquote>
+<div class="hlcode"><pre><span class="c"># salt &#39;*&#39; state.highstate</span>
+</pre></div>
+
+
+<p>客户端查看</p>
+<div class="hlcode"><pre><span class="cp"># crontab -l </span>
+<span class="cp"># Lines below here are managed by Salt, do not edit</span>
+<span class="cp"># SALT_CRON_IDENTIFIER:/bin/touch /tmp/111.txt</span>
+<span class="o">*</span> <span class="mi">20</span> <span class="mi">1</span><span class="o">-</span><span class="mi">10</span> <span class="mi">3</span><span class="p">,</span><span class="mi">5</span> <span class="o">*</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">touch</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="mf">111.</span><span class="n">txt</span>
+</pre></div>
+
+
+<h3 id="_8">删除计划任务</h3>
+<p>服务器端配置</p>
+<div class="hlcode"><pre><span class="cp"># cat /srv/salt/top.sls</span>
+<span class="nl">base:</span>
+  <span class="err">&#39;</span><span class="n">nb1</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">crontest</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="cp"># cat /srv/salt/crontest.sls</span>
+<span class="n">cron</span><span class="o">-</span><span class="n">test</span><span class="o">:</span>
+  <span class="n">cron</span><span class="p">.</span><span class="n">absent</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">touch</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="mf">111.</span><span class="n">txt</span>
+    <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">minute</span><span class="o">:</span> <span class="sc">&#39;*&#39;</span>
+    <span class="o">-</span> <span class="n">hour</span><span class="o">:</span> <span class="mi">20</span>
+    <span class="o">-</span> <span class="n">daymonth</span><span class="o">:</span> <span class="mi">1</span><span class="o">-</span><span class="mi">10</span>
+    <span class="o">-</span> <span class="n">month</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="err">&#39;</span>
+    <span class="o">-</span> <span class="n">dayweek</span><span class="o">:</span> <span class="sc">&#39;*&#39;</span>
+</pre></div>
+
+
+<blockquote>
+<p>把 cron.present: 改成 cron.absent:<br />
+注意：两者不能共存，要想删除一个 cron，那之前的 present 就得替换掉或者删除掉。</p>
+</blockquote>
+<div class="hlcode"><pre><span class="c"># salt &#39;*&#39; state.highstate</span>
+</pre></div>
+
+
+<h1 id="example">example</h1>
+<h2 id="dns">dns</h2>
+<div class="hlcode"><pre><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">resolv</span><span class="p">.</span><span class="n">conf</span><span class="o">:</span>
+  <span class="n">file</span><span class="p">.</span><span class="n">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">:</span><span class="c1">//init/resolv.conf</span>
+    <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">group</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">mode</span><span class="o">:</span> <span class="mi">644</span>
+</pre></div>
+
+
+<h2 id="lamp">lamp</h2>
+<p>模块是禁止开头写的，所以要空一行</p>
+<div class="hlcode"><pre><span class="n">lamp</span><span class="o">-</span><span class="n">pkg</span><span class="o">-</span><span class="n">install</span><span class="o">:</span>
+  <span class="n">pkg</span><span class="p">.</span><span class="n">installed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">names</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">php</span>
+      <span class="o">-</span> <span class="n">php</span><span class="o">-</span><span class="n">cli</span>
+      <span class="o">-</span> <span class="n">php</span><span class="o">-</span><span class="n">common</span>
+      <span class="o">-</span> <span class="n">mysql</span>
+      <span class="o">-</span> <span class="n">php</span><span class="o">-</span><span class="n">mysql</span>
+      <span class="o">-</span> <span class="n">php</span><span class="o">-</span><span class="n">pdo</span>
+<span class="n">apache</span><span class="o">-</span><span class="n">service</span><span class="o">:</span>
+  <span class="n">pkg</span><span class="p">.</span><span class="n">installed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">httpd</span>
+  <span class="n">file</span><span class="p">.</span><span class="n">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">httpd</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span><span class="n">httpd</span><span class="p">.</span><span class="n">conf</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">:</span><span class="c1">//files/httpd.conf</span>
+    <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">group</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">mode</span><span class="o">:</span> <span class="mi">644</span>
+    <span class="o">-</span> <span class="n">require</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">pkg</span><span class="o">:</span> <span class="n">apache</span><span class="o">-</span><span class="n">service</span>
+  <span class="n">service</span><span class="p">.</span><span class="n">running</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">httpd</span>
+    <span class="o">-</span> <span class="n">enable</span><span class="o">:</span> <span class="n">True</span>
+    <span class="o">-</span> <span class="n">reload</span><span class="o">:</span> <span class="n">True</span>
+    <span class="o">-</span> <span class="n">watch</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">file</span><span class="o">:</span> <span class="n">apache</span><span class="o">-</span><span class="n">service</span>
+<span class="n">mysql</span><span class="o">-</span><span class="n">service</span><span class="o">:</span>
+  <span class="n">pkg</span><span class="p">.</span><span class="n">installed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">mysql</span><span class="o">-</span><span class="n">server</span>
+    <span class="o">-</span> <span class="n">require_in</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">file</span><span class="o">:</span> <span class="n">mysql</span><span class="o">-</span><span class="n">service</span>
+  <span class="n">file</span><span class="p">.</span><span class="n">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">my</span><span class="p">.</span><span class="n">cnf</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">:</span><span class="c1">//files/my.cnf</span>
+    <span class="o">-</span> <span class="n">user</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">group</span><span class="o">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">mode</span><span class="o">:</span> <span class="mi">644</span>
+    <span class="o">-</span> <span class="n">watch_in</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">service</span><span class="o">:</span> <span class="n">mysql</span><span class="o">-</span><span class="n">service</span>
+  <span class="n">service</span><span class="p">.</span><span class="n">running</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">mysqld</span>
+    <span class="o">-</span> <span class="n">enable</span><span class="o">:</span> <span class="n">True</span>
+</pre></div>
+
+
+<h2 id="init-template">init template</h2>
+<p>top.sls</p>
+<div class="hlcode"><pre><span class="nl">base:</span>
+  <span class="sc">&#39;*&#39;</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">init</span><span class="p">.</span><span class="n">init</span>
+</pre></div>
+
+
+<p>init.sls</p>
+<div class="hlcode"><pre><span class="nl">include:</span>
+  <span class="o">-</span> <span class="n">init</span><span class="p">.</span><span class="n">dns</span>
+  <span class="o">-</span> <span class="n">init</span><span class="p">.</span><span class="n">history</span>
+  <span class="o">-</span> <span class="n">init</span><span class="p">.</span><span class="n">redis</span>
+  <span class="o">-</span> <span class="n">init</span><span class="p">.</span><span class="n">zabbix</span><span class="o">-</span><span class="n">agent</span>
+</pre></div>
+
+
+<p>history.sls</p>
+<div class="hlcode"><pre><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span><span class="o">:</span>
+  <span class="n">file</span><span class="p">.</span><span class="n">append</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">text</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">export</span> <span class="n">HISTTIMEFORMAT</span><span class="o">=</span><span class="s">&quot;%Y-%m-%d_%H:%M:%S `whoami` &quot;</span>
+</pre></div>
+
+
+<p>zabbix-agent.sls</p>
+<div class="hlcode"><pre><span class="n">zabbix</span><span class="o">-</span><span class="n">service</span><span class="o">:</span>
+  <span class="n">pkg</span><span class="p">.</span><span class="n">installed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">zabbix</span><span class="o">-</span><span class="n">agent</span>
+  <span class="n">file</span><span class="p">.</span><span class="n">managed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">zabbix_agentd</span><span class="p">.</span><span class="n">conf</span>
+    <span class="o">-</span> <span class="n">source</span><span class="o">:</span> <span class="n">salt</span><span class="o">:</span><span class="c1">//init/files/zabbix_agentd.conf</span>
+    <span class="o">-</span> <span class="n">template</span><span class="o">:</span> <span class="n">jinja</span>
+    <span class="o">-</span> <span class="n">defaults</span><span class="o">:</span>
+      <span class="nl">Zabbix_Server:</span> <span class="p">{{</span> <span class="n">pillar</span><span class="p">[</span><span class="err">&#39;</span><span class="n">zabbix</span><span class="o">-</span><span class="n">agent</span><span class="err">&#39;</span><span class="p">][</span><span class="err">&#39;</span><span class="n">Zabbix_Server</span><span class="err">&#39;</span><span class="p">]</span> <span class="p">}}</span>
+    <span class="o">-</span> <span class="n">require</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">pkg</span><span class="o">:</span> <span class="n">zabbix</span><span class="o">-</span><span class="n">service</span>
+  <span class="n">service</span><span class="p">.</span><span class="n">running</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">zabbix</span><span class="o">-</span><span class="n">agentd</span>
+    <span class="o">-</span> <span class="n">enable</span><span class="o">:</span> <span class="n">True</span>
+    <span class="o">-</span> <span class="n">watch</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">file</span><span class="o">:</span> <span class="n">zabbix</span><span class="o">-</span><span class="n">service</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

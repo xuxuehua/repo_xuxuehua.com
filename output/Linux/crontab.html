@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>crontab - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux">Linux</a>&nbsp;&#187;&nbsp;crontab
+    <span class="updated">Page Updated&nbsp;
+      2018-07-26 19:11
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">crontab</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#crontab">crontab</a><ul>
+<li><a href="#_1">*</a></li>
+<li><a href="#_2">,</a></li>
+<li><a href="#-">-</a></li>
+<li><a href="#n">*/n</a></li>
+<li><a href="#example">example</a></li>
+<li><a href="#_3">在线测试语法</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="crontab">crontab</h1>
+<h2 id="_1"><code>*</code></h2>
+<p>任何时间</p>
+<h2 id="_2"><code>,</code></h2>
+<p>代表不连续时间</p>
+<div class="hlcode"><pre><span class="mi">0</span> <span class="mi">8</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">16</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span>
+</pre></div>
+
+
+<blockquote>
+<p>每天8点，12点，16点0分执行</p>
+</blockquote>
+<h2 id="-"><code>-</code></h2>
+<p>连续时间范围</p>
+<div class="hlcode"><pre><span class="mi">0</span> <span class="mi">5</span> <span class="o">*</span> <span class="o">*</span> <span class="mi">1</span><span class="o">-</span><span class="mi">6</span>
+</pre></div>
+
+
+<blockquote>
+<p>周一至周六凌晨5点执行</p>
+</blockquote>
+<h2 id="n"><code>*/n</code></h2>
+<p>每隔多久执行</p>
+<div class="hlcode"><pre><span class="err">*/</span><span class="mi">10</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span>
+</pre></div>
+
+
+<blockquote>
+<p>每隔10s执行一次</p>
+</blockquote>
+<h2 id="example">example</h2>
+<ul>
+<li><a href="https://crontab.guru/every-minute">every minute</a></li>
+<li><a href="https://crontab.guru/every-1-minute">every 1 minute</a></li>
+<li><a href="https://crontab.guru/every-2-minutes">every 2 minutes</a></li>
+<li><a href="https://crontab.guru/every-even-minute">every even minute</a></li>
+<li><a href="https://crontab.guru/every-uneven-minute">every uneven minute</a></li>
+<li><a href="https://crontab.guru/every-3-minutes">every 3 minutes</a></li>
+<li><a href="https://crontab.guru/every-4-minutes">every 4 minutes</a></li>
+<li><a href="https://crontab.guru/every-5-minutes">every 5 minutes</a></li>
+<li><a href="https://crontab.guru/every-five-minutes">every five minutes</a></li>
+<li><a href="https://crontab.guru/every-6-minutes">every 6 minutes</a></li>
+<li><a href="https://crontab.guru/every-10-minutes">every 10 minutes</a></li>
+<li><a href="https://crontab.guru/every-ten-minutes">every ten minutes</a></li>
+<li><a href="https://crontab.guru/every-quarter-hour">every quarter hour</a></li>
+<li><a href="https://crontab.guru/every-20-minutes">every 20 minutes</a></li>
+<li><a href="https://crontab.guru/every-30-minutes">every 30 minutes</a></li>
+<li><a href="https://crontab.guru/every-hour-at-30-minutes">every hour at 30 minutes</a></li>
+<li><a href="https://crontab.guru/every-half-hour">every half hour</a></li>
+<li><a href="https://crontab.guru/every-60-minutes">every 60 minutes</a></li>
+<li><a href="https://crontab.guru/every-hour">every hour</a></li>
+<li><a href="https://crontab.guru/every-1-hour">every 1 hour</a></li>
+<li><a href="https://crontab.guru/every-2-hours">every 2 hours</a></li>
+<li><a href="https://crontab.guru/every-two-hours">every two hours</a></li>
+<li><a href="https://crontab.guru/every-even-hour">every even hour</a></li>
+<li><a href="https://crontab.guru/every-other-hour">every other hour</a></li>
+<li><a href="https://crontab.guru/every-3-hours">every 3 hours</a></li>
+<li><a href="https://crontab.guru/every-three-hours">every three hours</a></li>
+<li><a href="https://crontab.guru/every-4-hours">every 4 hours</a></li>
+<li><a href="https://crontab.guru/every-6-hours">every 6 hours</a></li>
+<li><a href="https://crontab.guru/every-six-hours">every six hours</a></li>
+<li><a href="https://crontab.guru/every-8-hours">every 8 hours</a></li>
+<li><a href="https://crontab.guru/every-12-hours">every 12 hours</a></li>
+<li><a href="https://crontab.guru/every-day">every day</a></li>
+<li><a href="https://crontab.guru/every-night">every night</a></li>
+<li><a href="https://crontab.guru/every-day-at-1am">every day at 1am</a></li>
+<li><a href="https://crontab.guru/every-day-at-2am">every day at 2am</a></li>
+<li><a href="https://crontab.guru/every-day-8am">every day 8am</a></li>
+<li><a href="https://crontab.guru/every-morning">every morning</a></li>
+<li><a href="https://crontab.guru/every-midnight">every midnight</a></li>
+<li><a href="https://crontab.guru/every-day-at-midnight">every day at midnight</a></li>
+<li><a href="https://crontab.guru/every-night-at-midnight">every night at midnight</a></li>
+<li><a href="https://crontab.guru/every-sunday">every sunday</a></li>
+<li><a href="https://crontab.guru/every-monday">every monday</a></li>
+<li><a href="https://crontab.guru/every-tuesday">every tuesday</a></li>
+<li><a href="https://crontab.guru/every-wednesday">every wednesday</a></li>
+<li><a href="https://crontab.guru/every-thursday">every thursday</a></li>
+<li><a href="https://crontab.guru/every-friday">every friday</a></li>
+<li><a href="https://crontab.guru/every-friday-at-midnight">every friday at midnight</a></li>
+<li><a href="https://crontab.guru/every-saturday">every saturday</a></li>
+<li><a href="https://crontab.guru/every-weekday">every weekday</a></li>
+<li><a href="https://crontab.guru/every-7-days">every 7 days</a></li>
+<li><a href="https://crontab.guru/every-week">every week</a></li>
+<li><a href="https://crontab.guru/every-month">every month</a></li>
+<li><a href="https://crontab.guru/every-other-month">every other month</a></li>
+<li><a href="https://crontab.guru/every-quarter">every quarter</a></li>
+<li><a href="https://crontab.guru/every-6-months">every 6 months</a></li>
+<li><a href="https://crontab.guru/every-year">every year</a></li>
+</ul>
+<h2 id="_3">在线测试语法</h2>
+<p>https://crontab.guru/</p>
+<p>http://cron.schlitt.info/</p>
+<p>http://www.cronmaker.com/</p>
+<p>https://www.freeformatter.com/</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

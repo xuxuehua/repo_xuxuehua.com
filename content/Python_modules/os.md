@@ -182,6 +182,34 @@ Out[19]: 'network'
 
 
 
+
+
+## os.path.dirname(path) 返回当前文件路径
+
+返回当前文件路径
+
+```
+os.path.dirname(__file__)
+```
+
+返回父目录文件路径
+
+```
+os.path.dirname(os.path.dirname(__file__))
+```
+
+
+
+```
+In [15]: p
+Out[15]: '/etc/sysconfig/network'
+
+In [20]: path.dirname(p)
+Out[20]: '/etc/sysconfig'
+```
+
+
+
 ## os.path.exists(name)
 
 判断是否存在文件或目录name
@@ -301,31 +329,6 @@ Out[17]: ('/etc/sysconfig', 'network')
 
 
 
-## os.path.dirname(path)
-返回当前文件路径
-
-```
-os.path.dirname(__file__)
-```
-
-返回父目录文件路径
-
-```
-os.path.dirname(os.path.dirname(__file__))
-```
-
-
-
-```
-In [15]: p
-Out[15]: '/etc/sysconfig/network'
-
-In [20]: path.dirname(p)
-Out[20]: '/etc/sysconfig'
-```
-
-
-
 ## os.pathsep
 
 文件路径分隔符
@@ -377,7 +380,7 @@ os.removedirs(r'a/b/c')
 
 
 
-## os.sep
+## os.sep 
 
 取代操作系统特定的路径分隔符
 

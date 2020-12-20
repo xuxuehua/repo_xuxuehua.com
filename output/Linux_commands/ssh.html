@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>ssh - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;ssh
+    <span class="updated">Page Updated&nbsp;
+      2018-08-07 11:50
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">ssh</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#ssh">ssh</a><ul>
+<li><a href="#-1">-1</a></li>
+<li><a href="#-2">-2</a></li>
+<li><a href="#-4">-4</a></li>
+<li><a href="#-6">-6</a></li>
+<li><a href="#-a">-A</a></li>
+<li><a href="#-a_1">-a</a></li>
+<li><a href="#-b">-b</a></li>
+<li><a href="#-c">-C</a></li>
+<li><a href="#-d">-D 动态转发</a></li>
+<li><a href="#-f">-F</a></li>
+<li><a href="#-f_1">-f</a></li>
+<li><a href="#-g">-g</a></li>
+<li><a href="#-i">-i</a></li>
+<li><a href="#-l">-l</a></li>
+<li><a href="#-l_1">-L 本地转发</a></li>
+<li><a href="#-n">-N</a></li>
+<li><a href="#-o-option">-o option 配置选项</a><ul>
+<li><a href="#serveraliveinterval">ServerAliveInterval</a></li>
+<li><a href="#stricthostkeychecking">StrictHostKeyChecking</a></li>
+<li><a href="#preferredauthentications">PreferredAuthentications</a></li>
+<li><a href="#pubkeyauthentication">PubkeyAuthentication</a></li>
+<li><a href="#proxycommand-case-sensitive">ProxyCommand (Case sensitive)</a><ul>
+<li><a href="#connect">connect</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#-p">-p</a></li>
+<li><a href="#-q">-q</a></li>
+<li><a href="#-r">-R 远程转发</a></li>
+<li><a href="#-t-tty">-t tty</a></li>
+<li><a href="#-x">-X</a></li>
+<li><a href="#-x_1">-x</a></li>
+<li><a href="#-y">-y</a></li>
+<li><a href="#config">config 文件</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="ssh">ssh</h1>
+<h2 id="-1">-1</h2>
+<p>强制使用ssh协议版本1</p>
+<h2 id="-2">-2</h2>
+<p>强制使用ssh协议版本2</p>
+<h2 id="-4">-4</h2>
+<p>强制使用IPv4地址</p>
+<h2 id="-6">-6</h2>
+<p>强制使用IPv6地址</p>
+<h2 id="-a">-A</h2>
+<p>开启认证代理连接转发功能</p>
+<h2 id="-a_1">-a</h2>
+<p>关闭认证代理连接转发功能</p>
+<h2 id="-b">-b</h2>
+<p>使用本机指定地址作为对应连接的源ip地址</p>
+<h2 id="-c">-C</h2>
+<p>请求压缩所有数据</p>
+<h2 id="-d">-D 动态转发</h2>
+<p>动态转发有点更加强劲的端口转发功能，即是无需固定指定被访问目标主机的端口号。这个端口号需要在本地通过协议指定，该协议就是简单、安全、实用的 <a href="https://en.wikipedia.org/wiki/SOCKS">SOCKS</a> 协议。</p>
+<div class="hlcode"><pre><span class="n">ssh</span> <span class="o">-</span><span class="n">D</span> <span class="mi">50000</span> <span class="n">user</span><span class="err">@</span><span class="n">host1</span>
+</pre></div>
+
+
+<blockquote>
+<p>这条命令创建了一个SOCKS代理，所以通过该SOCKS代理发出的数据包将经过<code>host1</code>转发出去。</p>
+</blockquote>
+<h2 id="-f">-F</h2>
+<p>指定ssh指令的配置文件</p>
+<h2 id="-f_1">-f</h2>
+<p>后台执行ssh指令</p>
+<h2 id="-g">-g</h2>
+<p>允许远程主机连接主机的转发端口</p>
+<h2 id="-i">-i</h2>
+<p>指定身份文件</p>
+<h2 id="-l">-l</h2>
+<p>指定连接远程服务器登录用户名</p>
+<h2 id="-l_1">-L 本地转发</h2>
+<p>本地转发，顾名思义就是把本地主机端口通过待登录主机端口转发到远程主机端口上去。</p>
+<div class="hlcode"><pre><span class="n">ssh</span> <span class="o">-</span><span class="n">L</span> <span class="mf">0.0.0.0</span><span class="o">:</span><span class="mi">50000</span><span class="o">:</span><span class="n">host2</span><span class="o">:</span><span class="mi">80</span> <span class="n">user</span><span class="err">@</span><span class="n">host1</span>
+</pre></div>
+
+
+<blockquote>
+<p>这条命令将<code>host2</code>的80端口映射到本地的50000端口，前提是待登录主机<code>host1</code>上可以正常连接到<code>host2</code>的80端口。</p>
+</blockquote>
+<h2 id="-n">-N</h2>
+<p>不执行远程指令</p>
+<h2 id="-o-option">-o option 配置选项</h2>
+<p>指定配置选项</p>
+<p>Can be used to give options in the format used in the configuration file.  This is useful for specifying options for which there is no separate command-line flag</p>
+<h3 id="serveraliveinterval">ServerAliveInterval</h3>
+<p>指定ssh 超时时间</p>
+<div class="hlcode"><pre><span class="n">ssh</span> <span class="o">-</span><span class="n">o</span> <span class="n">ServerAliveInterval</span><span class="o">=</span><span class="mi">30</span> <span class="n">user</span><span class="err">@</span><span class="n">host</span>
+</pre></div>
+
+
+<h3 id="stricthostkeychecking">StrictHostKeyChecking</h3>
+<p>Automatically accept keys</p>
+<div class="hlcode"><pre><span class="n">ssh</span> <span class="o">-</span><span class="n">oStrictHostKeyChecking</span><span class="o">=</span><span class="n">no</span> <span class="err">$</span><span class="n">h</span> 
+</pre></div>
+
+
+<h3 id="preferredauthentications">PreferredAuthentications</h3>
+<p>Force SSH client to use password authentication instead of public key</p>
+<div class="hlcode"><pre><span class="n">ssh</span> <span class="o">-</span><span class="n">o</span> <span class="n">PreferredAuthentications</span><span class="o">=</span><span class="n">password</span> <span class="o">-</span><span class="n">o</span> <span class="n">PubkeyAuthentication</span><span class="o">=</span><span class="n">no</span> <span class="n">user</span><span class="err">@</span><span class="n">host</span>
+</pre></div>
+
+
+<h3 id="pubkeyauthentication">PubkeyAuthentication</h3>
+<p>Force SSH client to use password authentication instead of public key</p>
+<div class="hlcode"><pre><span class="n">ssh</span> <span class="o">-</span><span class="n">o</span> <span class="n">PreferredAuthentications</span><span class="o">=</span><span class="n">password</span> <span class="o">-</span><span class="n">o</span> <span class="n">PubkeyAuthentication</span><span class="o">=</span><span class="n">no</span> <span class="n">user</span><span class="err">@</span><span class="n">host</span>
+</pre></div>
+
+
+<h3 id="proxycommand-case-sensitive">ProxyCommand (Case sensitive)</h3>
+<div class="hlcode"><pre><span class="nx">ssh</span> <span class="na">-o</span> <span class="s2">&quot;ProxyCommand nc --proxy-type socks5 --proxy 127.0.0.1:9050 %h %p&quot;</span> <span class="o">&lt;</span><span class="nx">target_host</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">ssh</span> <span class="o">-</span><span class="n">o</span> <span class="s">&quot;ProxyCommand= nc -X 5 -x 127.0.0.1:9050 %h %p&quot;</span> <span class="n">user</span><span class="err">@</span><span class="n">host</span>
+</pre></div>
+
+
+<p>To do it on a per-host basis, edit your ~/.ssh/config to look something like this:</p>
+<div class="hlcode"><pre><span class="n">host</span> <span class="n">example</span><span class="p">.</span><span class="n">com</span>
+    <span class="n">user</span> <span class="n">bar</span>
+    <span class="n">port</span> <span class="mi">22</span>
+    <span class="n">ProxyCommand</span> <span class="n">nc</span> <span class="o">--</span><span class="n">proxy</span><span class="o">-</span><span class="n">type</span> <span class="n">socks5</span> <span class="o">--</span><span class="n">proxy</span> <span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">9050</span> <span class="o">%</span><span class="n">h</span> <span class="o">%</span><span class="n">p</span>
+</pre></div>
+
+
+<p>Add this to your ssh config file (<code>~/.ssh/config</code>):</p>
+<div class="hlcode"><pre><span class="n">host</span> <span class="o">*</span>
+     <span class="n">CheckHostIP</span>  <span class="n">no</span>
+     <span class="n">Compression</span>  <span class="n">yes</span>
+     <span class="n">Protocol</span>     <span class="mi">2</span>
+     <span class="n">ProxyCommand</span> <span class="n">connect</span> <span class="o">-</span><span class="mi">4</span> <span class="o">-</span><span class="n">S</span> <span class="n">localhost</span><span class="o">:</span><span class="mi">9050</span> <span class="err">$</span><span class="p">(</span><span class="n">tor</span><span class="o">-</span><span class="n">resolve</span> <span class="o">%</span><span class="n">h</span> <span class="n">localhost</span><span class="o">:</span><span class="mi">9050</span><span class="p">)</span> 
+<span class="o">%</span><span class="n">p</span>
+</pre></div>
+
+
+<h4 id="connect">connect</h4>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="o">:</span><span class="c1">//github.com/ghostlyman/connect-proxy.git</span>
+<span class="n">cd</span> <span class="n">connect</span> 
+<span class="n">make</span> 
+<span class="n">gcc</span> <span class="n">connect</span><span class="p">.</span><span class="n">c</span> <span class="o">-</span><span class="n">o</span> <span class="n">connect</span> 
+<span class="n">cp</span> <span class="n">connect</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">ssh</span> <span class="o">-</span><span class="n">o</span> <span class="s">&quot;ProxyCommand connect -S 127.0.0.1:1080 %h %p&quot;</span> <span class="n">user</span><span class="err">@</span><span class="n">host</span>
+</pre></div>
+
+
+<h2 id="-p">-p</h2>
+<p>指定远程服务器上的端口</p>
+<h2 id="-q">-q</h2>
+<p>静默模式</p>
+<h2 id="-r">-R 远程转发</h2>
+<p>远程转发是指把登录主机所在网络中某个端口通过本地主机端口转发到远程主机上。</p>
+<p>sshd_config里要打开<code>AllowTcpForwarding</code>选项，否则<code>-R</code>远程端口转发会失败。</p>
+<p>默认转发到远程主机上的端口绑定的是<code>127.0.0.1</code>，如要绑定<code>0.0.0.0</code>需要打开sshd_config里的<code>GatewayPorts</code>选项。这个选项如果由于权限没法打开也有办法，可配合<code>ssh -L</code>将端口绑定到<code>0.0.0.0</code></p>
+<div class="hlcode"><pre><span class="n">ssh</span> <span class="o">-</span><span class="n">R</span> <span class="mf">0.0.0.0</span><span class="o">:</span><span class="mi">8080</span><span class="o">:</span><span class="n">host2</span><span class="o">:</span><span class="mi">80</span> <span class="n">user</span><span class="err">@</span><span class="n">host1</span>
+</pre></div>
+
+
+<blockquote>
+<p>这条命令将<code>host2</code>的80端口映射到待登录主机host1的8080端口，前提是本地主机可以正常连接<code>host2</code>的80端口。</p>
+</blockquote>
+<h2 id="-t-tty">-t tty</h2>
+<p>Force pseudo-tty allocation</p>
+<p>This can be used to execute arbitrary screen-based programs on a remote machine, which can be very useful</p>
+<p>Multiple -t options force tty allocation, even if ssh has no local tty</p>
+<h2 id="-x">-X</h2>
+<p>开启X11转发功能</p>
+<h2 id="-x_1">-x</h2>
+<p>关闭X11转发功能</p>
+<h2 id="-y">-y</h2>
+<p>开启信任X11转发功能</p>
+<h2 id="config">config 文件</h2>
+<div class="hlcode"><pre><span class="n">Host</span> <span class="o">*</span>
+    <span class="n">ServerAliveInterval</span> <span class="mi">60</span>
+</pre></div>
+
+
+<p><code>Host *</code> #表示需要启用该规则的服务端（域名或ip）<br />
+<code>ServerAliveInterval 60</code> #表示没60秒去给服务端发起一次请求消息（这个设置好就行了）<br />
+<code>ServerAliveCountMax 3</code> #表示最大连续尝试连接次数（这个基本不用设置）</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

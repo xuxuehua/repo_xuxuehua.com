@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>reverse_proxy - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Nginx">Nginx</a>&nbsp;&#187;&nbsp;reverse_proxy
+    <span class="updated">Page Updated&nbsp;
+      2018-12-27 13:14
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">reverse_proxy</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#reverse-proxy">Reverse Proxy</a><ul>
+<li><a href="#_1">变更为上游服务器</a></li>
+<li><a href="#openresty">openresty</a></li>
+<li><a href="#reverseconf">reverse.conf</a></li>
+<li><a href="#cache">Cache 配置</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="reverse-proxy">Reverse Proxy</h1>
+<h2 id="_1">变更为上游服务器</h2>
+<p>添加127.0.0.1 </p>
+<div class="hlcode"><pre>   <span class="n">server</span> <span class="p">{</span>
+        <span class="n">listen</span>       <span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">8090</span><span class="p">;</span>
+        <span class="p">}</span>
+</pre></div>
+
+
+<p>重启nginx</p>
+<div class="hlcode"><pre><span class="n">nginx</span> <span class="o">-</span><span class="n">s</span> <span class="n">stop</span>
+<span class="n">nginx</span>
+</pre></div>
+
+
+<h2 id="openresty">openresty</h2>
+<div class="hlcode"><pre><span class="nl">https:</span><span class="c1">//openresty.org/download/openresty-1.13.6.2.tar.gz</span>
+<span class="n">tar</span>
+<span class="p">.</span><span class="o">/</span><span class="n">configure</span> <span class="o">&amp;&amp;</span> <span class="n">make</span> <span class="o">&amp;&amp;</span> <span class="n">make</span> <span class="n">install</span> 
+</pre></div>
+
+
+<h2 id="reverseconf">reverse.conf</h2>
+<div class="hlcode"><pre><span class="n">upstream</span> <span class="n">local</span> <span class="p">{</span>            <span class="err">#</span> <span class="n">local</span><span class="err">是一组的命名</span>
+    <span class="n">server</span> <span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">8090</span><span class="p">;</span>  <span class="err">#</span> <span class="err">这里可以放一组机器，</span> <span class="err">不同的用户访问相同的</span><span class="n">URL</span><span class="err">，但返回的是不同的结果，需要使用反向代理</span>
+<span class="p">}</span>
+
+        <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+            <span class="err">#</span><span class="n">root</span>   <span class="n">html</span><span class="p">;</span>
+            <span class="err">#</span><span class="n">index</span>  <span class="n">index</span><span class="p">.</span><span class="n">html</span> <span class="n">index</span><span class="p">.</span><span class="n">htm</span><span class="p">;</span>
+            <span class="n">proxy_set_header</span> <span class="n">Host</span> <span class="err">$</span><span class="n">host</span><span class="p">;</span>
+            <span class="n">proxy_set_header</span> <span class="n">X</span><span class="o">-</span><span class="n">Real</span><span class="o">-</span><span class="n">IP</span> <span class="err">$</span><span class="n">remote_addr</span><span class="p">;</span>
+            <span class="n">proxy_set_header</span> <span class="n">X</span><span class="o">-</span><span class="n">Forwarded</span><span class="o">-</span><span class="n">For</span> <span class="err">$</span><span class="n">proxy_add_x_forwarded_for</span><span class="p">;</span>
+
+            <span class="err">#</span><span class="n">proxy_cache</span> <span class="n">my_cache</span><span class="p">;</span>  <span class="err">#</span>
+
+            <span class="err">#</span><span class="n">proxy_cache_key</span> <span class="err">$</span><span class="n">host</span><span class="err">$</span><span class="n">uri</span><span class="err">$</span><span class="n">is_args</span><span class="err">$</span><span class="n">args</span><span class="p">;</span>
+            <span class="err">#</span><span class="n">proxy_cache_valid</span>  <span class="mi">200</span> <span class="mi">304</span> <span class="mi">302</span> <span class="n">ld</span><span class="p">;</span>
+            <span class="n">proxy_pass</span> <span class="n">http</span><span class="o">:</span><span class="c1">//local;    # local指上游配置的组名</span>
+        <span class="p">}</span>
+</pre></div>
+
+
+<h2 id="cache">Cache 配置</h2>
+<div class="hlcode"><pre><span class="n">http</span> <span class="p">{</span>
+    <span class="n">proxy_cache_path</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">nginxcache</span> <span class="n">levels</span><span class="o">=</span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span> <span class="n">keys_zone</span><span class="o">=</span><span class="n">my_cache</span><span class="o">:</span><span class="mi">10</span><span class="n">m</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">10</span><span class="n">g</span> <span class="n">inactive</span><span class="o">=</span><span class="mi">60</span><span class="n">m</span> <span class="n">use_temp_path</span><span class="o">=</span><span class="n">off</span><span class="p">;</span>
+
+    <span class="err">#激活缓存</span>
+    <span class="n">server</span> <span class="p">{</span>
+        <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+            <span class="n">proxy_cache</span> <span class="n">my_cache</span><span class="p">;</span>   <span class="err">#</span> <span class="err">这里的</span><span class="n">my_cache</span><span class="err">就是上面的配置</span>
+
+            <span class="n">proxy_cache_key</span> <span class="err">$</span><span class="n">host</span><span class="err">$</span><span class="n">uri</span><span class="err">$</span><span class="n">is_args</span><span class="err">$</span><span class="n">args</span><span class="p">;</span> <span class="err">#这里的所有作为</span><span class="n">cache</span><span class="err">的</span><span class="n">key</span>
+            <span class="n">proxy_cache_valid</span>   <span class="mi">200</span> <span class="mi">304</span> <span class="mi">302</span> <span class="n">ld</span><span class="p">;</span> <span class="err">#这里不返回ø</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

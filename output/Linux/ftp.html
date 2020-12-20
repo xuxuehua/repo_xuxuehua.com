@@ -1,0 +1,508 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>ftp - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux">Linux</a>&nbsp;&#187;&nbsp;ftp
+    <span class="updated">Page Updated&nbsp;
+      2019-05-14 19:23
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">ftp</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">共享类型</a><ul>
+<li><a href="#ftp">ftp</a></li>
+<li><a href="#nfs">Nfs</a></li>
+<li><a href="#samba">Samba</a></li>
+</ul>
+</li>
+<li><a href="#_2">连接方式</a><ul>
+<li><a href="#das">DAS</a></li>
+<li><a href="#nas">NAS</a></li>
+<li><a href="#sas">SAS</a></li>
+</ul>
+</li>
+<li><a href="#ftp_1">ftp</a><ul>
+<li><a href="#_3">主动模式</a></li>
+<li><a href="#_4">被动模式</a></li>
+</ul>
+</li>
+<li><a href="#_5">应用程序</a><ul>
+<li><a href="#_6">服务器端</a></li>
+<li><a href="#_7">客户端</a></li>
+</ul>
+</li>
+<li><a href="#vsftpd">vsftpd</a><ul>
+<li><a href="#_8">用户的类型</a><ul>
+<li><a href="#_9">匿名用户</a></li>
+<li><a href="#_10">本地用户</a></li>
+<li><a href="#_11">虚拟用户</a></li>
+</ul>
+</li>
+<li><a href="#_12">包架构</a></li>
+<li><a href="#installation">installation</a></li>
+<li><a href="#_13">访问控制</a><ul>
+<li><a href="#_14">匿名用户</a></li>
+<li><a href="#_15">本地用户</a></li>
+</ul>
+</li>
+<li><a href="#chroot">设置CHROOT</a></li>
+<li><a href="#_16">登陆提示信息</a></li>
+<li><a href="#_17">优化配置</a></li>
+<li><a href="#_18">虚拟用户</a><ul>
+<li><a href="#mysql">基于mysql的虚拟用户</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">共享类型</h1>
+<h2 id="ftp">ftp</h2>
+<p>属于应用层服务，可以跨平台使用（ linux&lt;-&gt;unix&lt;-&gt;windows）</p>
+<h2 id="nfs">Nfs</h2>
+<p>属于内核模式，不可以跨平台（ linux&lt;-&gt;linux）</p>
+<h2 id="samba">Samba</h2>
+<p>可以跨平台使用（ linux&lt;-&gt;unix&lt;-&gt;windows）</p>
+<h1 id="_2">连接方式</h1>
+<h2 id="das">DAS</h2>
+<p>连接的磁盘</p>
+<h2 id="nas">NAS</h2>
+<p>通过nfs/cifs协议实现网络文件共享（文件存储方式）电子邮件、网页服务器多媒体流服务<br />
+、档案分享等就适用于NAS存储架构。</p>
+<h2 id="sas">SAS</h2>
+<p>通过网线或光纤实现ISCSI和FCSAN将物理存储设备连接起来使用（块存储方式较底层，需<br />
+要格式化并挂载当本地磁盘使用）数据库有关的应用适用于SAN存储架构。</p>
+<h1 id="ftp_1">ftp</h1>
+<h2 id="_3">主动模式</h2>
+<p>一般用于服务端存在防火墙的情况，客户端无法主动连接至服务端的20数据端口，需要由服务端主动连接客户端的高位数<br />
+据端口。</p>
+<ol>
+<li>两端在建立TCP通信通道后，客户端会发送port请求与服务端的21号端口认证连接并发送开放用来建立数据连接<br />
+的高位端口号。</li>
+<li>服务端在收到后，会通过20号端口发送ACK响应请求</li>
+<li>服务端会通过20端口与客户端发送的高位端口建立数据连接通道。</li>
+</ol>
+<h2 id="_4">被动模式</h2>
+<p>一般用于客户端存在防火墙的情况，服务端在收到连接请求后因为客户端防火墙而无法达到客户端高位端口，需要客户端<br />
+主动连接至服务端的数据传输端口。</p>
+<ol>
+<li>两端在建立TCP通信通道连接后，客户端会发送PASV请求给服务端。</li>
+<li>服务端在受到PASV端口后就会打开一个高位端口作为数据传输端口来响应给客户端等待客户端连接。</li>
+<li>客户端在收到响应后，就会去连接响应的端口建立数据连接通道</li>
+</ol>
+<h1 id="_5">应用程序</h1>
+<h2 id="_6">服务器端</h2>
+<div class="hlcode"><pre><span class="n">wu</span><span class="o">-</span><span class="n">ftpd</span><span class="o">:</span> <span class="n">Washington</span> <span class="n">University</span><span class="p">,</span> <span class="err">非模块化设计</span> 
+
+<span class="n">vsftpd</span><span class="err">：</span><span class="n">Very</span> <span class="n">Secure</span> <span class="n">ftp</span> <span class="n">Daemon</span> 
+
+<span class="nl">proftpd:</span>  
+
+<span class="n">pureftpd</span><span class="err">：</span> 
+
+<span class="n">Filezilla</span><span class="err">：</span> 
+
+<span class="n">Serv</span><span class="o">-</span><span class="n">U</span> 
+</pre></div>
+
+
+<h2 id="_7">客户端</h2>
+<div class="hlcode"><pre><span class="n">CLI</span><span class="o">:</span> 
+  <span class="n">ftp</span> 
+    <span class="n">lftp</span> 
+
+<span class="n">GUI</span><span class="o">:</span> 
+    <span class="n">gftpd</span> 
+    <span class="n">FlashFXP</span> 
+    <span class="n">Cuteftp</span> 
+  <span class="n">filezilla</span> 
+</pre></div>
+
+
+<h1 id="vsftpd">vsftpd</h1>
+<p>Vsftpd是基于ftp协议来对网络数据交换的一种实现，是一个开源的解决方案</p>
+<h2 id="_8">用户的类型</h2>
+<h3 id="_9">匿名用户</h3>
+<p>anonymous或ftp</p>
+<h3 id="_10">本地用户</h3>
+<p>账号名称、密码等信息保存在passwd、 shadow文件中</p>
+<h3 id="_11">虚拟用户</h3>
+<p>使用独立的账号/密码数据文件</p>
+<div class="hlcode"><pre><span class="n">user_list</span> <span class="n">wangwu</span> <span class="mi">123456</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">pub</span>
+</pre></div>
+
+
+<h2 id="_12">包架构</h2>
+<div class="hlcode"><pre><span class="err">官方站点：</span> <span class="n">http</span><span class="o">:</span><span class="c1">//vsftpd.beasts.org/</span>
+<span class="err">主程序</span><span class="o">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">vsftpd</span>
+<span class="err">服务名：</span> <span class="n">vsftpd</span>
+<span class="err">用户控制列表文件</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">ftpusers</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">user_list</span>
+<span class="err">主配置文件</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vsftpd</span><span class="p">.</span><span class="n">conf</span>
+</pre></div>
+
+
+<h2 id="installation">installation</h2>
+<div class="hlcode"><pre><span class="err">关闭防火墙和</span><span class="n">selinux</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">setenforce</span> <span class="mi">0</span> <span class="err">#表示关闭</span><span class="n">selinux</span><span class="err">。</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">service</span> <span class="n">iptables</span> <span class="n">stop</span> <span class="err">#表示关闭防火墙</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">vsftpd</span> <span class="err">#安装</span><span class="n">vsftpd</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">rpm</span> <span class="o">-</span><span class="n">ql</span> <span class="n">vsftpd</span> <span class="err">#查看安装生成的文件</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">logrotate</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">vsftpd</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pam</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">vsftpd</span> <span class="err">#</span><span class="n">pam</span><span class="err">认证文件</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">rc</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">init</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">vsftpd</span> <span class="err">#服务启动进程</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">ftpusers</span> <span class="err">#限制登陆文件</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">user_list</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vsftpd</span><span class="p">.</span><span class="n">conf</span> <span class="err">#</span><span class="n">vsftp</span><span class="err">的主配置文件</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vsftpd_conf_migrate</span><span class="p">.</span><span class="n">sh</span>
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">vsftpd</span> <span class="err">#程序文件</span>
+<span class="p">......</span>
+<span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">ftp</span> <span class="err">#</span><span class="n">FTP</span><span class="err">家目录</span>
+<span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">ftp</span><span class="o">/</span><span class="n">pub</span>
+</pre></div>
+
+
+<h2 id="_13">访问控制</h2>
+<h3 id="_14">匿名用户</h3>
+<div class="hlcode"><pre><span class="err">配置基于匿名用户的访问控制，可以修改</span><span class="n">vsftpd</span><span class="err">的主配置文件</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vsftpd</span><span class="p">.</span><span class="n">conf</span><span class="err">来进行，主要有下面几个参数</span>
+<span class="err"></span> <span class="n">anonymous_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="err">启动匿名用户</span>
+<span class="err"></span> <span class="n">anon_upload_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="err">是否允许匿名用户上传文件</span>
+<span class="err"></span> <span class="n">anon_mkdir_write_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="err">是否允许匿名用户有创建目录的权限，要考虑文件系统上的家目录，要具</span>
+<span class="err">备写权限</span>
+<span class="err"></span> <span class="n">anon_other_write_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="err">允许匿名登入者更多于上传或者建立目录之外的权限</span><span class="p">,</span><span class="err">譬如删除或者重命名</span>
+<span class="err"></span> <span class="n">anon_umask</span><span class="o">=</span><span class="mo">077</span>
+<span class="err">指定上传文件的默认的所有者和权限</span>
+</pre></div>
+
+
+<h3 id="_15">本地用户</h3>
+<div class="hlcode"><pre><span class="err">默认情况下，操作系统的账户是可以直接使用用户名和密码来登陆的。并且登</span>
+<span class="err">陆成功之后，默认进入到了自己的家目录。</span>
+
+<span class="err">配置基于系统用户的访问控制</span>
+<span class="err"></span> <span class="n">local_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="err">是否允许</span><span class="n">Linux</span><span class="err">用户登陆，默认是允许的，当然也可以禁止。</span>
+<span class="err"></span> <span class="n">write_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="err">是否允许系统用户上传文件</span>
+<span class="err"></span> <span class="n">local_root</span><span class="o">=/</span><span class="n">ftproot</span>
+<span class="err">非匿名用户登陆所在目录，当使用</span><span class="n">linux</span><span class="err">用户登陆成功之后，就不会默认在</span>
+<span class="err">自己的家目录了。相反，会位于下面指定的目录里。</span>
+<span class="err"></span> <span class="n">local_umask</span><span class="o">=</span><span class="mo">022</span>
+<span class="err">指定系统用户上传文件的默认权限</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">配置基于本地用户的访问控制</span>
+<span class="err">❖</span> <span class="err">要配置基于本地用户的访问控制，可以修改</span><span class="n">vsftpd</span><span class="err">的主配置文件</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vsftpd</span><span class="p">.</span><span class="n">conf</span><span class="err">来进行，有如下两种现在方法：</span>
+<span class="err">❖</span> <span class="mi">1</span><span class="err">、限制指定的本地用户不能访问，而其他本地用户可以访问</span>
+<span class="err">❖</span> <span class="err">例如下面的设置：</span>
+<span class="err"></span> <span class="n">userlist_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="err"></span> <span class="n">userlist_deny</span><span class="o">=</span><span class="n">YES</span>
+<span class="err"></span> <span class="n">userlist_file</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">user_list</span>
+<span class="err">❖</span> <span class="err">使文件</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">user_list</span><span class="err">中指定的本地用户不能访问</span><span class="n">FTP</span><span class="err">服</span>
+<span class="err">务器，而其他本地用户可以访问</span><span class="n">FTP</span><span class="err">服务器</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">限定指定的本地用户可以访问，而其他本地用户不可以访问</span>
+<span class="err"></span> <span class="err">例如下面的设置：</span>
+<span class="err"></span> <span class="n">userlist_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="err"></span> <span class="n">userlist_deny</span><span class="o">=</span><span class="n">NO</span>
+<span class="err"></span> <span class="n">userlist_file</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">user_list</span>
+<span class="err"></span> <span class="err">使文件</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">user_list</span><span class="err">中指定的本地用户可以访问</span><span class="n">FTP</span><span class="err">服</span>
+<span class="err">务器，而其他本地用户不可以访问</span><span class="n">FTP</span><span class="err">服务器</span>
+</pre></div>
+
+
+<h2 id="chroot">设置CHROOT</h2>
+<div class="hlcode"><pre><span class="err">在默认的配置中，本地用户可以切换到自己的家目录以外的目录进行浏览，并在权限许可范</span>
+<span class="err">围内进行下载和上传。这样的设置对于一个</span><span class="n">FTP</span><span class="err">服务器来说是不安全的。</span>
+<span class="err">❖</span> <span class="err">如果希望用户登陆后不能切换到自家目录以为的目录，则需要设置</span><span class="n">chroot</span><span class="err">选项，具体是：</span>
+<span class="err"></span> <span class="n">chroot_local_user</span>
+<span class="err"></span> <span class="n">chroot_list_enable</span>
+<span class="err"></span> <span class="n">chroot_list_file</span>
+<span class="err">❖</span> <span class="err">有两种设置</span><span class="n">chroot</span><span class="err">的方法：</span>
+<span class="err"></span> <span class="err">设置所有的本地用户执行</span><span class="n">chroot</span>
+<span class="err"></span> <span class="err">只要讲</span><span class="n">chroot_local_user</span><span class="err">的值设为</span><span class="n">YES</span><span class="err">即可，即：</span>
+<span class="err"></span> <span class="n">chroot_local_user</span><span class="o">=</span><span class="n">YES</span>
+<span class="err"></span> <span class="err">设置指定的用户执行</span><span class="n">chroot</span>
+<span class="err"></span> <span class="err">需要设置的参数如下：</span>
+<span class="err"></span> <span class="n">chroot_local_user</span><span class="o">=</span><span class="n">NO</span>
+<span class="err"></span> <span class="n">chroot_list_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="err"></span> <span class="n">chroot_list_file</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">chroot_list</span>
+<span class="err">这样，</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">chroot_list</span><span class="err">文件中指定的用户不能执行</span><span class="n">chroot</span>
+</pre></div>
+
+
+<h2 id="_16">登陆提示信息</h2>
+<div class="hlcode"><pre><span class="err">登陆提示信息图形界面是看不到的，只适用于</span><span class="n">ftp</span><span class="err">作为客户端的时候。可以使用下面的</span>
+<span class="err">方式来进行配置。但是优先级却不一样。如果希望用户登陆后不能切换到自家目录以为</span>
+<span class="err">的目录，</span>
+<span class="err"></span> <span class="n">ftpd_banner</span><span class="o">=</span><span class="err">“</span><span class="n">welcome</span> <span class="n">to</span> <span class="n">mage</span> <span class="n">ftp</span> <span class="n">server</span><span class="s">&quot;</span>
+<span class="err">这一句话优先生效</span>
+<span class="err"></span> <span class="n">banner_file</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">ftpbanner</span><span class="p">.</span><span class="n">txt</span>
+<span class="err">❖</span> <span class="err">目录访问提示信息</span>
+<span class="err"></span> <span class="err">当用户进入到某一个目录之后，可以给用户一个提示消息。用来提示这个目录的作用。</span>
+<span class="err">在相应的目录下建立一个隐藏文件</span> <span class="p">.</span><span class="n">message</span><span class="err">，在该文件中进行信息提示描述。</span>
+<span class="err"></span> <span class="n">dirmessage_enable</span><span class="o">=</span><span class="n">YES</span> <span class="p">(</span><span class="err">默认</span><span class="p">)</span>
+<span class="err"></span> <span class="n">message_file</span><span class="o">=</span><span class="p">.</span><span class="n">message</span><span class="p">(</span><span class="err">默认</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="_17">优化配置</h2>
+<div class="hlcode"><pre><span class="err">设置最大传输速率限制</span>
+<span class="err"></span> <span class="err">例如下面的配置：</span>
+<span class="err"></span> <span class="n">local_max_rate</span><span class="o">=</span><span class="mi">50000</span>
+<span class="err"></span> <span class="n">anon_max_rate</span><span class="o">=</span><span class="mi">30000</span>
+<span class="err">将本地用户的最大传输率设置为</span><span class="mi">50</span><span class="n">kbytes</span><span class="o">/</span><span class="n">sec</span><span class="err">，匿名用户的传输速率为</span><span class="mi">30</span><span class="n">kbytes</span><span class="o">/</span><span class="n">sec</span>
+<span class="err">❖</span> <span class="err">设置客户端连接时的端口范围</span>
+<span class="err"></span> <span class="err">例如下面的配置：</span>
+<span class="err"></span> <span class="n">pasv_min_port</span><span class="o">=</span><span class="mi">50000</span>
+<span class="err"></span> <span class="n">pasv_max_port</span><span class="o">=</span><span class="mi">60000</span>
+<span class="err">将使客户端连接时的端口范围在</span><span class="mi">50000</span><span class="err">和</span><span class="mi">60000</span><span class="err">之间，这提高了系统的安全性</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">设置基本的性能和安全选项</span>
+<span class="err"></span> <span class="mi">1</span><span class="err">、设置空闲的用户会话中断时间</span>
+<span class="err"></span> <span class="err">例如下面的配置：</span>
+<span class="err"></span> <span class="n">idle_session_timout</span><span class="o">=</span><span class="mi">6600</span>
+<span class="err"></span> <span class="err">将在用户会话空闲</span><span class="mi">10</span><span class="err">分钟后被中断</span>
+<span class="err"></span> <span class="mi">2</span><span class="err">、设置空闲的数据连接的终端时间</span>
+<span class="err"></span> <span class="err">例如下面的配置：</span>
+<span class="err"></span> <span class="n">date_connection_timeout</span><span class="o">=</span><span class="mi">120</span>
+<span class="err"></span> <span class="err">将在数据连接空闲</span><span class="mi">2</span><span class="err">分钟后被中断</span>
+<span class="err"></span> <span class="mi">3</span><span class="err">、设置客户端空闲时的自动中断和激活连接的时间</span>
+<span class="err"></span> <span class="err">例如下面的配置：</span>
+<span class="err"></span> <span class="n">accept_timout</span><span class="o">=</span><span class="mi">60</span>
+<span class="err"></span> <span class="n">connect_timeout</span><span class="o">=</span><span class="mi">60</span>
+<span class="err"></span> <span class="err">将使客户端空闲</span><span class="mi">1</span><span class="err">分钟后自动中断连接，并在中断一分钟后自动激活连</span>
+</pre></div>
+
+
+<h2 id="_18">虚拟用户</h2>
+<div class="hlcode"><pre><span class="err"></span> <span class="err">所有虚拟用户会统一映射为一个指定的系统帐号：访问共享位置，即为此系统帐号的家</span>
+<span class="err">目录。</span>
+<span class="err"></span> <span class="err">各虚拟用户可被赋予不同的访问权限，通过匿名用户的权限控制参数进行指定。</span>
+<span class="err">❖</span> <span class="err">虚拟用户帐号的存储方式：</span>
+<span class="err"></span> <span class="err">文件：编辑文本文件，此文件需要被编码为</span><span class="n">hash</span><span class="err">格式</span>
+<span class="err"></span> <span class="err">奇数行为用户名，偶数行为密码</span>
+<span class="err"></span> <span class="n">db_load</span> <span class="o">-</span><span class="n">T</span> <span class="o">-</span><span class="n">t</span> <span class="n">hash</span> <span class="o">-</span><span class="n">f</span> <span class="n">vusers</span><span class="p">.</span><span class="n">txt</span> <span class="n">vusers</span><span class="p">.</span><span class="n">db</span>
+<span class="err"></span> <span class="err">关系型数据库中的表中：</span>
+<span class="err"></span> <span class="err">实时查询数据库完成用户认证</span>
+<span class="err"></span> <span class="n">mysql</span><span class="err">库：</span> <span class="n">pam</span><span class="err">要依赖于</span><span class="n">pam</span><span class="o">-</span><span class="n">mysql</span>
+<span class="err">▪</span> <span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">security</span><span class="o">/</span><span class="n">pam_mysql</span><span class="p">.</span><span class="n">so</span>
+<span class="err">▪</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">doc</span><span class="o">/</span><span class="n">pam_mysql</span><span class="o">-</span><span class="mf">0.7</span><span class="o">/</span><span class="n">README</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">基于文件验证的</span><span class="n">vsftpd</span><span class="err">虚拟用户：</span>
+<span class="err"></span> <span class="err">创建用户数据库文件</span>
+<span class="err"></span> <span class="err">#</span> <span class="err">创建用户文件</span>
+<span class="err"></span> <span class="err">#</span> <span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vusers</span><span class="p">.</span><span class="n">txt</span>
+<span class="err"></span> <span class="n">ftp1</span> <span class="err">用户名</span>
+<span class="err"></span> <span class="n">ftp1pass</span> <span class="err">密码</span>
+<span class="err"></span> <span class="n">tom</span> <span class="err">用户名</span>
+<span class="err"></span> <span class="n">tompass</span> <span class="err">密码</span>
+<span class="err"></span> <span class="err">#</span> <span class="err">进入到相应的目录下</span>
+<span class="err"></span> <span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span>
+<span class="err"></span> <span class="err">#</span> <span class="err">创建数据库文件</span>
+<span class="err"></span> <span class="n">db_load</span> <span class="o">-</span><span class="n">T</span> <span class="o">-</span><span class="n">t</span> <span class="n">hash</span> <span class="o">-</span><span class="n">f</span> <span class="n">vusers</span><span class="p">.</span><span class="n">txt</span> <span class="n">vusers</span><span class="p">.</span><span class="n">db</span>
+<span class="err"></span> <span class="err">#</span> <span class="err">修改数据库权限</span>
+<span class="err"></span> <span class="n">chmod</span> <span class="mi">600</span> <span class="n">vusers</span><span class="p">.</span><span class="n">db</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">创建系统用户和访问</span><span class="n">FTP</span><span class="err">目录：</span>
+<span class="err"></span> <span class="err">虚拟用户访问</span><span class="n">FTP</span><span class="err">服务器的时候，要进入到自己的家目录下，但是系统中没有虚拟账户</span>
+<span class="err">所对应的账号家目录，所以我们要创建一个系统用户，与虚拟账户关联起来，这样，当</span>
+<span class="err">虚拟用户登陆之后，就会进入到我们创建的系统用户的家目录，然后进行数据访问。</span>
+<span class="err"></span> <span class="err">#</span> <span class="err">创建系统用户并指定家目录</span>
+<span class="err"></span> <span class="n">useradd</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">ftproot</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span> <span class="n">vuser</span>
+<span class="err"></span> <span class="err">#</span> <span class="err">修改家目录权限</span>
+<span class="err"></span> <span class="n">chmod</span> <span class="o">+</span><span class="n">rx</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">ftproot</span><span class="o">/</span>
+<span class="err">❖</span> <span class="err">创建</span><span class="n">pam</span><span class="err">配置文件</span>
+<span class="err"></span> <span class="err">修改</span><span class="n">vsftpd</span><span class="err">的</span><span class="n">pam</span><span class="err">模块的配置文件</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pam</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">vsftpd</span><span class="p">.</span><span class="n">db</span> <span class="p">,</span><span class="err">让</span><span class="n">vsftpd</span><span class="err">支持</span><span class="n">pam</span><span class="err">模块进行身</span>
+<span class="err">份验证。</span>
+<span class="err"></span> <span class="n">auth</span> <span class="n">required</span> <span class="n">pam_userdb</span><span class="p">.</span><span class="n">so</span> <span class="n">db</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vusers</span>
+<span class="err"></span> <span class="n">account</span> <span class="n">required</span> <span class="n">pam_userdb</span><span class="p">.</span><span class="n">so</span> <span class="n">db</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vusers</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">指定</span><span class="n">pam</span><span class="err">配置文件</span>
+<span class="err"></span> <span class="err">修改</span><span class="n">vsftpd</span><span class="err">的配置文件</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vsftpd</span><span class="p">.</span><span class="n">conf</span> <span class="p">,</span><span class="err">给</span><span class="n">vsftpd</span><span class="err">指定</span><span class="n">pam</span><span class="err">模块。</span>
+<span class="err"></span> <span class="n">guest_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="err"></span> <span class="n">guest_username</span><span class="o">=</span><span class="n">vuser</span>
+<span class="err"></span> <span class="n">pam_service_name</span><span class="o">=</span><span class="n">vsftpd</span><span class="p">.</span><span class="n">db</span>
+<span class="err">❖</span> <span class="err">创建</span><span class="n">pam</span><span class="err">配置文件虚拟用户建立独立的配置文件</span>
+<span class="err"></span> <span class="err">在</span><span class="n">vsftpd</span><span class="err">的配置文件中指定，用户配置文件的存储路径，然后在</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="err">目录下，创建相</span>
+<span class="err">应的目录，并且在目录中定义与用户名一致的配置文件并写入相应权限就可以了。</span>
+<span class="err">在</span><span class="n">vsftpd</span><span class="err">的配置文件</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vsftpd</span><span class="p">.</span><span class="n">conf</span> <span class="err">中指定如下路径</span><span class="p">.</span>
+<span class="err"></span> <span class="n">user_config_dir</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vusers</span><span class="p">.</span><span class="n">d</span><span class="o">/</span>
+<span class="err"></span> <span class="err">在</span><span class="n">etc</span><span class="err">目录下，创建如下的文件目录，这一个目录与前面在</span><span class="n">vsftpd</span><span class="err">配置文件中定义的一</span>
+<span class="err">致。</span>
+<span class="err"></span> <span class="n">mdkir</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vusers</span><span class="p">.</span><span class="n">d</span><span class="o">/</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">进入到</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vusers</span><span class="p">.</span><span class="n">d</span><span class="o">/</span> <span class="err">目录下，创建与用户名同名的配置文件，例如用户为</span><span class="n">tom</span><span class="err">，</span>
+<span class="err">那么就创建一个与</span><span class="n">tom</span><span class="err">一致的配置文件。</span> <span class="err">将下面的内容，写入配置文件，就可以进行权限控</span>
+<span class="err">制。</span>
+<span class="err"></span> <span class="err">#</span> <span class="err">虚拟用户上传权限</span>
+<span class="err"></span> <span class="n">anon_upload_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="err"></span> <span class="err">#</span> <span class="err">虚拟用户创建文件夹</span>
+<span class="err"></span> <span class="n">anon_mkdir_write_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="err"></span> <span class="err">#</span> <span class="err">虚拟的其他用户对指定用户目录的写权限</span>
+<span class="err"></span> <span class="n">anon_other_write_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="err">❖</span> <span class="err">或者还可以改变用户的默认登陆目录。也就是</span><span class="n">FTP</span><span class="err">用户登陆成功之后的默认路径。</span>
+<span class="err"></span> <span class="err">#登录目录改变至指定的目录</span>
+<span class="err"></span> <span class="n">local_root</span><span class="o">=/</span><span class="n">ftproot</span>
+</pre></div>
+
+
+<h3 id="mysql">基于mysql的虚拟用户</h3>
+<div class="hlcode"><pre><span class="err">安装数据库及</span><span class="n">pam_mysql</span><span class="err">插件</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">lab01</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">mysql</span><span class="o">-</span><span class="n">server</span> <span class="n">pam_mysql</span>
+<span class="mi">2</span><span class="err">、</span> <span class="err">创建用于</span><span class="n">vsftpd</span><span class="err">的数据库，在创建表和用户</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="n">CREATE</span> <span class="n">DATABASE</span> <span class="n">vsftpd</span><span class="p">;</span> <span class="err">#创建数据库</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="n">use</span> <span class="n">vsftpd</span><span class="err">；</span> <span class="err">#进入数据库</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="n">create</span> <span class="n">table</span> <span class="n">users</span> <span class="p">(</span> <span class="err">#创建表</span>
+<span class="o">-&gt;</span> <span class="n">id</span> <span class="kt">int</span> <span class="n">AUTO_INCREMENT</span> <span class="n">NOT</span> <span class="nb">NULL</span><span class="p">,</span>
+<span class="o">-&gt;</span> <span class="n">name</span> <span class="kt">char</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="n">binary</span> <span class="n">NOT</span> <span class="nb">NULL</span><span class="p">,</span>
+<span class="o">-&gt;</span> <span class="n">password</span> <span class="kt">char</span><span class="p">(</span><span class="mi">48</span><span class="p">)</span> <span class="n">binary</span> <span class="n">NOT</span> <span class="nb">NULL</span><span class="p">,</span>
+<span class="o">-&gt;</span> <span class="n">primary</span> <span class="n">key</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+<span class="o">-&gt;</span> <span class="p">);</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="n">INSERT</span> <span class="n">INTO</span> <span class="n">users</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">password</span><span class="p">)</span> <span class="n">values</span><span class="p">(</span><span class="err">&#39;</span><span class="n">bjwf</span><span class="err">&#39;</span><span class="p">,</span><span class="n">password</span><span class="p">(</span><span class="err">&#39;</span><span class="mi">123456</span><span class="err">&#39;</span><span class="p">));</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="n">INSERT</span> <span class="n">INTO</span> <span class="n">users</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">password</span><span class="p">)</span> <span class="n">values</span><span class="p">(</span><span class="err">&#39;</span><span class="n">zhangsan</span><span class="err">&#39;</span><span class="p">,</span><span class="n">password</span><span class="p">(</span><span class="err">&#39;</span><span class="n">bjwf</span><span class="p">.</span><span class="n">com</span><span class="err">&#39;</span><span class="p">));</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="n">GRANT</span> <span class="n">ALL</span> <span class="n">ON</span> <span class="n">vsftpd</span><span class="p">.</span><span class="o">*</span> <span class="n">TO</span> <span class="n">vsftpd</span><span class="err">@</span><span class="sc">&#39;%&#39;</span> <span class="n">IDENTIFIED</span> <span class="n">BY</span> <span class="err">&#39;</span><span class="n">bjwf</span><span class="p">.</span><span class="n">com</span><span class="err">&#39;</span><span class="p">;</span> <span class="err">#用户授权</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="n">FLUSH</span> <span class="n">PRIVILEGES</span><span class="p">;</span> <span class="err">#刷新授权</span>
+<span class="mi">3</span><span class="err">、查看</span><span class="n">pam</span><span class="err">模块</span><span class="p">,</span><span class="err">并创建认证文件</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">rpm</span> <span class="o">-</span><span class="n">ql</span> <span class="n">pam_mysql</span>
+<span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">security</span><span class="o">/</span><span class="n">pam_mysql</span><span class="p">.</span><span class="n">so</span> <span class="err">#</span><span class="n">pam</span><span class="err">模块生成认证时需要的共享库</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pam</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">vsftpd</span><span class="p">.</span><span class="n">mysql</span>
+<span class="n">auth</span> <span class="n">required</span> <span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">security</span><span class="o">/</span><span class="n">pam_mysql</span><span class="p">.</span><span class="n">so</span> <span class="n">user</span><span class="o">=</span><span class="n">vsftpd</span> <span class="n">passwd</span><span class="o">=</span><span class="n">bjwf</span><span class="p">.</span><span class="n">com</span> <span class="n">host</span><span class="o">=</span><span class="mf">192.168.130.251</span> <span class="n">db</span><span class="o">=</span><span class="n">vsftpd</span> <span class="n">table</span><span class="o">=</span><span class="n">users</span> <span class="n">userco</span>
+<span class="n">lumn</span><span class="o">=</span><span class="n">name</span> <span class="n">passwdcolumn</span><span class="o">=</span><span class="n">password</span> <span class="n">crypt</span><span class="o">=</span><span class="mi">2</span>
+<span class="n">account</span> <span class="n">required</span> <span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">security</span><span class="o">/</span><span class="n">pam_mysql</span><span class="p">.</span><span class="n">so</span> <span class="n">user</span><span class="o">=</span><span class="n">vsftpd</span> <span class="n">passwd</span><span class="o">=</span><span class="n">bjwf</span><span class="p">.</span><span class="n">com</span> <span class="n">host</span><span class="o">=</span><span class="mf">192.168.130.251</span> <span class="n">db</span><span class="o">=</span><span class="n">vsftpd</span> <span class="n">table</span><span class="o">=</span><span class="n">users</span> <span class="n">use</span>
+<span class="n">rcolumn</span><span class="o">=</span><span class="n">name</span> <span class="n">passwdcolumn</span><span class="o">=</span><span class="n">password</span> <span class="n">crypt</span><span class="o">=</span><span class="mi">2</span>
+<span class="mi">4</span><span class="err">、</span> <span class="err">创建虚拟用户的映射用户</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">useradd</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">ftproot</span> <span class="n">vuser</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">chmod</span> <span class="n">go</span><span class="o">+</span><span class="n">rx</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">ftproot</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">为单个用户提供配置文件</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vsftpd</span><span class="p">.</span><span class="n">conf</span>
+<span class="n">user_config_dir</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vuser_config</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">mkdir</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vuser_config</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">vsftpd</span><span class="o">/</span><span class="n">vuser_config</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="n">vuser_config</span><span class="p">]</span><span class="err">#</span> <span class="n">cat</span> <span class="n">bjwf</span>
+<span class="n">anon_upload_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="n">anon_mkdir_write_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="n">anon_other_write_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="n">vuser_config</span><span class="p">]</span><span class="err">#</span> <span class="n">cat</span> <span class="n">zhangsan</span>
+<span class="n">anon_upload_enable</span><span class="o">=</span><span class="n">YES</span>
+<span class="n">anon_mkdir_write_enable</span><span class="o">=</span><span class="n">NO</span>
+<span class="n">anon_other_write_enable</span><span class="o">=</span><span class="n">NO</span>
+<span class="mi">7</span><span class="err">、</span> <span class="err">重启服务验证权限</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">service</span> <span class="n">vsftpd</span> <span class="n">restart</span>
+<span class="n">Shutting</span> <span class="n">down</span> <span class="n">vsftpd</span><span class="o">:</span> <span class="p">[</span> <span class="n">OK</span> <span class="p">]</span>
+<span class="n">Starting</span> <span class="n">vsftpd</span> <span class="k">for</span> <span class="n">vsftpd</span><span class="o">:</span> <span class="p">[</span> <span class="n">OK</span> <span class="p">]</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">netstat</span> <span class="o">-</span><span class="n">tnlp</span><span class="o">|</span><span class="n">grep</span> <span class="mi">21</span>
+<span class="n">tcp</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mf">0.0.0.0</span><span class="o">:</span><span class="mi">21</span> <span class="mf">0.0.0.0</span><span class="o">:*</span> <span class="n">LISTEN</span> <span class="mi">1850</span><span class="o">/</span><span class="n">vsftpd</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">cp</span> <span class="n">install</span><span class="p">.</span><span class="n">log</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">ftproot</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">验证</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node1</span> <span class="n">tmp</span><span class="p">]</span><span class="err">#</span> <span class="n">lftp</span> <span class="o">-</span><span class="n">u</span> <span class="n">bjwf</span> <span class="mf">192.168.130.251</span> <span class="err">#使用可读、可写账号</span>
+<span class="nl">Password:</span>
+<span class="n">lftp</span> <span class="n">bjwf</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:~&gt;</span> <span class="n">ls</span> <span class="err">#查看文件</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">9545</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">16</span> <span class="n">install</span><span class="p">.</span><span class="n">log</span>
+<span class="n">lftp</span> <span class="n">bjwf</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">lcd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span> <span class="err">#切换到本地目录</span>
+<span class="n">lcd</span> <span class="n">ok</span><span class="p">,</span> <span class="n">local</span> <span class="n">cwd</span><span class="o">=/</span><span class="n">etc</span>
+<span class="n">lftp</span> <span class="n">bjwf</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">put</span> <span class="n">fstab</span> <span class="err">#上传文件</span>
+<span class="mi">541</span> <span class="n">bytes</span> <span class="n">transferred</span>
+<span class="n">lftp</span> <span class="n">bjwf</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">ls</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">541</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">20</span> <span class="n">fstab</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">9545</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">16</span> <span class="n">install</span><span class="p">.</span><span class="n">log</span>
+<span class="n">lftp</span> <span class="n">bjwf</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">put</span> <span class="n">passwd</span> <span class="err">#上传文件</span>
+<span class="mi">1228</span> <span class="n">bytes</span> <span class="n">transferred</span>
+<span class="n">lftp</span> <span class="n">bjwf</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">ls</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">541</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">20</span> <span class="n">fstab</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">9545</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">16</span> <span class="n">install</span><span class="p">.</span><span class="n">log</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">1228</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">21</span> <span class="n">passwd</span>
+<span class="n">lftp</span> <span class="n">bjwf</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">mkdir</span> <span class="n">haha</span> <span class="err">#创建目录</span>
+<span class="n">mkdir</span> <span class="n">ok</span><span class="p">,</span> <span class="err">`</span><span class="n">haha</span><span class="err">&#39;</span> <span class="n">created</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">lftp</span> <span class="n">bjwf</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">rm</span> <span class="n">install</span><span class="p">.</span><span class="n">log</span> <span class="err">#删除文件</span>
+<span class="n">rm</span> <span class="n">ok</span><span class="p">,</span> <span class="err">`</span><span class="n">install</span><span class="p">.</span><span class="n">log</span><span class="err">&#39;</span> <span class="n">removed</span>
+<span class="n">lftp</span> <span class="n">bjwf</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">ls</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">541</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">20</span> <span class="n">fstab</span>
+<span class="n">drwx</span><span class="o">------</span> <span class="mi">2</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">4096</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">21</span> <span class="n">haha</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">1228</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">21</span> <span class="n">passwd</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">node1</span> <span class="n">tmp</span><span class="p">]</span><span class="err">#</span> <span class="n">lftp</span> <span class="o">-</span><span class="n">u</span> <span class="n">zhangsan</span> <span class="mf">192.168.130.251</span> <span class="err">#切换另一个用户</span>
+<span class="nl">Password:</span>
+<span class="n">lftp</span> <span class="n">zhangsan</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:~&gt;</span> <span class="n">ls</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">541</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">20</span> <span class="n">fstab</span>
+<span class="n">drwx</span><span class="o">------</span> <span class="mi">2</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">4096</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">21</span> <span class="n">haha</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">1228</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">21</span> <span class="n">passwd</span>
+<span class="n">lftp</span> <span class="n">zhangsan</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">lcd</span> <span class="o">/</span><span class="n">etc</span>
+<span class="n">lcd</span> <span class="n">ok</span><span class="p">,</span> <span class="n">local</span> <span class="n">cwd</span><span class="o">=/</span><span class="n">etc</span>
+<span class="n">lftp</span> <span class="n">zhangsan</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">put</span> <span class="n">issue</span> <span class="err">#上传成功</span>
+<span class="mi">23</span> <span class="n">bytes</span> <span class="n">transferred</span>
+<span class="n">lftp</span> <span class="n">zhangsan</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">ls</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">541</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">20</span> <span class="n">fstab</span>
+<span class="n">drwx</span><span class="o">------</span> <span class="mi">2</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">4096</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">21</span> <span class="n">haha</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">23</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">23</span> <span class="n">issue</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">1228</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">21</span> <span class="n">passwd</span>
+<span class="n">lftp</span> <span class="n">zhangsan</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">rm</span> <span class="n">issue</span>
+<span class="nl">rm:</span> <span class="n">Access</span> <span class="n">failed</span><span class="o">:</span> <span class="mi">550</span> <span class="n">Permission</span> <span class="n">denied</span><span class="p">.</span> <span class="p">(</span><span class="n">issue</span><span class="p">)</span> <span class="err">#不能删除</span>
+<span class="n">lftp</span> <span class="n">zhangsan</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">mkdir</span> <span class="n">data</span>
+<span class="nl">mkdir:</span> <span class="n">Access</span> <span class="n">failed</span><span class="o">:</span> <span class="mi">550</span> <span class="n">Permission</span> <span class="n">denied</span><span class="p">.</span> <span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="err">#不能创建目录</span>
+<span class="n">lftp</span> <span class="n">zhangsan</span><span class="err">@</span><span class="mf">192.168.130.251</span><span class="o">:/&gt;</span> <span class="n">ls</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">541</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">20</span> <span class="n">fstab</span>
+<span class="n">drwx</span><span class="o">------</span> <span class="mi">2</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">4096</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">21</span> <span class="n">haha</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">23</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">23</span> <span class="n">issue</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="mi">500</span> <span class="mi">500</span> <span class="mi">1228</span> <span class="n">Jul</span> <span class="mo">01</span> <span class="mi">09</span><span class="o">:</span><span class="mi">21</span> <span class="n">passw</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

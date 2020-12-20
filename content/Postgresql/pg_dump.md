@@ -32,11 +32,25 @@ yum install postgresql12.x86_64
 
 
 
+or 
+
+```
+cd /tmp
+wget https://ftp.postgresql.org/pub/source/v11.4/postgresql-11.4.tar.gz
+tar zxvf postgresql-11.4.tar.gz
+cd postgresql-11.4
+./configure --without-readline && make && make install
+```
+
+> By default, it will install pg_dump into `/usr/local/pgsql/bin/pg_dump`
 
 
 
 
-## -s 
+
+## -s, --schema-only      
+
+ dump only the schema, no data
 
 ```
 /usr/pgsql-12/bin/pg_dump -s -h rxutestpostgres.com -p 5432 -U postgres id_generator > abc.txt
@@ -148,6 +162,10 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 ```
 
 
+
+## -t, --table=TABLE            
+
+dump the named table(s) only
 
 
 

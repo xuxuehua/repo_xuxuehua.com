@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>authorization - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Kubernetes">Kubernetes</a>&nbsp;&#187;&nbsp;authorization
+    <span class="updated">Page Updated&nbsp;
+      2019-03-23 13:33
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">authorization</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#kubernetes-rbac">Kubernetes 授权 RBAC</a><ul>
+<li><a href="#role">Role</a></li>
+<li><a href="#subject">Subject</a></li>
+<li><a href="#rolebinding">RoleBinding</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="kubernetes-rbac">Kubernetes 授权 RBAC</h1>
+<p>基于RBAC (Role-Based Access Control) 授权的工作机制</p>
+<h2 id="role">Role</h2>
+<p>其实是一组规则，定义了一组对Kubernetes API对象的操作权限</p>
+<div class="hlcode"><pre><span class="n">kind</span><span class="o">:</span> <span class="n">Role</span>
+<span class="n">apiVersion</span><span class="o">:</span> <span class="n">rbac</span><span class="o">.</span><span class="na">authorization</span><span class="o">.</span><span class="na">k8s</span><span class="o">.</span><span class="na">io</span><span class="o">/</span><span class="n">v1</span>
+<span class="n">metadata</span><span class="o">:</span>
+  <span class="kd">namespace</span><span class="o">:</span> <span class="n">mynamespace</span>
+  <span class="n">name</span><span class="o">:</span> <span class="n">example</span><span class="o">-</span><span class="n">role</span>
+<span class="n">rules</span><span class="o">:</span>
+<span class="o">-</span> <span class="n">apiGroups</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;&quot;</span><span class="o">]</span>
+  <span class="n">resources</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;pods&quot;</span><span class="o">]</span>
+  <span class="n">verbs</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;get&quot;</span><span class="o">,</span> <span class="s2">&quot;watch&quot;</span><span class="o">,</span> <span class="s2">&quot;list&quot;</span><span class="o">]</span>
+</pre></div>
+
+
+<blockquote>
+<p>这个 Role 对象指定了它能产生作用的 Namepace 是：mynamespace。</p>
+</blockquote>
+<h2 id="subject">Subject</h2>
+<p>被使用者，既可以是“人”，也可以是“机器”，也可以是在 Kubernetes 里定义的“用户”。</p>
+<h2 id="rolebinding">RoleBinding</h2>
+<p>定义了“被作用者”和“角色”的绑定关系。</p>
+<p>RoleBinding 本身也是一个 Kubernetes 的 API 对象。</p>
+<div class="hlcode"><pre><span class="n">kind</span><span class="o">:</span> <span class="n">RoleBinding</span>
+<span class="n">apiVersion</span><span class="o">:</span> <span class="n">rbac</span><span class="o">.</span><span class="na">authorization</span><span class="o">.</span><span class="na">k8s</span><span class="o">.</span><span class="na">io</span><span class="o">/</span><span class="n">v1</span>
+<span class="n">metadata</span><span class="o">:</span>
+  <span class="n">name</span><span class="o">:</span> <span class="n">example</span><span class="o">-</span><span class="n">rolebinding</span>
+  <span class="kd">namespace</span><span class="o">:</span> <span class="n">mynamespace</span>
+<span class="n">subjects</span><span class="o">:</span>
+<span class="o">-</span> <span class="n">kind</span><span class="o">:</span> <span class="n">User</span>
+  <span class="n">name</span><span class="o">:</span> <span class="n">example</span><span class="o">-</span><span class="n">user</span>
+  <span class="n">apiGroup</span><span class="o">:</span> <span class="n">rbac</span><span class="o">.</span><span class="na">authorization</span><span class="o">.</span><span class="na">k8s</span><span class="o">.</span><span class="na">io</span>
+<span class="n">roleRef</span><span class="o">:</span>
+  <span class="n">kind</span><span class="o">:</span> <span class="n">Role</span>
+  <span class="n">name</span><span class="o">:</span> <span class="n">example</span><span class="o">-</span><span class="n">role</span>
+  <span class="n">apiGroup</span><span class="o">:</span> <span class="n">rbac</span><span class="o">.</span><span class="na">authorization</span><span class="o">.</span><span class="na">k8s</span><span class="o">.</span><span class="na">io</span>
+</pre></div>
+
+
+<blockquote>
+<p>RoleBinding 对象里定义了一个 subjects 字段，即“被作用者”。它的类型是 User，即 Kubernetes 里的用户。这个用户的名字是 example-user。</p>
+<p>roleRef 字段。正是通过这个字段，RoleBinding 对象就可以直接通过名字，来引用我们前面定义的 Role 对象（example-role），从而定义了“被作用者（Subject）”和“角色（Role）”之间的绑定关系。</p>
+</blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

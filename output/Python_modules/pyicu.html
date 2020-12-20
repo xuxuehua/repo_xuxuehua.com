@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>pyicu - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;pyicu
+    <span class="updated">Page Updated&nbsp;
+      2020-06-28 15:59
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">pyicu</div>
+
+  <p>[toc]</p>
+<h1 id="pyicu">pyicu</h1>
+<h2 id="mac-installation">mac installation</h2>
+<p>1) install <code>icu4c</code> with brew:</p>
+<div class="hlcode"><pre><span class="n">brew</span> <span class="n">install</span> <span class="n">icu4c</span>
+<span class="n">brew</span> <span class="n">link</span> <span class="n">icu4c</span> <span class="o">--</span><span class="n">force</span>
+</pre></div>
+
+
+<p>2) check the version:</p>
+<div class="hlcode"><pre><span class="n">ls</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">Cellar</span><span class="o">/</span><span class="n">icu4c</span><span class="o">/</span>
+</pre></div>
+
+
+<p>it prompts something like: <code>64.2</code></p>
+<p>3) execute bellow commands with substitution of proper version from previous step (first line only integer part, second and third line with decimal part):</p>
+<div class="hlcode"><pre><span class="n">export</span> <span class="n">ICU_VERSION</span><span class="o">=</span><span class="mi">64</span>
+<span class="n">export</span> <span class="n">PYICU_INCLUDES</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">Cellar</span><span class="o">/</span><span class="n">icu4c</span><span class="o">/</span><span class="mf">64.2</span><span class="o">/</span><span class="n">include</span>
+<span class="n">export</span> <span class="n">PYICU_LFLAGS</span><span class="o">=-</span><span class="n">L</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">Cellar</span><span class="o">/</span><span class="n">icu4c</span><span class="o">/</span><span class="mf">64.2</span><span class="o">/</span><span class="n">lib</span>
+</pre></div>
+
+
+<p>4) finally install python package for pyicu:</p>
+<div class="hlcode"><pre><span class="n">pip</span> <span class="n">install</span> <span class="n">pyicu</span> <span class="o">--</span><span class="n">upgrade</span>
+</pre></div>
+
+
+<p>IF YOU FAIL with above (happen already to me on OS X <code>10.15</code>) you may need:</p>
+<div class="hlcode"><pre><span class="n">brew</span> <span class="n">install</span> <span class="n">pkg</span><span class="o">-</span><span class="n">config</span>
+
+<span class="n">export</span> <span class="n">PYICU_CFLAGS</span><span class="o">=-</span><span class="n">std</span><span class="o">=</span><span class="n">c</span><span class="o">++</span><span class="mi">11</span><span class="p">:</span><span class="o">-</span><span class="n">DPYICU_VER</span><span class="o">=</span><span class="s">&#39;&quot;2.3.1&quot;&#39;</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

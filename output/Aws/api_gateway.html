@@ -1,0 +1,674 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>api_gateway - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Aws">Aws</a>&nbsp;&#187;&nbsp;api_gateway
+    <span class="updated">Page Updated&nbsp;
+      2019-06-28 09:52
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">api_gateway</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#api-gateway">API Gateway</a><ul>
+<li><a href="#additional-features">Additional Features</a></li>
+<li><a href="#api-endpoint">api endpoint</a></li>
+<li><a href="#request-response">Request &amp; Response</a></li>
+<li><a href="#customized-domains">Customized Domains</a></li>
+</ul>
+</li>
+<li><a href="#http-apis-vs-rest-apis">HTTP APIs vs REST APIs</a></li>
+<li><a href="#limits">limits</a><ul>
+<li><a href="#length-of-method">length of method</a></li>
+<li><a href="#account-level-quotas">account-level quotas</a></li>
+<li><a href="#http-api-quotas">HTTP API quotas</a></li>
+<li><a href="#rest-api-quotas">REST API quotas</a><ul>
+<li><a href="#calculate-payload-size-javascript">calculate payload size （JavaScript）</a></li>
+</ul>
+</li>
+<li><a href="#websocket-api">WebSocket API</a></li>
+<li><a href="#api-gateway-quotas-for-creating-deploying-and-managing-an-api">API Gateway quotas for creating, deploying and managing an API</a></li>
+</ul>
+</li>
+<li><a href="#example">example</a><ul>
+<li><a href="#signature-version-4-for-http-post-request">signature version 4 for http post request</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="api-gateway">API Gateway</h1>
+<p>API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. It frees you from the operational burden of implementation, offers reliable network protection, and centralizes authorization decisions within policies so bugs and code concerns are minimized.</p>
+<ul>
+<li>
+<p>Host multiple versions and stages of your APIs</p>
+</li>
+<li>
+<p>Create and distribute API Keys to developers</p>
+</li>
+<li>
+<p>Throttle and monitor requests to protect your backend</p>
+</li>
+<li>
+<p>Leverage signature version 4 to authorize access to APIs</p>
+</li>
+<li>
+<p>Perform Request / Response data transformation and API mocking</p>
+</li>
+<li>
+<p>Reduce latency and DDoS protection through CloudFront</p>
+</li>
+<li>
+<p>Store API responses through managed caches</p>
+</li>
+<li>
+<p>Generate SDKs for Java, JavaScript, Java for Android, Objective-C or</p>
+<p>Swift for iOS, and Ruby</p>
+</li>
+</ul>
+<p><strong>API Gateway REST API</strong></p>
+<p>A collection of HTTP resources and methods that are integrated with backend HTTP endpoints, Lambda functions, or other AWS services. You can deploy this collection in one or more stages. Typically, API resources are organized in a resource tree according to the application logic. Each API resource can expose one or more API methods that have unique HTTP verbs supported by API Gateway.</p>
+<p><strong>API Gateway HTTP API</strong></p>
+<p>A collection of routes and methods that are integrated with backend HTTP endpoints or Lambda functions. You can deploy this collection in one or more stages. Each route can expose one or more API methods that have unique HTTP verbs supported by API Gateway.</p>
+<p><strong>API Gateway WebSocket API</strong></p>
+<p>A collection of WebSocket routes and route keys that are integrated with backend HTTP endpoints, Lambda functions, or other AWS services. You can deploy this collection in one or more stages. API methods are invoked through frontend WebSocket connections that you can associate with a registered custom domain name.</p>
+<h2 id="additional-features">Additional Features</h2>
+<p>Multiple versions and release stages</p>
+<p>Automatic SDK generation</p>
+<p>Monitoring and logging</p>
+<h2 id="api-endpoint">api endpoint</h2>
+<p>A hostname for an API in API Gateway that is deployed to a specific Region. The hostname is of the form <code>{api-id}.execute-api.{region}.amazonaws.com</code>.</p>
+<h2 id="request-response">Request &amp; Response</h2>
+<p><img alt="image-20200907100830313" src="api_gateway.assets/image-20200907100830313.png" /></p>
+<h2 id="customized-domains">Customized Domains</h2>
+<p><strong>Custom Domains in API Gateway</strong></p>
+<p>API Gateway enables you to create custom domains for your APIs. </p>
+<p>It also enables you to point to custom domains from multiple API types.</p>
+<p>Run your APIs within your own DNS zone</p>
+<p>Recommended for supporting multiple versions</p>
+<p>api.xurick.com/v1 -&gt; restapi1</p>
+<p>api.xurick.com/v2 -&gt; restapi2</p>
+<p>Support for cross-region redundancy with regional API endpoints</p>
+<p><img alt="image-20200907101655030" src="api_gateway.assets/image-20200907101655030.png" /></p>
+<h1 id="http-apis-vs-rest-apis">HTTP APIs vs REST APIs</h1>
+<p>https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html</p>
+<h1 id="limits">limits</h1>
+<h2 id="length-of-method">length of method</h2>
+<p>the maximum length of the method's ARN (for example, <code>arn:aws:execute-api:{region-id}:{account-id}:{api-id}/{stage-id}/{method}/{resource}/{path}</code>) is 1600 bytes.</p>
+<h2 id="account-level-quotas">account-level quotas</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Resource or operation</th>
+<th align="left">Default quota</th>
+<th align="left">Can be increased</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Throttle quota per Region across HTTP APIs, REST APIs, WebSocket APIs, and WebSocket callback APIs</td>
+<td align="left">10,000 requests per second (RPS) with an additional burst capacity provided by the <a href="https://en.wikipedia.org/wiki/Token_bucket">token bucket algorithm</a>, using a maximum bucket capacity of 5,000 requests.<strong>Note</strong>The burst quota is determined by the API Gateway service team based on the overall RPS quota for the account. It is not a quota that a customer can control or request changes to.</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Regional APIs</td>
+<td align="left">600</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Edge-optimized APIs</td>
+<td align="left">120</td>
+<td align="left">No</td>
+</tr>
+</tbody>
+</table>
+<h2 id="http-api-quotas">HTTP API quotas</h2>
+<p>For data transform, not support private VPC</p>
+<table>
+<thead>
+<tr>
+<th align="left">Resource or operation</th>
+<th align="left">Default quota</th>
+<th align="left">Can be increased</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Routes per API</td>
+<td align="left">300</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Integrations per API</td>
+<td align="left">300</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Maximum integration timeout</td>
+<td align="left">30 seconds</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Stages per API</td>
+<td align="left">10</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Tags per stage</td>
+<td align="left">50</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Total combined size of request line and header values</td>
+<td align="left">10240 bytes</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Payload size</td>
+<td align="left">10 MB</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Custom domains per account per Region</td>
+<td align="left">120</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Access log template size</td>
+<td align="left">3 KB</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Amazon CloudWatch Logs log entry</td>
+<td align="left">1 MB</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Authorizers per API</td>
+<td align="left">10</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Audiences per authorizer</td>
+<td align="left">50</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Scopes per route</td>
+<td align="left">10</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Timeout for JSON Web Key Set endpoint</td>
+<td align="left">1500 ms</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Timeout for OpenID Connect discovery endpoint</td>
+<td align="left">1500 ms</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">VPC links per account per Region</td>
+<td align="left">10</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Subnets per VPC link</td>
+<td align="left">10</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Stage variables per stage</td>
+<td align="left">100</td>
+<td align="left">No</td>
+</tr>
+</tbody>
+</table>
+<h2 id="rest-api-quotas">REST API quotas</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Resource or operation</th>
+<th align="left">Default quota</th>
+<th align="left">Can be increased</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Custom domain names per account per Region</td>
+<td align="left">120</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Length, in characters, of the URL for an edge-optimized API</td>
+<td align="left">8192</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Length, in characters, of the URL for a regional API</td>
+<td align="left">10240</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Private APIs per account per Region</td>
+<td align="left">600</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Length, in characters, of API Gateway resource policy</td>
+<td align="left">8192</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">API keys per account per Region</td>
+<td align="left">500</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Client certificates per account per Region</td>
+<td align="left">60</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Authorizers per API (AWS Lambda and Amazon Cognito)</td>
+<td align="left">10</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Documentation parts per API</td>
+<td align="left">2000</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Resources per API</td>
+<td align="left">300</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Stages per API</td>
+<td align="left">10</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Stage variables per stage</td>
+<td align="left">100</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Length, in characters, of the key in a stage variable</td>
+<td align="left">64</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Length, in characters, of the value in a stage variable</td>
+<td align="left">512</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Usage plans per account per Region</td>
+<td align="left">300</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Usage plans per API key</td>
+<td align="left">10</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">VPC links per account per Region</td>
+<td align="left">20</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">API caching TTL</td>
+<td align="left">300 seconds by default and configurable between 0 and 3600 by an API owner.</td>
+<td align="left">Not for the upper bound (3600)</td>
+</tr>
+<tr>
+<td align="left">Cached response size</td>
+<td align="left">1048576 Bytes. Cache data encryption may increase the size of the item that is being cached.</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Integration timeout</td>
+<td align="left">50 milliseconds - 29 seconds for all integration types, including Lambda, Lambda proxy, HTTP, HTTP proxy, and AWS integrations.</td>
+<td align="left">Not for the lower or upper bounds.</td>
+</tr>
+<tr>
+<td align="left">Total combined size of all header values</td>
+<td align="left">10240 Bytes</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Payload size</td>
+<td align="left">10 MB</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Tags per stage</td>
+<td align="left">50</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Number of iterations in a <code>#foreach ... #end</code> loop in mapping templates</td>
+<td align="left">1000</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">ARN length of a method with authorization</td>
+<td align="left">1600 bytes</td>
+<td align="left">No</td>
+</tr>
+</tbody>
+</table>
+<h3 id="calculate-payload-size-javascript">calculate payload size （JavaScript）</h3>
+<p>Value unit is byte</p>
+<div class="hlcode"><pre><span class="kd">function</span> <span class="nx">calculate_payload_size</span><span class="p">(</span> <span class="nx">channel</span><span class="p">,</span> <span class="nx">message</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">encodeURIComponent</span><span class="p">(</span>
+        <span class="nx">channel</span> <span class="o">+</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span>
+    <span class="p">).</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">100</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Below is an example of calling the above function with a sample message that is obviously well under the limit.</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">channel</span> <span class="o">=</span> <span class="s2">&quot;chats.room1&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;msg&quot;</span><span class="o">:</span><span class="s2">&quot;mrqbthxukm&quot;</span><span class="p">};</span>
+<span class="kd">var</span> <span class="nx">size</span> <span class="o">=</span> <span class="nx">calculate_payload_size</span><span class="p">(</span><span class="nx">channel</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Payload Size Bytes: &quot;</span><span class="p">,</span> <span class="nx">size</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">size</span> <span class="o">&lt;</span> <span class="mi">32768</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">pubnub</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span>
+    <span class="p">{</span><span class="nx">channel</span><span class="o">:</span> <span class="nx">channel</span><span class="p">,</span> <span class="nx">message</span><span class="o">:</span> <span class="nx">msg</span><span class="p">},</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">status</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="p">{</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">status</span><span class="p">,</span> <span class="nx">response</span><span class="p">);}</span>
+  <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="websocket-api">WebSocket API</h2>
+<p>Because of the WebSocket frame-size quota of 32 KB, a message larger than 32 KB must be split into multiple frames, each 32 KB or smaller. If a larger message (or larger frame size) is received, the connection is closed with code 1009.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Resource or operation</th>
+<th align="left">Default quota</th>
+<th align="left">Can be increased</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">New connections per second per account (across all WebSocket APIs) per Region</td>
+<td align="left">500</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">AWS Lambda authorizers per API</td>
+<td align="left">10</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">AWS Lambda authorizer result size</td>
+<td align="left">8 KB</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Routes per API</td>
+<td align="left">300</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Integrations per API</td>
+<td align="left">300</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">Stages per API</td>
+<td align="left">10</td>
+<td align="left">Yes</td>
+</tr>
+<tr>
+<td align="left">WebSocket frame size</td>
+<td align="left">32 KB</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Message payload size</td>
+<td align="left">128 KB *</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Connection duration for WebSocket API</td>
+<td align="left">2 hours</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Idle Connection Timeout</td>
+<td align="left">10 minutes</td>
+<td align="left">No</td>
+</tr>
+</tbody>
+</table>
+<h2 id="api-gateway-quotas-for-creating-deploying-and-managing-an-api">API Gateway quotas for creating, deploying and managing an API</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Action</th>
+<th align="left">Default quota</th>
+<th align="left">Can be increased</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/apikey-create/">CreateApiKey</a></td>
+<td align="left">5 requests per second per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/deployment-create/">CreateDeployment</a></td>
+<td align="left">1 request every 5 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/documentationversion-create/">CreateDocumentationVersion</a></td>
+<td align="left">1 request every 20 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/domainname-create/">CreateDomainName</a></td>
+<td align="left">1 request every 30 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/resource-create/">CreateResource</a></td>
+<td align="left">5 requests per second per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/restapi-create/">CreateRestApi</a></td>
+<td align="left"><strong>Regional or private API</strong>1 request every 3 seconds per account<strong><em>*Edge-optimized API*</em></strong>1 request every 30 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigatewayv2/latest/api-reference/vpclinks.html#CreateVpcLink">CreateVpcLink</a> (V2)</td>
+<td align="left">1 request every 15 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/apikey-delete/">DeleteApiKey</a></td>
+<td align="left">5 requests per second per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/domainname-delete/">DeleteDomainName</a></td>
+<td align="left">1 request every 30 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/resource-delete/">DeleteResource</a></td>
+<td align="left">5 requests per second per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/restapi-delete/">DeleteRestApi</a></td>
+<td align="left">1 request every 30 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/restapi-resources/">GetResources</a></td>
+<td align="left">5 requests every 2 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigatewayv2/latest/api-reference/vpclinks.html#DeleteVpcLink">DeleteVpcLink</a> (V2)</td>
+<td align="left">1 request every 30 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/documentationpart-import/">ImportDocumentationParts</a></td>
+<td align="left">1 request every 30 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/restapi-import/">ImportRestApi</a></td>
+<td align="left"><strong>Regional or private API</strong>1 request every 3 seconds per account<strong><em>*Edge-optimized API*</em></strong>1 request every 30 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/restapi-put/">PutRestApi</a></td>
+<td align="left">1 request per second per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/account-update/">UpdateAccount</a></td>
+<td align="left">1 request every 20 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/domainname-update/">UpdateDomainName</a></td>
+<td align="left">1 request every 30 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left"><a href="https://docs.aws.amazon.com/apigateway/api-reference/link-relation/usageplan-update/">UpdateUsagePlan</a></td>
+<td align="left">1 request every 20 seconds per account</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Other operations</td>
+<td align="left">No quota up to the total account quota.</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Total operations</td>
+<td align="left">10 requests per second with a burst quota of 40 requests per second.</td>
+<td align="left">No</td>
+</tr>
+</tbody>
+</table>
+<h1 id="example">example</h1>
+<h2 id="signature-version-4-for-http-post-request">signature version 4 for http post request</h2>
+<div class="hlcode"><pre><span class="k">import</span> <span class="nx">sys</span><span class="p">,</span> <span class="nx">os</span><span class="p">,</span> <span class="nb">base64</span><span class="p">,</span> <span class="nx">datetime</span><span class="p">,</span> <span class="nx">hashlib</span><span class="p">,</span> <span class="nx">hmac</span> 
+<span class="k">import</span> <span class="nx">requests</span> 
+
+
+<span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;POST&#39;</span>
+<span class="n">service</span> <span class="o">=</span> <span class="s1">&#39;execute-api&#39;</span>
+<span class="n">host</span><span class="o">=</span><span class="s1">&#39;&lt;API ID&gt;.execute-api.&lt;region&gt;.amazonaws.com&#39;</span>
+<span class="n">region</span> <span class="o">=</span> <span class="s1">&#39;us-east-1&#39;</span>
+<span class="n">endpoint</span> <span class="o">=</span> <span class="s1">&#39;https://&lt;API ID&gt;.execute-api.&lt;region&gt;.amazonaws.com/&lt;stage&gt;/&lt;resource&gt;&#39;</span>
+<span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/x-amz-json-1.0&#39;</span>
+
+<span class="n">request_parameters</span><span class="o">=</span><span class="s1">&#39;{&quot;msg&quot;:&quot;hello world&quot;}&#39;</span> <span class="vi">#Request</span> <span class="nb">body</span>
+
+<span class="nx">def</span> <span class="nx">sign</span><span class="p">(</span><span class="nb">key</span><span class="p">,</span> <span class="nb">msg</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nx">hmac.new</span><span class="p">(</span><span class="nb">key</span><span class="p">,</span> <span class="nx">msg.encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span> <span class="nx">hashlib.sha256</span><span class="p">)</span><span class="bp">.</span><span class="nx">digest</span><span class="p">()</span>
+
+<span class="nx">def</span> <span class="nx">getSignatureKey</span><span class="p">(</span><span class="nb">key</span><span class="p">,</span> <span class="nx">date_stamp</span><span class="p">,</span> <span class="nx">regionName</span><span class="p">,</span> <span class="nx">serviceName</span><span class="p">):</span>
+    <span class="n">kDate</span> <span class="o">=</span> <span class="nx">sign</span><span class="p">((</span><span class="s1">&#39;AWS4&#39;</span> <span class="o">+</span> <span class="nb">key</span><span class="p">)</span><span class="bp">.</span><span class="nx">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="nx">date_stamp</span><span class="p">)</span>
+    <span class="n">kRegion</span> <span class="o">=</span> <span class="nx">sign</span><span class="p">(</span><span class="nx">kDate</span><span class="p">,</span> <span class="nx">regionName</span><span class="p">)</span>
+    <span class="n">kService</span> <span class="o">=</span> <span class="nx">sign</span><span class="p">(</span><span class="nx">kRegion</span><span class="p">,</span> <span class="nx">serviceName</span><span class="p">)</span>
+    <span class="n">kSigning</span> <span class="o">=</span> <span class="nx">sign</span><span class="p">(</span><span class="nx">kService</span><span class="p">,</span> <span class="s1">&#39;aws4_request&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">kSigning</span>
+
+<span class="n">access_key</span> <span class="o">=</span> <span class="nx">os.environ.get</span><span class="p">(</span><span class="s1">&#39;AWS_ACCESS_KEY_ID&#39;</span><span class="p">)</span>
+<span class="n">secret_key</span> <span class="o">=</span> <span class="nx">os.environ.get</span><span class="p">(</span><span class="s1">&#39;AWS_SECRET_ACCESS_KEY&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="nx">access_key</span> <span class="nx">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nx">secret_key</span> <span class="nx">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nx">print</span><span class="p">(</span><span class="s1">&#39;No access key is available.&#39;</span><span class="p">)</span>
+    <span class="nx">sys.exit</span><span class="p">()</span>
+
+
+<span class="n">t</span> <span class="o">=</span> <span class="nx">datetime.datetime.utcnow</span><span class="p">()</span>
+<span class="n">amz_date</span> <span class="o">=</span> <span class="nx">t.strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m%dT%H%M%SZ&#39;</span><span class="p">)</span>
+<span class="n">date_stamp</span> <span class="o">=</span> <span class="nx">t.strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m%d&#39;</span><span class="p">)</span> 
+
+<span class="n">canonical_uri</span> <span class="o">=</span> <span class="s1">&#39;/&lt;stage&gt;/&lt;resource&gt;&#39;</span>
+
+
+<span class="n">canonical_querystring</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+
+<span class="n">canonical_headers</span> <span class="o">=</span> <span class="s1">&#39;host:&#39;</span> <span class="o">+</span> <span class="nb">host</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;x-amz-date:&#39;</span> <span class="o">+</span> <span class="nx">amz_date</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+<span class="n">signed_headers</span> <span class="o">=</span> <span class="s1">&#39;host;x-amz-date&#39;</span>
+
+<span class="n">payload_hash</span> <span class="o">=</span> <span class="nx">hashlib.sha256</span><span class="p">(</span><span class="nx">request_parameters.encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="bp">.</span><span class="nx">hexdigest</span><span class="p">()</span>
+
+
+<span class="n">canonical_request</span> <span class="o">=</span> <span class="nb">method</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nx">canonical_uri</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nx">canonical_querystring</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nx">canonical_headers</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nx">signed_headers</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nx">payload_hash</span>
+
+
+<span class="n">algorithm</span> <span class="o">=</span> <span class="s1">&#39;AWS4-HMAC-SHA256&#39;</span>
+<span class="n">credential_scope</span> <span class="o">=</span> <span class="nx">date_stamp</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">region</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">service</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;aws4_request&#39;</span>
+<span class="n">string_to_sign</span> <span class="o">=</span> <span class="nx">algorithm</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>  <span class="nx">amz_date</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>  <span class="nx">credential_scope</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>  <span class="nx">hashlib.sha256</span><span class="p">(</span><span class="nx">canonical_request.encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="bp">.</span><span class="nx">hexdigest</span><span class="p">()</span>
+
+
+<span class="n">signing_key</span> <span class="o">=</span> <span class="nx">getSignatureKey</span><span class="p">(</span><span class="nx">secret_key</span><span class="p">,</span> <span class="nx">date_stamp</span><span class="p">,</span> <span class="nx">region</span><span class="p">,</span> <span class="nx">service</span><span class="p">)</span>
+
+<span class="n">signature</span> <span class="o">=</span> <span class="nx">hmac.new</span><span class="p">(</span><span class="nx">signing_key</span><span class="p">,</span> <span class="p">(</span><span class="nx">string_to_sign</span><span class="p">)</span><span class="bp">.</span><span class="nx">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="nx">hashlib.sha256</span><span class="p">)</span><span class="bp">.</span><span class="nx">hexdigest</span><span class="p">()</span>
+
+
+<span class="n">authorization_header</span> <span class="o">=</span> <span class="nx">algorithm</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="s1">&#39;Credential=&#39;</span> <span class="o">+</span> <span class="nx">access_key</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">credential_scope</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span>  <span class="s1">&#39;SignedHeaders=&#39;</span> <span class="o">+</span> <span class="nx">signed_headers</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="s1">&#39;Signature=&#39;</span> <span class="o">+</span> <span class="nb">signature</span>
+
+
+<span class="n">headers</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">&#39;X-Amz-Date&#39;</span><span class="p">:</span><span class="nx">amz_date</span><span class="p">,</span>
+    <span class="s1">&#39;Authorization&#39;</span><span class="p">:</span><span class="nx">authorization_header</span><span class="p">,</span>
+    <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span><span class="nb">content_type</span><span class="p">,</span>
+    <span class="s1">&#39;host&#39;</span><span class="p">:</span><span class="nb">host</span>
+<span class="p">}</span>
+
+<span class="nx">print</span><span class="p">(</span><span class="nb">headers</span><span class="p">)</span>
+<span class="nx">print</span><span class="p">(</span><span class="s1">&#39;=============================================&#39;</span><span class="p">)</span>
+<span class="n">response</span><span class="o">=</span><span class="nx">requests.request</span><span class="p">(</span><span class="nb">method</span><span class="p">,</span><span class="n">url</span><span class="o">=</span><span class="nx">endpoint</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="nb">headers</span><span class="p">,</span><span class="kd">data</span><span class="o">=</span><span class="nx">request_parameters</span><span class="p">)</span>
+<span class="nx">print</span><span class="p">(</span><span class="nx">response.text</span><span class="p">)</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

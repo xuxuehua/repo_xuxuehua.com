@@ -1,0 +1,408 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>socket - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;socket
+    <span class="updated">Page Updated&nbsp;
+      2018-09-10 12:14
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">socket</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#socket">socket</a><ul>
+<li><a href="#socket-families">Socket Families(地址簇)</a></li>
+<li><a href="#socket_1">Socket 类型</a></li>
+<li><a href="#socket_2">创建 Socket</a><ul>
+<li><a href="#tcp">tcp</a></li>
+<li><a href="#udp">udp</a></li>
+</ul>
+</li>
+<li><a href="#socket_3">Socket 函数</a><ul>
+<li><a href="#_1">服务器端</a></li>
+<li><a href="#_2">客户端</a></li>
+<li><a href="#_3">公用的</a></li>
+</ul>
+</li>
+<li><a href="#socket_4">Socket 编程流程</a><ul>
+<li><a href="#tcp_1">TCP 服务器</a></li>
+<li><a href="#tcp_2">TCP 客户端</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#tcpsocket">实现TCP持续的socket通信</a><ul>
+<li><a href="#server">Server</a></li>
+<li><a href="#client">Client</a></li>
+</ul>
+</li>
+<li><a href="#udpsocket">实现UDP持续的socket通信</a><ul>
+<li><a href="#server_1">Server</a></li>
+<li><a href="#client_1">Client</a></li>
+</ul>
+</li>
+<li><a href="#tcp_3">TCP 多线程聊天室</a><ul>
+<li><a href="#server_2">server</a></li>
+<li><a href="#client_2">client</a></li>
+</ul>
+</li>
+<li><a href="#socketserver">socketserver</a></li>
+</ul>
+</div>
+<h1 id="socket">socket</h1>
+<p>socket(family, type[,protocal]) 使用给定的套接族，套接字类型，协议编号（默认为0）来创建套接字</p>
+<h2 id="socket-families">Socket Families(地址簇)</h2>
+<p>协议类型称为地址簇</p>
+<div class="hlcode"><pre><span class="n">socket</span><span class="p">.</span><span class="n">AF_UNIX</span> <span class="n">unix</span><span class="err">本机进程间通信</span> 
+<span class="n">socket</span><span class="p">.</span><span class="n">AF_INET</span>　<span class="n">IPV4</span>　
+<span class="n">socket</span><span class="p">.</span><span class="n">AF_INET6</span>  <span class="n">IPV6</span>
+</pre></div>
+
+
+<h2 id="socket_1">Socket 类型</h2>
+<table>
+<thead>
+<tr>
+<th>socket 类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>socket.AF_UNIX</td>
+<td>用于同一台机器上的进程通信（既本机通信）</td>
+</tr>
+<tr>
+<td>socket.AF_INET</td>
+<td>用于服务器与服务器之间的网络通信</td>
+</tr>
+<tr>
+<td>socket.AF_INET6</td>
+<td>基于IPV6方式的服务器与服务器之间的网络通信</td>
+</tr>
+<tr>
+<td>socket.SOCK_STREAM</td>
+<td>基于TCP的流式socket通信</td>
+</tr>
+<tr>
+<td>socket.SOCK_DGRAM</td>
+<td>基于UDP的数据报式socket通信</td>
+</tr>
+<tr>
+<td>socket.SOCK_RAW</td>
+<td>原始套接字，普通的套接字无法处理ICMP、IGMP等网络报文，而SOCK_RAW可以；其次SOCK_RAW也可以处理特殊的IPV4报文；此外，利用原始套接字，可以通过IP_HDRINCL套接字选项由用户构造IP头</td>
+</tr>
+<tr>
+<td>socket.SOCK_SEQPACKET</td>
+<td>可靠的连续数据包服务.  #废弃了</td>
+</tr>
+</tbody>
+</table>
+<h2 id="socket_2">创建 Socket</h2>
+<h3 id="tcp">tcp</h3>
+<div class="hlcode"><pre><span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="p">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="udp">udp</h3>
+<div class="hlcode"><pre><span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="p">.</span><span class="n">SOCK_DGRAM</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="socket_3">Socket 函数</h2>
+<h3 id="_1">服务器端</h3>
+<table>
+<thead>
+<tr>
+<th>Socket 函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>s.bind(address)</td>
+<td>将套接字绑定到地址，在AF_INET下，以tuple(host, port)的方式传入，如s.bind((host, port))</td>
+</tr>
+<tr>
+<td>s.listen(backlog)</td>
+<td>开始监听TCP传入连接，backlog指定在拒绝链接前，操作系统可以挂起的最大连接数，该值最少为1，大部分应用程序设为5就够用了</td>
+</tr>
+<tr>
+<td>s.accept()</td>
+<td>接受TCP链接并返回（conn, address），其中conn是新的套接字对象，可以用来接收和发送数据，address是链接客户端的地址。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_2">客户端</h3>
+<table>
+<thead>
+<tr>
+<th>Socket 函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>s.connect(address)</td>
+<td>链接到address处的套接字，一般address的格式为tuple(host, port)，如果链接出错，则返回socket.error错误</td>
+</tr>
+<tr>
+<td>s.connect_ex(address)</td>
+<td>功能与s.connect(address)相同，但成功返回0，失败返回errno的值</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_3">公用的</h3>
+<table>
+<thead>
+<tr>
+<th>Socket 函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>s.recv(bufsize[, flag])</td>
+<td>接受TCP套接字的数据，数据以字符串形式返回，buffsize指定要接受的最大数据量，flag提供有关消息的其他信息，通常可以忽略</td>
+</tr>
+<tr>
+<td>s.send(string[, flag])</td>
+<td>发送TCP数据，将字符串中的数据发送到链接的套接字，返回值是要发送的字节数量，该数量可能小于string的字节大小</td>
+</tr>
+<tr>
+<td>s.sendall(string[, flag])</td>
+<td>完整发送TCP数据，将字符串中的数据发送到链接的套接字，但在返回之前尝试发送所有数据。成功返回None，失败则抛出异常</td>
+</tr>
+<tr>
+<td>s.recvfrom(bufsize[, flag])</td>
+<td>接受UDP套接字的数据u，与recv()类似，但返回值是tuple(data, address)。其中data是包含接受数据的字符串，address是发送数据的套接字地址</td>
+</tr>
+<tr>
+<td>s.sendto(string[, flag], address)</td>
+<td>发送UDP数据，将数据发送到套接字，address形式为tuple(ipaddr, port)，指定远程地址发送，返回值是发送的字节数</td>
+</tr>
+<tr>
+<td>s.close()</td>
+<td>关闭套接字</td>
+</tr>
+<tr>
+<td>s.getpeername()</td>
+<td>返回套接字的远程地址，返回值通常是一个tuple(ipaddr, port)</td>
+</tr>
+<tr>
+<td>s.getsockname()</td>
+<td>返回套接字自己的地址，返回值通常是一个tuple(ipaddr, port)</td>
+</tr>
+<tr>
+<td>s.setsockopt(level, optname, value)</td>
+<td>设置给定套接字选项的值</td>
+</tr>
+<tr>
+<td>s.getsockopt(level, optname[, buflen])</td>
+<td>返回套接字选项的值</td>
+</tr>
+<tr>
+<td>s.settimeout(timeout)</td>
+<td>设置套接字操作的超时时间，timeout是一个浮点数，单位是秒，值为None则表示永远不会超时。一般超时期应在刚创建套接字时设置，因为他们可能用于连接的操作，如s.connect()</td>
+</tr>
+<tr>
+<td>s.gettimeout()</td>
+<td>返回当前超时值，单位是秒，如果没有设置超时则返回None</td>
+</tr>
+<tr>
+<td>s.fileno()</td>
+<td>返回套接字的文件描述</td>
+</tr>
+<tr>
+<td>s.setblocking(flag)</td>
+<td>如果flag为0，则将套接字设置为非阻塞模式，否则将套接字设置为阻塞模式（默认值）。非阻塞模式下，如果调用recv()没有发现任何数据，或send()调用无法立即发送数据，那么将引起socket.error异常。</td>
+</tr>
+<tr>
+<td>s.makefile()</td>
+<td>创建一个与该套接字相关的文件</td>
+</tr>
+</tbody>
+</table>
+<h2 id="socket_4">Socket 编程流程</h2>
+<h3 id="tcp_1">TCP 服务器</h3>
+<div class="hlcode"><pre><span class="mi">1</span><span class="err">、创建套接字，绑定套接字到本地</span><span class="n">IP</span><span class="err">与端口</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="p">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="n">s</span><span class="p">.</span><span class="n">bind</span><span class="p">()</span>
+
+<span class="mi">2</span><span class="err">、开始监听链接</span>
+<span class="n">s</span><span class="p">.</span><span class="n">listen</span><span class="p">()</span>
+
+<span class="mi">3</span><span class="err">、进入循环，不断接受客户端的链接请求</span>
+<span class="n">While</span> <span class="n">True</span><span class="o">:</span>
+    <span class="n">s</span><span class="p">.</span><span class="n">accept</span><span class="p">()</span>
+
+<span class="mi">4</span><span class="err">、接收客户端传来的数据，并且发送给对方发送数据</span>
+<span class="n">s</span><span class="p">.</span><span class="n">recv</span><span class="p">()</span>
+<span class="n">s</span><span class="p">.</span><span class="n">sendall</span><span class="p">()</span>
+
+<span class="mi">5</span><span class="err">、传输完毕后，关闭套接字</span>
+<span class="n">s</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<h3 id="tcp_2">TCP 客户端</h3>
+<div class="hlcode"><pre><span class="mi">1</span><span class="err">、创建套接字并链接至远端地址</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="p">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="n">s</span><span class="p">.</span><span class="n">connect</span><span class="p">()</span>
+
+
+<span class="mi">2</span><span class="err">、链接后发送数据和接收数据</span>
+<span class="n">s</span><span class="p">.</span><span class="n">sendall</span><span class="p">()</span>
+<span class="n">s</span><span class="p">.</span><span class="n">recv</span><span class="p">()</span>
+
+<span class="mi">3</span><span class="err">、传输完毕后，关闭套接字</span>
+</pre></div>
+
+
+<h1 id="tcpsocket">实现TCP持续的socket通信</h1>
+<h2 id="server">Server</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">socket</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="err">&#39;</span><span class="mf">127.0.0.1</span><span class="err">&#39;</span>
+<span class="n">PORT</span> <span class="o">=</span> <span class="mi">8001</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="p">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="n">s</span><span class="p">.</span><span class="n">bind</span><span class="p">((</span><span class="n">HOST</span><span class="p">,</span> <span class="n">PORT</span><span class="p">))</span>
+<span class="n">s</span><span class="p">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Start</span> <span class="n">at</span> <span class="o">%</span><span class="n">s</span><span class="o">:%</span><span class="n">s</span><span class="err">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">HOST</span><span class="p">,</span> <span class="n">PORT</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Waiting</span> <span class="k">for</span> <span class="n">connection</span><span class="err">&#39;</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+    <span class="n">conn</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">accept</span><span class="p">()</span>
+    <span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Connected</span> <span class="n">by</span> <span class="err">&#39;</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+        <span class="n">print</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="err">&#39;</span><span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="err">&#39;</span><span class="p">))</span>
+
+        <span class="n">conn</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Server</span> <span class="n">have</span> <span class="n">received</span> <span class="n">your</span> <span class="n">message</span><span class="p">.</span><span class="err">&#39;</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="err">&#39;</span><span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="err">&#39;</span><span class="p">))</span>
+</pre></div>
+
+
+<h2 id="client">Client</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">socket</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="err">&#39;</span><span class="mf">127.0.0.1</span><span class="err">&#39;</span>
+<span class="n">PORT</span> <span class="o">=</span> <span class="mi">8001</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="p">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="n">s</span><span class="p">.</span><span class="n">connect</span><span class="p">((</span><span class="n">HOST</span><span class="p">,</span> <span class="n">PORT</span><span class="p">))</span>
+
+<span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">input</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Input</span> <span class="n">your</span> <span class="n">message</span> <span class="o">:</span> <span class="err">&#39;</span><span class="p">)</span>
+    <span class="n">s</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">cmd</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="err">&#39;</span><span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="err">&#39;</span><span class="p">))</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+
+
+<h1 id="udpsocket">实现UDP持续的socket通信</h1>
+<h2 id="server_1">Server</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">socket</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="err">&#39;</span><span class="mf">127.0.0.1</span><span class="err">&#39;</span>
+<span class="n">PORT</span> <span class="o">=</span> <span class="mi">9999</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="p">.</span><span class="n">SOCK_DGRAM</span><span class="p">)</span>
+
+<span class="n">s</span><span class="p">.</span><span class="n">bind</span><span class="p">((</span><span class="n">HOST</span><span class="p">,</span> <span class="n">PORT</span><span class="p">))</span>
+
+<span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Bind</span> <span class="n">UDP</span> <span class="n">on</span> <span class="o">%</span><span class="n">s</span><span class="err">&#39;</span> <span class="o">%</span> <span class="n">PORT</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">recvfrom</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Received</span> <span class="n">from</span> <span class="o">%</span><span class="n">s</span><span class="o">:%</span><span class="n">s</span><span class="err">&#39;</span> <span class="o">%</span> <span class="n">addr</span><span class="p">)</span>
+    <span class="n">s</span><span class="p">.</span><span class="n">sendto</span><span class="p">(</span><span class="n">b</span><span class="err">&#39;</span><span class="n">Hello</span><span class="p">,</span> <span class="o">%</span><span class="n">s</span><span class="err">&#39;</span> <span class="o">%</span> <span class="n">data</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="client_1">Client</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">socket</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="err">&#39;</span><span class="mf">127.0.0.1</span><span class="err">&#39;</span>
+<span class="n">PORT</span> <span class="o">=</span> <span class="mi">9999</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="p">.</span><span class="n">SOCK_DGRAM</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">input</span><span class="p">(</span><span class="err">&#39;</span><span class="n">UDP</span> <span class="n">Data</span><span class="o">:</span> <span class="err">&#39;</span><span class="p">)</span>
+    <span class="n">s</span><span class="p">.</span><span class="n">sendto</span><span class="p">(</span><span class="n">cmd</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="err">&#39;</span><span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="err">&#39;</span><span class="p">),</span> <span class="p">(</span><span class="n">HOST</span><span class="p">,</span> <span class="n">PORT</span><span class="p">))</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">).</span><span class="n">decode</span><span class="p">(</span><span class="err">&#39;</span><span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="err">&#39;</span><span class="p">))</span>
+</pre></div>
+
+
+<h1 id="tcp_3">TCP 多线程聊天室</h1>
+<h2 id="server_2">server</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">socket</span>
+<span class="n">import</span> <span class="n">threading</span>
+
+<span class="n">server</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="p">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="n">server</span><span class="p">.</span><span class="n">bind</span><span class="p">((</span><span class="err">&#39;</span><span class="mf">0.0.0.0</span><span class="err">&#39;</span><span class="p">,</span> <span class="mi">8000</span><span class="p">))</span>
+<span class="n">server</span><span class="p">.</span><span class="n">listen</span><span class="p">()</span>
+
+
+<span class="n">def</span> <span class="n">handle_sock</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">sock</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+        <span class="n">print</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="n">re_data</span> <span class="o">=</span> <span class="n">input</span><span class="p">()</span>
+        <span class="n">sock</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">re_data</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&quot;utf-8&quot;</span><span class="p">))</span>
+
+
+<span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+    <span class="n">sock</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">server</span><span class="p">.</span><span class="n">accept</span><span class="p">()</span>
+    <span class="n">client_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="p">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">handle_sock</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">addr</span><span class="p">))</span>
+    <span class="n">client_thread</span><span class="p">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+
+
+<h2 id="client_2">client</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">socket</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="p">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="p">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="n">client</span><span class="p">.</span><span class="n">connect</span><span class="p">((</span><span class="s">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="mi">8000</span><span class="p">))</span>
+
+<span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+    <span class="n">re_data</span> <span class="o">=</span> <span class="n">input</span><span class="p">()</span>
+    <span class="n">client</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">re_data</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;utf-8&quot;</span><span class="p">))</span>
+</pre></div>
+
+
+<h1 id="socketserver">socketserver</h1>
+<p>先设置socket类型，然后依次调用bind(), listen(), accept()， 最后用while循环让服务器不断接收请求</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

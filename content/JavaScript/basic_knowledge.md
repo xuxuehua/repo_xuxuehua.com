@@ -372,3 +372,9 @@ i = 10; // i现在是全局变量
 
 
 
+
+
+# 教程 
+
+https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
+

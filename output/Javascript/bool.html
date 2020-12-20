@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>bool 布尔计算 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Javascript">Javascript</a>&nbsp;&#187;&nbsp;bool 布尔计算
+    <span class="updated">Page Updated&nbsp;
+      2018-06-04 16:03
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">bool 布尔计算</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#bool">Bool</a><ul>
+<li><a href="#_1">布尔值</a><ul>
+<li><a href="#_2">声明布尔对象</a><ul>
+<li><a href="#false">初始值为 false</a></li>
+<li><a href="#true">初始值为 True</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_3">布尔计算</a><ul>
+<li><a href="#_4">&amp;&amp;与运算</a></li>
+<li><a href="#_5">|| 或运算</a></li>
+<li><a href="#_6">! 非运算</a><ul>
+<li><a href="#_7">! !</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_8">与其他类型比较</a><ul>
+<li><a href="#_9">与数据类型比较</a></li>
+<li><a href="#_10">与浮点数比较</a></li>
+<li><a href="#nan">与NaN比较</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="bool">Bool</h1>
+<h2 id="_1">布尔值</h2>
+<ul>
+<li>布尔值和布尔代数的表示完全一致，一个布尔值只有<code>true</code>、<code>false</code>两种值，要么是<code>true</code>，要么是<code>false</code></li>
+</ul>
+<h3 id="_2">声明布尔对象</h3>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">y</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Boolean</span><span class="p">;</span>
+</pre></div>
+
+
+<h4 id="false">初始值为 false</h4>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">myBoolean</span><span class="o">=</span><span class="n">new</span> <span class="n">Boolean</span><span class="p">();</span>
+<span class="n">var</span> <span class="n">myBoolean</span><span class="o">=</span><span class="n">new</span> <span class="n">Boolean</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">myBoolean</span><span class="o">=</span><span class="n">new</span> <span class="n">Boolean</span><span class="p">(</span><span class="n">null</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">myBoolean</span><span class="o">=</span><span class="n">new</span> <span class="n">Boolean</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">myBoolean</span><span class="o">=</span><span class="n">new</span> <span class="n">Boolean</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">myBoolean</span><span class="o">=</span><span class="n">new</span> <span class="n">Boolean</span><span class="p">(</span><span class="n">NaN</span><span class="p">);</span>
+</pre></div>
+
+
+<h4 id="true">初始值为 True</h4>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">myBoolean</span><span class="o">=</span><span class="n">new</span> <span class="n">Boolean</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">myBoolean</span><span class="o">=</span><span class="n">new</span> <span class="n">Boolean</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">myBoolean</span><span class="o">=</span><span class="n">new</span> <span class="n">Boolean</span><span class="p">(</span><span class="s">&quot;true&quot;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">myBoolean</span><span class="o">=</span><span class="n">new</span> <span class="n">Boolean</span><span class="p">(</span><span class="s">&quot;false&quot;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">myBoolean</span><span class="o">=</span><span class="n">new</span> <span class="n">Boolean</span><span class="p">(</span><span class="s">&quot;Bill Gates&quot;</span><span class="p">);</span>
+</pre></div>
+
+
+<h2 id="_3">布尔计算</h2>
+<div class="hlcode"><pre><span class="nb">true</span><span class="p">;</span> <span class="c1">// 这是一个true值</span>
+<span class="nb">false</span><span class="p">;</span> <span class="c1">// 这是一个false值</span>
+<span class="mi">2</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 这是一个true值</span>
+<span class="mi">2</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">;</span> <span class="c1">// 这是一个false值</span>
+</pre></div>
+
+
+<h3 id="_4">&amp;&amp;与运算</h3>
+<ul>
+<li><code>&amp;&amp;</code>运算是与运算，只有所有都为<code>true</code>，<code>&amp;&amp;</code>运算结果才是<code>true</code></li>
+</ul>
+<div class="hlcode"><pre><span class="nb">true</span> <span class="o">&amp;&amp;</span> <span class="nb">true</span><span class="p">;</span> <span class="c1">// 这个&amp;&amp;语句计算结果为true</span>
+<span class="nb">true</span> <span class="o">&amp;&amp;</span> <span class="nb">false</span><span class="p">;</span> <span class="c1">// 这个&amp;&amp;语句计算结果为false</span>
+<span class="nb">false</span> <span class="o">&amp;&amp;</span> <span class="nb">true</span> <span class="o">&amp;&amp;</span> <span class="nb">false</span><span class="p">;</span> <span class="c1">// 这个&amp;&amp;语句计算结果为false</span>
+</pre></div>
+
+
+<h3 id="_5">|| 或运算</h3>
+<ul>
+<li><code>||</code>运算是或运算，只要其中有一个为<code>true</code>，<code>||</code>运算结果就是<code>true</code></li>
+</ul>
+<div class="hlcode"><pre><span class="nb">false</span> <span class="o">||</span> <span class="nb">false</span><span class="p">;</span> <span class="c1">// 这个||语句计算结果为false</span>
+<span class="nb">true</span> <span class="o">||</span> <span class="nb">false</span><span class="p">;</span> <span class="c1">// 这个||语句计算结果为true</span>
+<span class="nb">false</span> <span class="o">||</span> <span class="nb">true</span> <span class="o">||</span> <span class="nb">false</span><span class="p">;</span> <span class="c1">// 这个||语句计算结果为true</span>
+</pre></div>
+
+
+<h3 id="_6">! 非运算</h3>
+<ul>
+<li><code>!</code>运算是非运算，它是一个单目运算符，把<code>true</code>变成<code>false</code>，<code>false</code>变成<code>true</code></li>
+</ul>
+<div class="hlcode"><pre><span class="o">!</span> <span class="nb">true</span><span class="p">;</span> <span class="c1">// 结果为false</span>
+<span class="o">!</span> <span class="nb">false</span><span class="p">;</span> <span class="c1">// 结果为true</span>
+<span class="o">!</span> <span class="p">(</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">);</span> <span class="c1">// 结果为true</span>
+</pre></div>
+
+
+<h4 id="_7">! !</h4>
+<p>第一个表示无论什么操作都返回一个布尔值</p>
+<p>第二个表示对布尔值取反</p>
+<h2 id="_8">与其他类型比较</h2>
+<h3 id="_9">与数据类型比较</h3>
+<ul>
+<li>JavaScript允许对任意数据类型做比较</li>
+</ul>
+<blockquote>
+<p>第一种是<code>==</code>比较，它会自动转换数据类型再比较，很多时候，会得到非常诡异的结果；</p>
+<p>第二种是<code>===</code>比较，它不会自动转换数据类型，如果数据类型不一致，返回<code>false</code>，如果一致，再比较。</p>
+<p>由于JavaScript这个设计缺陷，<em>不要</em>使用<code>==</code>比较，始终坚持使用<code>===</code>比较</p>
+</blockquote>
+<div class="hlcode"><pre><span class="nb">false</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// true</span>
+<span class="nb">false</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// false</span>
+</pre></div>
+
+
+<h3 id="_10">与浮点数比较</h3>
+<div class="hlcode"><pre><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">===</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">);</span> <span class="c1">// false</span>
+</pre></div>
+
+
+<ul>
+<li>浮点数在运算过程中会产生误差，因为计算机无法精确表示无限循环小数。要比较两个浮点数是否相等，只能计算它们之差的绝对值，看是否小于某个阈值：</li>
+</ul>
+<div class="hlcode"><pre><span class="n">Math</span><span class="p">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.0000001</span><span class="p">;</span> <span class="c1">// true</span>
+</pre></div>
+
+
+<h3 id="nan">与NaN比较</h3>
+<ul>
+<li><code>NaN</code>这个特殊的Number与所有其他值都不相等，包括它自己</li>
+</ul>
+<div class="hlcode"><pre><span class="n">NaN</span> <span class="o">===</span> <span class="n">NaN</span><span class="p">;</span> <span class="c1">// false</span>
+</pre></div>
+
+
+<ul>
+<li>唯一能判断<code>NaN</code>的方法是通过<code>isNaN()</code>函数：</li>
+</ul>
+<div class="hlcode"><pre><span class="n">isNaN</span><span class="p">(</span><span class="n">NaN</span><span class="p">);</span> <span class="c1">// true</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -124,3 +124,10 @@ critical temperature reached...,shutting down
 
 If you have a UPS and running a daemon to monitor power and shutdown you should obviously check its logs (NUT logs on /var/log/messages but apcupsd logs on /var/log/apcupsd*)
 
+
+
+
+
+# 教程
+
+https://www.w3cschool.cn/linux/

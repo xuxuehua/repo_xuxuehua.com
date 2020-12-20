@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>javabean - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java_core_classes">Java_core_classes</a>&nbsp;&#187;&nbsp;javabean
+    <span class="updated">Page Updated&nbsp;
+      2019-10-20 23:55
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">javabean</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#javabean">JavaBean</a><ul>
+<li><a href="#_1">方法</a><ul>
+<li><a href="#getxyz">getXyz() 读方法</a></li>
+<li><a href="#setxyz">setXyz() 写方法</a></li>
+<li><a href="#boolean">Boolean 字段</a></li>
+</ul>
+</li>
+<li><a href="#_2">属性</a><ul>
+<li><a href="#getter">getter</a></li>
+<li><a href="#setter">setter</a></li>
+<li><a href="#_3">属性定义</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#javabean_1">JavaBean的作用</a></li>
+<li><a href="#javabean_2">枚举JavaBean属性</a></li>
+</ul>
+</div>
+<h1 id="javabean">JavaBean</h1>
+<p>在Java中，有很多<code>class</code>的定义都符合这样的规范：</p>
+<ul>
+<li>若干<code>private</code>实例字段；</li>
+<li>通过<code>public</code>方法来读写实例字段</li>
+</ul>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">private</span> <span class="n">String</span> <span class="n">name</span><span class="p">;</span>
+    <span class="n">private</span> <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">this</span><span class="p">.</span><span class="n">name</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="p">(</span><span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span> <span class="n">this</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="n">public</span> <span class="kt">int</span> <span class="nf">getAge</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">this</span><span class="p">.</span><span class="n">age</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="nf">setAge</span><span class="p">(</span><span class="kt">int</span> <span class="n">age</span><span class="p">)</span> <span class="p">{</span> <span class="n">this</span><span class="p">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>如果读写方法符合以下这种命名规范：</p>
+<div class="hlcode"><pre><span class="c1">// 读方法:</span>
+<span class="n">public</span> <span class="n">Type</span> <span class="n">getXyz</span><span class="p">()</span>
+
+<span class="c1">// 写方法:</span>
+<span class="n">public</span> <span class="k">void</span> <span class="n">setXyz</span><span class="p">(</span><span class="n">Type</span> <span class="n">value</span><span class="p">)</span>
+</pre></div>
+
+
+<p>那么这种<code>class</code>被称为<code>JavaBean</code></p>
+<h2 id="_1">方法</h2>
+<h3 id="getxyz">getXyz() 读方法</h3>
+<h3 id="setxyz">setXyz() 写方法</h3>
+<h3 id="boolean">Boolean 字段</h3>
+<p>boolean<code>字段比较特殊，它的读方法一般命名为</code>isXyz()</p>
+<div class="hlcode"><pre><span class="c1">// 读方法:</span>
+<span class="n">public</span> <span class="n">boolean</span> <span class="n">isChild</span><span class="p">()</span>
+<span class="c1">// 写方法:</span>
+<span class="n">public</span> <span class="k">void</span> <span class="n">setChild</span><span class="p">(</span><span class="n">boolean</span> <span class="n">value</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="_2">属性</h2>
+<p>通常把一组对应的读方法（<code>getter</code>）和写方法（<code>setter</code>）称为属性（<code>property</code>）。例如，<code>name</code>属性：</p>
+<ul>
+<li>对应的读方法是<code>String getName()</code></li>
+<li>对应的写方法是<code>setName(String)</code></li>
+</ul>
+<h3 id="getter">getter</h3>
+<p>只有<code>getter</code>的属性称为只读属性（read-only），例如，定义一个age只读属性：</p>
+<ul>
+<li>对应的读方法是<code>int getAge()</code></li>
+<li>无对应的写方法<code>setAge(int)</code></li>
+</ul>
+<h3 id="setter">setter</h3>
+<p>类似的，只有<code>setter</code>的属性称为只写属性（write-only）。</p>
+<p>很明显，只读属性很常见，只写属性不常见。</p>
+<h3 id="_3">属性定义</h3>
+<p>属性只需要定义<code>getter</code>和<code>setter</code>方法，不一定需要对应的字段。例如，<code>child</code>只读属性定义如下</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">private</span> <span class="n">String</span> <span class="n">name</span><span class="p">;</span>
+    <span class="n">private</span> <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">this</span><span class="p">.</span><span class="n">name</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="p">(</span><span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span> <span class="n">this</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="n">public</span> <span class="kt">int</span> <span class="nf">getAge</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">this</span><span class="p">.</span><span class="n">age</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="nf">setAge</span><span class="p">(</span><span class="kt">int</span> <span class="n">age</span><span class="p">)</span> <span class="p">{</span> <span class="n">this</span><span class="p">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="n">public</span> <span class="n">boolean</span> <span class="nf">isChild</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">age</span> <span class="o">&lt;=</span> <span class="mi">6</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p>可以看出，getter和setter也是一种数据封装的方法</p>
+</blockquote>
+<h1 id="javabean_1">JavaBean的作用</h1>
+<p>JavaBean主要用来传递数据，即把一组数据组合成一个JavaBean便于传输。此外，JavaBean可以方便地被IDE工具分析，生成读写属性的代码，主要用在图形界面的可视化设计中</p>
+<h1 id="javabean_2">枚举JavaBean属性</h1>
+<p>要枚举一个JavaBean的所有属性，可以直接使用Java核心库提供的<code>Introspector</code></p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="n">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+        <span class="n">BeanInfo</span> <span class="n">info</span> <span class="o">=</span> <span class="n">Introspector</span><span class="p">.</span><span class="n">getBeanInfo</span><span class="p">(</span><span class="n">Person</span><span class="p">.</span><span class="n">class</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">PropertyDescriptor</span> <span class="n">pd</span> <span class="o">:</span> <span class="n">info</span><span class="p">.</span><span class="n">getPropertyDescriptors</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">pd</span><span class="p">.</span><span class="n">getName</span><span class="p">());</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;  &quot;</span> <span class="o">+</span> <span class="n">pd</span><span class="p">.</span><span class="n">getReadMethod</span><span class="p">());</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;  &quot;</span> <span class="o">+</span> <span class="n">pd</span><span class="p">.</span><span class="n">getWriteMethod</span><span class="p">());</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">private</span> <span class="n">String</span> <span class="n">name</span><span class="p">;</span>
+    <span class="n">private</span> <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="p">(</span><span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">this</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="kt">int</span> <span class="nf">getAge</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">age</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="kt">void</span> <span class="nf">setAge</span><span class="p">(</span><span class="kt">int</span> <span class="n">age</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">this</span><span class="p">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">age</span>
+  <span class="n">public</span> <span class="kt">int</span> <span class="n">Person</span><span class="p">.</span><span class="n">getAge</span><span class="p">()</span>
+  <span class="n">public</span> <span class="kt">void</span> <span class="n">Person</span><span class="p">.</span><span class="n">setAge</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span>
+<span class="n">class</span>
+  <span class="n">public</span> <span class="n">final</span> <span class="n">native</span> <span class="n">java</span><span class="p">.</span><span class="n">lang</span><span class="p">.</span><span class="n">Class</span> <span class="n">java</span><span class="p">.</span><span class="n">lang</span><span class="p">.</span><span class="n">Object</span><span class="p">.</span><span class="n">getClass</span><span class="p">()</span>
+  <span class="n">null</span>
+<span class="n">name</span>
+  <span class="n">public</span> <span class="n">java</span><span class="p">.</span><span class="n">lang</span><span class="p">.</span><span class="n">String</span> <span class="n">Person</span><span class="p">.</span><span class="n">getName</span><span class="p">()</span>
+  <span class="n">public</span> <span class="kt">void</span> <span class="n">Person</span><span class="p">.</span><span class="n">setName</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="n">lang</span><span class="p">.</span><span class="n">String</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>运行上述代码，可以列出所有的属性，以及对应的读写方法。注意<code>class</code>属性是从<code>Object</code>继承的<code>getClass()</code>方法带来的</p>
+</blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

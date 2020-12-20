@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>commons_logging - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java_core_classes">Java_core_classes</a>&nbsp;&#187;&nbsp;commons_logging
+    <span class="updated">Page Updated&nbsp;
+      2019-10-24 23:44
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">commons_logging</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#commons-logging">Commons Logging</a><ul>
+<li><a href="#_1">安装</a></li>
+<li><a href="#_2">日志级别</a></li>
+<li><a href="#_3">引用</a><ul>
+<li><a href="#_4">静态方法</a></li>
+<li><a href="#_5">实例方法</a><ul>
+<li><a href="#_6">子类使用父类</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_7">重载方法</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="commons-logging">Commons Logging</h1>
+<p>和Java标准库提供的日志不同，Commons Logging是一个第三方日志库，它是由Apache创建的日志模块。</p>
+<p>Commons Logging的特色是，它可以挂接不同的日志系统，并通过配置文件指定挂接的日志系统。默认情况下，Commons Loggin自动搜索并使用Log4j（Log4j是另一个流行的日志系统），如果没有找到Log4j，再使用JDK Logging。</p>
+<h2 id="_1">安装</h2>
+<p>下载解压，找到<code>commons-logging-1.2.jar</code>这个文件</p>
+<p>http://mirrors.tuna.tsinghua.edu.cn/apache//commons/logging/binaries/commons-logging-1.2-bin.tar.gz</p>
+<p>再把commons-logging-1.2.jar 与Main.java 放置于同一个目录下</p>
+<div class="hlcode"><pre><span class="n">javac</span> <span class="o">-</span><span class="n">cp</span> <span class="n">commons</span><span class="o">-</span><span class="n">logging</span><span class="o">-</span><span class="mf">1.2</span><span class="p">.</span><span class="n">jar</span> <span class="n">Main</span><span class="p">.</span><span class="n">java</span>
+</pre></div>
+
+
+<p>编译成功，那么当前目录下就会多出一个<code>Main.class</code>文件</p>
+<div class="hlcode"><pre><span class="n">java</span> <span class="o">-</span><span class="n">cp</span> <span class="p">.</span><span class="o">:</span><span class="n">commons</span><span class="o">-</span><span class="n">logging</span><span class="o">-</span><span class="mf">1.2</span><span class="p">.</span><span class="n">jar</span> <span class="n">Main</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">Oct</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">2019</span> <span class="mi">7</span><span class="o">:</span><span class="mo">04</span><span class="o">:</span><span class="mi">21</span> <span class="n">AM</span> <span class="n">Main</span> <span class="n">main</span>
+<span class="nl">INFO:</span> <span class="n">start</span><span class="p">...</span>
+<span class="n">Oct</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">2019</span> <span class="mi">7</span><span class="o">:</span><span class="mo">04</span><span class="o">:</span><span class="mi">21</span> <span class="n">AM</span> <span class="n">Main</span> <span class="n">main</span>
+<span class="nl">WARNING:</span> <span class="n">end</span><span class="p">...</span>
+</pre></div>
+
+
+<h2 id="_2">日志级别</h2>
+<p>默认级别是<code>INFO</code></p>
+<ul>
+<li>FATAL</li>
+<li>ERROR</li>
+<li>WARNING</li>
+<li>INFO</li>
+<li>DEBUG</li>
+<li>TRACE</li>
+</ul>
+<h2 id="_3">引用</h2>
+<h3 id="_4">静态方法</h3>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="n">final</span> <span class="n">Log</span> <span class="n">log</span> <span class="o">=</span> <span class="n">LogFactory</span><span class="p">.</span><span class="n">getLog</span><span class="p">(</span><span class="n">Main</span><span class="p">.</span><span class="n">class</span><span class="p">);</span>
+
+    <span class="k">static</span> <span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="_5">实例方法</h3>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">protected</span> <span class="n">final</span> <span class="n">Log</span> <span class="n">log</span> <span class="o">=</span> <span class="n">LogFactory</span><span class="p">.</span><span class="n">getLog</span><span class="p">(</span><span class="n">getClass</span><span class="p">());</span>
+
+    <span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p>实例变量log的获取方式是<code>LogFactory.getLog(getClass())</code>，虽然也可以用<code>LogFactory.getLog(Person.class)</code>，但是前一种方式有个非常大的好处，就是子类可以直接使用该<code>log</code></p>
+</blockquote>
+<h4 id="_6">子类使用父类</h4>
+<p>由于Java类的动态特性，子类获取的<code>log</code>字段实际上相当于<code>LogFactory.getLog(Student.class)</code>，但却是从父类继承而来，并且无需改动代码</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">protected</span> <span class="n">final</span> <span class="n">Log</span> <span class="n">log</span> <span class="o">=</span> <span class="n">LogFactory</span><span class="p">.</span><span class="n">getLog</span><span class="p">(</span><span class="n">getClass</span><span class="p">());</span>
+
+    <span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">Student</span> <span class="n">extends</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="kt">void</span> <span class="n">bar</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_7">重载方法</h2>
+<p>Commons Logging的日志方法，例如<code>info()</code>，除了标准的<code>info(String)</code>外，还提供了一个非常有用的重载方法：<code>info(String, Throwable)</code>，这使得记录异常更加简单</p>
+<div class="hlcode"><pre><span class="n">try</span> <span class="p">{</span>
+    <span class="p">...</span>
+<span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">log</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;got exception!&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

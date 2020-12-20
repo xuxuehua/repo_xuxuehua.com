@@ -1,0 +1,493 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>pipenv - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;pipenv
+    <span class="updated">Page Updated&nbsp;
+      2018-07-31 12:14
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">pipenv</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#pipenv">pipenv</a><ul>
+<li><a href="#_1">特点</a></li>
+<li><a href="#_2">安装</a><ul>
+<li><a href="#mac">Mac</a></li>
+<li><a href="#linux">Linux</a><ul>
+<li><a href="#curl">curl</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_3">卸载</a><ul>
+<li><a href="#_4">指定依赖</a></li>
+</ul>
+</li>
+<li><a href="#_5">使用</a><ul>
+<li><a href="#_6">初始化</a><ul>
+<li><a href="#pipfile-pipfilelock">Pipfile &amp; Pipfile.lock</a></li>
+<li><a href="#_7">自动补齐</a></li>
+</ul>
+</li>
+<li><a href="#virtualenv">Virtualenv</a><ul>
+<li><a href="#virtualenv_1">激活 Virtualenv</a></li>
+<li><a href="#virtualenv_2">退出 Virtualenv</a></li>
+<li><a href="#_8">自定义虚拟环境的路径</a></li>
+<li><a href="#_9">指定安装包的版本</a></li>
+<li><a href="#_10">指定安装包的源</a></li>
+<li><a href="#-json">--json</a></li>
+</ul>
+</li>
+<li><a href="#autoenv">autoenv 自动激活虚拟环境</a></li>
+</ul>
+</li>
+<li><a href="#pipenv_1">pipenv 命令参数</a><ul>
+<li><a href="#run">run 虚拟环境运行</a></li>
+<li><a href="#check">check 安全性检查</a></li>
+<li><a href="#graph">graph 图形化依赖</a></li>
+<li><a href="#install">install 安装包</a></li>
+<li><a href="#shell">shell 补全</a></li>
+<li><a href="#lock">Lock 锁定</a></li>
+<li><a href="#-where">--where 定位项目</a></li>
+<li><a href="#-venv">--venv 定位虚拟环境</a></li>
+<li><a href="#-envs">--envs 定义环境变量</a></li>
+<li><a href="#-py-python">--py 定位Python解释器</a></li>
+<li><a href="#-python">--python 指定版本</a></li>
+<li><a href="#-man">--man 帮助</a></li>
+<li><a href="#requirementstxt">操作 requirements.txt</a><ul>
+<li><a href="#_11">导入</a></li>
+<li><a href="#_12">生成</a></li>
+</ul>
+</li>
+<li><a href="#_13">浏览模块代码</a></li>
+<li><a href="#env">自动加载环境变量.env</a></li>
+<li><a href="#_14">浏览模块代码</a></li>
+<li><a href="#pypi">更新 pypi源来提高依赖库安装的速度</a></li>
+</ul>
+</li>
+<li><a href="#commands">Commands</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="pipenv">pipenv</h1>
+<p>Pipenv是一款旨在将所有包管理工具（如bundler, composer, npm, cargo, yarn等）的优点集中应用于python领域中的工具。它对各个平台都有很好的支持。</p>
+<h2 id="_1">特点</h2>
+<p>不用再单独使用<code>pip</code>和<code>virtualenv</code>, 现在它们合并在一起了</p>
+<p>不用再维护<code>requirements.txt</code>, 使用<code>Pipfile</code>和<code>Pipfile.lock</code>来代替</p>
+<p>可以使用多个python版本(<code>python2</code>和<code>python3</code>)</p>
+<p>通过查找<em>Pipfile</em>，递归的自动查找你的项目</p>
+<p>在安装了<code>pyenv</code>的条件下，可以自动安装需要的Python版本</p>
+<p>如果 .env 文件存在，则自动载入</p>
+<h2 id="_2">安装</h2>
+<h3 id="mac">Mac</h3>
+<p><code>brew install pipenv</code></p>
+<p><code>brew upgrade pipenv</code></p>
+<h3 id="linux">Linux</h3>
+<div class="hlcode"><pre><span class="n">pip3</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="n">pipenv</span>
+</pre></div>
+
+
+<blockquote>
+<p>This does a <a href="https://pip.pypa.io/en/stable/user_guide/#user-installs">user installation</a> to prevent breaking any system-wide packages. If <code>pipenv</code>isn’t available in your shell after installation, you’ll need to add the <a href="https://docs.python.org/3/library/site.html#site.USER_BASE">user base</a>’s binary directory to your <code>PATH</code>.</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">pipenv</span>
+
+<span class="n">export</span> <span class="n">PATH</span><span class="o">=</span><span class="s">&quot;/Users/xhxu/Library/Python/3.6/bin:$PATH&quot;</span>  <span class="err">#</span> <span class="err">把用户目录下</span><span class="n">bin</span><span class="err">放在最前面，这样可以直接使用</span><span class="n">pipenv</span><span class="err">了</span> 
+</pre></div>
+
+
+<h4 id="curl">curl</h4>
+<p><code>curl https://raw.githubusercontent.com/kennethreitz/pipenv/master/get-pipenv.py | python</code></p>
+<h2 id="_3">卸载</h2>
+<p>卸载所有</p>
+<p><code>pipenv uninstall --all</code></p>
+<h3 id="_4">指定依赖</h3>
+<div class="hlcode"><pre><span class="n">pipenv</span> <span class="n">uninstall</span> <span class="err">`</span><span class="n">pipenv</span> <span class="n">graph</span> <span class="o">--</span><span class="n">json</span> <span class="o">|</span><span class="n">python3</span> <span class="n">depends</span><span class="p">.</span><span class="n">py</span> <span class="n">requests</span><span class="err">`</span>
+</pre></div>
+
+
+<blockquote>
+<p>其中depends.py脚本会解析依赖关系，排除其他包依赖的项目然后删除</p>
+</blockquote>
+<h2 id="_5">使用</h2>
+<h3 id="_6">初始化</h3>
+<div class="hlcode"><pre><span class="n">mkdir</span> <span class="n">test_pipenv</span>
+<span class="n">cd</span> <span class="n">test_pipenv</span>
+<span class="n">pipenv</span> <span class="n">install</span> <span class="err">#</span> <span class="err">创建一个虚拟环境</span>
+</pre></div>
+
+
+<blockquote>
+<p>Pipfile和Pipfile.lock两个文件互相配合，完成虚拟环境的管理工作</p>
+<p><code>pipenv install --three # 需要确保系统中存在python3版本</code></p>
+</blockquote>
+<ul>
+<li><code>pipenv --three</code>可以初始化一个<code>python3</code>版本的虚拟环境</li>
+</ul>
+<div class="hlcode"><pre><span class="n">xhxu</span><span class="o">-</span><span class="n">mac</span><span class="o">:</span><span class="n">test_pipenv1</span> <span class="n">xhxu</span><span class="err">$</span> <span class="n">pipenv</span> <span class="o">--</span><span class="n">three</span>
+<span class="n">Creating</span> <span class="n">a</span> <span class="n">virtualenv</span> <span class="k">for</span> <span class="n">this</span> <span class="n">project</span><span class="p">...</span>
+<span class="nl">Pipfile:</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="n">test_pipenv1</span><span class="o">/</span><span class="n">Pipfile</span>
+<span class="n">Using</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">pyenv</span><span class="o">/</span><span class="n">versions</span><span class="o">/</span><span class="n">django_zmrenwu_env3</span><span class="mf">.5.2</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python3</span> <span class="p">(</span><span class="mf">3.5.2</span><span class="p">)</span> <span class="n">to</span> <span class="n">create</span> <span class="n">virtualenv</span><span class="p">...</span>
+<span class="err">⠋</span><span class="n">Running</span> <span class="n">virtualenv</span> <span class="n">with</span> <span class="n">interpreter</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">pyenv</span><span class="o">/</span><span class="n">versions</span><span class="o">/</span><span class="n">django_zmrenwu_env3</span><span class="mf">.5.2</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python3</span>
+<span class="n">Using</span> <span class="n">base</span> <span class="n">prefix</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">pyenv</span><span class="o">/</span><span class="n">versions</span><span class="o">/</span><span class="mf">3.5.2</span><span class="err">&#39;</span>
+<span class="n">New</span> <span class="n">python</span> <span class="n">executable</span> <span class="n">in</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">test_pipenv1</span><span class="o">-</span><span class="n">ckTi0WZI</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python3</span>
+<span class="n">Also</span> <span class="n">creating</span> <span class="n">executable</span> <span class="n">in</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">test_pipenv1</span><span class="o">-</span><span class="n">ckTi0WZI</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python</span>
+<span class="n">Installing</span> <span class="n">setuptools</span><span class="p">,</span> <span class="n">pip</span><span class="p">,</span> <span class="n">wheel</span><span class="p">...</span><span class="n">done</span><span class="p">.</span>
+<span class="n">Setting</span> <span class="n">project</span> <span class="k">for</span> <span class="n">test_pipenv1</span><span class="o">-</span><span class="n">ckTi0WZI</span> <span class="n">to</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="n">test_pipenv1</span>
+
+<span class="n">Virtualenv</span> <span class="n">location</span><span class="o">:</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">test_pipenv1</span><span class="o">-</span><span class="n">ckTi0WZI</span>
+<span class="n">Creating</span> <span class="n">a</span> <span class="n">Pipfile</span> <span class="k">for</span> <span class="n">this</span> <span class="n">project</span><span class="p">...</span>
+</pre></div>
+
+
+<ul>
+<li><code>pipenv --two</code>可以初始化一个<code>python2</code>版本的虚拟环境</li>
+</ul>
+<div class="hlcode"><pre><span class="n">xhxu</span><span class="o">-</span><span class="n">mac</span><span class="o">:</span><span class="n">test_pipenv2</span> <span class="n">xhxu</span><span class="err">$</span> <span class="n">pipenv</span> <span class="o">--</span><span class="n">two</span>
+<span class="n">Creating</span> <span class="n">a</span> <span class="n">virtualenv</span> <span class="k">for</span> <span class="n">this</span> <span class="n">project</span><span class="p">...</span>
+<span class="nl">Pipfile:</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="n">test_pipenv2</span><span class="o">/</span><span class="n">Pipfile</span>
+<span class="n">Using</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">pyenv</span><span class="o">/</span><span class="n">versions</span><span class="o">/</span><span class="n">env2</span><span class="mf">.7.13</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python2</span> <span class="p">(</span><span class="mf">2.7.13</span><span class="p">)</span> <span class="n">to</span> <span class="n">create</span> <span class="n">virtualenv</span><span class="p">...</span>
+<span class="err">⠋</span><span class="n">Running</span> <span class="n">virtualenv</span> <span class="n">with</span> <span class="n">interpreter</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">pyenv</span><span class="o">/</span><span class="n">versions</span><span class="o">/</span><span class="n">env2</span><span class="mf">.7.13</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python2</span>
+<span class="n">Using</span> <span class="n">real</span> <span class="n">prefix</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">pyenv</span><span class="o">/</span><span class="n">versions</span><span class="o">/</span><span class="mf">2.7.13</span><span class="err">&#39;</span>
+<span class="n">New</span> <span class="n">python</span> <span class="n">executable</span> <span class="n">in</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">test_pipenv2</span><span class="o">-</span><span class="n">pBEJdovF</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python2</span>
+<span class="n">Also</span> <span class="n">creating</span> <span class="n">executable</span> <span class="n">in</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">test_pipenv2</span><span class="o">-</span><span class="n">pBEJdovF</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python</span>
+<span class="n">Installing</span> <span class="n">setuptools</span><span class="p">,</span> <span class="n">pip</span><span class="p">,</span> <span class="n">wheel</span><span class="p">...</span><span class="n">done</span><span class="p">.</span>
+<span class="n">Setting</span> <span class="n">project</span> <span class="k">for</span> <span class="n">test_pipenv2</span><span class="o">-</span><span class="n">pBEJdovF</span> <span class="n">to</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="n">test_pipenv2</span>
+
+<span class="n">Virtualenv</span> <span class="n">location</span><span class="o">:</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">test_pipenv2</span><span class="o">-</span><span class="n">pBEJdovF</span>
+<span class="n">Creating</span> <span class="n">a</span> <span class="n">Pipfile</span> <span class="k">for</span> <span class="n">this</span> <span class="n">project</span><span class="p">...</span>
+</pre></div>
+
+
+<p>指定具体版本</p>
+<div class="hlcode"><pre><span class="n">pipenv</span> <span class="o">--</span><span class="n">python</span> <span class="mf">3.7.0</span>
+</pre></div>
+
+
+<h4 id="pipfile-pipfilelock">Pipfile &amp; Pipfile.lock</h4>
+<p>Pipfile 存放着当前虚拟环境的配置信息，包含python版本，pypi源，以及项目安装的依赖库</p>
+<blockquote>
+<p><code>pipenv</code>根据这个来寻找项目的根目录。</p>
+<p><code>Pipfile</code> 文件是 <code>TOML</code> 格式而不是 <code>requirements.txt</code> 那样的纯文本。[</p>
+<p>一个项目对应一个 Pipfile，支持开发环境与正式环境区分。默认提供 <code>default</code> 和 <code>development</code> 区分</p>
+</blockquote>
+<p>Pipfile.lock 顾名思义，这个文件时对于<code>Pipfile</code>的一个锁定。支持锁定项目不同的版本所依赖的环境.</p>
+<h4 id="_7">自动补齐</h4>
+<div class="hlcode"><pre><span class="n">eval</span> <span class="s">&quot;$(pipenv --completion)&quot;</span>
+</pre></div>
+
+
+<h3 id="virtualenv">Virtualenv</h3>
+<p>Linux 默认会在<code>~/.local/share/virtualenvs/</code> 下面创建</p>
+<p>在项目目录内创建虚拟环境文件夹，可以设置环境变量<code>PIPENV_VENV_IN_PROJECT</code> ，名为<code>.venv</code> 的虚拟环境文件夹将在项目根目录被创建</p>
+<h4 id="virtualenv_1">激活 Virtualenv</h4>
+<p><code>pipenv shell</code></p>
+<div class="hlcode"><pre><span class="n">xhxu</span><span class="o">-</span><span class="n">mac</span><span class="o">:</span><span class="n">test_pipenv</span> <span class="n">xhxu</span><span class="err">$</span> <span class="n">pipenv</span> <span class="n">shell</span>
+<span class="n">Launching</span> <span class="n">subshell</span> <span class="n">in</span> <span class="n">virtual</span> <span class="n">environment</span><span class="err">…</span>
+<span class="n">bash</span><span class="o">-</span><span class="mf">3.2</span><span class="err">$</span>  <span class="p">.</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">test_pipenv</span><span class="o">-</span><span class="n">v79hOH8k</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">activate</span>
+<span class="p">(</span><span class="n">test_pipenv</span><span class="o">-</span><span class="n">v79hOH8k</span><span class="p">)</span> <span class="n">bash</span><span class="o">-</span><span class="mf">3.2</span><span class="err">$</span> <span class="n">which</span> <span class="n">python3</span>
+<span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">test_pipenv</span><span class="o">-</span><span class="n">v79hOH8k</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python3</span>
+</pre></div>
+
+
+<h4 id="virtualenv_2">退出 Virtualenv</h4>
+<p><code>exit</code></p>
+<div class="hlcode"><pre><span class="p">(</span><span class="n">test_pipenv</span><span class="o">-</span><span class="n">v79hOH8k</span><span class="p">)</span> <span class="n">bash</span><span class="o">-</span><span class="mf">3.2</span><span class="err">$</span> <span class="n">exit</span>
+<span class="n">exit</span>
+<span class="n">xhxu</span><span class="o">-</span><span class="n">mac</span><span class="o">:</span><span class="n">test_pipenv</span> <span class="n">xhxu</span><span class="err">$</span> <span class="n">which</span> <span class="n">python3</span>
+<span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="p">.</span><span class="n">pyenv</span><span class="o">/</span><span class="n">shims</span><span class="o">/</span><span class="n">python3</span>
+</pre></div>
+
+
+<h4 id="_8">自定义虚拟环境的路径</h4>
+<p>默认情况下,<code>pipenv</code>使用<a href="https://github.com/berdario/pew"><code>pew</code></a>来管理虚拟环境的路径，我们可以自定义<code>WORKON_HOME</code>环境变量来设置虚拟环境的路径。比如:</p>
+<div class="hlcode"><pre><span class="n">export</span> <span class="n">WORKON_HOME</span><span class="o">=~/</span><span class="p">.</span><span class="n">venvs</span>
+</pre></div>
+
+
+<blockquote>
+<p>可以通过社会环境变量<code>PIPENV_VENV_IN_PROJECT</code>使虚拟环境在每个项目的根目录下<code>project/.venv</code>。</p>
+</blockquote>
+<h4 id="_9">指定安装包的版本</h4>
+<p><code>pipenv install requests==2.13.0</code></p>
+<blockquote>
+<p>这个命令也会自动更新<code>Pipfile</code>文件</p>
+</blockquote>
+<h4 id="_10">指定安装包的源</h4>
+<p>如果我们需要在安装包时，从一个源下载一个安装包，然后从另一个源下载另一个安装包，我们可以通过下面的方式配置</p>
+<div class="hlcode"><pre><span class="k">[[source]]</span>
+<span class="na">url</span> <span class="o">=</span> <span class="s">&quot;https://pypi.python.org/simple&quot;</span>
+<span class="na">verify_ssl</span> <span class="o">=</span> <span class="s">true</span>
+<span class="na">name</span> <span class="o">=</span> <span class="s">&quot;pypi&quot;</span>
+
+<span class="k">[[source]]</span>
+<span class="na">url</span> <span class="o">=</span> <span class="s">&quot;http://pypi.home.kennethreitz.org/simple&quot;</span>
+<span class="na">verify_ssl</span> <span class="o">=</span> <span class="s">false</span>
+<span class="na">name</span> <span class="o">=</span> <span class="s">&quot;home&quot;</span>
+
+<span class="k">[dev-packages]</span>
+
+<span class="k">[packages]</span>
+<span class="na">requests</span> <span class="o">=</span> <span class="s">{version=&quot;*&quot;, index=&quot;home&quot;}</span>
+<span class="na">maya</span> <span class="o">=</span> <span class="s">{version=&quot;*&quot;, index=&quot;pypi&quot;}</span>
+<span class="na">records</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span>
+</pre></div>
+
+
+<h4 id="-json">--json</h4>
+<p>以 json形式输出</p>
+<h3 id="autoenv">autoenv 自动激活虚拟环境</h3>
+<div class="hlcode"><pre><span class="n">pip</span> <span class="n">install</span> <span class="n">autoenv</span>  <span class="err">#</span> <span class="err">安装</span> <span class="n">autoenv</span>
+</pre></div>
+
+
+<p><code>autoenv</code> 可以在进入项目之后自动检测项目目录的 <code>.env</code> 文件激活项目所需的虚拟环境</p>
+<div class="hlcode"><pre><span class="n">vim</span> <span class="p">.</span><span class="n">env</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="cp"># bash 的话，执行这一条指令</span>
+<span class="n">echo</span> <span class="s">&quot;source `which activate.sh`&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">~/</span><span class="p">.</span><span class="n">bashrc</span>
+<span class="cp"># zsh 的话，执行这一条指令</span>
+<span class="n">echo</span> <span class="s">&quot;source `which activate.sh`&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">~/</span><span class="p">.</span><span class="n">zshrc</span>
+</pre></div>
+
+
+<h2 id="pipenv_1">pipenv 命令参数</h2>
+<h3 id="run">run 虚拟环境运行</h3>
+<p>即不显示激活虚拟环境即可在当前项目的虚拟环境中执行命令</p>
+<p><code>pipenv run which python</code></p>
+<p>pipenv run 可以激活虚拟环境，并使用shell命令</p>
+<div class="hlcode"><pre><span class="n">xhxu</span><span class="o">-</span><span class="n">mac</span><span class="o">:</span><span class="n">test_pipenv</span> <span class="n">xhxu</span><span class="err">$</span> <span class="n">pipenv</span> <span class="n">run</span> <span class="n">python</span> <span class="n">manage</span><span class="p">.</span><span class="n">py</span> <span class="n">runserver</span>
+<span class="n">xhxu</span><span class="o">-</span><span class="n">mac</span><span class="o">:</span><span class="n">test_pipenv</span> <span class="n">xhxu</span><span class="err">$</span> <span class="n">pipenv</span> <span class="n">run</span> <span class="n">python</span> <span class="n">your_script</span><span class="p">.</span><span class="n">py</span>
+</pre></div>
+
+
+<p>如果你不想每次运行Python时都输入这么多字符，可以在shell中设置一个别名，例如，</p>
+<div class="hlcode"><pre><span class="n">alias</span> <span class="n">prp</span><span class="o">=</span><span class="s">&quot;pipenv run python&quot;</span>
+</pre></div>
+
+
+<h3 id="check">check 安全性检查</h3>
+<p><code>pipenv check</code></p>
+<div class="hlcode"><pre><span class="n">xhxu</span><span class="o">-</span><span class="n">mac</span><span class="o">:</span><span class="n">test_pipenv</span> <span class="n">xhxu</span><span class="err">$</span> <span class="n">pipenv</span> <span class="n">check</span>
+<span class="n">Checking</span> <span class="n">PEP</span> <span class="mi">508</span> <span class="n">requirements</span><span class="p">...</span>
+<span class="n">Passed</span><span class="o">!</span>
+<span class="n">Checking</span> <span class="n">installed</span> <span class="n">package</span> <span class="n">safety</span><span class="p">...</span>
+<span class="n">All</span> <span class="n">good</span><span class="o">!</span>
+</pre></div>
+
+
+<h3 id="graph">graph 图形化依赖</h3>
+<p>将输出一个包含当前所有已安装依赖的漂亮图形</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">pipenv</span> <span class="n">graph</span>
+<span class="n">elasticsearch</span><span class="o">-</span><span class="n">dsl</span><span class="o">==</span><span class="mf">6.2.1</span>
+  <span class="o">-</span> <span class="n">elasticsearch</span> <span class="p">[</span><span class="n">required</span><span class="o">:</span> <span class="o">&gt;=</span><span class="mf">6.0.0</span><span class="p">,</span><span class="o">&lt;</span><span class="mf">7.0.0</span><span class="p">,</span> <span class="n">installed</span><span class="o">:</span> <span class="mf">6.3.0</span><span class="p">]</span>
+    <span class="o">-</span> <span class="n">urllib3</span> <span class="p">[</span><span class="n">required</span><span class="o">:</span> <span class="o">&gt;=</span><span class="mf">1.21.1</span><span class="p">,</span> <span class="n">installed</span><span class="o">:</span> <span class="mf">1.23</span><span class="p">]</span>
+  <span class="o">-</span> <span class="n">ipaddress</span> <span class="p">[</span><span class="n">required</span><span class="o">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">installed</span><span class="o">:</span> <span class="mf">1.0.22</span><span class="p">]</span>
+  <span class="o">-</span> <span class="n">python</span><span class="o">-</span><span class="n">dateutil</span> <span class="p">[</span><span class="n">required</span><span class="o">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">installed</span><span class="o">:</span> <span class="mf">2.7.3</span><span class="p">]</span>
+    <span class="o">-</span> <span class="n">six</span> <span class="p">[</span><span class="n">required</span><span class="o">:</span> <span class="o">&gt;=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">installed</span><span class="o">:</span> <span class="mf">1.11.0</span><span class="p">]</span>
+  <span class="o">-</span> <span class="n">six</span> <span class="p">[</span><span class="n">required</span><span class="o">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">installed</span><span class="o">:</span> <span class="mf">1.11.0</span><span class="p">]</span>
+<span class="n">requests</span><span class="o">==</span><span class="mf">2.19.1</span>
+  <span class="o">-</span> <span class="n">certifi</span> <span class="p">[</span><span class="n">required</span><span class="o">:</span> <span class="o">&gt;=</span><span class="mf">2017.4.17</span><span class="p">,</span> <span class="n">installed</span><span class="o">:</span> <span class="mf">2018.4.16</span><span class="p">]</span>
+  <span class="o">-</span> <span class="n">chardet</span> <span class="p">[</span><span class="n">required</span><span class="o">:</span> <span class="o">&gt;=</span><span class="mf">3.0.2</span><span class="p">,</span><span class="o">&lt;</span><span class="mf">3.1.0</span><span class="p">,</span> <span class="n">installed</span><span class="o">:</span> <span class="mf">3.0.4</span><span class="p">]</span>
+  <span class="o">-</span> <span class="n">idna</span> <span class="p">[</span><span class="n">required</span><span class="o">:</span> <span class="o">&gt;=</span><span class="mf">2.5</span><span class="p">,</span><span class="o">&lt;</span><span class="mf">2.8</span><span class="p">,</span> <span class="n">installed</span><span class="o">:</span> <span class="mf">2.7</span><span class="p">]</span>
+  <span class="o">-</span> <span class="n">urllib3</span> <span class="p">[</span><span class="n">required</span><span class="o">:</span> <span class="o">&gt;=</span><span class="mf">1.21.1</span><span class="p">,</span><span class="o">&lt;</span><span class="mf">1.24</span><span class="p">,</span> <span class="n">installed</span><span class="o">:</span> <span class="mf">1.23</span><span class="p">]</span>
+</pre></div>
+
+
+<h3 id="install">install 安装包</h3>
+<p><code>pipenv install PACKAGE_NAME</code></p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">pipenv</span> <span class="n">install</span> <span class="n">elasticsearch</span><span class="o">-</span><span class="n">dsl</span> <span class="n">requests</span>
+</pre></div>
+
+
+<p>指定版本</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">pipenv</span> <span class="n">install</span> <span class="o">--</span><span class="n">python</span> <span class="mi">3</span>
+<span class="err">$</span> <span class="n">pipenv</span> <span class="n">install</span> <span class="o">--</span><span class="n">python</span> <span class="mf">3.6</span>
+<span class="err">$</span> <span class="n">pipenv</span> <span class="n">install</span> <span class="o">--</span><span class="n">python</span> <span class="mf">2.7.14</span>
+</pre></div>
+
+
+<h3 id="shell">shell 补全</h3>
+<p>如果使用的是<code>bash</code>, 可添加下面语句到<code>.bashrc</code>或<code>.bash_profile</code></p>
+<div class="hlcode"><pre><span class="n">eval</span> <span class="s">&quot;$(pipenv --completion)&quot;</span>
+</pre></div>
+
+
+<p>使用fish shell，将下列命令加入<code>~/.config/fish/completions/pipenv.fish</code></p>
+<div class="hlcode"><pre><span class="n">eval</span> <span class="p">(</span><span class="n">pipenv</span> <span class="o">--</span><span class="n">completion</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="lock">Lock 锁定</h3>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">pipenv</span> <span class="n">lock</span>
+<span class="n">Locking</span> <span class="p">[</span><span class="n">dev</span><span class="o">-</span><span class="n">packages</span><span class="p">]</span> <span class="n">dependencies</span><span class="p">...</span>
+<span class="n">Locking</span> <span class="p">[</span><span class="n">packages</span><span class="p">]</span> <span class="n">dependencies</span><span class="p">...</span>
+<span class="n">Updated</span> <span class="n">Pipfile</span><span class="p">.</span><span class="n">lock</span> <span class="p">(</span><span class="mi">55</span><span class="n">ac43</span><span class="p">)</span><span class="o">!</span>
+</pre></div>
+
+
+<h3 id="-where">--where 定位项目</h3>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">pipenv</span> <span class="o">--</span><span class="n">where</span>
+<span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="n">test_pipenv</span>
+</pre></div>
+
+
+<h3 id="-venv">--venv 定位虚拟环境</h3>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">pipenv</span> <span class="o">--</span><span class="n">venv</span>
+<span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">kennethreitz</span><span class="o">/</span><span class="p">.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">test</span><span class="o">-</span><span class="n">Skyy4vr</span>
+</pre></div>
+
+
+<h3 id="-envs">--envs 定义环境变量</h3>
+<p>pipenv内置了很多环境变量，可以通过设置这些环境变量来配置<code>pipenv</code></p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">pipenv</span> <span class="o">--</span><span class="n">envs</span>
+<span class="n">The</span> <span class="n">following</span> <span class="n">environment</span> <span class="n">variables</span> <span class="n">can</span> <span class="n">be</span> <span class="n">set</span><span class="p">,</span> <span class="n">to</span> <span class="k">do</span> <span class="n">various</span> <span class="n">things</span><span class="o">:</span>
+
+  <span class="o">-</span> <span class="n">PIPENV_MAX_DEPTH</span>
+  <span class="o">-</span> <span class="n">PIPENV_SHELL</span>
+  <span class="o">-</span> <span class="n">PIPENV_DOTENV_LOCATION</span>
+  <span class="o">-</span> <span class="n">PIPENV_HIDE_EMOJIS</span>
+  <span class="o">-</span> <span class="n">PIPENV_CACHE_DIR</span>
+  <span class="o">-</span> <span class="n">PIPENV_VIRTUALENV</span>
+  <span class="o">-</span> <span class="n">PIPENV_MAX_SUBPROCESS</span>
+  <span class="o">-</span> <span class="n">PIPENV_COLORBLIND</span>
+  <span class="o">-</span> <span class="n">PIPENV_VENV_IN_PROJECT</span> <span class="err">#</span> <span class="err">在项目根路径下创建虚拟环境</span>
+  <span class="o">-</span> <span class="n">PIPENV_MAX_ROUNDS</span>
+  <span class="o">-</span> <span class="n">PIPENV_USE_SYSTEM</span>
+  <span class="o">-</span> <span class="n">PIPENV_SHELL_COMPAT</span>
+  <span class="o">-</span> <span class="n">PIPENV_USE_HASHES</span>
+  <span class="o">-</span> <span class="n">PIPENV_NOSPIN</span>
+  <span class="o">-</span> <span class="n">PIPENV_PIPFILE</span>
+  <span class="o">-</span> <span class="n">PIPENV_INSTALL_TIMEOUT</span>
+  <span class="o">-</span> <span class="n">PIPENV_YES</span>
+  <span class="o">-</span> <span class="n">PIPENV_SHELL_FANCY</span>
+  <span class="o">-</span> <span class="n">PIPENV_DONT_USE_PYENV</span>
+  <span class="o">-</span> <span class="n">PIPENV_DONT_LOAD_ENV</span>
+  <span class="o">-</span> <span class="n">PIPENV_DEFAULT_PYTHON_VERSION</span> <span class="err">#</span> <span class="err">设置创建虚拟环境时默认的</span><span class="n">python</span><span class="err">版本信息，如</span><span class="o">:</span> <span class="mf">3.6</span>
+  <span class="o">-</span> <span class="n">PIPENV_SKIP_VALIDATION</span>
+  <span class="o">-</span> <span class="n">PIPENV_TIMEOUT</span>
+</pre></div>
+
+
+<p>需要修改某个默认配置时，只需要把它添加到<code>.bashrc</code>或<code>.bash_profile</code>文件里即可。</p>
+<h3 id="-py-python">--py 定位Python解释器</h3>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">pipenv</span> <span class="o">--</span><span class="n">py</span>
+<span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">kennethreitz</span><span class="o">/</span><span class="p">.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">test</span><span class="o">-</span><span class="n">Skyy4vre</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python</span>
+</pre></div>
+
+
+<h3 id="-python">--python 指定版本</h3>
+<div class="hlcode"><pre><span class="n">xhxu</span><span class="o">-</span><span class="n">mac</span><span class="o">:</span><span class="n">test_pipenv2</span> <span class="n">xhxu</span><span class="err">$</span> <span class="n">pipenv</span> <span class="o">--</span><span class="n">python</span> <span class="mf">2.7.11</span>
+</pre></div>
+
+
+<blockquote>
+<p><code>pipenv</code>会自动扫描系统寻找合适的版本信息，如果找不到的话，同时又安装了<code>pyenv</code>, 它会自动调用<code>pyenv</code>下载对应的版本的python</p>
+</blockquote>
+<p>Create a new project using Python 3.6, specifically:<br />
+<code>$ pipenv --python 3.6</code></p>
+<h3 id="-man">--man 帮助</h3>
+<p><code>pipenv --man</code></p>
+<h3 id="requirementstxt">操作 requirements.txt</h3>
+<h4 id="_11">导入</h4>
+<p>当在执行<code>pipenv install</code>命令的时候，如果有一个<code>requirements.txt</code>文件，那么会自动从<code>requirements.txt</code>文件导入安装包信息并创建一个<code>Pipfile</code>文件。</p>
+<p>同样可以使用<code>$ pipenv install -r path/to/requirements.txt</code>来导入<code>requirements.txt</code>文件</p>
+<blockquote>
+<p>默认情况下，我们都是在<code>requirements.txt</code>文件里指定了安装包的版本信息的，在导入<code>requirements.txt</code>文件时，版本信息也会被自动写<code>Pipfile</code>文件里， 但是这个信息我们一般不需要保存在<code>Pipfile</code>文件里，需要手动更新<code>Pipfile</code>来删除版本信息</p>
+</blockquote>
+<h4 id="_12">生成</h4>
+<p>我们也可以从<code>Pipfile</code>和<code>Pipfile.lock</code>文件来生成<code>requirements.txt</code></p>
+<div class="hlcode"><pre><span class="cp"># 生成requirements.txt文件</span>
+<span class="err">$</span> <span class="n">pipenv</span> <span class="n">lock</span> <span class="o">-</span><span class="n">r</span>
+
+<span class="cp"># 生成dev-packages的requirements.txt文件</span>
+<span class="cp"># pipenv lock -r -d</span>
+</pre></div>
+
+
+<h3 id="_13">浏览模块代码</h3>
+<div class="hlcode"><pre><span class="cp"># 用编辑器打开requests模块</span>
+<span class="err">$</span> <span class="n">pipenv</span> <span class="n">open</span> <span class="n">requests</span>
+</pre></div>
+
+
+<h3 id="env">自动加载环境变量.env</h3>
+<p>如果项目根目录下有<code>.env</code>文件，<code>$ pipenv shell</code>和<code>$ pipenv run</code>会自动加载它。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">cat</span> <span class="p">.</span><span class="n">env</span>
+<span class="n">HELLO</span><span class="o">=</span><span class="n">WORLD</span>
+
+<span class="err">$</span> <span class="n">pipenv</span> <span class="n">run</span> <span class="n">python</span>
+<span class="n">Loading</span> <span class="p">.</span><span class="n">env</span> <span class="n">environment</span> <span class="n">variables</span><span class="err">…</span>
+<span class="n">Python</span> <span class="mf">2.7.13</span> <span class="p">(</span><span class="k">default</span><span class="p">,</span> <span class="n">Jul</span> <span class="mi">18</span> <span class="mi">2017</span><span class="p">,</span> <span class="mi">09</span><span class="o">:</span><span class="mi">17</span><span class="o">:</span><span class="mo">00</span><span class="p">)</span>
+<span class="p">[</span><span class="n">GCC</span> <span class="mf">4.2.1</span> <span class="n">Compatible</span> <span class="n">Apple</span> <span class="n">LLVM</span> <span class="mf">8.1.0</span> <span class="p">(</span><span class="n">clang</span><span class="o">-</span><span class="mf">802.0.42</span><span class="p">)]</span> <span class="n">on</span> <span class="n">darwin</span>
+<span class="n">Type</span> <span class="s">&quot;help&quot;</span><span class="p">,</span> <span class="s">&quot;copyright&quot;</span><span class="p">,</span> <span class="s">&quot;credits&quot;</span> <span class="n">or</span> <span class="s">&quot;license&quot;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span><span class="p">.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">import</span> <span class="n">os</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="err">&#39;</span><span class="n">HELLO</span><span class="err">&#39;</span><span class="p">]</span>
+<span class="err">&#39;</span><span class="n">WORLD</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h3 id="_14">浏览模块代码</h3>
+<div class="hlcode"><pre><span class="cp"># 用编辑器打开requests模块</span>
+<span class="err">$</span> <span class="n">pipenv</span> <span class="n">open</span> <span class="n">requests</span>
+</pre></div>
+
+
+<h3 id="pypi">更新 pypi源来提高依赖库安装的速度</h3>
+<p>在使用pipenv的时候，常常会在安装的时候，一直卡在了 <code>Locking</code> 这里，通过加上 <code>-v</code> 参数，可以看到安装过程中的步骤信息，卡在了下载那里，这时应该可以意识到是因为网络的原因，pipenv创建的 <code>Pipfile</code> 中默认的pypi源是python官方的 <strong>https://pypi.python.org/simple</strong>。我们国内用户访问下载的时候会很慢。</p>
+<p>所以，我一般会在创建好Pipfile以后，修改到文件中 <code>source</code> 块下的 <code>url</code> 字段，设置为国内的 pypi 源就好了，我推荐的是清华的pypi源，具体设置如下：</p>
+<p><em>备注：我还没有找到如何修改能在创建时就设好的方法，应该修改源码是可以的，但这样不尊重源码，毕竟高墙是我们自己筑起的，如果有好的方法，您不妨在评论中告诉我一下</em></p>
+<div class="hlcode"><pre><span class="k">[[source]]</span>
+
+<span class="na">url</span> <span class="o">=</span> <span class="s">&quot;https://pypi.tuna.tsinghua.edu.cn/simple&quot;</span>
+<span class="na">verify_ssl</span> <span class="o">=</span> <span class="s">true</span>
+<span class="na">name</span> <span class="o">=</span> <span class="s">&quot;pypi&quot;</span>
+</pre></div>
+
+
+<h2 id="commands">Commands</h2>
+<p>Install all dependencies for a project (including dev):<br />
+<code>$ pipenv install --dev</code></p>
+<p>Create a lockfile containing pre-releases:<br />
+<code>$ pipenv lock --pre</code></p>
+<p>Show a graph of your installed dependencies:<br />
+<code>$ pipenv graph</code></p>
+<p>Check your installed dependencies for security vulnerabilities:<br />
+<code>$ pipenv check</code></p>
+<p>Install a local setup.py into your virtual environment/Pipfile:<br />
+<code>$ pipenv install -e .</code></p>
+<p>Use a lower-level pip command:<br />
+<code>$ pipenv run pip freeze</code></p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

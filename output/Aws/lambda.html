@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>lambda - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Aws">Aws</a>&nbsp;&#187;&nbsp;lambda
+    <span class="updated">Page Updated&nbsp;
+      2019-06-28 10:03
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">lambda</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#lambda">Lambda</a><ul>
+<li><a href="#components">Components</a><ul>
+<li><a href="#the-function">The Function</a></li>
+<li><a href="#event-source">Event source</a></li>
+</ul>
+</li>
+<li><a href="#lambda_1">Lambda限制</a></li>
+<li><a href="#_1">处理指标</a></li>
+<li><a href="#_2">环境变量引用</a></li>
+<li><a href="#_3">开发工具</a><ul>
+<li><a href="#sam">SAM</a></li>
+<li><a href="#aws-cdk">AWS CDK</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_4">原理</a><ul>
+<li><a href="#_5">启动</a></li>
+<li><a href="#_6">优化</a></li>
+</ul>
+</li>
+<li><a href="#_7">调用</a><ul>
+<li><a href="#_8">同步</a><ul>
+<li><a href="#http-api">HTTP API</a></li>
+<li><a href="#http-api-vs-rest-api">HTTP API vs REST API</a></li>
+</ul>
+</li>
+<li><a href="#_9">异步</a><ul>
+<li><a href="#api-gw">API GW</a></li>
+</ul>
+</li>
+<li><a href="#_10">流式</a><ul>
+<li><a href="#_11">增强</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sqs-lambda">SQS 触发Lambda</a></li>
+<li><a href="#_12">解藕</a></li>
+<li><a href="#lambda_2">lambda 并发</a><ul>
+<li><a href="#_13">原理</a></li>
+<li><a href="#_14">并发上升</a></li>
+<li><a href="#_15">并发扩展</a></li>
+<li><a href="#_16">提高并发限制</a></li>
+<li><a href="#_17">预配置并发</a></li>
+<li><a href="#auto-scaling">auto scaling</a></li>
+</ul>
+</li>
+<li><a href="#lambda_3">Lambda 层</a><ul>
+<li><a href="#layer">layer打包</a></li>
+</ul>
+</li>
+<li><a href="#example">example</a><ul>
+<li><a href="#lambda-to-rds">lambda to rds</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="lambda">Lambda</h1>
+<p>Just specific coded functions are running only when are needed and without any knowledge of the servers or OS or the language runtime configuration</p>
+<p>AWS Lambda enables developers to write code functions that only contain what their logic requires and have their code be deployed, invoked, made highly reliable, and scaled without having to manage infrastructure whatsoever. </p>
+<h2 id="components">Components</h2>
+<h3 id="the-function">The Function</h3>
+<p>Event handler</p>
+<p>IAM role</p>
+<p>Compute amount</p>
+<p>Execution timeout</p>
+<h3 id="event-source">Event source</h3>
+<p>S3</p>
+<p>DynamoDB</p>
+<p>SNS</p>
+<p>Kinesis</p>
+<p>Gateway API</p>
+<h2 id="lambda_1">Lambda限制</h2>
+<p><img alt="image-20200324152135665" src="lambda.assets/image-20200324152135665.png" /></p>
+<p><img alt="image-20200324152210408" src="lambda.assets/image-20200324152210408.png" /></p>
+<h2 id="_1">处理指标</h2>
+<p><img alt="image-20200324152307731" src="lambda.assets/image-20200324152307731.png" /></p>
+<h2 id="_2">环境变量引用</h2>
+<p><img alt="image-20200324155832684" src="lambda.assets/image-20200324155832684.png" /></p>
+<h2 id="_3">开发工具</h2>
+<h3 id="sam">SAM</h3>
+<p><img alt="image-20200324160839021" src="lambda.assets/image-20200324160839021.png" /></p>
+<p><img alt="image-20200324160920193" src="lambda.assets/image-20200324160920193.png" /></p>
+<p><img alt="image-20200324161007610" src="lambda.assets/image-20200324161007610.png" /></p>
+<h3 id="aws-cdk">AWS CDK</h3>
+<p><img alt="image-20200324161120122" src="lambda.assets/image-20200324161120122.png" /></p>
+<h1 id="_4">原理</h1>
+<p><img alt="image-20200324153024282" src="lambda.assets/image-20200324153024282.png" /></p>
+<h2 id="_5">启动</h2>
+<p><img alt="image-20200324153305342" src="lambda.assets/image-20200324153305342.png" /></p>
+<h2 id="_6">优化</h2>
+<p><img alt="image-20200324153424079" src="lambda.assets/image-20200324153424079.png" /></p>
+<p><img alt="image-20200324153718932" src="lambda.assets/image-20200324153718932.png" /></p>
+<h1 id="_7">调用</h1>
+<h2 id="_8">同步</h2>
+<p><img alt="image-20200324150557142" src="lambda.assets/image-20200324150557142.png" /></p>
+<h3 id="http-api">HTTP API</h3>
+<p>只是简单的http 调用</p>
+<p><img alt="image-20200324150713358" src="lambda.assets/image-20200324150713358.png" /></p>
+<h3 id="http-api-vs-rest-api">HTTP API vs REST API</h3>
+<p><img alt="image-20200324150839360" src="lambda.assets/image-20200324150839360.png" /></p>
+<h2 id="_9">异步</h2>
+<p><img alt="image-20200324151102793" src="lambda.assets/image-20200324151102793.png" /></p>
+<p><img alt="image-20200324151300798" src="lambda.assets/image-20200324151300798.png" /></p>
+<h3 id="api-gw">API GW</h3>
+<p><img alt="image-20200324151436778" src="lambda.assets/image-20200324151436778.png" /></p>
+<h2 id="_10">流式</h2>
+<p><img alt="image-20200324151508727" src="lambda.assets/image-20200324151508727.png" /></p>
+<h3 id="_11">增强</h3>
+<p><img alt="image-20200324151820795" src="lambda.assets/image-20200324151820795.png" /></p>
+<p><img alt="image-20200324151942870" src="lambda.assets/image-20200324151942870.png" /></p>
+<h1 id="sqs-lambda">SQS 触发Lambda</h1>
+<p><img alt="image-20200324152436598" src="lambda.assets/image-20200324152436598.png" /></p>
+<p><img alt="image-20200324152558955" src="lambda.assets/image-20200324152558955.png" /></p>
+<h1 id="_12">解藕</h1>
+<p><img alt="image-20200324152659640" src="lambda.assets/image-20200324152659640.png" /></p>
+<p><img alt="image-20200324152746850" src="lambda.assets/image-20200324152746850.png" /></p>
+<p><img alt="image-20200324152900740" src="lambda.assets/image-20200324152900740.png" /></p>
+<h1 id="lambda_2">lambda 并发</h1>
+<h2 id="_13">原理</h2>
+<p><img alt="image-20200324154300157" src="lambda.assets/image-20200324154300157.png" /></p>
+<h2 id="_14">并发上升</h2>
+<p><img alt="image-20200324154358929" src="lambda.assets/image-20200324154358929.png" /></p>
+<h2 id="_15">并发扩展</h2>
+<p><img alt="image-20200324154438759" src="lambda.assets/image-20200324154438759.png" /></p>
+<h2 id="_16">提高并发限制</h2>
+<p><img alt="image-20200324154513536" src="lambda.assets/image-20200324154513536.png" /></p>
+<p><img alt="image-20200324154534274" src="lambda.assets/image-20200324154534274.png" /></p>
+<h2 id="_17">预配置并发</h2>
+<p><img alt="image-20200324155001455" src="lambda.assets/image-20200324155001455.png" /></p>
+<p><img alt="image-20200324155040904" src="lambda.assets/image-20200324155040904.png" /></p>
+<h2 id="auto-scaling">auto scaling</h2>
+<p><img alt="image-20200324155313570" src="lambda.assets/image-20200324155313570.png" /></p>
+<h1 id="lambda_3">Lambda 层</h1>
+<p><img alt="image-20200324155723565" src="lambda.assets/image-20200324155723565.png" /></p>
+<h2 id="layer">layer打包</h2>
+<p>基于ec2</p>
+<p>https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html</p>
+<p>基于docker</p>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">v</span> <span class="s">&quot;$PWD&quot;</span><span class="o">:/</span><span class="n">var</span><span class="o">/</span><span class="n">task</span> <span class="s">&quot;lambci/lambda:build-python3.7&quot;</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">sh</span> <span class="o">-</span><span class="n">c</span> <span class="s">&quot;pip install psycopg2-binary -t python/lib/python3.7/site-packages/; exit&quot;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">zip</span> <span class="o">-</span><span class="n">r9</span> <span class="n">mypythonlibs</span><span class="p">.</span><span class="n">zip</span> <span class="n">python</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">null</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="nx">aws</span> <span class="nx">lambda</span> <span class="nx">publish</span><span class="o">-</span><span class="nx">layer</span><span class="o">-</span><span class="nx">version</span> <span class="o">--</span><span class="nx">layer</span><span class="o">-</span><span class="nx">name</span> <span class="nx">mypythonlibs</span> <span class="o">--</span><span class="nx">description</span> <span class="s2">&quot;My python libs&quot;</span> <span class="o">--</span><span class="nx">zip</span><span class="o">-</span><span class="nx">file</span> <span class="nx">fileb</span><span class="o">:</span><span class="c1">//mypythonlibs.zip --compatible-runtimes &quot;python2.7&quot; &quot;python3.6&quot; &quot;python3.7&quot;</span>
+
+<span class="nx">aws</span> <span class="nx">lambda</span> <span class="nx">update</span><span class="o">-</span><span class="kd">function</span><span class="o">-</span><span class="nx">configuration</span> <span class="o">--</span><span class="nx">layers</span> <span class="nx">arn</span><span class="o">:</span><span class="nx">aws</span><span class="o">:</span><span class="nx">lambda</span><span class="o">:</span><span class="nx">us</span><span class="o">-</span><span class="nx">east</span><span class="o">-</span><span class="mi">2</span><span class="o">:</span><span class="mi">123456789012</span><span class="o">:</span><span class="nx">layer</span><span class="o">:</span><span class="nx">mypythonlibs</span><span class="o">:</span><span class="mi">1</span> <span class="o">--</span><span class="kd">function</span><span class="o">-</span><span class="nx">name</span> <span class="nx">my</span><span class="o">-</span><span class="kd">function</span>
+</pre></div>
+
+
+<p>You can also use the lambci/lambda Docker images directly for your Lambda package, without creating a layer. Run the following command to get the required versions of your dependencies:</p>
+<p><strong>Note:</strong> Replace <strong>3.6</strong> with <strong>3.7</strong> or <strong>3.8</strong> depending on the compatible libraries that you want to install.</p>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">v</span> <span class="s">&quot;$PWD&quot;</span><span class="o">:/</span><span class="n">var</span><span class="o">/</span><span class="n">task</span> <span class="s">&quot;lambci/lambda:build-python3.6&quot;</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">sh</span> <span class="o">-</span><span class="n">c</span> <span class="s">&quot;pip install -r requirements.txt -t libs; exit&quot;</span>
+</pre></div>
+
+
+<h1 id="example">example</h1>
+<h2 id="lambda-to-rds">lambda to rds</h2>
+<p>https://aws.amazon.com/blogs/database/query-your-aws-database-from-your-serverless-application/</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

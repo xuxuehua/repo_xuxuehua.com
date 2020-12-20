@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>egrep - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;egrep
+    <span class="updated">Page Updated&nbsp;
+      2018-10-03 19:17
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">egrep</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#egrep">egrep</a><ul>
+<li><a href="#-o">-o 打印匹配项</a></li>
+<li><a href="#-v">-v 打印版本信息</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="egrep">egrep</h1>
+<p>等同于 grep -E</p>
+<p>?     意义相同，但是不需要\</p>
+<p>+     匹配其前字符至少一次     相当于基本exgexp中的(1,)</p>
+<p>{m,n}     意义与基本exgexp相同，不需要\</p>
+<p>( )     分组，不需要\</p>
+<p>|     表示or           exp     (C|c)at    表示Cat or cat</p>
+<h2 id="-o">-o 打印匹配项</h2>
+<p>-o --only-matching  Print only the matched(not-empty) parts of a matching line.</p>
+<h2 id="-v">-v 打印版本信息</h2>
+<p>-v --version   Print the version number of grep to the standard output stream.</p>
+<p>抓去1-255 之间的整数，小数点是不会被识别的</p>
+<p>egrep  --color ‘\&lt;([1-9] | [1-9][0-9] | 1[0-9][0-9] | 2[0-4][0-9] | 25[0-5])>'</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

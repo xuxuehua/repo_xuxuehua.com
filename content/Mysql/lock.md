@@ -150,6 +150,34 @@ SELECT comment_id, product_id, comment_text, user_id FROM product_comment WHERE 
 
 
 
+#### version
+
+使用数据版本（Version）记录机制，即为数据增加一个版本标识，一般是通过为数据库表增加一个数字类型的 “version” 字段来实现的。当读取数据时，将 version 字段的值一同读出，数据每更新一次，对此 version 值加一。
+
+当我们提交更新的时候，数据库表对应记录的当前版本信息与第一次取出来的 version 值进行比对。如果数据库表当前版本号与第一次取出来的 version 值相等，则予以更新，否则认为是过期数据。更新语句写成 SQL 大概是下面这个样子：
+
+```
+UPDATE table_name SET xxx = #{xxx}, version=version+1 where version =#{version};
+复制代码
+```
+
+这不就是乐观锁吗？是的，这是乐观锁最常用的一种实现方式。**是的，如果我们使用版本号，或是 fence token 这种方式，就不需要使用分布式锁服务了。**
+
+另外，多说一下。这种 fence token 的玩法，在数据库那边一般会用 timestamp 时间截来玩。也是在更新提交的时候检查当前数据库中数据的时间戳和自己更新前取到的时间戳进行对比，如果一致则 OK，否则就是版本冲突。
+
+还有，我们有时候都不需要增加额外的版本字段或是 fence token。比如，如果想更新库存，我们可以这样操作：
+
+```
+SELECT stock FROM tb_product where product_id=#{product_id};
+UPDATE tb_product SET stock=stock-#{num} WHERE product_id=#{product_id} AND stock=#{stock};
+```
+
+先把库存数量（stock）查出来，然后在更新的时候，检查一下是否是上次读出来的库存。如果不是，说明有别人更新过了，我的 UPDATE 操作就会失败，得重新再来。
+
+细心的你一定发现了，这不就是计算机汇编指令中的原子操作 CAS（Compare And Swap）嘛，大量无锁的数据结构都需要用到这个。（关于 CAS 的话题，你可以看一下我在 CoolShell 上写的[无锁队列的实现](https://coolshell.cn/articles/8239.html) ）。
+
+
+
 ### 悲观锁
 
 悲观锁（Pessimistic Locking）也是一种思想，对数据被其他事务的修改持保守态度，会通过数据库自身的锁机制来实现，从而保证数据操作的排它性。

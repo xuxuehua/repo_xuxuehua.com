@@ -1,0 +1,241 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>basic_knowledge - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Nodejs">Nodejs</a>&nbsp;&#187;&nbsp;basic_knowledge
+    <span class="updated">Page Updated&nbsp;
+      2018-07-29 16:36
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">basic_knowledge</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#web-developing">Web developing</a><ul>
+<li><a href="#_1">基本概念</a><ul>
+<li><a href="#nodejs">Node.js开发优势</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#nodejs_1">nodejs</a><ul>
+<li><a href="#_2">特点</a></li>
+<li><a href="#_3">安装</a><ul>
+<li><a href="#nvm">NVM</a><ul>
+<li><a href="#linux">Linux</a></li>
+<li><a href="#osx">OSX</a></li>
+</ul>
+</li>
+<li><a href="#npm">npm 包管理工具</a></li>
+<li><a href="#npx">npx</a></li>
+</ul>
+</li>
+<li><a href="#npm-vs-cnpm">npm VS cnpm</a><ul>
+<li><a href="#proxy">proxy 配置</a></li>
+<li><a href="#cnpm">cnpm 使用</a></li>
+</ul>
+</li>
+<li><a href="#hello-world">hello world</a></li>
+<li><a href="#_4">全局对象</a><ul>
+<li><a href="#process">process 对象</a><ul>
+<li><a href="#process_1">process 响应</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#strict">全局strict 模式</a></li>
+</ul>
+</li>
+<li><a href="#javascript">判断JavaScript执行环境</a></li>
+</ul>
+</div>
+<h1 id="web-developing">Web developing</h1>
+<h2 id="_1">基本概念</h2>
+<p>MVC：为了解决直接用脚本语言嵌入HTML导致的可维护性差的问题，Web应用也引入了Model-View-Controller的模式，来简化Web开发。ASP发展为ASP.Net，JSP和PHP也有一大堆MVC框架。</p>
+<p>目前，Web开发技术仍在快速发展中，异步开发、新的MVVM前端技术层出不穷。</p>
+<p>由于Node.js把JavaScript引入了服务器端，因此，原来必须使用PHP/Java/C#/Python/Ruby等其他语言来开发服务器端程序，现在可以使用Node.js开发了！</p>
+<p>可以用来部署构建工具webpack的环境依赖</p>
+<h3 id="nodejs">Node.js开发优势</h3>
+<p>一是后端语言也是JavaScript，以前掌握了前端JavaScript的开发人员，现在可以同时编写后端代码；</p>
+<p>二是前后端统一使用JavaScript，就没有切换语言的障碍了；</p>
+<p>三是速度快，非常快！这得益于Node.js天生是异步的</p>
+<h1 id="nodejs_1">nodejs</h1>
+<h2 id="_2">特点</h2>
+<p>借助JavaScript天生的事件驱动机制加V8高性能引擎，使编写高性能Web服务轻而易举。</p>
+<h2 id="_3">安装</h2>
+<p>偶数为稳定版本</p>
+<p>https://nodejs.org/en/</p>
+<h3 id="nvm">NVM</h3>
+<h4 id="linux">Linux</h4>
+<p>Node Version Manager</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">o</span><span class="o">-</span> <span class="n">https</span><span class="o">:</span><span class="c1">//raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash</span>
+</pre></div>
+
+
+<h4 id="osx">OSX</h4>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">o</span><span class="o">-</span> <span class="n">https</span><span class="o">:</span><span class="c1">//raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash</span>
+</pre></div>
+
+
+<p>append them into <code>~/.bash_profile</code></p>
+<div class="hlcode"><pre><span class="n">export</span> <span class="n">NVM_DIR</span><span class="o">=</span><span class="s">&quot;$HOME/.nvm&quot;</span>
+<span class="p">[</span> <span class="o">-</span><span class="n">s</span> <span class="s">&quot;$NVM_DIR/nvm.sh&quot;</span> <span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="err">\</span><span class="p">.</span> <span class="s">&quot;$NVM_DIR/nvm.sh&quot;</span>  <span class="err">#</span> <span class="n">This</span> <span class="n">loads</span> <span class="n">nvm</span>
+<span class="p">[</span> <span class="o">-</span><span class="n">s</span> <span class="s">&quot;$NVM_DIR/bash_completion&quot;</span> <span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="err">\</span><span class="p">.</span> <span class="s">&quot;$NVM_DIR/bash_completion&quot;</span>  <span class="err">#</span> <span class="n">This</span> <span class="n">loads</span> <span class="n">nvm</span> <span class="n">bash_completion</span>
+</pre></div>
+
+
+<h3 id="npm">npm 包管理工具</h3>
+<p>Node Package Management</p>
+<p><strong>but</strong> doesn't make life easy <em>executing</em> any</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">L</span> <span class="n">https</span><span class="o">:</span><span class="c1">//www.npmjs.com/install.sh | sh</span>
+</pre></div>
+
+
+<p><code>NPM</code> by itself does not simply run any package. it doesn't run any package in a matter of fact. If you want to run a package using NPM, you must specify that package in your <code>package.json</code> file.</p>
+<p>When executables are installed via NPM packages, NPM links to them:</p>
+<ol>
+<li><em>local</em> installs have "links" created at <code>./node_modules/.bin/</code> directory.</li>
+<li><em>global</em> installs have "links" created from the global <code>bin/</code> directory (e.g. <code>/usr/local/bin</code>) on Linux or at <code>%AppData%/npm</code> on Windows.</li>
+</ol>
+<h3 id="npx">npx</h3>
+<p>A tool for <em>executing</em> Node packages</p>
+<p><code>npx</code> will check whether <code>&lt;command&gt;</code> exists in <code>$PATH</code>, or in the local project binaries, and execute it.</p>
+<p>if you wish to execute the locally-installed package <code>some-package</code> all you need to do is type:</p>
+<div class="hlcode"><pre><span class="n">npx</span> <span class="n">some</span><span class="o">-</span><span class="n">package</span>
+</pre></div>
+
+
+<p>Another <strong>major</strong> advantage of <code>npx</code> is the ability to execute a package which wasn't previously installed:</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">npx</span> <span class="n">create</span><span class="o">-</span><span class="n">react</span><span class="o">-</span><span class="n">app</span> <span class="n">my</span><span class="o">-</span><span class="n">app</span>
+</pre></div>
+
+
+<p>The above example will generate a <code>react</code> app boilerplate <em>within</em> the path the command had run in, and ensures that you always use the latest version of a generator or build tool without having to upgrade each time you’re about to use it.</p>
+<h2 id="npm-vs-cnpm">npm VS cnpm</h2>
+<p>npm其实是Node.js的包管理工具（package manager）</p>
+<p>因为npm安装插件是从国外服务器下载，受网络影响大，可能出现异常，如果npm的服务器在中国就好了，所以我们乐于分享的淘宝团队干了cnpm这事。</p>
+<h3 id="proxy">proxy 配置</h3>
+<div class="hlcode"><pre><span class="n">npm</span> <span class="n">config</span> <span class="n">set</span> <span class="n">proxy</span> <span class="n">http</span><span class="o">:</span><span class="c1">//127.0.01:8123</span>
+<span class="n">npm</span> <span class="n">config</span> <span class="n">set</span> <span class="n">https</span><span class="o">-</span><span class="n">proxy</span> <span class="n">http</span><span class="o">:</span><span class="c1">//127.0.0.1:8123</span>
+</pre></div>
+
+
+<h3 id="cnpm">cnpm 使用</h3>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">npm</span> <span class="n">install</span> <span class="o">-</span><span class="n">g</span> <span class="n">cnpm</span> <span class="o">--</span><span class="n">registry</span><span class="o">=</span><span class="n">https</span><span class="o">:</span><span class="c1">//registry.npm.taobao.org</span>
+</pre></div>
+
+
+<h2 id="hello-world">hello world</h2>
+<div class="hlcode"><pre><span class="err">&#39;</span><span class="n">use</span> <span class="n">strict</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Hello</span><span class="p">,</span> <span class="n">World</span><span class="o">!</span><span class="err">&#39;</span><span class="p">);</span>
+</pre></div>
+
+
+<h2 id="_4">全局对象</h2>
+<p>JavaScript有且仅有一个全局对象，在浏览器中，叫<code>window</code>对象。而在Node.js环境中，也有唯一的全局对象，叫<code>global</code>，</p>
+<p>进入Node.js交互环境，可以直接输入：</p>
+<div class="hlcode"><pre><span class="o">&gt;</span> <span class="n">global</span><span class="p">.</span><span class="n">console</span>
+<span class="n">Console</span> <span class="p">{</span>
+  <span class="nl">log:</span> <span class="p">[</span><span class="n">Function</span><span class="o">:</span> <span class="n">bound</span> <span class="p">],</span>
+  <span class="nl">info:</span> <span class="p">[</span><span class="n">Function</span><span class="o">:</span> <span class="n">bound</span> <span class="p">],</span>
+  <span class="nl">warn:</span> <span class="p">[</span><span class="n">Function</span><span class="o">:</span> <span class="n">bound</span> <span class="p">],</span>
+  <span class="nl">error:</span> <span class="p">[</span><span class="n">Function</span><span class="o">:</span> <span class="n">bound</span> <span class="p">],</span>
+  <span class="nl">dir:</span> <span class="p">[</span><span class="n">Function</span><span class="o">:</span> <span class="n">bound</span> <span class="p">],</span>
+  <span class="nl">time:</span> <span class="p">[</span><span class="n">Function</span><span class="o">:</span> <span class="n">bound</span> <span class="p">],</span>
+  <span class="nl">timeEnd:</span> <span class="p">[</span><span class="n">Function</span><span class="o">:</span> <span class="n">bound</span> <span class="p">],</span>
+  <span class="nl">trace:</span> <span class="p">[</span><span class="n">Function</span><span class="o">:</span> <span class="n">bound</span> <span class="n">trace</span><span class="p">],</span>
+  <span class="nl">assert:</span> <span class="p">[</span><span class="n">Function</span><span class="o">:</span> <span class="n">bound</span> <span class="p">],</span>
+  <span class="nl">Console:</span> <span class="p">[</span><span class="n">Function</span><span class="o">:</span> <span class="n">Console</span><span class="p">]</span> <span class="p">}</span>
+</pre></div>
+
+
+<h3 id="process">process 对象</h3>
+<p><code>process</code>也是Node.js提供的一个对象，它代表当前Node.js进程。通过<code>process</code>对象可以拿到许多有用信息：</p>
+<div class="hlcode"><pre><span class="o">&gt;</span> <span class="n">process</span> <span class="o">===</span> <span class="n">global</span><span class="p">.</span><span class="n">process</span><span class="p">;</span>
+<span class="nb">true</span>
+<span class="o">&gt;</span> <span class="n">process</span><span class="p">.</span><span class="n">version</span><span class="p">;</span>
+<span class="err">&#39;</span><span class="n">v5</span><span class="mf">.2.0</span><span class="err">&#39;</span>
+<span class="o">&gt;</span> <span class="n">process</span><span class="p">.</span><span class="n">platform</span><span class="p">;</span>
+<span class="err">&#39;</span><span class="n">darwin</span><span class="err">&#39;</span>
+<span class="o">&gt;</span> <span class="n">process</span><span class="p">.</span><span class="n">arch</span><span class="p">;</span>
+<span class="err">&#39;</span><span class="n">x64</span><span class="err">&#39;</span>
+<span class="o">&gt;</span> <span class="n">process</span><span class="p">.</span><span class="n">cwd</span><span class="p">();</span> <span class="c1">//返回当前工作目录</span>
+<span class="err">&#39;</span><span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">michael</span><span class="err">&#39;</span>
+<span class="o">&gt;</span> <span class="n">process</span><span class="p">.</span><span class="n">chdir</span><span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">private</span><span class="o">/</span><span class="n">tmp</span><span class="err">&#39;</span><span class="p">);</span> <span class="c1">// 切换当前工作目录</span>
+<span class="n">undefined</span>
+<span class="o">&gt;</span> <span class="n">process</span><span class="p">.</span><span class="n">cwd</span><span class="p">();</span>
+<span class="err">&#39;</span><span class="o">/</span><span class="n">private</span><span class="o">/</span><span class="n">tmp</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h4 id="process_1">process 响应</h4>
+<p>在下一次事件响应中执行代码，可以调用<code>process.nextTick()</code>：</p>
+<div class="hlcode"><pre><span class="c1">// test.js</span>
+
+<span class="c1">// process.nextTick()将在下一轮事件循环中调用:</span>
+<span class="n">process</span><span class="p">.</span><span class="n">nextTick</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(&#39;</span><span class="n">nextTick</span> <span class="n">callback</span><span class="o">!</span><span class="p">&#39;);</span>
+<span class="p">});</span>
+<span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(&#39;</span><span class="n">nextTick</span> <span class="n">was</span> <span class="n">set</span><span class="o">!</span><span class="p">&#39;);</span>
+</pre></div>
+
+
+<p>用Node执行上面的代码<code>node test.js</code>，你会看到，打印输出是：</p>
+<div class="hlcode"><pre><span class="n">nextTick</span> <span class="n">was</span> <span class="n">set</span><span class="o">!</span>
+<span class="n">nextTick</span> <span class="n">callback</span><span class="o">!</span>
+</pre></div>
+
+
+<blockquote>
+<p>这说明传入<code>process.nextTick()</code>的函数不是立刻执行，而是要等到下一次事件循环。</p>
+</blockquote>
+<p>Node.js进程本身的事件就由<code>process</code>对象来处理。如果我们响应<code>exit</code>事件，就可以在程序即将退出时执行某个回调函数：</p>
+<div class="hlcode"><pre><span class="c1">// 程序即将退出时的回调函数:</span>
+<span class="n">process</span><span class="p">.</span><span class="n">on</span><span class="p">(&#39;</span><span class="n">exit</span><span class="p">&#39;,</span> <span class="k">function</span> <span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(&#39;</span><span class="n">about</span> <span class="n">to</span> <span class="n">exit</span> <span class="k">with</span> <span class="nl">code:</span> <span class="p">&#39;</span> <span class="o">+</span> <span class="n">code</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<h2 id="strict">全局strict 模式</h2>
+<p>省去每个js文件都加上'use strict'; </p>
+<div class="hlcode"><pre><span class="n">node</span> <span class="o">--</span><span class="n">use_strict</span> <span class="n">example</span><span class="p">.</span><span class="n">js</span>
+</pre></div>
+
+
+<h1 id="javascript">判断JavaScript执行环境</h1>
+<p>有很多JavaScript代码既能在浏览器中执行，也能在Node环境执行，但有些时候，程序本身需要判断自己到底是在什么环境下执行的，常用的方式就是根据浏览器和Node环境提供的全局变量名称来判断：</p>
+<div class="hlcode"><pre><span class="k">if</span> <span class="p">(</span><span class="n">typeof</span><span class="p">(</span><span class="n">window</span><span class="p">)</span> <span class="o">===</span> <span class="err">&#39;</span><span class="n">undefined</span><span class="err">&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="err">&#39;</span><span class="n">node</span><span class="p">.</span><span class="n">js</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="err">&#39;</span><span class="n">browser</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>rest - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Nodejs_modules">Nodejs_modules</a>&nbsp;&#187;&nbsp;rest
+    <span class="updated">Page Updated&nbsp;
+      2018-08-05 23:55
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">rest</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#rest">REST</a><ul>
+<li><a href="#rest-api">REST API</a><ul>
+<li><a href="#rest-api_1">编写REST API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="rest">REST</h1>
+<p><a href="http://zh.wikipedia.org/wiki/REST">REST</a>（Representational State Transfer）风格的软件架构模式</p>
+<p>REST就是一种设计API的模式。最常用的数据格式是JSON。由于JSON能直接被JavaScript读取，所以，以JSON格式编写的REST风格的API具有简单、易读、易用的特点。</p>
+<p>编写API有什么好处呢？由于API就是把Web App的功能全部封装了，所以，通过API操作数据，可以极大地把前端和后端的代码隔离，使得后端代码易于测试，前端代码编写更简单。</p>
+<h2 id="rest-api">REST API</h2>
+<h3 id="rest-api_1">编写REST API</h3>
+<p>编写REST API，实际上就是编写处理HTTP请求的async函数，不过，REST请求和普通的HTTP请求有几个特殊的地方：</p>
+<ol>
+<li>REST请求仍然是标准的HTTP请求，但是，除了GET请求外，POST、PUT等请求的body是JSON数据格式，请求的<code>Content-Type</code>为<code>application/json</code>；</li>
+<li>REST响应返回的结果是JSON数据格式，因此，响应的<code>Content-Type</code>也是<code>application/json</code>。</li>
+</ol>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

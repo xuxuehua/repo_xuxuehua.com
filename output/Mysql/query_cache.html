@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>query_cache 查询缓存 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Mysql">Mysql</a>&nbsp;&#187;&nbsp;query_cache 查询缓存
+    <span class="updated">Page Updated&nbsp;
+      2018-12-28 13:51
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">query_cache 查询缓存</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#mysql">MySQL查询缓存</a><ul>
+<li><a href="#_1">判断命中</a></li>
+<li><a href="#_2">不会被缓存</a></li>
+<li><a href="#_3">变量</a><ul>
+<li><a href="#_4">查询缓存的相关服务器变量</a></li>
+<li><a href="#_5">查看相关的状态变量</a></li>
+<li><a href="#_6">缓存命中率评估</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="mysql">MySQL查询缓存</h1>
+<p>不建议设置过大，默认为16MB</p>
+<p>如果查询缓存是有意义的，那就需要打开，除非使用memcache等其他缓存机制。</p>
+<h2 id="_1">判断命中</h2>
+<p>通过查询语句的hash值判断，hash时，考虑的因素包括</p>
+<div class="hlcode"><pre><span class="err">查询本身，要查询的数据库，客户端使用协议版本</span><span class="p">,</span> <span class="p">...</span>
+</pre></div>
+
+
+<p>查询语句任何字符上的不同，都会导致缓存不能命中</p>
+<h2 id="_2">不会被缓存</h2>
+<p>查询中包含自定义函数UDF，存储函数，用户自定义变量，临时表，mysql库中系统表，或者包含列级别的表，有着不确定值的函数( Now() );</p>
+<h2 id="_3">变量</h2>
+<h3 id="_4">查询缓存的相关服务器变量</h3>
+<p>查询缓存中内存块的最小分配单位</p>
+<div class="hlcode"><pre><span class="n">query_cache_min_res_unit</span>
+</pre></div>
+
+
+<blockquote>
+<p>较小值会减少浪费，但会导致更频繁的内存分配操作</p>
+<p>较大值会带来浪费，会导致碎片过多</p>
+</blockquote>
+<p>能够缓存的最大查询结果</p>
+<div class="hlcode"><pre><span class="n">query_cache_limit</span>
+</pre></div>
+
+
+<blockquote>
+<p>对于较大结果的查询语句，建议在SELECT中使用SQL_NO_CACHE</p>
+</blockquote>
+<p>查询缓存总共可用的内存空间，单位为字节，必须为1024整数倍</p>
+<div class="hlcode"><pre><span class="n">query_cache_size</span>
+</pre></div>
+
+
+<p>指定value为ON，OFF，DEMAND</p>
+<div class="hlcode"><pre><span class="n">query_cache_type</span>
+</pre></div>
+
+
+<p>如果某表被其他的连接锁定，是否仍然可以充查询缓存中返回结果</p>
+<p>默认值为OFF， 表示可以表被其他连接锁定的场景中继续从缓存返回数据，ON表示不允许</p>
+<div class="hlcode"><pre><span class="n">query_cache_wlock_invalidate</span>
+</pre></div>
+
+
+<h3 id="_5">查看相关的状态变量</h3>
+<div class="hlcode"><pre><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">GLOBAL</span> <span class="n">STATUS</span> <span class="n">LIKE</span> <span class="err">&#39;</span><span class="o">%</span><span class="n">Qcache</span><span class="o">%</span><span class="err">&#39;</span><span class="p">;</span>
+</pre></div>
+
+
+<h3 id="_6">缓存命中率评估</h3>
+<div class="hlcode"><pre><span class="n">Qcache_hits</span><span class="o">/</span><span class="p">(</span><span class="n">Qcache_hits</span><span class="o">+</span><span class="n">Com_select</span><span class="p">)</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,588 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>basic_knowledge - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Saltstack">Saltstack</a>&nbsp;&#187;&nbsp;basic_knowledge
+    <span class="updated">Page Updated&nbsp;
+      2019-06-18 08:53
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">basic_knowledge</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#saltstack">SaltStack</a><ul>
+<li><a href="#installation">installation</a><ul>
+<li><a href="#centos">centos</a><ul>
+<li><a href="#master">master</a></li>
+<li><a href="#minion">minion</a></li>
+</ul>
+</li>
+<li><a href="#source-code">Source code</a><ul>
+<li><a href="#master_1">master</a></li>
+<li><a href="#minion_1">minion</a></li>
+</ul>
+</li>
+<li><a href="#pip">pip</a><ul>
+<li><a href="#master_2">master</a></li>
+<li><a href="#minion_2">minion</a></li>
+</ul>
+</li>
+<li><a href="#salt-bootstrap">salt-bootstrap</a><ul>
+<li><a href="#master_3">master</a></li>
+<li><a href="#minion_3">minion</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_1">架构</a><ul>
+<li><a href="#master-minion">Master -&gt; Minion</a><ul>
+<li><a href="#_2">配置及参数</a></li>
+<li><a href="#_3">配置文件</a></li>
+<li><a href="#_4">进程</a></li>
+<li><a href="#_5">管理密钥</a><ul>
+<li><a href="#modules">Modules</a></li>
+<li><a href="#highstate">highstate</a></li>
+<li><a href="#salt_schedule">salt_schedule</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#master-syndic-minion">Master -&gt; Syndic -&gt; Minion</a></li>
+<li><a href="#masterless-masterminion">Masterless 无Master的minion</a></li>
+</ul>
+</li>
+<li><a href="#_6">系统组件</a><ul>
+<li><a href="#grains-minion">Grains 收集minion静态系统信息</a><ul>
+<li><a href="#grains">grains优先级</a></li>
+<li><a href="#grains_1">grains的下发</a><ul>
+<li><a href="#_7">自定义</a></li>
+<li><a href="#_8">固定配置</a></li>
+</ul>
+</li>
+<li><a href="#-g">-G</a></li>
+<li><a href="#grainsitems-grains">grains.items  查询grains</a></li>
+<li><a href="#grains_2">自定义Grains</a></li>
+</ul>
+</li>
+<li><a href="#pillar-minion">Pillar 定义minion数据</a><ul>
+<li><a href="#pillar">激活pillar</a></li>
+<li><a href="#pillar_1">自定义pillar</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#example">example</a><ul>
+<li><a href="#apache">部署apache</a><ul>
+<li><a href="#master_4">master</a></li>
+<li><a href="#minion_4">minion</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="saltstack">SaltStack</h1>
+<p>SaltStack是基础设施管理的一种具有革命性意义的方法，以速度替代复杂性。SaltStack足够简单，可以在几分钟内运行，可扩展到足以管理数万台服务器，并且能够在几秒钟内快速与每个系统进行通信。</p>
+<p>底层采用动态的连接总线（ZeroMQ消息队列pub/sub方式通信），使用ssl证书签发的方式进行认证管理</p>
+<h2 id="installation">installation</h2>
+<h3 id="centos">centos</h3>
+<h4 id="master">master</h4>
+<div class="hlcode"><pre><span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">salt</span><span class="o">-</span><span class="n">master</span> <span class="n">salt</span><span class="o">-</span><span class="n">minion</span>
+<span class="n">systemctl</span> <span class="n">start</span> <span class="n">salt</span><span class="o">-</span><span class="n">master</span>
+<span class="n">systemctl</span> <span class="n">enable</span> <span class="n">salt</span><span class="o">-</span><span class="n">master</span>
+</pre></div>
+
+
+<h4 id="minion">minion</h4>
+<div class="hlcode"><pre><span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">salt</span><span class="o">-</span><span class="n">minion</span>
+
+<span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="err">&#39;</span><span class="n">s</span><span class="o">/</span><span class="err">#</span><span class="n">master</span><span class="o">:</span> <span class="n">salt</span><span class="o">/</span><span class="n">master</span><span class="o">:</span> <span class="n">IPADDRESS</span><span class="o">/</span><span class="n">g</span><span class="err">&#39;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">minion</span>
+
+<span class="n">systemctl</span> <span class="n">start</span> <span class="n">salt</span><span class="o">-</span><span class="n">minion</span>
+<span class="n">systemctl</span> <span class="n">enable</span> <span class="n">salt</span><span class="o">-</span><span class="n">minion</span>
+</pre></div>
+
+
+<h3 id="source-code">Source code</h3>
+<h4 id="master_1">master</h4>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="o">:</span><span class="c1">//github.com/saltstack/salt.git</span>
+
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">salt</span><span class="o">/</span><span class="n">requirements</span><span class="o">/</span><span class="n">zeromq</span><span class="p">.</span><span class="n">txt</span>
+
+<span class="n">python</span> <span class="n">salt</span><span class="o">/</span><span class="n">setup</span><span class="p">.</span><span class="n">py</span> <span class="n">install</span>
+
+<span class="n">mkdir</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="p">;</span> <span class="n">cp</span> <span class="n">salt</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span><span class="n">master</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span>
+
+<span class="n">salt</span><span class="o">-</span><span class="n">master</span> <span class="o">-</span><span class="n">d</span>
+</pre></div>
+
+
+<h4 id="minion_1">minion</h4>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="o">:</span><span class="c1">//github.com/saltstack/salt.git</span>
+
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">salt</span><span class="o">/</span><span class="n">requirements</span><span class="o">/</span><span class="n">zeromq</span><span class="p">.</span><span class="n">txt</span>
+
+<span class="n">python</span> <span class="n">salt</span><span class="o">/</span><span class="n">setup</span><span class="p">.</span><span class="n">py</span> <span class="n">installSalt</span>
+
+<span class="n">mkdir</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="p">;</span> <span class="n">cp</span> <span class="n">salt</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span><span class="n">minion</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span>
+
+<span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="err">&#39;</span><span class="n">s</span><span class="o">/</span><span class="err">#</span><span class="n">master</span><span class="o">:</span> <span class="n">salt</span><span class="o">/</span><span class="n">master</span><span class="o">:</span> <span class="n">IPADDRESS</span><span class="o">/</span><span class="n">g</span><span class="err">&#39;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">minion</span>  <span class="err">#</span><span class="n">IPADDRESS</span><span class="err">为</span><span class="n">Master</span><span class="err">服务器地址</span>
+
+<span class="n">salt</span><span class="o">-</span><span class="n">minion</span> <span class="o">-</span><span class="n">d</span>
+</pre></div>
+
+
+<h3 id="pip">pip</h3>
+<h4 id="master_2">master</h4>
+<div class="hlcode"><pre><span class="n">pip</span> <span class="n">install</span> <span class="n">salt</span>
+
+<span class="n">mkdir</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="p">;</span><span class="n">wget</span> <span class="o">-</span><span class="n">SO</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">master</span> <span class="n">https</span><span class="o">:</span><span class="c1">//github.com/saltstack/salt/blob/develop/conf/master</span>
+
+<span class="n">salt</span><span class="o">-</span><span class="n">master</span> <span class="o">-</span><span class="n">d</span>
+</pre></div>
+
+
+<h4 id="minion_2">minion</h4>
+<div class="hlcode"><pre><span class="n">pip</span> <span class="n">install</span> <span class="n">salt</span>
+
+<span class="n">mkdir</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="p">;</span><span class="n">wget</span> <span class="o">-</span><span class="n">SO</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">minion</span> <span class="n">https</span><span class="o">:</span><span class="c1">//github.com/saltstack/salt/blob/develop/conf/minion</span>
+
+<span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="err">&#39;</span><span class="n">s</span><span class="o">/</span><span class="err">#</span><span class="n">master</span><span class="o">:</span> <span class="n">salt</span><span class="o">/</span><span class="n">master</span><span class="o">:</span> <span class="n">IPADDRESS</span><span class="o">/</span><span class="n">g</span><span class="err">&#39;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">minion</span>  <span class="err">#</span><span class="n">IPADDRESS</span><span class="err">为</span><span class="n">Master</span><span class="err">服务器地址</span>
+
+<span class="n">salt</span><span class="o">-</span><span class="n">minion</span> <span class="o">-</span><span class="n">d</span>
+</pre></div>
+
+
+<h3 id="salt-bootstrap">salt-bootstrap</h3>
+<p>salt-bootstrap是SaltStack的一个单独项目，该项目主要用于解决多平台一键部署SaltStack环境。核心工程就是维护一个庞大的bash脚本</p>
+<h4 id="master_3">master</h4>
+<div class="hlcode"><pre><span class="n">Wget</span> <span class="o">-</span><span class="n">c</span> <span class="n">https</span><span class="o">:</span><span class="c1">//raw.githubusercontent.com/saltstack/salt-bootstrap/stable/bootstrap-salt.sh —no-check-certificate  </span>
+
+<span class="n">wget</span> <span class="o">-</span><span class="n">O</span> <span class="p">[</span><span class="n">bootstrap</span><span class="o">-</span><span class="n">salt</span><span class="p">.</span><span class="n">sh</span><span class="p">](</span><span class="n">http</span><span class="o">:</span><span class="c1">//bootstrap-salt.sh) https://bootstrap.saltstack.com </span>
+
+<span class="n">sudo</span> <span class="n">sh</span> <span class="p">[</span><span class="n">bootstrap</span><span class="o">-</span><span class="n">salt</span><span class="p">.</span><span class="n">sh</span><span class="p">](</span><span class="n">http</span><span class="o">:</span><span class="c1">//bootstrap-salt.sh) </span>
+</pre></div>
+
+
+<h4 id="minion_3">minion</h4>
+<p>只安装最新版Minion并且指定Minion id关于salt-bootstrap脚本的参数大家可以运行sh install_salt.sh -h查看，该脚本也提供非常方便的一键部署参数。</p>
+<div class="hlcode"><pre><span class="n">echo</span> <span class="s">&quot;IPADDRESS     salt&quot;</span>  <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">hosts</span>  <span class="err">#</span><span class="n">IPADDRESS</span><span class="err">为</span><span class="n">Master</span><span class="err">服务器地址</span>
+
+<span class="n">curl</span> <span class="o">-</span><span class="n">L</span> <span class="n">https</span><span class="o">:</span><span class="c1">//bootstrap.saltstack.com -o </span>
+<span class="n">install_salt</span><span class="p">.</span><span class="n">sh</span>
+
+<span class="n">sh</span> <span class="n">install_salt</span><span class="p">.</span><span class="n">sh</span> <span class="o">-</span><span class="n">i</span> <span class="n">Minion</span>  
+</pre></div>
+
+
+<h1 id="_1">架构</h1>
+<p><img alt="img" src="https://snag.gy/ymdafR.jpg" /></p>
+<h2 id="master-minion">Master -&gt; Minion</h2>
+<p>master 和minion 全部直连 </p>
+<h3 id="_2">配置及参数</h3>
+<p>4505 (publish_port) Salt Master pub 接口 </p>
+<p>可以通过修改/etc/salt/master配置文件的publish_port参数设置。它是salt的消息发布系统，如果查看4505端口，会发现所有的Minion连接到Master的4505端口，TCP状态持续保持为ESTABLISHED。</p>
+<p>4506 (ret_port) Salt-Master Ret 接口 </p>
+<p>ZeroMQ REP系统，默认监听4506端口，可以通过修改/etc/salt/master配置文件的ret_port参数设置。它是salt客户端与服务端通信的端口。比如说Minion执行某个命令后的返回值就是发送给Master的4506这个REP端口</p>
+<p>user: 指定master 进程的运⾏⽤户,  如果调整,  则需要调整部分目录的权限(默认为root)<br />
+timeout:  指定timeout时间,  如果minion规模庞⼤或⺴络状况不好,建议增⼤该值(默认5s)<br />
+keep_jobs:  默认情况下, minion 会执⾏结果会返回master, master会缓存到本地的cachedir 目录,  该参数指定缓存多⻓时间,  以供查看之前的执⾏结果,  会占⽤磁盘空间(默认为24h)<br />
+job_cache: master 是否缓存执⾏结果,  如果规模庞⼤(超过5000台),  建议使⽤其他⽅式来存储jobs,  关闭本选项(默认为True)<br />
+file_recv :  是否允许minion传送⽂件到master 上(默认是Flase)<br />
+file_roots: 指定file server目录,  默认为:</p>
+<div class="hlcode"><pre><span class="n">file_roots</span><span class="o">:</span>    
+  <span class="n">base</span><span class="o">:</span>    
+  <span class="o">-</span> <span class="sr">/srv/s</span><span class="n">alt</span>     
+</pre></div>
+
+
+<p>指定pillar 目录,  默认为:log_level:  执⾏⽇志级别,  ⽀持的⽇志级别有'garbage', 'trace', 'debug', info', 'warning', 'error', ‘critical ’ ( 默认为’warning’)</p>
+<div class="hlcode"><pre><span class="n">pillar_roots</span>
+  <span class="nl">base:</span>
+    <span class="o">-</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">pillar</span>  
+</pre></div>
+
+
+<h3 id="_3">配置文件</h3>
+<div class="hlcode"><pre><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">master</span> 
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">minion</span> 
+</pre></div>
+
+
+<h3 id="_4">进程</h3>
+<div class="hlcode"><pre><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">salt</span><span class="o">-</span><span class="n">master</span> <span class="o">-</span><span class="n">d</span> 
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">salt</span><span class="o">-</span><span class="n">minion</span> <span class="o">-</span><span class="n">d</span>  
+</pre></div>
+
+
+<h3 id="_5">管理密钥</h3>
+<p>Salt-key 命令来管理minion 密钥 </p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">server</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span><span class="o">-</span><span class="n">key</span>  <span class="o">-</span><span class="n">L</span> 
+<span class="n">Accepted</span> <span class="n">Keys</span><span class="o">:</span> 
+<span class="n">Denied</span> <span class="n">Keys</span><span class="o">:</span> 
+<span class="n">Unaccepted</span> <span class="n">Keys</span><span class="o">:</span> 
+<span class="n">minion</span><span class="o">-</span><span class="n">one</span> 
+<span class="n">Rejected</span> <span class="n">Keys</span><span class="o">:</span> 
+</pre></div>
+
+
+<p>master上接受密钥 </p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span><span class="o">-</span><span class="n">key</span> <span class="o">-</span><span class="n">L</span> 
+<span class="n">Accepted</span> <span class="n">Keys</span><span class="o">:</span>
+<span class="n">Denied</span> <span class="n">Keys</span><span class="o">:</span>
+<span class="n">Unaccepted</span> <span class="n">Keys</span><span class="o">:</span>
+<span class="mf">192.168.1.11</span>
+<span class="n">Rejected</span> <span class="n">Keys</span><span class="o">:</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span><span class="o">-</span><span class="n">key</span> <span class="o">-</span><span class="n">A</span> <span class="o">-</span><span class="n">y</span> 
+<span class="n">The</span> <span class="n">following</span> <span class="n">keys</span> <span class="n">are</span> <span class="n">going</span> <span class="n">to</span> <span class="n">be</span> <span class="n">accepted</span><span class="o">:</span>
+<span class="n">Unaccepted</span> <span class="n">Keys</span><span class="o">:</span>
+<span class="mf">192.168.1.11</span>
+<span class="n">Key</span> <span class="k">for</span> <span class="n">minion</span> <span class="mf">192.168.1.11</span> <span class="n">accepted</span><span class="p">.</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span><span class="o">-</span><span class="n">key</span> <span class="o">-</span><span class="n">L</span> 
+<span class="n">Accepted</span> <span class="n">Keys</span><span class="o">:</span>
+<span class="mf">192.168.1.11</span>
+<span class="n">Denied</span> <span class="n">Keys</span><span class="o">:</span>
+<span class="n">Unaccepted</span> <span class="n">Keys</span><span class="o">:</span>
+<span class="n">Rejected</span> <span class="n">Keys</span><span class="o">:</span>
+</pre></div>
+
+
+<p>minion在第一次启动时, 会自动生成minion.pem， 然后将 minion.pub发送给master。master在接收到minion的public key后，通过salt-key命令accept minion public key，这样在master的/etc/salt/pki/master/minions下的将会存放以minion id命名的 public key，然后master就能对minion发送指令了。</p>
+<p>查看密钥的职位密码来确保其与minion的密钥相匹配，在master上查看 </p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">server</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span><span class="o">-</span><span class="n">key</span> <span class="o">-</span><span class="n">f</span> <span class="n">minion</span><span class="o">-</span><span class="n">one</span> 
+<span class="n">Unaccepted</span> <span class="n">Keys</span><span class="o">:</span> 
+<span class="n">minion</span><span class="o">-</span><span class="n">one</span><span class="o">:</span>  <span class="n">ad</span><span class="o">:</span><span class="n">e0</span><span class="o">:</span><span class="mi">1</span><span class="n">c</span><span class="o">:</span><span class="mf">1f</span><span class="o">:</span><span class="mi">46</span><span class="o">:</span><span class="n">c6</span><span class="o">:</span><span class="mi">93</span><span class="o">:</span><span class="mi">24</span><span class="o">:</span><span class="n">fb</span><span class="o">:</span><span class="n">e6</span><span class="o">:</span><span class="n">b2</span><span class="o">:</span><span class="n">f5</span><span class="o">:</span><span class="n">bc</span><span class="o">:</span><span class="n">e5</span><span class="o">:</span><span class="n">fa</span><span class="o">:</span><span class="n">b6</span> 
+</pre></div>
+
+
+<p>在minion上查询minion的私钥  </p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">client</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span><span class="o">-</span><span class="n">call</span> <span class="o">--</span><span class="n">local</span> <span class="n">key</span><span class="p">.</span><span class="n">finger</span> 
+<span class="nl">local:</span> <span class="n">ad</span><span class="o">:</span><span class="n">e0</span><span class="o">:</span><span class="mi">1</span><span class="n">c</span><span class="o">:</span><span class="mf">1f</span><span class="o">:</span><span class="mi">46</span><span class="o">:</span><span class="n">c6</span><span class="o">:</span><span class="mi">93</span><span class="o">:</span><span class="mi">24</span><span class="o">:</span><span class="n">fb</span><span class="o">:</span><span class="n">e6</span><span class="o">:</span><span class="n">b2</span><span class="o">:</span><span class="n">f5</span><span class="o">:</span><span class="n">bc</span><span class="o">:</span><span class="n">e5</span><span class="o">:</span><span class="n">fa</span><span class="o">:</span><span class="n">b6</span> 
+</pre></div>
+
+
+<h4 id="modules">Modules</h4>
+<p>在命令行中和配置文件中使用的指令模块,可以在命令行中运行</p>
+<h4 id="highstate">highstate</h4>
+<p>为minion端下发永久添加状态,从sls配置文件读取.即同步状态配置</p>
+<p>触发所有minion从master下载top.sls文件以及其中定一个的states，然后编译、执行。执行完之后，minion会将执行结果的摘要信息汇报给master。</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="n">pillar</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span> <span class="sc">&#39;*&#39;</span> <span class="n">state</span><span class="p">.</span><span class="n">highstate</span>
+<span class="mf">192.168.1.11</span><span class="o">:</span>
+<span class="o">----------</span>
+          <span class="nl">ID:</span> <span class="n">apache</span><span class="o">-</span><span class="n">service</span>
+    <span class="nl">Function:</span> <span class="n">pkg</span><span class="p">.</span><span class="n">installed</span>
+        <span class="nl">Name:</span> <span class="n">httpd</span>
+      <span class="nl">Result:</span> <span class="n">True</span>
+     <span class="nl">Comment:</span> <span class="n">The</span> <span class="n">following</span> <span class="n">packages</span> <span class="n">were</span> <span class="n">installed</span><span class="o">/</span><span class="n">updated</span><span class="o">:</span> <span class="n">httpd</span>
+     <span class="nl">Started:</span> <span class="mo">04</span><span class="o">:</span><span class="mi">25</span><span class="o">:</span><span class="mf">07.910627</span>
+    <span class="nl">Duration:</span> <span class="mf">77592.817</span> <span class="n">ms</span>
+     <span class="nl">Changes:</span>   
+              <span class="o">----------</span>
+              <span class="nl">apr:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">1.4.8</span><span class="o">-</span><span class="mf">3.</span><span class="n">el7_4</span><span class="mf">.1</span>
+                  <span class="nl">old:</span>
+              <span class="n">apr</span><span class="o">-</span><span class="n">util</span><span class="o">:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">1.5.2</span><span class="o">-</span><span class="mf">6.</span><span class="n">el7</span>
+                  <span class="nl">old:</span>
+              <span class="nl">httpd:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">2.4.6</span><span class="o">-</span><span class="mf">89.</span><span class="n">el7</span><span class="p">.</span><span class="n">centos</span>
+                  <span class="nl">old:</span>
+              <span class="n">httpd</span><span class="o">-</span><span class="n">tools</span><span class="o">:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">2.4.6</span><span class="o">-</span><span class="mf">89.</span><span class="n">el7</span><span class="p">.</span><span class="n">centos</span>
+                  <span class="nl">old:</span>
+              <span class="nl">mailcap:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">2.1.41</span><span class="o">-</span><span class="mf">2.</span><span class="n">el7</span>
+                  <span class="nl">old:</span>
+<span class="o">----------</span>
+          <span class="nl">ID:</span> <span class="n">apache</span><span class="o">-</span><span class="n">service</span>
+    <span class="nl">Function:</span> <span class="n">pkg</span><span class="p">.</span><span class="n">installed</span>
+        <span class="nl">Name:</span> <span class="n">httpd</span><span class="o">-</span><span class="n">devel</span>
+      <span class="nl">Result:</span> <span class="n">True</span>
+     <span class="nl">Comment:</span> <span class="n">The</span> <span class="n">following</span> <span class="n">packages</span> <span class="n">were</span> <span class="n">installed</span><span class="o">/</span><span class="n">updated</span><span class="o">:</span> <span class="n">httpd</span><span class="o">-</span><span class="n">devel</span>
+     <span class="nl">Started:</span> <span class="mo">04</span><span class="o">:</span><span class="mi">26</span><span class="o">:</span><span class="mf">25.518515</span>
+    <span class="nl">Duration:</span> <span class="mf">21131.086</span> <span class="n">ms</span>
+     <span class="nl">Changes:</span>   
+              <span class="o">----------</span>
+              <span class="n">apr</span><span class="o">-</span><span class="n">devel</span><span class="o">:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">1.4.8</span><span class="o">-</span><span class="mf">3.</span><span class="n">el7_4</span><span class="mf">.1</span>
+                  <span class="nl">old:</span>
+              <span class="n">apr</span><span class="o">-</span><span class="n">util</span><span class="o">-</span><span class="n">devel</span><span class="o">:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">1.5.2</span><span class="o">-</span><span class="mf">6.</span><span class="n">el7</span>
+                  <span class="nl">old:</span>
+              <span class="n">cyrus</span><span class="o">-</span><span class="n">sasl</span><span class="o">:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">2.1.26</span><span class="o">-</span><span class="mf">23.</span><span class="n">el7</span>
+                  <span class="nl">old:</span>
+              <span class="n">cyrus</span><span class="o">-</span><span class="n">sasl</span><span class="o">-</span><span class="n">devel</span><span class="o">:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">2.1.26</span><span class="o">-</span><span class="mf">23.</span><span class="n">el7</span>
+                  <span class="nl">old:</span>
+              <span class="n">expat</span><span class="o">-</span><span class="n">devel</span><span class="o">:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">2.1.0</span><span class="o">-</span><span class="mf">10.</span><span class="n">el7_3</span>
+                  <span class="nl">old:</span>
+              <span class="n">httpd</span><span class="o">-</span><span class="n">devel</span><span class="o">:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">2.4.6</span><span class="o">-</span><span class="mf">89.</span><span class="n">el7</span><span class="p">.</span><span class="n">centos</span>
+                  <span class="nl">old:</span>
+              <span class="n">libdb</span><span class="o">-</span><span class="n">devel</span><span class="o">:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">5.3.21</span><span class="o">-</span><span class="mf">24.</span><span class="n">el7</span>
+                  <span class="nl">old:</span>
+              <span class="nl">openldap:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">2.4.44</span><span class="o">-</span><span class="mf">21.</span><span class="n">el7_6</span>
+                  <span class="nl">old:</span>
+                      <span class="mf">2.4.44</span><span class="o">-</span><span class="mf">20.</span><span class="n">el7</span>
+              <span class="n">openldap</span><span class="o">-</span><span class="n">devel</span><span class="o">:</span>
+                  <span class="o">----------</span>
+                  <span class="nl">new:</span>
+                      <span class="mf">2.4.44</span><span class="o">-</span><span class="mf">21.</span><span class="n">el7_6</span>
+                  <span class="nl">old:</span>
+<span class="o">----------</span>
+          <span class="nl">ID:</span> <span class="n">apache</span><span class="o">-</span><span class="n">service</span>
+    <span class="nl">Function:</span> <span class="n">service</span><span class="p">.</span><span class="n">running</span>
+        <span class="nl">Name:</span> <span class="n">httpd</span>
+      <span class="nl">Result:</span> <span class="n">True</span>
+     <span class="nl">Comment:</span> <span class="n">Service</span> <span class="n">httpd</span> <span class="n">has</span> <span class="n">been</span> <span class="n">enabled</span><span class="p">,</span> <span class="n">and</span> <span class="n">is</span> <span class="n">running</span>
+     <span class="nl">Started:</span> <span class="mo">04</span><span class="o">:</span><span class="mi">26</span><span class="o">:</span><span class="mf">46.743870</span>
+    <span class="nl">Duration:</span> <span class="mf">612.381</span> <span class="n">ms</span>
+     <span class="nl">Changes:</span>   
+              <span class="o">----------</span>
+              <span class="nl">httpd:</span>
+                  <span class="n">True</span>
+
+<span class="n">Summary</span>
+<span class="o">------------</span>
+<span class="nl">Succeeded:</span> <span class="mi">3</span> <span class="p">(</span><span class="n">changed</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="nl">Failed:</span>    <span class="mi">0</span>
+<span class="o">------------</span>
+<span class="n">Total</span> <span class="n">states</span> <span class="n">run</span><span class="o">:</span>     <span class="mi">3</span>
+</pre></div>
+
+
+<h4 id="salt_schedule">salt_schedule</h4>
+<p>会自动保持客户端配置</p>
+<h2 id="master-syndic-minion">Master -&gt; Syndic -&gt; Minion</h2>
+<p>通过syndic 对Minion进行管理 </p>
+<p>Syndic 建立在中心master 和minion之间，并允许多层分级Syndic</p>
+<p>Syndic运行在一个Master上，并连接到另外一个Master(比她更高级别)，然后Syndic minion所连接的高级Master就可以控制连接到运行Syndic的Master 上的minion。</p>
+<p>​    </p>
+<h2 id="masterless-masterminion">Masterless 无Master的minion</h2>
+<p>只需要在每台机器上安装Minion，然后采用本机只负责对本机的配置管理工作机制服务模式</p>
+<p>直接在本地使用salt-call命令使用Saltstack的各种功能，而不用连接到master上</p>
+<div class="hlcode"><pre><span class="c"># salt-call --local state.highstate</span>
+</pre></div>
+
+
+<h1 id="_6">系统组件</h1>
+<h2 id="grains-minion">Grains 收集minion静态系统信息</h2>
+<p>minion端的变量,静态的</p>
+<p>Grains是SaltStack记录Minion的一些静态信息的组件，我们可以简单地理解为Grains里面记录着每台Minion的一些常用属性，比如CPU、内存、磁盘、网络信息等，我们可以通过grains.items查看某台Minion的所有Grains信息</p>
+<p>Minions的Grains信息是Minions启动的时候采集汇报给Master的，在实际应用环境中我们需要根据自己的业务需求去自定义一些Grains</p>
+<p>grains的特性–每次启动汇报、静态决定了它没有pillar灵活，要知道pillar是随时可变的，只要在master端修改了那一般都会立刻生效的。所以<strong>grains更适合做一些静态的属性值的采集</strong>，例如设备的角色(role)，磁盘个数(disk_num），操作系统版本等诸如此类非常固定的属性。</p>
+<h3 id="grains">grains优先级</h3>
+<p>通过master下发的grains优先级是最高的(/etc/salt/grains)，/etc/salt/minion次之，/etc/salt/grains最低</p>
+<h3 id="grains_1">grains的下发</h3>
+<h4 id="_7">自定义</h4>
+<p>可以通过<a href="http://docs.saltstack.com/ref/modules/all/salt.modules.state.html#salt.modules.state.highstate"><code>state.highstate</code></a>、<a href="http://docs.saltstack.com/ref/modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_grains"><code>saltutil.sync_grains</code></a>、<a href="http://docs.saltstack.com/ref/modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_all"><code>saltutil.sync_all</code></a> 等方法批量下发，切记所有在_grains目录下的所有自定义grains值都会下发到minion，这是血的教训。</p>
+<p>通过<code>state.highstate</code> 下发的grains好处是无须重启minion即可生效</p>
+<h4 id="_8">固定配置</h4>
+<p>固定存放在minion端配置文件中，如grains、minion文件中，可以通过file manager的方法去批量下发/etc/salt/grains等配置文件实现grains的批量下发，当然了也通过别的方式把这个文件批量下发下去，都是ok的。</p>
+<p>通过下发/etc/salt/grains文件下发的grains值则必须重启minion端服务才可以生效</p>
+<h3 id="-g">-G</h3>
+<p>用于指定匹配的grains</p>
+<div class="hlcode"><pre><span class="n">salt</span> <span class="o">-</span><span class="n">G</span> <span class="err">&#39;</span><span class="n">os</span><span class="o">:</span><span class="n">CentOS</span><span class="err">&#39;</span> <span class="n">test</span><span class="p">.</span><span class="n">ping</span>
+</pre></div>
+
+
+<h3 id="grainsitems-grains">grains.items  查询grains</h3>
+<p>查询grains 信息</p>
+<div class="hlcode"><pre><span class="cp"># salt \* grains.items</span>
+<span class="mf">192.168.1.11</span><span class="o">:</span>
+    <span class="o">----------</span>
+    <span class="nl">SSDs:</span>
+    <span class="nl">biosreleasedate:</span>
+        <span class="mi">12</span><span class="o">/</span><span class="mo">01</span><span class="o">/</span><span class="mi">2006</span>
+    <span class="nl">biosversion:</span>
+        <span class="n">VirtualBox</span>
+    <span class="nl">cpu_flags:</span>
+        <span class="o">-</span> <span class="n">fpu</span>
+</pre></div>
+
+
+<h3 id="grains_2">自定义Grains</h3>
+<p>在Minion的/etc/salt/minion配置文件中默认有一些注释行。这里就是在Minion上<br />
+的minion配置文件中如何定义Grains信息例子。下面只需根据自动的需求按照以下格式去填写相应的键值对就行，大家注意格式就行，SaltStack的配置文件的默认格式都是YAML格式</p>
+<div class="hlcode"><pre><span class="c"># Custom static grains for this minion can be specified here and used in SLS</span>
+<span class="c"># files just like all other grains. This example sets 4 custom grains, with</span>
+<span class="c"># the &#39;roles&#39; grain having two values that can be matched against.</span>
+<span class="c">#grains:</span>
+<span class="c">#  roles:</span>
+<span class="c">#    - webserver</span>
+<span class="c">#    - memcache</span>
+<span class="c">#  deployment: datacenter4</span>
+<span class="c">#  cabinet: 13</span>
+<span class="c">#  cab_u: 14-15</span>
+<span class="c">#</span>
+</pre></div>
+
+
+<p>为了统一管理Minion的Grains信息，需要把这<br />
+些注释复制到minion.d/grains文件中</p>
+<div class="hlcode"><pre><span class="cp"># vi /etc/salt/minion</span>
+
+<span class="cp"># Custom static grains for this minion can be specified here and used in SLS</span>
+<span class="cp"># files just like all other grains. This example sets 4 custom grains, with</span>
+<span class="cp"># the &#39;roles&#39; grain having two values that can be matched against.</span>
+<span class="nl">grains:</span>
+  <span class="nl">roles:</span>
+    <span class="o">-</span> <span class="n">nginx</span>
+  <span class="nl">env:</span>
+    <span class="o">-</span> <span class="n">test</span>
+  <span class="nl">myname:</span>
+    <span class="o">-</span> <span class="n">hadron</span>
+<span class="cp">#  deployment: datacenter4</span>
+<span class="cp">#  cabinet: 13</span>
+<span class="cp">#  cab_u: 14-15</span>
+</pre></div>
+
+
+<h2 id="pillar-minion">Pillar 定义minion数据</h2>
+<p>Pillar用于给<strong>特定的 minion</strong> 定义任何你需要的数据， 这些数据可以被Salt的其他组件使用</p>
+<p>minion端的变量, pillar 和 grains 不一样，是在 master 上定义的，并且是针对 minion 定义的一些信息。像一些比较重要的数据（密码）可以存在 pillar 里，还可以定义变量等。</p>
+<h3 id="pillar">激活pillar</h3>
+<div class="hlcode"><pre><span class="cp"># vim /etc/salt/master</span>
+
+<span class="nl">pillar_roots:</span>
+  <span class="nl">base:</span>
+    <span class="o">-</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">pillar</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">mkdir</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">pillar</span>
+</pre></div>
+
+
+<h3 id="pillar_1">自定义pillar</h3>
+<p>总入口文件，内容如下</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">nb0</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">vim</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">pillar</span><span class="o">/</span><span class="n">top</span><span class="p">.</span><span class="n">sls</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">nb0</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">cat</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">pillar</span><span class="o">/</span><span class="n">top</span><span class="p">.</span><span class="n">sls</span>
+<span class="nl">base:</span>
+  <span class="err">&#39;</span><span class="n">nb1</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">test</span>
+</pre></div>
+
+
+<p>自定义配置文件，内容如下</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">nb0</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">vim</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">pillar</span><span class="o">/</span><span class="n">test</span><span class="p">.</span><span class="n">sls</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">nb0</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">cat</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">pillar</span><span class="o">/</span><span class="n">test</span><span class="p">.</span><span class="n">sls</span>
+<span class="nl">conf:</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">test123</span><span class="p">.</span><span class="n">conf</span>
+<span class="nl">myname:</span> <span class="n">hadron</span>
+</pre></div>
+
+
+<p>获取pillar 状态</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="n">pillar</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span> <span class="sc">&#39;*&#39;</span> <span class="n">saltutil</span><span class="p">.</span><span class="n">refresh_pillar</span>
+<span class="mf">192.168.1.11</span><span class="o">:</span>
+    <span class="n">True</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="n">pillar</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span> <span class="sc">&#39;*&#39;</span> <span class="n">pillar</span><span class="p">.</span><span class="n">items</span>
+<span class="mf">192.168.1.11</span><span class="o">:</span>
+    <span class="o">----------</span>
+    <span class="nl">conf:</span>
+        <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">test123</span><span class="p">.</span><span class="n">conf</span>
+    <span class="nl">myname:</span>
+        <span class="n">rick</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="n">pillar</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span> <span class="sc">&#39;*&#39;</span> <span class="n">pillar</span><span class="p">.</span><span class="n">items</span> <span class="n">myname</span>
+<span class="mf">192.168.1.11</span><span class="o">:</span>
+    <span class="o">----------</span>
+    <span class="nl">myname:</span>
+        <span class="n">rick</span>
+</pre></div>
+
+
+<h1 id="example">example</h1>
+<h2 id="apache">部署apache</h2>
+<h3 id="master_4">master</h3>
+<div class="hlcode"><pre><span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">master</span>
+
+<span class="nl">file_roots:</span>
+  <span class="nl">base:</span>
+    <span class="o">-</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">salt</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">cat</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">top</span><span class="p">.</span><span class="n">sls</span>
+<span class="nl">base:</span>
+  <span class="err">&#39;</span><span class="mf">192.168.1.11</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">apache</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">cat</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">apache</span><span class="p">.</span><span class="n">sls</span>
+<span class="n">apache</span><span class="o">-</span><span class="n">service</span><span class="o">:</span>
+  <span class="n">pkg</span><span class="p">.</span><span class="n">installed</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">names</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">httpd</span>
+      <span class="o">-</span> <span class="n">httpd</span><span class="o">-</span><span class="n">devel</span>
+  <span class="n">service</span><span class="p">.</span><span class="n">running</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">httpd</span>
+    <span class="o">-</span> <span class="n">enable</span><span class="o">:</span> <span class="n">True</span>
+</pre></div>
+
+
+<blockquote>
+<p>apache-service 是自定义的 id 名。pkg.installed 为包安装函数，下面是要安装的包的名字。service.running 也是一个函数，来保证指定的服务启动，enable 表示开机启动</p>
+</blockquote>
+<h3 id="minion_4">minion</h3>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

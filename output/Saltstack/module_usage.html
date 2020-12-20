@@ -1,0 +1,187 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>module_usage - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Saltstack">Saltstack</a>&nbsp;&#187;&nbsp;module_usage
+    <span class="updated">Page Updated&nbsp;
+      2019-06-19 15:16
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">module_usage</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">模块</a><ul>
+<li><a href="#list_modules-module">list_modules     所有module组件列表</a></li>
+<li><a href="#list_functions-modulefunction">list_functions   指定module的所有function方法</a></li>
+<li><a href="#sysdoc-module">sys.doc  指定module用法</a></li>
+<li><a href="#_2"></a></li>
+</ul>
+</li>
+<li><a href="#_3">常用函数</a><ul>
+<li><a href="#cpget_file-minion">cp.get_file  复制文件到minion</a></li>
+<li><a href="#cpget_dir-minion">cp.get_dir   复制目录到minion</a></li>
+<li><a href="#cmdscript">cmd.script   批量执行脚本</a></li>
+</ul>
+</li>
+<li><a href="#rerun">Rerun组件</a><ul>
+<li><a href="#example">example</a><ul>
+<li><a href="#minion">minion 配置文件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">模块</h1>
+<h2 id="list_modules-module">list_modules     所有module组件列表</h2>
+<div class="hlcode"><pre><span class="cp"># salt \* sys.list_modules</span>
+<span class="mf">192.168.1.11</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">acl</span>
+    <span class="o">-</span> <span class="n">aliases</span>
+    <span class="o">-</span> <span class="n">alternatives</span>
+    <span class="o">-</span> <span class="n">apache</span>
+    <span class="o">-</span> <span class="n">archive</span>
+    <span class="o">-</span> <span class="n">artifactory</span>
+    <span class="o">-</span> <span class="n">blockdev</span>
+    <span class="o">-</span> <span class="n">btrfs</span>
+    <span class="o">-</span> <span class="n">buildout</span>
+    <span class="o">-</span> <span class="n">cloud</span>
+    <span class="o">-</span> <span class="n">cmd</span>
+    <span class="o">-</span> <span class="n">composer</span>
+    <span class="o">-</span> <span class="n">config</span>
+    <span class="o">-</span> <span class="n">container_resource</span>
+    <span class="o">-</span> <span class="n">cp</span>
+    <span class="o">-</span> <span class="n">cron</span>
+    <span class="o">-</span> <span class="n">data</span>
+    <span class="p">......</span>
+</pre></div>
+
+
+<h2 id="list_functions-modulefunction">list_functions   指定module的所有function方法</h2>
+<div class="hlcode"><pre><span class="cp">[</span><span class="nb">root</span><span class="p">@</span><span class="nx">localhost</span> <span class="nx">salt</span><span class="cp">]</span><span class="err">#</span> <span class="nx">salt</span> <span class="err">\</span><span class="o">*</span> <span class="nx">sys</span><span class="p">.</span><span class="nx">list_functions</span> <span class="nx">cmd</span>
+<span class="mf">192.168</span><span class="p">.</span><span class="mf">1.11</span><span class="o">:</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">exec_code</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">exec_code_all</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">has_exec</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">retcode</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">run</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">run_all</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">run_chroot</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">run_stderr</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">run_stdout</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">script</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">script_retcode</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">shell</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">shells</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">tty</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">which</span>
+    <span class="o">-</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">which_bin</span>
+</pre></div>
+
+
+<h2 id="sysdoc-module">sys.doc  指定module用法</h2>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="n">salt</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span> <span class="err">\</span><span class="o">*</span> <span class="n">sys</span><span class="p">.</span><span class="n">doc</span> <span class="n">cmd</span>
+<span class="err">&#39;</span><span class="n">cmd</span><span class="p">.</span><span class="n">exec_code</span><span class="o">:</span><span class="err">&#39;</span>
+
+    <span class="n">Pass</span> <span class="n">in</span> <span class="n">two</span> <span class="n">strings</span><span class="p">,</span> <span class="n">the</span> <span class="n">first</span> <span class="n">naming</span> <span class="n">the</span> <span class="n">executable</span> <span class="n">language</span><span class="p">,</span> <span class="n">aka</span> <span class="o">-</span>
+    <span class="n">python2</span><span class="p">,</span> <span class="n">python3</span><span class="p">,</span> <span class="n">ruby</span><span class="p">,</span> <span class="n">perl</span><span class="p">,</span> <span class="n">lua</span><span class="p">,</span> <span class="n">etc</span><span class="p">.</span> <span class="n">the</span> <span class="n">second</span> <span class="n">string</span> <span class="n">containing</span>
+    <span class="n">the</span> <span class="n">code</span> <span class="n">you</span> <span class="n">wish</span> <span class="n">to</span> <span class="n">execute</span><span class="p">.</span> <span class="n">The</span> <span class="n">stdout</span> <span class="n">will</span> <span class="n">be</span> <span class="n">returned</span><span class="p">.</span>
+
+    <span class="n">CLI</span> <span class="n">Example</span><span class="o">:</span>
+
+        <span class="n">salt</span> <span class="sc">&#39;*&#39;</span> <span class="n">cmd</span><span class="p">.</span><span class="n">exec_code</span> <span class="n">ruby</span> <span class="err">&#39;</span><span class="n">puts</span> <span class="s">&quot;cheese&quot;</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<p>多个module之间通过逗号分隔</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="n">salt</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span> <span class="err">\</span><span class="o">*</span> <span class="n">sys</span><span class="p">.</span><span class="n">doc</span> <span class="n">test</span><span class="p">.</span><span class="n">echo</span><span class="p">,</span> <span class="n">cmd</span><span class="p">.</span><span class="n">run</span>
+<span class="err">&#39;</span><span class="n">cmd</span><span class="p">.</span><span class="n">run</span><span class="o">:</span><span class="err">&#39;</span>
+
+    <span class="n">Execute</span> <span class="n">the</span> <span class="n">passed</span> <span class="n">command</span> <span class="n">and</span> <span class="k">return</span> <span class="n">the</span> <span class="n">output</span> <span class="n">as</span> <span class="n">a</span> <span class="n">string</span>
+
+    <span class="n">Note</span> <span class="n">that</span> <span class="err">``</span><span class="n">env</span><span class="err">``</span> <span class="n">represents</span> <span class="n">the</span> <span class="n">environment</span> <span class="n">variables</span> <span class="k">for</span> <span class="n">the</span> <span class="n">command</span><span class="p">,</span> <span class="n">and</span>
+    <span class="n">should</span> <span class="n">be</span> <span class="n">formatted</span> <span class="n">as</span> <span class="n">a</span> <span class="n">dict</span><span class="p">,</span> <span class="n">or</span> <span class="n">a</span> <span class="n">YAML</span> <span class="n">string</span> <span class="n">which</span> <span class="n">resolves</span> <span class="n">to</span> <span class="n">a</span> <span class="n">dict</span><span class="p">.</span>
+</pre></div>
+
+
+<h2 id="_2"></h2>
+<h1 id="_3">常用函数</h1>
+<h2 id="cpget_file-minion">cp.get_file  复制文件到minion</h2>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">kvmserver</span> <span class="n">data</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span> <span class="err">&#39;</span><span class="n">web9</span><span class="err">&#39;</span> <span class="n">cp</span><span class="p">.</span><span class="n">get_file</span> <span class="n">salt</span><span class="o">:</span><span class="c1">//dev/data/zabbix_agentd_install.sh  /home/shell/zabbix_agent_install.sh</span>
+<span class="nl">web9:</span>
+</pre></div>
+
+
+<h2 id="cpget_dir-minion">cp.get_dir   复制目录到minion</h2>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">kvmserver</span> <span class="n">data</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span> <span class="err">&#39;</span><span class="n">web9</span><span class="err">&#39;</span> <span class="n">cp</span><span class="p">.</span><span class="n">get_dir</span>  <span class="n">salt</span><span class="o">:</span><span class="c1">//dev/data  /home/shell/</span>
+<span class="nl">web9:</span>
+    <span class="o">-</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">shell</span><span class="c1">//data/zabbix_agentd_install.sh</span>
+</pre></div>
+
+
+<h2 id="cmdscript">cmd.script   批量执行脚本</h2>
+<p>在远程服务器上执行shell脚本使用</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="mi">21</span><span class="n">yunwei</span> <span class="n">shell</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span>  <span class="s">&quot;*&quot;</span>  <span class="n">cmd</span><span class="p">.</span><span class="n">script</span>  <span class="n">salt</span><span class="o">:</span><span class="c1">//shell/etcbak.sh</span>
+<span class="mf">192.168.1.11</span><span class="o">:</span>
+    <span class="o">----------</span>
+    <span class="nl">pid:</span>
+        <span class="mi">422</span>
+    <span class="nl">retcode:</span>
+        <span class="mi">0</span>
+    <span class="nl">stderr:</span>
+        <span class="nl">tar:</span> <span class="n">Removing</span> <span class="n">leading</span> <span class="err">`</span><span class="o">/</span><span class="err">&#39;</span> <span class="n">from</span> <span class="n">member</span> <span class="n">names</span>
+    <span class="nl">stdout:</span>
+        <span class="n">etc</span> <span class="n">bakup</span> <span class="n">sucess</span>
+</pre></div>
+
+
+<h1 id="rerun">Rerun组件</h1>
+<p><strong>Return组件可以理解为SaltStack系统对执行Minion返回后的数据进行存储或者返回给其他程序</strong>，它支持多种存储方式，比如用MySQL、MongoDB、Redis、Memcache等，通过Return我们可以对SaltStack的每次操作进行记录，对以后日志审计提供了数据来源。目前官方已经支持30种Return数据存储与接口，我们可以很方便地配置与使用它。当然也支持自己定义的Return。在选择和配置好要使用的Return后，只需在salt命令后面指定Return即可。</p>
+<h2 id="example">example</h2>
+<h3 id="minion">minion 配置文件</h3>
+<p>redis方式</p>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="err">–</span><span class="n">no</span><span class="o">-</span><span class="n">check</span><span class="o">-</span><span class="n">certificate</span> <span class="n">https</span><span class="o">:</span><span class="c1">//pypi.python.org/packages/source/r/redis/redis-2.8.0.tar.gz</span>
+<span class="n">tar</span> <span class="o">-</span><span class="n">zvxf</span> <span class="n">redis</span><span class="o">-</span><span class="mf">2.8.0</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span>
+<span class="n">mv</span> <span class="n">redis</span><span class="o">-</span><span class="mf">2.8.0</span> <span class="n">python</span><span class="o">-</span><span class="n">redis</span><span class="o">-</span><span class="mf">2.8.0</span>
+<span class="n">cd</span> <span class="n">python</span><span class="o">-</span><span class="n">redis</span><span class="o">-</span><span class="mf">2.8.0</span>
+<span class="n">python</span> <span class="n">setup</span><span class="p">.</span><span class="n">py</span> <span class="n">install</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="n">python</span><span class="o">-</span><span class="n">redis</span><span class="o">-</span><span class="mf">2.8.0</span><span class="p">]</span><span class="err">#</span> <span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="err">&#39;</span><span class="n">import</span> <span class="n">redis</span><span class="p">;</span> <span class="n">print</span> <span class="n">redis</span><span class="p">.</span><span class="n">VERSION</span><span class="err">&#39;</span>
+<span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>显示2.8.0 表示安装完成</p>
+</blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

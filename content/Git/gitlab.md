@@ -372,8 +372,14 @@ stg_v1_5.21.0:
 
 
 
+
+
 # example
 
 ## gitlab ci/cd 
 
 https://gitlab.com/kargo-ci/kubernetes-sigs-kubespray
+
+
+
+![image-20201115100046158](gitlab.assets/image-20201115100046158.png)

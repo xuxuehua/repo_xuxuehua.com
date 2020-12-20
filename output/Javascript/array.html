@@ -1,0 +1,396 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>array 数组 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Javascript">Javascript</a>&nbsp;&#187;&nbsp;array 数组
+    <span class="updated">Page Updated&nbsp;
+      2018-06-05 09:42
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">array 数组</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#array">Array 数组</a><ul>
+<li><a href="#_1">数组定义</a></li>
+<li><a href="#_2">创建数组</a></li>
+</ul>
+</li>
+<li><a href="#_3">操作数组</a><ul>
+<li><a href="#_4">增</a><ul>
+<li><a href="#push">push</a></li>
+<li><a href="#unshift">unshift 头部添加元素</a></li>
+</ul>
+</li>
+<li><a href="#_5">删</a><ul>
+<li><a href="#pop">pop 尾部删除</a></li>
+<li><a href="#shift">shift 头部删除元素</a></li>
+</ul>
+</li>
+<li><a href="#_6">查</a><ul>
+<li><a href="#for-i">for i</a></li>
+<li><a href="#foreach">forEach</a></li>
+<li><a href="#_7">索引访问数组元素</a></li>
+<li><a href="#length">length 获取数组长度</a></li>
+<li><a href="#indexof">indexOf</a></li>
+</ul>
+</li>
+<li><a href="#_8">改</a><ul>
+<li><a href="#_9">数组索引赋值</a></li>
+<li><a href="#concat">concat 合并数组</a></li>
+<li><a href="#slice">slice 截取</a><ul>
+<li><a href="#_10">复制数组</a></li>
+</ul>
+</li>
+<li><a href="#sort">sort</a></li>
+<li><a href="#reverse">reverse</a></li>
+<li><a href="#splice">splice 分割</a></li>
+<li><a href="#concat_1">concat 连接</a></li>
+<li><a href="#join">join 连接</a></li>
+</ul>
+</li>
+<li><a href="#_11">多维数组</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="array">Array 数组</h1>
+<h2 id="_1">数组定义</h2>
+<p>数组是一组按顺序排列的集合，集合的每个值称为元素。JavaScript的数组可以包括任意数据类型。</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Hello</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">null</span><span class="p">,</span> <span class="nb">true</span><span class="p">];</span>
+</pre></div>
+
+
+<blockquote>
+<p>该数组包含6个元素。数组用<code>[]</code>表示，元素之间用<code>,</code>分隔</p>
+</blockquote>
+<h2 id="_2">创建数组</h2>
+<p>通过 [ ] 实现</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">undefined</span>
+<span class="n">x</span>
+<span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">let</span> <span class="n">myArray</span> <span class="o">=</span> <span class="p">[{</span><span class="n">name</span><span class="o">:</span> <span class="s">&quot;Rick&quot;</span><span class="p">},</span> <span class="p">{</span><span class="n">age</span><span class="o">:</span> <span class="mi">18</span><span class="p">}]</span>
+</pre></div>
+
+
+<p>通过<code>Array()</code>函数实现</p>
+<div class="hlcode"><pre><span class="n">new</span> <span class="nf">Array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="c1">// 创建了数组[1, 2, 3]</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">cars</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Array</span><span class="p">(</span><span class="s">&quot;Audi&quot;</span><span class="p">,</span> <span class="s">&quot;BMW&quot;</span><span class="p">,</span> <span class="s">&quot;Benz&quot;</span><span class="p">);</span>
+</pre></div>
+
+
+<h1 id="_3">操作数组</h1>
+<h2 id="_4">增</h2>
+<h3 id="push">push</h3>
+<p><code>push()</code>向<code>Array</code>的末尾添加若干元素</p>
+<div class="hlcode"><pre><span class="n">let</span> <span class="n">myArray</span> <span class="o">=</span> <span class="p">[{</span><span class="n">name</span><span class="o">:</span> <span class="s">&quot;Rick&quot;</span><span class="p">},</span> <span class="p">{</span><span class="n">age</span><span class="o">:</span> <span class="mi">18</span><span class="p">}];</span>
+<span class="n">myArray</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="n">job</span><span class="o">:</span> <span class="s">&quot;Engineer&quot;</span><span class="p">});</span>
+<span class="n">myArray</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="p">[{</span><span class="err">…</span><span class="p">},</span> <span class="p">{</span><span class="err">…</span><span class="p">},</span> <span class="p">{</span><span class="err">…</span><span class="p">}]</span>
+<span class="mi">0</span><span class="o">:</span> <span class="p">{</span><span class="n">name</span><span class="o">:</span> <span class="s">&quot;Rick&quot;</span><span class="p">}</span>
+<span class="mi">1</span><span class="o">:</span> <span class="p">{</span><span class="n">age</span><span class="o">:</span> <span class="mi">18</span><span class="p">}</span>
+<span class="mi">2</span><span class="o">:</span> <span class="p">{</span><span class="n">job</span><span class="o">:</span> <span class="s">&quot;Engineer&quot;</span><span class="p">}</span>
+<span class="nl">length:</span> <span class="mi">3</span>
+<span class="nl">__proto__:</span> <span class="n">Array</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="unshift">unshift 头部添加元素</h3>
+<p>如果要往<code>Array</code>的头部添加若干元素，使用<code>unshift()</code>方法</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">];</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">unshift</span><span class="p">(</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">);</span> <span class="c1">// 返回Array新的长度: 4</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// [&#39;A&#39;, &#39;B&#39;, 1, 2]</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">shift</span><span class="p">();</span> <span class="c1">// &#39;A&#39;</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// [&#39;B&#39;, 1, 2]</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">shift</span><span class="p">();</span> <span class="n">arr</span><span class="p">.</span><span class="n">shift</span><span class="p">();</span> <span class="n">arr</span><span class="p">.</span><span class="n">shift</span><span class="p">();</span> <span class="c1">// 连续shift 3次</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// []</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">shift</span><span class="p">();</span> <span class="c1">// 空数组继续shift不会报错，而是返回undefined</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// []</span>
+</pre></div>
+
+
+<h2 id="_5">删</h2>
+<h3 id="pop">pop 尾部删除</h3>
+<p><code>pop()</code>则把<code>Array</code>的最后一个元素删除掉：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">];</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">);</span> <span class="c1">// 返回Array新的长度: 4</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// [1, 2, &#39;A&#39;, &#39;B&#39;]</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> <span class="c1">// pop()返回&#39;B&#39;</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// [1, 2, &#39;A&#39;]</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> <span class="n">arr</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> <span class="n">arr</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> <span class="c1">// 连续pop 3次</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// []</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> <span class="c1">// 空数组继续pop不会报错，而是返回undefined</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// []</span>
+</pre></div>
+
+
+<h3 id="shift">shift 头部删除元素</h3>
+<p><code>shift()</code>方法则把<code>Array</code>的第一个元素删掉</p>
+<div class="hlcode"><pre><span class="n">let</span> <span class="n">myArray</span> <span class="o">=</span> <span class="p">[{</span><span class="n">name</span><span class="o">:</span> <span class="s">&quot;Rick&quot;</span><span class="p">},</span> <span class="p">{</span><span class="n">age</span><span class="o">:</span> <span class="mi">18</span><span class="p">}]</span>
+<span class="n">myArray</span><span class="p">.</span><span class="n">shift</span><span class="p">();</span>
+<span class="p">{</span><span class="n">name</span><span class="o">:</span> <span class="s">&quot;Rick&quot;</span><span class="p">}</span>
+<span class="n">myArray</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="p">[{</span><span class="err">…</span><span class="p">},</span> <span class="p">{</span><span class="err">…</span><span class="p">}]</span>
+<span class="mi">0</span><span class="o">:</span> <span class="p">{</span><span class="n">age</span><span class="o">:</span> <span class="mi">18</span><span class="p">}</span>
+<span class="mi">1</span><span class="o">:</span> <span class="p">{</span><span class="n">job</span><span class="o">:</span> <span class="s">&quot;Engineer&quot;</span><span class="p">}</span>
+<span class="nl">length:</span> <span class="mi">2</span>
+<span class="nl">__proto__:</span> <span class="n">Array</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="_6">查</h2>
+<h3 id="for-i">for i</h3>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">a</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Array</span><span class="p">();</span>
+<span class="n">undefined</span>
+<span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;1&#39;</span><span class="p">;</span>
+<span class="s">&quot;1&quot;</span>
+<span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;2&#39;</span><span class="p">;</span>
+<span class="s">&quot;2&quot;</span>
+<span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;3&#39;</span><span class="p">;</span>
+<span class="s">&quot;3&quot;</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span><span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">])};</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">1</span>
+<span class="mi">2</span>
+<span class="mi">3</span>
+</pre></div>
+
+
+<h3 id="foreach">forEach</h3>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">myArray</span> <span class="o">=</span> <span class="p">[{</span><span class="n">name</span><span class="o">:</span> <span class="s">&quot;Rick&quot;</span><span class="p">},</span> <span class="p">{</span><span class="n">age</span><span class="o">:</span> <span class="mi">18</span><span class="p">},</span> <span class="p">{</span><span class="n">name</span><span class="o">:</span> <span class="s">&quot;Michelle&quot;</span><span class="p">},</span> <span class="p">{</span><span class="n">age</span><span class="o">:</span><span class="mi">18</span><span class="p">}];</span>
+<span class="k">const</span> <span class="n">myInfo</span> <span class="o">=</span> <span class="n">info</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">info</span><span class="p">.</span><span class="n">name</span><span class="p">)};</span>
+<span class="n">myArray</span><span class="p">.</span><span class="n">forEach</span><span class="p">(</span><span class="n">myInfo</span><span class="p">);</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">Rick</span>
+<span class="n">Michelle</span>
+</pre></div>
+
+
+<h3 id="_7">索引访问数组元素</h3>
+<p>数组的元素可以通过索引来访问。请注意，索引的起始值为<code>0</code></p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Hello</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">null</span><span class="p">,</span> <span class="nb">true</span><span class="p">];</span>
+<span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="c1">// 返回索引为0的元素，即1</span>
+<span class="n">arr</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span> <span class="c1">// 返回索引为5的元素，即true</span>
+<span class="n">arr</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span> <span class="c1">// 索引超出了范围，返回undefined</span>
+</pre></div>
+
+
+<h3 id="length">length 获取数组长度</h3>
+<p>要取得<code>Array</code>的长度，直接访问<code>length</code>属性：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Hello</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">null</span><span class="p">,</span> <span class="nb">true</span><span class="p">];</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">length</span><span class="p">;</span> <span class="c1">// 6</span>
+</pre></div>
+
+
+<h3 id="indexof">indexOf</h3>
+<p>与String类似，<code>Array</code>也可以通过<code>indexOf()</code>来搜索一个指定的元素的位置：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="err">&#39;</span><span class="mi">30</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">xyz</span><span class="err">&#39;</span><span class="p">];</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">indexOf</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span> <span class="c1">// 元素10的索引为0</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">indexOf</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span> <span class="c1">// 元素20的索引为1</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">indexOf</span><span class="p">(</span><span class="mi">30</span><span class="p">);</span> <span class="c1">// 元素30没有找到，返回-1</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">indexOf</span><span class="p">(</span><span class="err">&#39;</span><span class="mi">30</span><span class="err">&#39;</span><span class="p">);</span> <span class="c1">// 元素&#39;30&#39;的索引为2</span>
+</pre></div>
+
+
+<blockquote>
+<p>注意了，数字<code>30</code>和字符串<code>'30'</code>是不同的元素。</p>
+</blockquote>
+<h2 id="_8">改</h2>
+<h3 id="_9">数组索引赋值</h3>
+<p>直接给<code>Array</code>的<code>length</code>赋一个新的值会导致<code>Array</code>大小的变化：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">length</span><span class="p">;</span> <span class="c1">// 3</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">length</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// arr变为[1, 2, 3, undefined, undefined, undefined]</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">length</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// arr变为[1, 2]</span>
+</pre></div>
+
+
+<p>Array<code>可以通过索引把对应的元素修改为新的值，因此，对</code>Array<code>的索引进行赋值会直接修改这个</code>Array：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">];</span>
+<span class="n">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">99</span><span class="p">;</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// arr现在变为[&#39;A&#39;, 99, &#39;C&#39;]</span>
+</pre></div>
+
+
+<p>如果通过索引赋值时，索引超过了范围，同样会引起<code>Array</code>大小的变化：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+<span class="n">arr</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;x&#39;</span><span class="p">;</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// arr变为[1, 2, 3, undefined, undefined, &#39;x&#39;]</span>
+</pre></div>
+
+
+<blockquote>
+<p>大多数其他编程语言不允许直接改变数组的大小，越界访问索引会报错。然而，JavaScript的<code>Array</code>却不会有任何错误。在编写代码时，不建议直接修改<code>Array</code>的大小，访问索引时要确保索引不会越界。</p>
+</blockquote>
+<h3 id="concat">concat 合并数组</h3>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr1</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Array</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">undefined</span>
+<span class="n">arr1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
+<span class="s">&quot;a&quot;</span>
+<span class="n">arr1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;b&#39;</span><span class="p">;</span>
+<span class="s">&quot;b&quot;</span>
+<span class="n">var</span> <span class="n">arr2</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Array</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">undefined</span>
+<span class="n">arr2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;c&#39;</span><span class="p">;</span>
+<span class="s">&quot;c&quot;</span>
+<span class="n">arr2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;d&#39;</span><span class="p">;</span>
+<span class="s">&quot;d&quot;</span>
+<span class="n">arr1</span><span class="p">.</span><span class="n">concat</span><span class="p">(</span><span class="n">arr2</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="p">[</span><span class="s">&quot;a&quot;</span><span class="p">,</span> <span class="s">&quot;b&quot;</span><span class="p">,</span> <span class="s">&quot;c&quot;</span><span class="p">,</span> <span class="s">&quot;d&quot;</span><span class="p">]</span>
+</pre></div>
+
+
+<h3 id="slice">slice 截取</h3>
+<p><code>slice()</code>就是对应String的<code>substring()</code>版本，它截取<code>Array</code>的部分元素，然后返回一个新的<code>Array</code>：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">,</span> <span class="sc">&#39;D&#39;</span><span class="p">,</span> <span class="sc">&#39;E&#39;</span><span class="p">,</span> <span class="sc">&#39;F&#39;</span><span class="p">,</span> <span class="sc">&#39;G&#39;</span><span class="p">];</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="c1">// 从索引0开始，到索引3结束，但不包括索引3: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;]</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">slice</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span> <span class="c1">// 从索引3开始到结束: [&#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;]</span>
+</pre></div>
+
+
+<blockquote>
+<p>注意到<code>slice()</code>的起止参数包括开始索引，不包括结束索引。</p>
+</blockquote>
+<h4 id="_10">复制数组</h4>
+<p>如果不给<code>slice()</code>传递任何参数，它就会从头到尾截取所有元素。利用这一点，我们可以很容易地复制一个<code>Array</code>：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">,</span> <span class="sc">&#39;D&#39;</span><span class="p">,</span> <span class="sc">&#39;E&#39;</span><span class="p">,</span> <span class="sc">&#39;F&#39;</span><span class="p">,</span> <span class="sc">&#39;G&#39;</span><span class="p">];</span>
+<span class="n">var</span> <span class="n">aCopy</span> <span class="o">=</span> <span class="n">arr</span><span class="p">.</span><span class="n">slice</span><span class="p">();</span>
+<span class="n">aCopy</span><span class="p">;</span> <span class="c1">// [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;, &#39;F&#39;, &#39;G&#39;]</span>
+<span class="n">aCopy</span> <span class="o">===</span> <span class="n">arr</span><span class="p">;</span> <span class="c1">// false</span>
+</pre></div>
+
+
+<h3 id="sort">sort</h3>
+<ul>
+<li>字符</li>
+</ul>
+<p><code>sort()</code>可以对当前<code>Array</code>进行排序，它会直接修改当前<code>Array</code>的元素位置，直接调用时，按照默认顺序排序：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">,</span> <span class="sc">&#39;A&#39;</span><span class="p">];</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">sort</span><span class="p">();</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;]</span>
+</pre></div>
+
+
+<ul>
+<li>数字</li>
+</ul>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">arr</span> <span class="o">=</span>  <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="kc">undefined</span>
+<span class="nx">arr</span><span class="cp">[</span><span class="mi">0</span><span class="cp">]</span> <span class="o">=</span> <span class="s1">&#39;10&#39;</span><span class="p">;</span>
+<span class="s2">&quot;10&quot;</span>
+<span class="nx">arr</span><span class="cp">[</span><span class="mi">1</span><span class="cp">]</span> <span class="o">=</span> <span class="s1">&#39;5&#39;</span><span class="p">;</span>
+<span class="s2">&quot;5&quot;</span>
+<span class="nx">arr</span><span class="cp">[</span><span class="mi">2</span><span class="cp">]</span> <span class="o">=</span> <span class="s1">&#39;40&#39;</span>
+<span class="s2">&quot;40&quot;</span>
+<span class="nx">arr</span><span class="cp">[</span><span class="mi">3</span><span class="cp">]</span> <span class="o">=</span> <span class="s1">&#39;25&#39;</span><span class="p">;</span>
+<span class="s2">&quot;25&quot;</span>
+<span class="nx">arr</span><span class="cp">[</span><span class="mi">4</span><span class="cp">]</span> <span class="o">=</span> <span class="s1">&#39;1000&#39;</span><span class="p">;</span>
+<span class="s2">&quot;1000&quot;</span>
+<span class="kd">function</span> <span class="nx">sortNumber</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="nx">a</span> <span class="o">-</span> <span class="nx">b</span><span class="p">};</span>
+<span class="nx">arr</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="nx">sortNumber</span><span class="p">);</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="cp">[</span><span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="s2">&quot;10&quot;</span><span class="p">,</span> <span class="s2">&quot;25&quot;</span><span class="p">,</span> <span class="s2">&quot;40&quot;</span><span class="p">,</span> <span class="s2">&quot;1000&quot;</span><span class="cp">]</span>
+</pre></div>
+
+
+<h3 id="reverse">reverse</h3>
+<p><code>reverse()</code>把整个<code>Array</code>的元素给掉个方向，也就是反转：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="err">&#39;</span><span class="n">one</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">two</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">three</span><span class="err">&#39;</span><span class="p">];</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">reverse</span><span class="p">();</span> 
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// [&#39;three&#39;, &#39;two&#39;, &#39;one&#39;]</span>
+</pre></div>
+
+
+<h3 id="splice">splice 分割</h3>
+<p><code>splice()</code>方法是修改<code>Array</code>的“万能方法”，它可以从指定的索引开始删除若干元素，然后再从该位置添加若干元素：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="err">&#39;</span><span class="n">Microsoft</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Apple</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Yahoo</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">AOL</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Excite</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Oracle</span><span class="err">&#39;</span><span class="p">];</span>
+<span class="c1">// 从索引2开始删除3个元素,然后再添加两个元素:</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Google</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Facebook</span><span class="err">&#39;</span><span class="p">);</span> <span class="c1">// 返回删除的元素 [&#39;Yahoo&#39;, &#39;AOL&#39;, &#39;Excite&#39;]</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// [&#39;Microsoft&#39;, &#39;Apple&#39;, &#39;Google&#39;, &#39;Facebook&#39;, &#39;Oracle&#39;]</span>
+<span class="c1">// 只删除,不添加:</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">// [&#39;Google&#39;, &#39;Facebook&#39;]</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// [&#39;Microsoft&#39;, &#39;Apple&#39;, &#39;Oracle&#39;]</span>
+<span class="c1">// 只添加,不删除:</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Google</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Facebook</span><span class="err">&#39;</span><span class="p">);</span> <span class="c1">// 返回[],因为没有删除任何元素</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// [&#39;Microsoft&#39;, &#39;Apple&#39;, &#39;Google&#39;, &#39;Facebook&#39;, &#39;Oracle&#39;]</span>
+</pre></div>
+
+
+<h3 id="concat_1">concat 连接</h3>
+<p><code>concat()</code>方法把当前的<code>Array</code>和另一个<code>Array</code>连接起来，并返回一个新的<code>Array</code>：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">];</span>
+<span class="n">var</span> <span class="n">added</span> <span class="o">=</span> <span class="n">arr</span><span class="p">.</span><span class="n">concat</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]);</span>
+<span class="n">added</span><span class="p">;</span> <span class="c1">// [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, 1, 2, 3]</span>
+<span class="n">arr</span><span class="p">;</span> <span class="c1">// [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;]</span>
+</pre></div>
+
+
+<blockquote>
+<p><code>concat()</code>方法并没有修改当前<code>Array</code>，而是返回了一个新的<code>Array</code></p>
+</blockquote>
+<p><code>concat()</code>方法可以接收任意个元素和<code>Array</code>，并且自动把<code>Array</code>拆开，然后全部添加到新的<code>Array</code>里：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">];</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">concat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]);</span> <span class="c1">// [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, 1, 2, 3, 4]</span>
+</pre></div>
+
+
+<h3 id="join">join 连接</h3>
+<p><code>join()</code>方法是一个非常实用的方法，它把当前<code>Array</code>的每个元素都用指定的字符串连接起来，然后返回连接后的字符串：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+<span class="n">arr</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="sc">&#39;-&#39;</span><span class="p">);</span> <span class="c1">// &#39;A-B-C-1-2-3&#39;</span>
+</pre></div>
+
+
+<h2 id="_11">多维数组</h2>
+<p>如果数组的某个元素又是一个<code>Array</code>，则可以形成多维数组，例如：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">],</span> <span class="sc">&#39;-&#39;</span><span class="p">];</span>
+</pre></div>
+
+
+<blockquote>
+<p>上述<code>Array</code>包含3个元素，其中头两个元素本身也是<code>Array</code>。</p>
+</blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

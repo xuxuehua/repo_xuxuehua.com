@@ -1,0 +1,206 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>ss - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;ss
+    <span class="updated">Page Updated&nbsp;
+      2018-12-07 22:21
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">ss</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#ss">ss</a><ul>
+<li><a href="#ss-local">ss-local</a></li>
+<li><a href="#ss-server">ss-server</a></li>
+<li><a href="#socks5">SOCKS5 协议</a><ul>
+<li><a href="#_1">建立连接</a></li>
+<li><a href="#_2">响应连接</a></li>
+<li><a href="#_3">和目标服务建立连接</a></li>
+<li><a href="#_4">数据转发</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="ss">ss</h1>
+<h2 id="ss-local">ss-local</h2>
+<p>ss-local 的职责是在本机启动和监听着一个服务，本地软件的网络请求都先发送到 ss-local，ss-local 收到来自本地软件的网络请求后，把要传输的原数据根据用户配置的加密方法和密码进行加密，再转发到服务器去</p>
+<h2 id="ss-server">ss-server</h2>
+<p>ss-server 的职责是在墙外服务器启动和监听一个服务，该服务监听来自本机的 ss-local 的请求。在收到来自 ss-local 转发过来的数据时，会先根据用户配置的加密方法和密码对数据进行对称解密，以获得加密后的数据的原内容。同时还会解 SOCKS5 协议，读出本次请求真正的目标服务地址，再把解密后得到的原数据转发到真正的目标服务</p>
+<p>当真正的目标服务返回了数据时，ss-server 端会把返回的数据加密后转发给对应的 ss-local 端，ss-local 端收到数据再解密后，转发给本机的软件。这是一个对称相反的过程。</p>
+<h2 id="socks5">SOCKS5 协议</h2>
+<p>SOCKS5 是 TCP/IP 层面的网络代理协议。<br />
+ss-server 端解密出来的数据就是采用 SOCKS5 协议封装的，通过 SOCKS5 协议 ss-server 端能读出本机软件想访问的服务的真正地址以及要传输的原数据</p>
+<h3 id="_1">建立连接</h3>
+<p>客户端向服务端连接连接，客户端发送的数据包如下：</p>
+<table>
+<thead>
+<tr>
+<th>VER</th>
+<th>NMETHODS</th>
+<th>METHODS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>VER</code>：代表 SOCKS 的版本，SOCKS5 默认为<code>0x05</code>，其固定长度为1个字节；<br />
+<code>NMETHODS</code>：表示第三个字段METHODS的长度，它的长度也是1个字节；<br />
+<code>METHODS</code>：表示客户端支持的验证方式，可以有多种，他的长度是1-255个字节。</p>
+</blockquote>
+<p>目前支持的验证方式共有：</p>
+<ul>
+<li><code>0x00</code>：NO AUTHENTICATION REQUIRED（不需要验证）</li>
+<li><code>0x01</code>：GSSAPI</li>
+<li><code>0x02</code>：USERNAME/PASSWORD（用户名密码）</li>
+<li><code>0x03</code>: to X'7F' IANA ASSIGNED</li>
+<li><code>0x80</code>: to X'FE' RESERVED FOR PRIVATE METHODS</li>
+<li><code>0xFF</code>: NO ACCEPTABLE METHODS（都不支持，没法连接了）</li>
+</ul>
+<h3 id="_2">响应连接</h3>
+<p>服务端收到客户端的验证信息之后，就要回应客户端，服务端需要客户端提供哪种验证方式的信息。服务端回应的包格式如下：</p>
+<table>
+<thead>
+<tr>
+<th>VER</th>
+<th>METHOD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>VER</code>：代表 SOCKS 的版本，SOCKS5 默认为<code>0x05</code>，其固定长度为1个字节；</p>
+<p><code>METHOD</code>：代表服务端需要客户端按此验证方式提供的验证信息，其值长度为1个字节，可为上面六种验证方式之一</p>
+</blockquote>
+<h3 id="_3">和目标服务建立连接</h3>
+<p>客户端发起的连接由服务端验证通过后，客户端下一步应该告诉真正目标服务的地址给服务器，服务器得到地址后再去请求真正的目标服务。也就是说客户端需要把 Google 服务的地址<code>google.com:80</code>告诉服务端，服务端再去请求<code>google.com:80</code>。<br />
+目标服务地址的格式为 (IP或域名)+端口，客户端需要发送的包格式如下：</p>
+<table>
+<thead>
+<tr>
+<th>VER</th>
+<th>CMD</th>
+<th>RSV</th>
+<th>ATYP</th>
+<th>DST.ADDR</th>
+<th>DST.PORT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1</td>
+<td><code>0x00</code></td>
+<td>1</td>
+<td>Variable</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<ul>
+<li><code>VER</code>：代表 SOCKS 协议的版本，SOCKS 默认为0x05，其值长度为1个字节；</li>
+<li>CMD：代表客户端请求的类型，值长度也是1个字节，有三种类型；</li>
+<li><code>CONNECT</code>： <code>0x01</code>；</li>
+<li><code>BIND</code>： <code>0x02</code>；</li>
+<li><code>UDP</code>： ASSOCIATE <code>0x03</code>；</li>
+<li><code>RSV</code>：保留字，值长度为1个字节；</li>
+<li>ATYP：代表请求的远程服务器地址类型，值长度1个字节，有三种类型；</li>
+<li><code>IPV4</code>： address: <code>0x01</code>；</li>
+<li><code>DOMAINNAME</code>: <code>0x03</code>；</li>
+<li><code>IPV6</code>： address: <code>0x04</code>；</li>
+<li><code>DST.ADDR</code>：代表远程服务器的地址，根据 <code>ATYP</code> 进行解析，值长度不定；</li>
+<li><code>DST.PORT</code>：代表远程服务器的端口，要访问哪个端口的意思，值长度2个字节</li>
+</ul>
+</blockquote>
+<p>服务端在得到来自客户端告诉的目标服务地址后，便和目标服务进行连接，不管连接成功与否，服务器都应该把连接的结果告诉客户端。在连接成功的情况下，服务端返回的包格式如下：</p>
+<table>
+<thead>
+<tr>
+<th>VER</th>
+<th>REP</th>
+<th>RSV</th>
+<th>ATYP</th>
+<th>BND.ADDR</th>
+<th>BND.PORT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1</td>
+<td><code>0x00</code></td>
+<td>1</td>
+<td>Variable</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<ul>
+<li><code>VER</code>：代表 SOCKS 协议的版本，SOCKS 默认为0x05，其值长度为1个字节；</li>
+<li>REP代表响应状态码，值长度也是1个字节，有以下几种类型</li>
+<li><code>0x00</code> succeeded</li>
+<li><code>0x01</code> general SOCKS server failure</li>
+<li><code>0x02</code> connection not allowed by ruleset</li>
+<li><code>0x03</code> Network unreachable</li>
+<li><code>0x04</code> Host unreachable</li>
+<li><code>0x05</code> Connection refused</li>
+<li><code>0x06</code> TTL expired</li>
+<li><code>0x07</code> Command not supported</li>
+<li><code>0x08</code> Address type not supported</li>
+<li><code>0x09</code> to <code>0xFF</code> unassigned</li>
+<li><code>RSV</code>：保留字，值长度为1个字节</li>
+<li>ATYP：代表请求的远程服务器地址类型，值长度1个字节，有三种类型</li>
+<li>IP V4 address： <code>0x01</code></li>
+<li>DOMAINNAME： <code>0x03</code></li>
+<li>IP V6 address： <code>0x04</code></li>
+<li><code>BND.ADDR</code>：表示绑定地址，值长度不定。</li>
+<li><code>BND.PORT</code>： 表示绑定端口，值长度2个字节</li>
+</ul>
+</blockquote>
+<h3 id="_4">数据转发</h3>
+<p>客户端在收到来自服务器成功的响应后，就会开始发送数据了，服务端在收到来自客户端的数据后，会转发到目标服务</p>
+<p>SOCKS5 协议的目的其实就是为了把来自原本应该在本机直接请求目标服务的流程，放到了服务端去代理客户端访问</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>novnc - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Nodejs_modules">Nodejs_modules</a>&nbsp;&#187;&nbsp;novnc
+    <span class="updated">Page Updated&nbsp;
+      2018-11-20 23:45
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">novnc</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#novnc">novnc</a><ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#_1">创建安全连接</a><ul>
+<li><a href="#launch">Launch</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="novnc">novnc</h1>
+<h2 id="installation">Installation</h2>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="o">:</span><span class="c1">//github.com/novnc/noVNC.git</span>
+</pre></div>
+
+
+<h2 id="_1">创建安全连接</h2>
+<p>VNC的默认会话不是安全的，我们需要创建一个安全的VNC连接。</p>
+<div class="hlcode"><pre><span class="n">To</span> <span class="n">encrypt</span> <span class="n">the</span> <span class="n">traffic</span> <span class="n">using</span> <span class="n">the</span> <span class="n">WebSocket</span> <span class="err">‘</span><span class="n">wss</span><span class="o">:</span><span class="c1">//’ URI scheme you need to generate a certificate for the proxy to load. By default the proxy loads a certificate file name self.pem but the –cert=CERT option can override the file name. You can generate a self-signed certificate using openssl. When asked for the common name, use the hostname of the server where the proxy will be running:</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">openssl</span> <span class="n">req</span> <span class="o">-</span><span class="n">new</span> <span class="o">-</span><span class="n">x509</span> <span class="o">-</span><span class="n">days</span> <span class="mi">365</span> <span class="o">-</span><span class="n">nodes</span> <span class="o">-</span><span class="n">out</span> <span class="n">self</span><span class="p">.</span><span class="n">pem</span> <span class="o">-</span><span class="n">keyout</span> <span class="n">self</span><span class="p">.</span><span class="n">pem</span>
+</pre></div>
+
+
+<blockquote>
+<p>只填写了Common Name (e.g. server FQDN or YOUR name) []:这个字段，填写的内容是本机的hostname，一路回车完成创建，so easy. </p>
+<p>创建完毕的证书self.pem需要放置到noVNC/utils目录下，当启动noVNC时，websockify将自动装载证书</p>
+</blockquote>
+<h3 id="launch">Launch</h3>
+<div class="hlcode"><pre><span class="p">.</span><span class="o">/</span><span class="n">utils</span><span class="o">/</span><span class="n">launch</span><span class="p">.</span><span class="n">sh</span> <span class="o">--</span><span class="n">vnc</span> <span class="n">localhost</span><span class="o">:</span><span class="mi">5901</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

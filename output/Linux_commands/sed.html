@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>sed - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;sed
+    <span class="updated">Page Updated&nbsp;
+      2018-09-27 16:01
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">sed</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#sed">sed</a><ul>
+<li><a href="#-e">-e</a></li>
+<li><a href="#-i">-i 直接编辑</a><ul>
+<li><a href="#_1">删除</a></li>
+<li><a href="#_2">替换</a></li>
+</ul>
+</li>
+<li><a href="#a">a 新增</a></li>
+<li><a href="#d">d 删除</a></li>
+<li><a href="#s">s 查找并替换</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="sed">sed</h1>
+<p>流编辑器，处理时，把当前处理的行存储在临时缓冲中，然后sed处理缓冲中的内容，然后返回</p>
+<p>接下来处理下一行，并重复以上动作直到结束</p>
+<div class="hlcode"><pre><span class="n">sed</span> <span class="p">[</span><span class="o">-</span><span class="n">nefri</span><span class="p">]</span> <span class="err">&#39;</span><span class="n">command</span><span class="err">&#39;</span> <span class="n">filename</span>
+</pre></div>
+
+
+<h2 id="-e">-e</h2>
+<p>直接在列模式上进行sed的动作编辑</p>
+<h2 id="-i">-i 直接编辑</h2>
+<p>直接编辑文件</p>
+<h3 id="_1">删除</h3>
+<div class="hlcode"><pre><span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="err">&#39;</span><span class="mi">6</span><span class="n">d</span><span class="err">&#39;</span> <span class="o">~/</span><span class="p">.</span><span class="n">ssh</span><span class="o">/</span><span class="n">known_hosts</span>
+</pre></div>
+
+
+<p>用命令行往文件的顶部添加文字</p>
+<div class="hlcode"><pre><span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="err">&#39;</span><span class="mi">1</span><span class="n">s</span><span class="o">/^/</span><span class="n">line</span> <span class="n">to</span> <span class="n">insert</span><span class="err">\</span><span class="n">n</span><span class="o">/</span><span class="err">&#39;</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">/</span><span class="n">you</span><span class="o">/</span><span class="n">want</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">change</span><span class="p">.</span><span class="n">txt</span>
+</pre></div>
+
+
+<p>用命令行往配置文件里插入多行文本</p>
+<div class="hlcode"><pre><span class="n">cat</span> <span class="o">&gt;&gt;</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">append</span><span class="o">-</span><span class="n">to</span><span class="p">.</span><span class="n">txt</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;EOF&quot;</span>
+<span class="n">export</span> <span class="n">PATH</span><span class="o">=</span><span class="err">$</span><span class="n">HOME</span><span class="o">/</span><span class="n">jdk1</span><span class="mf">.8.0</span><span class="n">_31</span><span class="o">/</span><span class="n">bin</span><span class="o">:</span><span class="err">$</span><span class="n">PATH</span>
+<span class="n">export</span> <span class="n">JAVA_HOME</span><span class="o">=</span><span class="err">$</span><span class="n">HOME</span><span class="o">/</span><span class="n">jdk1</span><span class="mf">.8.0</span><span class="n">_31</span><span class="o">/</span>
+<span class="n">EOF</span>
+</pre></div>
+
+
+<h3 id="_2">替换</h3>
+<div class="hlcode"><pre><span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="err">&#39;</span><span class="n">columns</span><span class="o">/</span><span class="p">.</span><span class="err">*/</span><span class="n">replacement</span><span class="o">-</span><span class="n">word</span><span class="o">/</span><span class="err">&#39;</span> <span class="n">file</span><span class="p">.</span><span class="n">txt</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="err">&#39;</span><span class="n">s</span><span class="o">/</span><span class="n">some_a</span><span class="o">/</span><span class="n">some_b</span><span class="o">/</span><span class="n">g</span><span class="err">&#39;</span> <span class="n">file</span><span class="p">.</span><span class="n">txt</span>
+</pre></div>
+
+
+<h2 id="a">a 新增</h2>
+<p>在a的后面可以接字符串，在下一行出现</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="nx">ifconfig</span> <span class="o">|</span> <span class="nx">sed</span> <span class="s1">&#39;2a123&#39;</span>
+<span class="nx">eth0</span><span class="p">:</span> <span class="n">flags</span><span class="o">=</span><span class="mi">4163</span><span class="o">&lt;</span><span class="nb">UP</span><span class="p">,</span><span class="nx">BROADCAST</span><span class="p">,</span><span class="nb">RUNNING</span><span class="p">,</span><span class="nx">MULTICAST</span><span class="o">&gt;</span>  <span class="nx">mtu</span> <span class="mi">1500</span>
+        <span class="nx">inet</span> <span class="mf">108.166.209.94</span>  <span class="nx">netmask</span> <span class="mf">255.255.255.192</span>  <span class="nx">broadcast</span> <span class="mf">108.166.209.127</span>
+<span class="mi">123</span>
+        <span class="nx">inet6</span> <span class="nx">fe80</span><span class="p">::</span><span class="mi">216</span><span class="p">:</span><span class="mi">3</span><span class="nx">cff</span><span class="p">:</span><span class="nx">fee1</span><span class="p">:</span><span class="mi">3</span><span class="nx">ddf</span>  <span class="nx">prefixlen</span> <span class="mi">64</span>  <span class="nx">scopeid</span> <span class="mh">0x20</span><span class="o">&lt;</span><span class="k">link</span><span class="o">&gt;</span>
+        <span class="nx">inet6</span> <span class="mi">2607</span><span class="p">:</span><span class="nx">f130</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="nx">ee</span><span class="p">:</span><span class="mi">216</span><span class="p">:</span><span class="mi">3</span><span class="nx">cff</span><span class="p">:</span><span class="nx">fee1</span><span class="p">:</span><span class="mi">3</span><span class="nx">ddf</span>  <span class="nx">prefixlen</span> <span class="mi">64</span>  <span class="nx">scopeid</span> <span class="mh">0x0</span><span class="o">&lt;</span><span class="bp">global</span><span class="o">&gt;</span>
+        <span class="nx">ether</span> <span class="mi">00</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mi">3</span><span class="nx">c</span><span class="p">:</span><span class="nx">e1</span><span class="p">:</span><span class="mi">3</span><span class="nb">d</span><span class="p">:</span><span class="nx">df</span>  <span class="nx">txqueuelen</span> <span class="mi">1000</span>  <span class="p">(</span><span class="nx">Ethernet</span><span class="p">)</span>
+        <span class="nb">RX</span> <span class="nx">packets</span> <span class="mi">375584</span>  <span class="nb">bytes</span> <span class="mi">1380914096</span> <span class="p">(</span><span class="mf">1.3</span> <span class="nx">GB</span><span class="p">)</span>
+        <span class="nb">RX</span> <span class="nb">errors</span> <span class="mi">0</span>  <span class="nx">dropped</span> <span class="mi">3895</span>  <span class="nx">overruns</span> <span class="mi">0</span>  <span class="nx">frame</span> <span class="mi">0</span>
+        <span class="nx">TX</span> <span class="nx">packets</span> <span class="mi">475843</span>  <span class="nb">bytes</span> <span class="mi">255423182</span> <span class="p">(</span><span class="mf">255.4</span> <span class="nx">MB</span><span class="p">)</span>
+        <span class="nx">TX</span> <span class="nb">errors</span> <span class="mi">0</span>  <span class="nx">dropped</span> <span class="mi">0</span> <span class="nx">overruns</span> <span class="mi">0</span>  <span class="nx">carrier</span> <span class="mi">0</span>  <span class="nx">collisions</span> <span class="mi">0</span>
+</pre></div>
+
+
+<h2 id="d">d 删除</h2>
+<div class="hlcode"><pre><span class="err">$</span> <span class="nx">ifconfig</span> <span class="o">|</span> <span class="nx">sed</span> <span class="s1">&#39;2d&#39;</span>
+<span class="nx">eth0</span><span class="p">:</span> <span class="n">flags</span><span class="o">=</span><span class="mi">4163</span><span class="o">&lt;</span><span class="nb">UP</span><span class="p">,</span><span class="nx">BROADCAST</span><span class="p">,</span><span class="nb">RUNNING</span><span class="p">,</span><span class="nx">MULTICAST</span><span class="o">&gt;</span>  <span class="nx">mtu</span> <span class="mi">1500</span>
+        <span class="nx">inet6</span> <span class="nx">fe80</span><span class="p">::</span><span class="mi">216</span><span class="p">:</span><span class="mi">3</span><span class="nx">cff</span><span class="p">:</span><span class="nx">fee1</span><span class="p">:</span><span class="mi">3</span><span class="nx">ddf</span>  <span class="nx">prefixlen</span> <span class="mi">64</span>  <span class="nx">scopeid</span> <span class="mh">0x20</span><span class="o">&lt;</span><span class="k">link</span><span class="o">&gt;</span>
+        <span class="nx">inet6</span> <span class="mi">2607</span><span class="p">:</span><span class="nx">f130</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="nx">ee</span><span class="p">:</span><span class="mi">216</span><span class="p">:</span><span class="mi">3</span><span class="nx">cff</span><span class="p">:</span><span class="nx">fee1</span><span class="p">:</span><span class="mi">3</span><span class="nx">ddf</span>  <span class="nx">prefixlen</span> <span class="mi">64</span>  <span class="nx">scopeid</span> <span class="mh">0x0</span><span class="o">&lt;</span><span class="bp">global</span><span class="o">&gt;</span>
+        <span class="nx">ether</span> <span class="mi">00</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mi">3</span><span class="nx">c</span><span class="p">:</span><span class="nx">e1</span><span class="p">:</span><span class="mi">3</span><span class="nb">d</span><span class="p">:</span><span class="nx">df</span>  <span class="nx">txqueuelen</span> <span class="mi">1000</span>  <span class="p">(</span><span class="nx">Ethernet</span><span class="p">)</span>
+        <span class="nb">RX</span> <span class="nx">packets</span> <span class="mi">375921</span>  <span class="nb">bytes</span> <span class="mi">1380967304</span> <span class="p">(</span><span class="mf">1.3</span> <span class="nx">GB</span><span class="p">)</span>
+        <span class="nb">RX</span> <span class="nb">errors</span> <span class="mi">0</span>  <span class="nx">dropped</span> <span class="mi">3921</span>  <span class="nx">overruns</span> <span class="mi">0</span>  <span class="nx">frame</span> <span class="mi">0</span>
+        <span class="nx">TX</span> <span class="nx">packets</span> <span class="mi">475986</span>  <span class="nb">bytes</span> <span class="mi">255443460</span> <span class="p">(</span><span class="mf">255.4</span> <span class="nx">MB</span><span class="p">)</span>
+        <span class="nx">TX</span> <span class="nb">errors</span> <span class="mi">0</span>  <span class="nx">dropped</span> <span class="mi">0</span> <span class="nx">overruns</span> <span class="mi">0</span>  <span class="nx">carrier</span> <span class="mi">0</span>  <span class="nx">collisions</span> <span class="mi">0</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">ifconfig</span> <span class="o">|</span> <span class="n">sed</span> <span class="err">&#39;</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="n">d</span><span class="err">&#39;</span>
+        <span class="n">ether</span> <span class="mo">00</span><span class="o">:</span><span class="mi">16</span><span class="o">:</span><span class="mi">3</span><span class="n">c</span><span class="o">:</span><span class="n">e1</span><span class="o">:</span><span class="mi">3</span><span class="n">d</span><span class="o">:</span><span class="n">df</span>  <span class="n">txqueuelen</span> <span class="mi">1000</span>  <span class="p">(</span><span class="n">Ethernet</span><span class="p">)</span>
+        <span class="n">RX</span> <span class="n">packets</span> <span class="mi">376502</span>  <span class="n">bytes</span> <span class="mi">1381112705</span> <span class="p">(</span><span class="mf">1.3</span> <span class="n">GB</span><span class="p">)</span>
+        <span class="n">RX</span> <span class="n">errors</span> <span class="mi">0</span>  <span class="n">dropped</span> <span class="mi">3955</span>  <span class="n">overruns</span> <span class="mi">0</span>  <span class="n">frame</span> <span class="mi">0</span>
+        <span class="n">TX</span> <span class="n">packets</span> <span class="mi">476379</span>  <span class="n">bytes</span> <span class="mi">255496381</span> <span class="p">(</span><span class="mf">255.4</span> <span class="n">MB</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="s">s 查找并替换</h2>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

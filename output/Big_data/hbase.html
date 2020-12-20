@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>hbase - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Big_data">Big_data</a>&nbsp;&#187;&nbsp;hbase
+    <span class="updated">Page Updated&nbsp;
+      2019-07-12 18:33
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">hbase</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#nosql">NoSQL</a></li>
+<li><a href="#hbase">HBase 特点</a></li>
+<li><a href="#hbase_1">HBase可伸缩架构</a><ul>
+<li><a href="#hregion">HRegion</a><ul>
+<li><a href="#hregionserver">HRegionServer</a></li>
+</ul>
+</li>
+<li><a href="#hmaster">HMaster</a></li>
+</ul>
+</li>
+<li><a href="#hbase_2">HBase可扩展数据模型</a><ul>
+<li><a href="#columnfamily">ColumnFamily</a><ul>
+<li><a href="#_1">缺点</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#hbase_3">HBase的高性能存储</a></li>
+</ul>
+</div>
+<h1 id="nosql">NoSQL</h1>
+<p>NoSQL，主要指非关系的、分布式的、支持海量数据存储的数据库设计模式。也有许多专家将 NoSQL解读为Not Only SQL，表示NoSQL只是关系数据库的补充，而不是替代方案。其中，HBase是这一类NoSQL系统的杰出代表。</p>
+<h1 id="hbase">HBase 特点</h1>
+<p>HBase之所以能够具有海量数据处理能力，其根本在于和传统关系型数据库设计的不同思路。传统关系型数据库对存储在其上的数据有很多约束，学习关系数据库都要学习数据库设计范式，事实上，是在数据存储中包含了一部分业务逻辑。而NoSQL数据库则简单暴力地认为，数据库就是存储数据的，业务逻辑应该由应用程序去处理</p>
+<h1 id="hbase_1">HBase可伸缩架构</h1>
+<p>HBase的伸缩性主要依赖其可分裂的HRegion及可伸缩的分布式文件系统HDFS实现。</p>
+<p><img alt="image-20200729163708648" src="hbase.assets/image-20200729163708648.png" /></p>
+<p><img alt="image-20200729163724214" src="hbase.assets/image-20200729163724214.png" /></p>
+<h2 id="hregion">HRegion</h2>
+<p>HRegion是HBase负责数据存储的主要进程，应用程序对数据的读写操作都是通过和HRegion通信完成。</p>
+<p>数据以HRegion为单位进行管理，也就是说应用程序如果想要访问一个数据，必须先找到HRegion，然后将数据读写操作提交给HRegion，由 HRegion完成存储层面的数据操作。</p>
+<p>当一个HRegion中数据量太多时，这个HRegion连同HFile会分裂成两个HRegion，并根据集群中服务器负载进行迁移。如果集群中有新加入的服务器，也就是说有了新的HRegionServer，由于其负载较低，也会把HRegion迁移过去并记录到HMaster，从而实现HBase的线性伸缩。</p>
+<h3 id="hregionserver">HRegionServer</h3>
+<p>HRegionServer是物理服务器，每个HRegionServer上可以启动多个HRegion实例。当一个 HRegion中写入的数据太多，达到配置的阈值时，一个HRegion会分裂成两个HRegion，并将HRegion在整个集群中进行迁移，以使HRegionServer的负载均衡。</p>
+<h2 id="hmaster">HMaster</h2>
+<p>每个HRegion中存储一段Key值区间[key1, key2)的数据，所有HRegion的信息，包括存储的Key值区间、所在HRegionServer地址、访问端口号等，都记录在HMaster服务器上。为了保证HMaster的高可用，HBase会启动多个HMaster，并通过ZooKeeper选举出一个主服务器。</p>
+<h1 id="hbase_2">HBase可扩展数据模型</h1>
+<p>能够做到可扩展的数据结构设计, 并不用修改表结构就可以新增字段。许多NoSQL数据库使用的列族（ColumnFamily）设计就是其中一个解决方案。</p>
+<h2 id="columnfamily">ColumnFamily</h2>
+<p><img alt="img" src="https://snag.gy/BIF7Jc.jpg" /></p>
+<p>表中不同学生的联系方式各不相同，选修的课程也不同， 而且将来还会有更多联系方式和课程加入到这张表里，如果按照传统的关系数据库设计，无论提前预设多少冗余字段都会捉襟见肘、疲于应付。</p>
+<p>使用支持列族结构的NoSQL数据库，在创建表的时候，只需要指定列族的名字，无需指定字段（Column）。那什么时候指定字段呢？可以在数据写入时再指定。通过这种方式，数据表可以包含数百万的字段，这样就可以随意扩展应用程序的数据结构了。并且这种数据库在查询时也很方便，可以通过指定任意字段名称和值进行查询。</p>
+<p>HBase这种列族的数据结构设计，实际上是把字段的名称和字段的值，以Key-Value的方式一起存储在HBase中。实际写入的时候，可以随意指定字段名称，即使有几百万个字段也能轻松应对。</p>
+<h3 id="_1">缺点</h3>
+<p>1.列族不好查询，没有传统sql那样按照不同字段方便，只能根据rowkey查询，范围查询scan性能低</p>
+<p>2.查询也没有mysql一样的走索引优化，因为列不固定， 在需要读取整条记录的时候，需要访问多个列族组合数据，效率会降低，可以通过字段冗余来解决一些问题 </p>
+<p>3.列族因为不固定，所以很难做一些业务约束，比如uk等等</p>
+<p>4.做不了事务控制 </p>
+<p>5.只能提供Key值和全表扫描两种访问方式，很多情况下需要自己建耳机索引。</p>
+<p>6.数据是非结构化，或者说是半结构化的，应用在处理数据时要费点心，不像关系数据库那么省心。</p>
+<p>在数据完全结构化，很少变动，需要事务的场景使用Mysql等关系数据库比较合适。 </p>
+<h1 id="hbase_3">HBase的高性能存储</h1>
+<p>为了提高数据写入速度，HBase使用了一种叫作<strong>LSM树</strong>的数据结构进行数据存储。LSM树的全名是Log Structed Merge Tree，翻译过来就是Log结构合并树。数据写入的时候以Log方式连续写入，然后异步对磁盘上的多个LSM树进行合并。</p>
+<p><img alt="img" src="https://snag.gy/S9ytXH.jpg" /></p>
+<p>LSM树可以看作是一个N阶合并树。数据写操作（包括插入、修改、删除）都在内存中进行，并且都会创建一个新记录（修改会记录新的数据值，而删除会记录一个删除标志）。这些数据在内存中仍然还是一棵排序树，当数据量超过设定的内存阈值后，会将这棵排序树和磁盘上最新的排序树合并。当这棵排序树的数据量也超过设定阈值后，会和磁盘上下一级的排序树合并。合并过程中，会用最新更新的数据覆盖旧的数据（或者记录为不同版本）。</p>
+<p>在需要进行读操作时，总是从内存中的排序树开始搜索，如果没有找到，就从磁盘 上的排序树顺序查找。</p>
+<p>在LSM树上进行一次数据更新不需要磁盘访问，在内存即可完成。当数据访问以写操作为主，而读操作则集中在最近写入的数据上时，使用LSM树可以极大程度地减少磁盘的访问次数，加快访问速度。</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

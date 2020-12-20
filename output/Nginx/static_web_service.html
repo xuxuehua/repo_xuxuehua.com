@@ -1,0 +1,166 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>static_web_service - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Nginx">Nginx</a>&nbsp;&#187;&nbsp;static_web_service
+    <span class="updated">Page Updated&nbsp;
+      2018-11-25 15:05
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">static_web_service</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#static_web_service">static_web_service</a><ul>
+<li><a href="#nginxconf">nginx.conf</a></li>
+<li><a href="#_1">文件路径</a></li>
+<li><a href="#gzip">gzip 压缩</a></li>
+<li><a href="#autoindex">autoindex 遍历目录内容</a></li>
+<li><a href="#log_format">log_format 日志记录</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="static_web_service">static_web_service</h1>
+<h2 id="nginxconf">nginx.conf</h2>
+<div class="hlcode"><pre><span class="cp">#user  nobody;</span>
+<span class="n">worker_processes</span>  <span class="mi">1</span><span class="p">;</span>
+
+<span class="cp">#error_log  logs/error.log;</span>
+<span class="cp">#error_log  logs/error.log  notice;</span>
+<span class="cp">#error_log  logs/error.log  info;</span>
+
+<span class="cp">#pid        logs/nginx.pid;</span>
+
+
+<span class="n">events</span> <span class="p">{</span>
+    <span class="n">worker_connections</span>  <span class="mi">1024</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="n">http</span> <span class="p">{</span>
+    <span class="n">include</span>       <span class="n">mime</span><span class="p">.</span><span class="n">types</span><span class="p">;</span>
+    <span class="n">default_type</span>  <span class="n">application</span><span class="o">/</span><span class="n">octet</span><span class="o">-</span><span class="n">stream</span><span class="p">;</span>
+
+    <span class="err">#</span><span class="n">log_format</span>  <span class="n">main</span>  <span class="err">&#39;$</span><span class="n">remote_addr</span> <span class="o">-</span> <span class="err">$</span><span class="n">remote_user</span> <span class="p">[</span><span class="err">$</span><span class="n">time_local</span><span class="p">]</span> <span class="s">&quot;$request&quot;</span> <span class="err">&#39;</span>
+    <span class="err">#</span>                  <span class="err">&#39;$</span><span class="n">status</span> <span class="err">$</span><span class="n">body_bytes_sent</span> <span class="s">&quot;$http_referer&quot;</span> <span class="err">&#39;</span>
+    <span class="err">#</span>                  <span class="err">&#39;</span><span class="s">&quot;$http_user_agent&quot;</span> <span class="s">&quot;$http_x_forwarded_for&quot;</span><span class="err">&#39;</span><span class="p">;</span>
+
+    <span class="err">#</span><span class="n">access_log</span>  <span class="n">logs</span><span class="o">/</span><span class="n">access</span><span class="p">.</span><span class="n">log</span>  <span class="n">main</span><span class="p">;</span>
+
+    <span class="n">sendfile</span>        <span class="n">on</span><span class="p">;</span>
+    <span class="err">#</span><span class="n">tcp_nopush</span>     <span class="n">on</span><span class="p">;</span>
+
+    <span class="err">#</span><span class="n">keepalive_timeout</span>  <span class="mi">0</span><span class="p">;</span>
+    <span class="n">keepalive_timeout</span>  <span class="mi">65</span><span class="p">;</span>
+
+    <span class="err">#</span><span class="n">gzip</span>  <span class="n">on</span><span class="p">;</span>  <span class="err">#</span> <span class="err">打开</span><span class="n">gzip</span><span class="err">压缩</span>
+
+    <span class="n">server</span> <span class="p">{</span>
+        <span class="n">listen</span>       <span class="mi">8080</span><span class="p">;</span>            <span class="err">#</span> <span class="err">指定端口</span>
+        <span class="n">server_name</span>  <span class="n">localhost</span><span class="p">;</span>
+
+        <span class="err">#</span><span class="n">charset</span> <span class="n">koi8</span><span class="o">-</span><span class="n">r</span><span class="p">;</span>
+
+        <span class="err">#</span><span class="n">access_log</span>  <span class="n">logs</span><span class="o">/</span><span class="n">host</span><span class="p">.</span><span class="n">access</span><span class="p">.</span><span class="n">log</span>  <span class="n">main</span><span class="p">;</span>
+
+        <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>                  <span class="err">#</span> <span class="err">请求路径</span>
+        <span class="n">alias</span> <span class="n">project</span><span class="o">-</span><span class="n">html</span><span class="o">-</span><span class="n">website</span><span class="o">/</span><span class="p">;</span>  <span class="err">#</span> <span class="err">这里与</span><span class="n">url</span><span class="err">的路径一样的</span>
+            <span class="err">#</span><span class="n">root</span>   <span class="n">html</span><span class="p">;</span>             <span class="err">#</span> <span class="err">这里需要写绝对路径</span>
+            <span class="n">index</span>  <span class="n">index</span><span class="p">.</span><span class="n">html</span> <span class="n">index</span><span class="p">.</span><span class="n">htm</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="err">#</span><span class="n">error_page</span>  <span class="mi">404</span>              <span class="o">/</span><span class="mf">404.</span><span class="n">html</span><span class="p">;</span>
+
+        <span class="err">#</span> <span class="n">redirect</span> <span class="n">server</span> <span class="n">error</span> <span class="n">pages</span> <span class="n">to</span> <span class="n">the</span> <span class="k">static</span> <span class="n">page</span> <span class="o">/</span><span class="mi">50</span><span class="n">x</span><span class="p">.</span><span class="n">html</span>
+        <span class="err">#</span>
+        <span class="n">error_page</span>   <span class="mi">500</span> <span class="mi">502</span> <span class="mi">503</span> <span class="mi">504</span>  <span class="o">/</span><span class="mi">50</span><span class="n">x</span><span class="p">.</span><span class="n">html</span><span class="p">;</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="o">/</span><span class="mi">50</span><span class="n">x</span><span class="p">.</span><span class="n">html</span> <span class="p">{</span>
+            <span class="n">root</span>   <span class="n">html</span><span class="p">;</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_1">文件路径</h2>
+<div class="hlcode"><pre><span class="n">server</span> <span class="p">{</span>
+    <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+        <span class="n">alias</span> <span class="n">dlib</span><span class="o">/</span><span class="p">;</span> <span class="err">通常使用</span><span class="n">alias</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="gzip">gzip 压缩</h2>
+<div class="hlcode"><pre><span class="n">http</span> <span class="p">{</span>
+    <span class="n">gzip</span>    <span class="n">on</span><span class="p">;</span>
+    <span class="n">gzip_min_length</span> <span class="mi">1</span><span class="p">;</span> <span class="err">#长度一字节</span>
+    <span class="n">gzip_comp_level</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="n">gzip_types</span>  <span class="n">text</span><span class="o">/</span><span class="n">plain</span>  <span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">javascript</span>    <span class="n">text</span><span class="o">/</span><span class="n">css</span>    <span class="n">application</span><span class="o">/</span><span class="n">xml</span> <span class="n">text</span><span class="o">/</span><span class="n">javascript</span> <span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">httpd</span><span class="o">-</span><span class="n">php</span> <span class="n">image</span><span class="o">/</span><span class="n">jpeg</span>  <span class="n">image</span><span class="o">/</span><span class="n">gif</span>   <span class="n">image</span><span class="o">/</span><span class="n">png</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="autoindex">autoindex 遍历目录内容</h2>
+<div class="hlcode"><pre><span class="n">server</span> <span class="p">{</span>
+    <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+        <span class="n">alias</span> <span class="n">dlib</span><span class="o">/</span><span class="p">;</span>
+        <span class="n">autoindex</span>   <span class="n">on</span><span class="p">;</span> 
+        <span class="n">set</span> <span class="err">$</span><span class="n">limit_rate</span> <span class="mi">1</span><span class="n">k</span><span class="p">;</span>  <span class="err">#</span> <span class="err">限制访问速度，每秒</span><span class="mi">1</span><span class="n">K</span><span class="err">字节</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="log_format">log_format 日志记录</h2>
+<p>指定日志格式</p>
+<div class="hlcode"><pre><span class="n">http</span> <span class="p">{</span>
+    <span class="n">log_format</span>  <span class="n">main</span>  <span class="err">&#39;$</span><span class="n">remote_addr</span> <span class="o">-</span> <span class="err">$</span><span class="n">remote_user</span> <span class="p">[</span><span class="err">$</span><span class="n">time_local</span><span class="p">]</span> <span class="s">&quot;$request&quot;</span> <span class="err">&#39;</span>
+                      <span class="err">&#39;$</span><span class="n">status</span> <span class="err">$</span><span class="n">body_bytes_sent</span> <span class="s">&quot;$http_referer&quot;</span> <span class="err">&#39;</span>
+                      <span class="err">&#39;</span><span class="s">&quot;$http_user_agent&quot;</span> <span class="s">&quot;$http_x_forwarded_for&quot;</span><span class="err">&#39;</span><span class="p">;</span>
+
+    <span class="n">access_log</span>  <span class="n">logs</span><span class="o">/</span><span class="n">access</span><span class="p">.</span><span class="n">log</span>  <span class="n">main</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>开启日志</p>
+<div class="hlcode"><pre>    <span class="n">server</span> <span class="p">{</span>
+        <span class="n">listen</span>       <span class="mi">80</span><span class="p">;</span>
+        <span class="n">server_name</span>  <span class="n">localhost</span><span class="p">;</span>
+
+        <span class="err">#</span><span class="n">charset</span> <span class="n">koi8</span><span class="o">-</span><span class="n">r</span><span class="p">;</span>
+
+        <span class="n">access_log</span>  <span class="n">logs</span><span class="o">/</span><span class="n">host</span><span class="p">.</span><span class="n">access</span><span class="p">.</span><span class="n">log</span>  <span class="n">main</span><span class="p">;</span>
+    <span class="p">}</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

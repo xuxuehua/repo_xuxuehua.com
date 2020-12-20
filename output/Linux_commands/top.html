@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>top - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;top
+    <span class="updated">Page Updated&nbsp;
+      2018-11-27 01:05
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">top</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#top">top</a><ul>
+<li><a href="#-d">-d 更新间隔</a></li>
+<li><a href="#-i">-i  不显示僵死</a></li>
+<li><a href="#-p">-p</a></li>
+<li><a href="#-h-threads-mode-operation">-H Threads-mode operation</a></li>
+</ul>
+</li>
+<li><a href="#example">example</a><ul>
+<li><a href="#headers">headers</a></li>
+<li><a href="#content">content</a></li>
+</ul>
+</li>
+<li><a href="#_1">功能操作</a><ul>
+<li><a href="#p-cpu">P 以CPU排序</a></li>
+<li><a href="#m">M 以内存排序</a></li>
+<li><a href="#n-pid">N 以PID排序</a></li>
+<li><a href="#q">q 退出</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="top">top</h1>
+<p>top指令是从<code>/proc/stats</code> 目录下获取数据</p>
+<h2 id="-d">-d 更新间隔</h2>
+<p>默认是3秒</p>
+<h2 id="-i">-i  不显示僵死</h2>
+<p>不限时任何闲置或者僵死的进程</p>
+<h2 id="-p">-p</h2>
+<p>指定监控进程ID来监控进程状态</p>
+<h2 id="-h-threads-mode-operation">-H Threads-mode operation</h2>
+<p>Instructs  top to display individual threads.  Without this command-line option a summation of all threads in each process is shown.  Later this can be changed with the <code>H</code> interactive command</p>
+<div class="hlcode"><pre><span class="nb">top</span> <span class="na">-H</span> <span class="na">-p</span> <span class="o">&lt;</span><span class="nx">process_id</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h1 id="example">example</h1>
+<div class="hlcode"><pre><span class="n">top</span> <span class="o">-</span> <span class="mi">13</span><span class="o">:</span><span class="mi">08</span><span class="o">:</span><span class="mi">18</span> <span class="n">up</span> <span class="mi">356</span> <span class="n">days</span><span class="p">,</span>  <span class="mi">5</span><span class="o">:</span><span class="mi">36</span><span class="p">,</span>  <span class="mi">2</span> <span class="n">users</span><span class="p">,</span>  <span class="n">load</span> <span class="n">average</span><span class="o">:</span> <span class="mf">1.58</span><span class="p">,</span> <span class="mf">0.68</span><span class="p">,</span> <span class="mf">0.30</span>
+<span class="nl">Tasks:</span> <span class="mi">201</span> <span class="n">total</span><span class="p">,</span>   <span class="mi">2</span> <span class="n">running</span><span class="p">,</span> <span class="mi">198</span> <span class="n">sleeping</span><span class="p">,</span>   <span class="mi">0</span> <span class="n">stopped</span><span class="p">,</span>   <span class="mi">1</span> <span class="n">zombie</span>
+<span class="o">%</span><span class="n">Cpu</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">:</span>  <span class="mf">5.3</span> <span class="n">us</span><span class="p">,</span> <span class="mf">21.1</span> <span class="n">sy</span><span class="p">,</span>  <span class="mf">0.0</span> <span class="n">ni</span><span class="p">,</span> <span class="mf">73.7</span> <span class="n">id</span><span class="p">,</span>  <span class="mf">0.0</span> <span class="n">wa</span><span class="p">,</span>  <span class="mf">0.0</span> <span class="n">hi</span><span class="p">,</span>  <span class="mf">0.0</span> <span class="n">si</span><span class="p">,</span>  <span class="mf">0.0</span> <span class="n">st</span>
+<span class="n">KiB</span> <span class="n">Mem</span> <span class="o">:</span>  <span class="mi">2047724</span> <span class="n">total</span><span class="p">,</span>   <span class="mi">220252</span> <span class="n">free</span><span class="p">,</span>  <span class="mi">1410216</span> <span class="n">used</span><span class="p">,</span>   <span class="mi">417256</span> <span class="n">buff</span><span class="o">/</span><span class="n">cache</span>
+<span class="n">KiB</span> <span class="n">Swap</span><span class="o">:</span>        <span class="mi">0</span> <span class="n">total</span><span class="p">,</span>        <span class="mi">0</span> <span class="n">free</span><span class="p">,</span>        <span class="mi">0</span> <span class="n">used</span><span class="p">.</span>   <span class="mi">308616</span> <span class="n">avail</span> <span class="n">Mem</span>
+
+  <span class="n">PID</span> <span class="n">USER</span>      <span class="n">PR</span>  <span class="n">NI</span>    <span class="n">VIRT</span>    <span class="n">RES</span>    <span class="n">SHR</span> <span class="n">S</span> <span class="o">%</span><span class="n">CPU</span> <span class="o">%</span><span class="n">MEM</span>     <span class="n">TIME</span><span class="o">+</span> <span class="n">COMMAND</span>
+  <span class="mi">982</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>  <span class="mi">157752</span>   <span class="mi">4312</span>   <span class="mi">3552</span> <span class="n">R</span>  <span class="mf">5.6</span>  <span class="mf">0.2</span>   <span class="mi">0</span><span class="o">:</span><span class="mf">00.03</span> <span class="n">top</span>
+    <span class="mi">1</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>  <span class="mi">193668</span>   <span class="mi">6392</span>   <span class="mi">3576</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.3</span>  <span class="mi">86</span><span class="o">:</span><span class="mf">40.63</span> <span class="n">systemd</span>
+    <span class="mi">2</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="o">:</span><span class="mf">39.48</span> <span class="n">kthreadd</span>
+    <span class="mi">4</span> <span class="n">root</span>       <span class="mi">0</span> <span class="o">-</span><span class="mi">20</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="o">:</span><span class="mf">00.00</span> <span class="n">kworker</span><span class="o">/</span><span class="mi">0</span><span class="o">:</span><span class="mi">0</span><span class="n">H</span>
+    <span class="mi">6</span> <span class="n">root</span>       <span class="mi">0</span> <span class="o">-</span><span class="mi">20</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="o">:</span><span class="mf">00.04</span> <span class="n">mm_percpu_wq</span>
+    <span class="mi">7</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">6</span><span class="o">:</span><span class="mf">26.21</span> <span class="n">ksoftirqd</span><span class="o">/</span><span class="mi">0</span>
+    <span class="mi">8</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mi">29</span><span class="o">:</span><span class="mf">22.01</span> <span class="n">rcu_sched</span>
+    <span class="mi">9</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="o">:</span><span class="mf">00.00</span> <span class="n">rcu_bh</span>
+   <span class="mi">10</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">R</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mi">29</span><span class="o">:</span><span class="mf">54.98</span> <span class="n">rcuos</span><span class="o">/</span><span class="mi">0</span>
+   <span class="mi">11</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="o">:</span><span class="mf">00.00</span> <span class="n">rcuob</span><span class="o">/</span><span class="mi">0</span>
+   <span class="mi">12</span> <span class="n">root</span>      <span class="n">rt</span>   <span class="mi">0</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="o">:</span><span class="mf">00.00</span> <span class="n">migration</span><span class="o">/</span><span class="mi">0</span>
+   <span class="mi">13</span> <span class="n">root</span>      <span class="n">rt</span>   <span class="mi">0</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">2</span><span class="o">:</span><span class="mf">49.41</span> <span class="n">watchdog</span><span class="o">/</span><span class="mi">0</span>
+   <span class="mi">14</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="o">:</span><span class="mf">00.00</span> <span class="n">cpuhp</span><span class="o">/</span><span class="mi">0</span>
+   <span class="mi">15</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="o">:</span><span class="mf">00.00</span> <span class="n">kdevtmpfs</span>
+   <span class="mi">16</span> <span class="n">root</span>       <span class="mi">0</span> <span class="o">-</span><span class="mi">20</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="o">:</span><span class="mf">00.00</span> <span class="n">netns</span>
+   <span class="mi">17</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">5</span><span class="o">:</span><span class="mf">33.92</span> <span class="n">khungtaskd</span>
+   <span class="mi">18</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="o">:</span><span class="mf">00.15</span> <span class="n">oom_reaper</span>
+   <span class="mi">19</span> <span class="n">root</span>       <span class="mi">0</span> <span class="o">-</span><span class="mi">20</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="o">:</span><span class="mf">00.00</span> <span class="n">writeback</span>
+   <span class="mi">20</span> <span class="n">root</span>      <span class="mi">20</span>   <span class="mi">0</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">0</span> <span class="n">S</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>   <span class="mi">0</span><span class="o">:</span><span class="mf">00.00</span> <span class="n">kcompactd0</span>
+</pre></div>
+
+
+<h2 id="headers">headers</h2>
+<div class="hlcode"><pre><span class="n">users</span><span class="o">:</span> <span class="err">当前用户在线</span> 
+
+<span class="n">zombie</span><span class="err">：僵死的进程数</span> 
+
+<span class="mf">5.3</span> <span class="n">us</span><span class="err">：用户态进程占用</span><span class="n">CPU</span><span class="err">时间百分比，不包含</span><span class="n">renice</span><span class="err">值为负的任务占用的</span><span class="n">CPU</span><span class="err">的时间。</span> 
+
+<span class="mf">21.1</span> <span class="n">sy</span><span class="err">：内核占用</span><span class="n">CPU</span><span class="err">时间百分比</span> 
+
+<span class="mf">0.0</span> <span class="n">ni</span><span class="err">：</span><span class="n">renice</span><span class="err">值为负的任务的用户态进程的</span><span class="n">CPU</span><span class="err">时间百分比。</span><span class="n">nice</span><span class="err">是优先级的意思</span> 
+
+<span class="mf">73.7</span> <span class="n">id</span><span class="err">：空闲</span><span class="n">CPU</span><span class="err">时间百分比</span> 
+
+<span class="mf">0.0</span> <span class="n">wa</span><span class="err">：等待</span><span class="n">I</span><span class="o">/</span><span class="n">O</span><span class="err">的</span><span class="n">CPU</span><span class="err">时间百分比</span> 
+
+<span class="mf">0.0</span> <span class="n">hi</span><span class="err">：</span><span class="n">CPU</span><span class="err">硬中断时间百分比</span> 
+
+<span class="mf">0.0</span> <span class="n">si</span><span class="err">：</span><span class="n">CPU</span><span class="err">软中断时间百分比</span> 
+</pre></div>
+
+
+<h2 id="content">content</h2>
+<p>PID：进程的ID </p>
+<p>USER：进程所有者 </p>
+<p>PR（priority）：进程的优先级别，越小越优先被执行 </p>
+<p>NI（nice）：值 </p>
+<p>VIRT（virtual）：进程占用的虚拟内存 </p>
+<p>RES：进程占用的物理内存 </p>
+<p>SHR：进程使用的共享内存 </p>
+<p>S：进程的状态。S表示休眠，R表示正在运行，Z表示僵死状态，N表示该进程优先值为负数 </p>
+<p>%CPU：进程占用CPU的使用率 </p>
+<p>%MEM：进程使用的物理内存和总内存的百分比 </p>
+<p>TIME+：该进程启动后占用的总的CPU时间，即占用CPU使用时间的累加值。 </p>
+<p>COMMAND：进程启动命令名称 </p>
+<h1 id="_1">功能操作</h1>
+<h2 id="p-cpu">P 以CPU排序</h2>
+<p>默认是此项</p>
+<h2 id="m">M 以内存排序</h2>
+<h2 id="n-pid">N 以PID排序</h2>
+<h2 id="q">q 退出</h2>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

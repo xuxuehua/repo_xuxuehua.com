@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>basic_knowledge - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Nodejs_modules">Nodejs_modules</a>&nbsp;&#187;&nbsp;basic_knowledge
+    <span class="updated">Page Updated&nbsp;
+      2019-08-30 09:58
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">basic_knowledge</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">模块</a><ul>
+<li><a href="#_2">导出模块</a></li>
+<li><a href="#_3">调用模块</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">模块</h1>
+<h2 id="_2">导出模块</h2>
+<p><code>var ref = require('module_name');</code></p>
+<ul>
+<li>暴露变量也是<code>module.exports = variable;</code></li>
+</ul>
+<div class="hlcode"><pre><span class="s1">&#39;use strict&#39;</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="s1">&#39;Hello&#39;</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">greet</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;!&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">greet</span><span class="p">;</span>
+</pre></div>
+
+
+<h2 id="_3">调用模块</h2>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">greet</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="err">&#39;</span><span class="p">.</span><span class="o">/</span><span class="n">hello</span><span class="err">&#39;</span><span class="p">);</span>
+
+<span class="n">var</span> <span class="n">s</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">Rick</span><span class="err">&#39;</span><span class="p">;</span>
+
+<span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">greet</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+</pre></div>
+
+
+<blockquote>
+<p>这里调用的时候是相对目录</p>
+</blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

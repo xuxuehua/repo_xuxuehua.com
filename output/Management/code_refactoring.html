@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>code_refactoring - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Management">Management</a>&nbsp;&#187;&nbsp;code_refactoring
+    <span class="updated">Page Updated&nbsp;
+      2020-05-09 00:26
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">code_refactoring</div>
+
+  <p>[toc]</p>
+<h1 id="_1">代码重构</h1>
+<h2 id="_2">预重构</h2>
+<p>对框架进行粗略的大刀阔斧的改动，把函数和参数进行抽象和梳理，但是忽略实现的细节。加一些 TODO，说明自己还想做哪些改动。这样做一个大的 PR，并描述出自己想做的东西，发给所有工程师，看看会不会有人对改动的大纲有意见或者建议。因为粗糙，差不多一两天就能弄完。老板和同事当时给出了很多意见，这样就避免了后期做细致改动时再有意见不统一的麻烦。同时这个预重构的代码帮助自己对 “成竹” 有个很细致的把握。</p>
+<h2 id="_3">端到端的测试例集</h2>
+<p>大军未动，粮草先行。重构未动，测试先行。因为重构会改变细节的实现，但是已有代码的 API 层的行为是不应该有变动的。重构前，确保足够的 Test Case Coverage，让端到端的 Test Case 尽可能地覆盖所有的场景。这些 Tests 在整个重构中不应该再变动。它们是保证重构没有改变系统行为，没有引入新 Bug 的护城河。</p>
+<h2 id="pr">小PR</h2>
+<p>小的 PR 出去，一来降低风险，二来同事们做 Code Review 也会轻松很多。</p>
+<h2 id="_4">常量抽取</h2>
+<p>什么意思呢，就是一个文件或者类内部的代码组织。比如有重复的代码段，就应该提取出来公用。不要在代码里随意设常数，所有的常数都应该文件顶部统一定义。哪些应该是 private，等等</p>
+<h2 id="_5">代码可读性方面</h2>
+<p>一个函数不要太长，太长就 break down。所有的变量名尽量能够说明它的用意和类型。比如 hosting_address_hash，一看就知道是房东地址，而且是个 hash 类型。不要有嵌套太多层的条件语句或者循环语句。不要有一个太长的 boolean 判断语句。如果一个函数，别人需要看你的长篇注释才能明白，那这个函数就一定有重构的空间。另外，如果不可避免有一些注释，则一定要保证注释准确且与代码完全一致。</p>
+<h2 id="_6">转移成员变量+函数（转移职责）</h2>
+<p>将不应该由自己管理的成员变量和函数转移出去</p>
+<p>选择成员变量-&gt;右键-&gt;Refactor-&gt;Move</p>
+<h2 id="_7">方法抽取</h2>
+<p>Pycharm 选择代码，右键-&gt;选择refactor-&gt;Extract Method</p>
+<h2 id="_8">抽取类</h2>
+<p>当你发现要转移的成员变量和函数找不到合适的类时（转移职责却找不到下家），要想起来，这里是程序世界，而我们程序猿就是类和对象的造物主，是时候创建一个新的类，让它来替我们分担职责（成员变量和函数）了</p>
+<p>选中要搬的成员变量和函数，右键-&gt;Refactor-&gt;Extract-&gt;Delegate（抽取一个委托者，委托他来管理这部分变量和函数，如果只有变量或只有函数，可以抽出参数对象Paramater Object或方法对象Method Object）</p>
+<p>不推荐抽取参数对象，因为一般参数对象是给参数多的方法用的（用参数对象取代一长溜的参数），而且如果成员变量抽取了也不会影响任何函数的话，那就是无用对象了，不如直接把他们删除掉</p>
+<h1 id="_9">原因</h1>
+<h2 id="_10">类过长</h2>
+<p>读不通——直接用滚轮滚都得好几秒，就算是原作者，时间长了恐怕也难以理清整个类，更不用说是其他的读者</p>
+<p>扩展不通——一个类有过多的接口，会让扩展这个类变得异常困难，一动千行</p>
+<h3 id="_11">可能有冗余代码</h3>
+<ol>
+<li>冗余代码使方法、类过长，不简洁</li>
+<li>冗余代码会造成发散式修改（冗余代码需要变动时，每一处Ctrl+V都需要修改）</li>
+</ol>
+<h3 id="_12">多半是职责过多</h3>
+<p>一个类开放几十个接口，绝对存在职责过多的问题，就像图中的Tom猫一样手忙脚乱，一个类的职责过多也有巨大问题：</p>
+<ol>
+<li>
+<p>违反设计原则——单一职责原则（单一职责原则要求一个类只实现一个职责，比如一只Tom只做扫地、擦桌、拖地中的一件事，而其他事的实现可以转移给史派克狗或肥胖女佣），违反了这个原则会导致发散式变化、发散式修改、类过长等代码问题，还会让你的类难以扩展，甚至会让其他程序猿认为你不专业</p>
+</li>
+<li>
+<p>发散式变化（指引发此类修改的地方很多），如果一个类的职责很多，那它的扇入（调用者）一定很多，每个调用者的修改都有可能让你这个类不得不随之修改，也就是发散式变化。就是说不管哪儿出了问题，你这个类都得遭殃</p>
+</li>
+<li>
+<p>发散式修改（指此类修改引发修改的地方很多），相同的，如果一个类职责很多，那支撑它实现的下级，即扇出（被调用方）一定很多，如果此类逻辑发生变动，所有下级被调用者可能都得随之修改，也就是发散式修改。就是说你这个类出了问题，不管哪儿都会遭殃</p>
+</li>
+<li>
+<p>难以扩展：如果你的一个类接口非常多，那它的子类怎么办？它的包装类怎么办？难道全部都要实现这么多接口，全部都要承担同样多的职责吗？扩展起来真的非常麻烦</p>
+</li>
+<li>
+<p>触发机关：【测试之怒】【运维之怒】</p>
+</li>
+</ol>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

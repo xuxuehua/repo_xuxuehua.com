@@ -381,7 +381,7 @@ datetime.time.utcoffset()：返回时区的时间偏移量
 
 
 
-## .timedelta 两个时间点的间隔
+## .timedelta 两个时间点的间隔 （时间差）
 
 datetime.datetime.timedelta用于计算两个日期之间的差值
 
@@ -394,11 +394,42 @@ delta2 = datetime.timedelta(weeks = 3)
 print(t + delta1)
 print(t + delta2)
 print(t_next - t)
+
 >>>
 2016-12-11 20:40:00
 2017-01-01 20:30:00
 0:30:00
 ```
+
+
+
+```
+In [42]: s1
+Out[42]: '2020-11-23 07:15:42'
+
+In [43]: s2
+Out[43]: '2020-11-24 07:15:42'
+
+In [44]: format = "%Y-%m-%d %H:%M:%S"
+
+In [45]: import datetime
+
+In [46]: S1 = datetime.datetime.strptime(s1, format)
+
+In [47]: S2 = datetime.datetime.strptime(s2, format)
+
+In [48]: x = S2 - S1
+
+In [49]: x
+Out[49]: datetime.timedelta(days=1)
+
+In [50]: x.total_seconds()
+Out[50]: 86400.0
+```
+
+
+
+
 
 
 

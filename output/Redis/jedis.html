@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>jedis - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Redis">Redis</a>&nbsp;&#187;&nbsp;jedis
+    <span class="updated">Page Updated&nbsp;
+      2020-03-04 22:31
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">jedis</div>
+
+  <p>[toc]</p>
+<h1 id="jedis">Jedis</h1>
+<h2 id="pomxml">pom.xml</h2>
+<div class="hlcode"><pre>    <span class="nt">&lt;dependencies&gt;</span>
+        <span class="c">&lt;!-- https://mvnrepository.com/artifact/redis.clients/jedis --&gt;</span>
+        <span class="nt">&lt;dependency&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>redis.clients<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>jedis<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>3.2.0<span class="nt">&lt;/version&gt;</span>
+        <span class="nt">&lt;/dependency&gt;</span>
+
+    <span class="nt">&lt;/dependencies&gt;</span>
+    <span class="nt">&lt;properties&gt;</span>
+        <span class="nt">&lt;maven.compiler.source&gt;</span>1.13<span class="nt">&lt;/maven.compiler.source&gt;</span>
+        <span class="nt">&lt;maven.compiler.target&gt;</span>1.13<span class="nt">&lt;/maven.compiler.target&gt;</span>
+    <span class="nt">&lt;/properties&gt;</span>
+</pre></div>
+
+
+<h2 id="helloworld">HelloWorld</h2>
+<div class="hlcode"><pre><span class="k">import</span> <span class="nx">redis.clients.jedis.Jedis</span><span class="p">;</span>
+
+<span class="k">import</span> <span class="nx">java.util.Set</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="nf">class</span> <span class="nx">TestJedis</span> <span class="p">{</span>
+
+    <span class="p">@</span><span class="nx">SuppressWarnings</span><span class="p">(</span><span class="s2">&quot;resource&quot;</span><span class="p">)</span>
+    <span class="k">public</span> <span class="nf">static</span> <span class="bp">void</span> <span class="nx">main</span><span class="p">(</span><span class="kt">String</span><span class="err">[</span><span class="cp">]</span> args) {
+        Jedis jedis = new Jedis(&quot;167.172.197.4&quot;, 6379);
+        String ping = jedis.ping();
+        System.out.println(ping);
+
+        jedis.set(&quot;k7&quot;, &quot;v7&quot;);
+        String v7 = jedis.get(&quot;k7&quot;);
+        System.out.println(v7);
+        Set<span class="nt">&lt;String&gt;</span> keys = jedis.keys(&quot;*&quot;);
+        for (String key: keys) {
+            System.out.println(key);
+        }
+        jedis.close();
+    }
+}
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

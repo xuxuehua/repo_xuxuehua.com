@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>lterator - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python">Python</a>&nbsp;&#187;&nbsp;lterator
+    <span class="updated">Page Updated&nbsp;
+      2018-08-22 11:45
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">lterator</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">迭代器</a><ul>
+<li><a href="#_2">定义</a><ul>
+<li><a href="#isinstance">isinstance</a></li>
+<li><a href="#iter">iter()</a></li>
+</ul>
+</li>
+<li><a href="#iter_1">判断iter类型</a></li>
+<li><a href="#_3">特点</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">迭代器</h1>
+<h2 id="_2">定义</h2>
+<p>可以直接作用于for循环的对象称为可迭代对象，Iterable</p>
+<p>可以被next() 函数调用并不断返回下一个值的对象称为迭代器，Iterator</p>
+<h3 id="isinstance">isinstance</h3>
+<p>判断iterable对象</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">22</span><span class="p">]</span><span class="o">:</span> <span class="n">from</span> <span class="n">collections</span> <span class="n">import</span> <span class="n">Iterable</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">23</span><span class="p">]</span><span class="o">:</span> <span class="n">isinstance</span><span class="p">([],</span> <span class="n">Iterable</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">23</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">24</span><span class="p">]</span><span class="o">:</span> <span class="n">isinstance</span><span class="p">({},</span> <span class="n">Iterable</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">24</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">25</span><span class="p">]</span><span class="o">:</span> <span class="n">isinstance</span><span class="p">(</span><span class="err">&#39;</span><span class="n">abc</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">25</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">26</span><span class="p">]</span><span class="o">:</span> <span class="n">isinstance</span><span class="p">((</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)),</span> <span class="n">Iterable</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">26</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">27</span><span class="p">]</span><span class="o">:</span> <span class="n">isinstance</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+</pre></div>
+
+
+<h3 id="iter">iter()</h3>
+<p>iter() 函数把list， dict， str等iterable变成iterator</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">28</span><span class="p">]</span><span class="o">:</span> <span class="n">from</span> <span class="n">collections</span> <span class="n">import</span> <span class="n">Iterator</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">29</span><span class="p">]</span><span class="o">:</span> <span class="n">isinstance</span><span class="p">([],</span> <span class="n">Iterator</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">29</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">30</span><span class="p">]</span><span class="o">:</span> <span class="n">isinstance</span><span class="p">(</span><span class="n">iter</span><span class="p">([]),</span> <span class="n">Iterator</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">30</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+</pre></div>
+
+
+<h2 id="iter_1">判断iter类型</h2>
+<div class="hlcode"><pre><span class="nt">def</span> <span class="nt">is_iterable</span><span class="o">(</span><span class="nt">param</span><span class="o">):</span>
+    <span class="nt">try</span><span class="o">:</span>
+        <span class="nt">iter</span><span class="o">(</span><span class="nt">param</span><span class="o">)</span>
+        <span class="nt">return</span> <span class="nt">True</span>
+    <span class="nt">except</span> <span class="nt">TypeError</span><span class="o">:</span>
+        <span class="nt">return</span> <span class="nt">False</span>
+
+
+<span class="nt">params</span> <span class="o">=</span> <span class="cp">[</span>
+    <span class="mi">1234</span><span class="p">,</span>
+    <span class="s1">&#39;1234&#39;</span><span class="p">,</span>
+    <span class="err">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="cp">]</span><span class="o">,</span>
+    <span class="nt">set</span><span class="o">(</span><span class="cp">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="cp">]</span><span class="o">),</span>
+    <span class="p">{</span><span class="m">1</span><span class="o">:</span><span class="m">1</span><span class="o">,</span> <span class="m">2</span><span class="o">:</span><span class="m">2</span><span class="o">,</span> <span class="m">3</span><span class="o">:</span><span class="m">3</span><span class="o">,</span> <span class="m">4</span><span class="o">:</span><span class="m">4</span><span class="p">}</span><span class="o">,</span>
+    <span class="o">(</span><span class="nt">1</span><span class="o">,</span> <span class="nt">2</span><span class="o">,</span> <span class="nt">3</span><span class="o">,</span> <span class="nt">4</span><span class="o">)</span>
+<span class="o">]</span>
+
+<span class="nt">for</span> <span class="nt">param</span> <span class="nt">in</span> <span class="nt">params</span><span class="o">:</span>
+    <span class="nt">print</span><span class="o">(</span><span class="s1">&#39;{} is iterable? {}&#39;</span><span class="nc">.format</span><span class="o">(</span><span class="nt">param</span><span class="o">,</span> <span class="nt">is_iterable</span><span class="o">(</span><span class="nt">param</span><span class="o">)))</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nt">1234</span> <span class="nt">is</span> <span class="nt">iterable</span><span class="o">?</span> <span class="nt">False</span>
+<span class="nt">1234</span> <span class="nt">is</span> <span class="nt">iterable</span><span class="o">?</span> <span class="nt">True</span>
+<span class="cp">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="cp">]</span> <span class="nt">is</span> <span class="nt">iterable</span><span class="o">?</span> <span class="nt">True</span>
+<span class="p">{</span><span class="m">1</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="m">3</span><span class="o">,</span> <span class="m">4</span><span class="p">}</span> <span class="nt">is</span> <span class="nt">iterable</span><span class="o">?</span> <span class="nt">True</span>
+<span class="p">{</span><span class="m">1</span><span class="o">:</span> <span class="m">1</span><span class="o">,</span> <span class="m">2</span><span class="o">:</span> <span class="m">2</span><span class="o">,</span> <span class="m">3</span><span class="o">:</span> <span class="m">3</span><span class="o">,</span> <span class="m">4</span><span class="o">:</span> <span class="m">4</span><span class="p">}</span> <span class="nt">is</span> <span class="nt">iterable</span><span class="o">?</span> <span class="nt">True</span>
+<span class="o">(</span><span class="nt">1</span><span class="o">,</span> <span class="nt">2</span><span class="o">,</span> <span class="nt">3</span><span class="o">,</span> <span class="nt">4</span><span class="o">)</span> <span class="nt">is</span> <span class="nt">iterable</span><span class="o">?</span> <span class="nt">True</span>
+</pre></div>
+
+
+<h2 id="_3">特点</h2>
+<p>Python的<code>Iterator</code>对象表示的是一个数据流，Iterator对象可以被<code>next()</code>函数调用并不断返回下一个数据，直到没有数据时抛出<code>StopIteration</code>错误。可以把这个数据流看做是一个有序序列，但我们却不能提前知道序列的长度，只能不断通过<code>next()</code>函数实现按需计算下一个数据，所以<code>Iterator</code>的计算是惰性的，只有在需要返回下一个数据时它才会计算。</p>
+<p><code>Iterator</code>甚至可以表示一个无限大的数据流，例如全体自然数。而使用list是永远不可能存储全体自然数的。</p>
+<p>Python的<code>for</code>循环本质上就是通过不断调用<code>next()</code>函数实现的，例如：</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">72</span><span class="p">]</span><span class="o">:</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span><span class="o">:</span>
+    <span class="p">...</span><span class="o">:</span>     <span class="n">pass</span>
+    <span class="p">...</span><span class="o">:</span>
+</pre></div>
+
+
+<p>实际上完全等价于：</p>
+<div class="hlcode"><pre><span class="cp"># 首先获得Iterator对象:</span>
+<span class="n">it</span> <span class="o">=</span> <span class="n">iter</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="cp"># 循环:</span>
+<span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+    <span class="nl">try:</span>
+        <span class="err">#</span> <span class="err">获得下一个值</span><span class="o">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+    <span class="n">except</span> <span class="n">StopIteration</span><span class="o">:</span>
+        <span class="err">#</span> <span class="err">遇到</span><span class="n">StopIteration</span><span class="err">就退出循环</span>
+        <span class="k">break</span>
+</pre></div>
+
+
+<p>如range(Python3)， readlines(Python3)就是迭代器</p>
+<p>文件操作，就是用的迭代器</p>
+<div class="hlcode"><pre><span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">f</span><span class="o">:</span>
+    <span class="n">pass</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

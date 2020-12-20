@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>copy - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;copy
+    <span class="updated">Page Updated&nbsp;
+      2018-08-15 10:46
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">copy</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#copy">copy 模块</a><ul>
+<li><a href="#shallow-copy">浅拷贝(shallow copy)</a></li>
+<li><a href="#deep-copy">深拷贝(deep copy)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="copy">copy 模块</h1>
+<h2 id="shallow-copy">浅拷贝(shallow copy)</h2>
+<p>指重新分配一块内存，创建一个新的对象，里面的元素是原对象中子对象的引用。因此，如果原对象中的元素不可变，那倒无所谓;但如果元素可变，浅拷贝通常会带来一些副作用，尤其需要注意</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">)]</span>                                                                      
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="o">:</span> <span class="n">l2</span> <span class="o">=</span> <span class="n">list</span><span class="p">(</span><span class="n">l1</span><span class="p">)</span>                                                                                
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]</span><span class="o">:</span> <span class="n">l1</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>                                                                               
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">:</span> <span class="n">l1</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">append</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>                                                                              
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="n">l1</span>                                                                                           
+<span class="n">Out</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span> <span class="mi">100</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">:</span> <span class="n">l2</span>                                                                                           
+<span class="n">Out</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">)]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">:</span> <span class="n">l1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>                                                                            
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">18</span><span class="p">]</span><span class="o">:</span> <span class="n">l1</span>                                                                                           
+<span class="n">Out</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span><span class="o">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <span class="mi">100</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="n">l2</span>                                                                                           
+<span class="n">Out</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">)]</span>
+</pre></div>
+
+
+<blockquote>
+<p>l1.append(100)，表示对l1的列表新增元素100。这个操作不会对l2产生任何影响，因为l2和l1作为整体是两个不同的对象，并不共享内存地址。操作过后l2不变，l1会发生改变</p>
+<p>l1[0].append(3)，这里表示对l1中的第一个列表新增元素3。因为l2是l1的浅拷贝，l2中的第一个元素和l1中的第一个元素，共同指向同一个列表，因此l2中的第一个列表也会相对应的新增元素3。操作后l1和l2都会改变</p>
+<p>l1[1] += (50, 60)，因为元组是不可变的，这里表示对l1中的第二个元组拼接，然后重新创建了一个新元组作为l1中的第二个元素，而l2中没有引用新元组，因此l2并不受影响。操作后l2不变，l1发生改变</p>
+</blockquote>
+<h2 id="deep-copy">深拷贝(deep copy)</h2>
+<p>指重新分配一块内存，创建一个新的对象，并且将原对象中的元素，以递归的方式，通过创建新的子对象拷贝到新对象中。因此，新对象和原对象没有任何关联。</p>
+<div class="hlcode"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">import</span> <span class="n">copy</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">origin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
+<span class="cp">#origin 里边有三个元素：1， 2，[3, 4]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cop1</span> <span class="o">=</span> <span class="n">copy</span><span class="p">.</span><span class="n">copy</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cop2</span> <span class="o">=</span> <span class="n">copy</span><span class="p">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cop1</span> <span class="o">==</span> <span class="n">cop2</span>
+<span class="n">True</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cop1</span> <span class="n">is</span> <span class="n">cop2</span>
+<span class="n">False</span> 
+<span class="cp">#cop1 和 cop2 看上去相同，但已不再是同一个object</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">origin</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;hey!&quot;</span> 
+<span class="o">&gt;&gt;&gt;</span> <span class="n">origin</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="err">&#39;</span><span class="n">hey</span><span class="o">!</span><span class="err">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cop1</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="err">&#39;</span><span class="n">hey</span><span class="o">!</span><span class="err">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cop2</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
+<span class="cp">#把origin内的子list [3, 4] 改掉了一个元素，观察 cop1 和 cop2</span>
+</pre></div>
+
+
+<p>不过，深度拷贝也不是完美的，往往也会带来一系列问题。如果被拷贝对象中存在指向自身的引用，那么程序很容易陷入无限循环</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="o">:</span> <span class="n">import</span> <span class="n">copy</span>                                                                                  
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">21</span><span class="p">]</span><span class="o">:</span> <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>                                                                                      
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">22</span><span class="p">]</span><span class="o">:</span> <span class="n">x</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>                                                                                  
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">23</span><span class="p">]</span><span class="o">:</span> <span class="n">x</span>                                                                                            
+<span class="n">Out</span><span class="p">[</span><span class="mi">23</span><span class="p">]</span><span class="o">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">[...]]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">24</span><span class="p">]</span><span class="o">:</span> <span class="n">y</span> <span class="o">=</span> <span class="n">copy</span><span class="p">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>                                                                                                                                                                     
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">25</span><span class="p">]</span><span class="o">:</span> <span class="n">y</span>                                                                                            
+<span class="n">Out</span><span class="p">[</span><span class="mi">25</span><span class="p">]</span><span class="o">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">[...]]</span>
+</pre></div>
+
+
+<blockquote>
+<p>深度拷贝函数deepcopy中会维护一个字典，记录已经拷贝的对象与其ID。拷贝过程中，如果字典里已经存储了将要拷贝的对象，则会从字典直接返回， 因此并没有出现stack overflow 的情况</p>
+</blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

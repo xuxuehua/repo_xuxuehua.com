@@ -10,6 +10,10 @@ date: 2020-05-20 15:37
 
 # Snowflake
 
+Snowflake is an analytic data warehouse provided as software-as-a-service (SaaS). Snowflake provides a data warehouse that is faster, easier to use and far more flexible than traditional data warehouse offerings.
+
+
+
 
 
 ## Preparing data load
@@ -86,6 +90,33 @@ If the S3 bucket referenced by your external stage is in the same region as your
 
 
 
+
+
+# Privileges
+
+
+
+## other roles
+
+Enabling Account Usage for Other Roles
+By default, the SNOWFLAKE database is available only to the ACCOUNTADMIN role.
+To enable other roles to access the database and schemas, and query the views, a user with the ACCOUNTADMIN role must grant the following data sharing privilege to the desired roles:
+
+IMPORTED PRIVILEGES
+
+```
+use role accountadmin;
+
+grant imported privileges on database snowflake to role sysadmin;
+grant imported privileges on database snowflake to role customrole1;
+
+use role customrole1;
+
+select * from snowflake.account_usage.databases;
+```
+
+
+
 # terminology
 
 
@@ -150,15 +181,41 @@ The system administrator (SYSADMIN) role includes the privileges to create wareh
 
 # Snowflake Architecture 
 
-![image-20200525143307565](snowflake.assets/image-20200525143307565.png)
+![image-20201207084439652](snowflake.assets/image-20201207084439652.png)
 
 services communicate through RESTful interfaces and fall into three architectural layers: 
 
-**Data Storage** This layer uses Amazon S3 to store table data and query results. 
+## Data Storage
 
-**Virtual Warehouses** The “muscle” of the system. This layer handles query execution within elastic clusters of virtual machines, called virtual warehouses. 
+When data is loaded into Snowflake, Snowflake reorganizes that data into its internal optimized, compressed, columnar format. Snowflake stores this optimized data using Amazon Web Service’s S3 (Simple Storage Service) cloud storage or Azure Blob Storage.
 
-**Cloud Services** The “brain” of the system. This layer is a collection of services that manage virtual warehouses, queries, transactions, and all the metadata that goes around that: database schemas, access control information, encryption keys, usage statistics and so forth.
+The data objects stored by Snowflake are not directly visible or accessible by customers; they are accessible only through SQL query operations run using Snowflake.
+
+
+
+
+
+## Query processing
+
+Query execution is performed in the processing layer. Snowflake processes queries using “virtual warehouses.” Each virtual warehouse is an MPP compute cluster composed of multiple compute nodes allocated by Snowflake from Amazon EC2 or Azure Virtual Machines.
+
+Each virtual warehouse is an independent compute cluster that does not share compute resources with other virtual warehouses. As a result, each virtual warehouse has no impact on the performance of other virtual warehouses.
+
+
+
+
+
+## Cloud Services 
+
+The cloud services layer is a collection of services that coordinate activities across Snowflake. These services tie together all of the different components of Snowflake in order to process user requests, from login to query dispatch. The cloud services layer also runs on compute instances provisioned by Snowflake. 
+
+Among the services in this layer: 
+
+* Authentication  
+* Infrastructure management 
+* Metadata management 
+* Query parsing and optimization 
+* Access control
 
 
 

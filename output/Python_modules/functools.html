@@ -1,0 +1,180 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>functools - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;functools
+    <span class="updated">Page Updated&nbsp;
+      2019-01-31 18:38
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">functools</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#partial">partial 偏函数</a><ul>
+<li><a href="#_1">本质</a></li>
+</ul>
+</li>
+<li><a href="#lru_cache">lru_cache</a></li>
+<li><a href="#ordereddict">OrderedDict</a><ul>
+<li><a href="#base64">实现base64</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="partial">partial 偏函数</h1>
+<p>把函数部分的参数固定下来，相当于部分的参数添加了一个固定的默认值，形成一个新的函数并返回</p>
+<p>从partial生成的新函数，是对原函数的封装</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+   <span class="o">...</span><span class="p">:</span>     <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+   <span class="o">...</span><span class="p">:</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">newadd</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">add</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">newadd</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="mi">12</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">newadd</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="mi">13</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">newadd</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="mi">16</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">inspect</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">newadd</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">Signature</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h2 id="_1">本质</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">def</span> <span class="n">partial</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span><span class="o">:</span>
+   <span class="p">...</span><span class="o">:</span>     <span class="n">def</span> <span class="n">newfunc</span><span class="p">(</span><span class="o">*</span><span class="n">fargs</span><span class="p">,</span> <span class="o">**</span><span class="n">fkeywords</span><span class="p">)</span><span class="o">:</span>
+   <span class="p">...</span><span class="o">:</span>         <span class="n">newkeywords</span> <span class="o">=</span> <span class="n">keywords</span><span class="p">.</span><span class="n">copy</span><span class="p">()</span>
+   <span class="p">...</span><span class="o">:</span>         <span class="n">newkeywords</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="n">fkeywords</span><span class="p">)</span>
+   <span class="p">...</span><span class="o">:</span>         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">args</span> <span class="o">+</span> <span class="n">fargs</span><span class="p">),</span> <span class="o">**</span><span class="n">newkeywords</span><span class="p">)</span>
+   <span class="p">...</span><span class="o">:</span>     <span class="n">newfunc</span><span class="p">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+   <span class="p">...</span><span class="o">:</span>     <span class="n">newfunc</span><span class="p">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+   <span class="p">...</span><span class="o">:</span>     <span class="n">newfunc</span><span class="p">.</span><span class="n">keywords</span> <span class="o">=</span> <span class="n">keywords</span>
+   <span class="p">...</span><span class="o">:</span>     <span class="k">return</span> <span class="n">newfunc</span>
+   <span class="p">...</span><span class="o">:</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="n">def</span> <span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">:</span>
+    <span class="p">...</span><span class="o">:</span>     <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+    <span class="p">...</span><span class="o">:</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="n">foo</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">add</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="o">:</span> <span class="n">foo</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="o">:</span> <span class="mi">9</span>
+</pre></div>
+
+
+<h1 id="lru_cache">lru_cache</h1>
+<p>Python<strong>自带的缓存</strong></p>
+<p>实现于 functool 模块中的 lru_cache 装饰器。</p>
+<div class="hlcode"><pre><span class="err">@</span><span class="n">functools</span><span class="p">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">None</span><span class="p">,</span> <span class="n">typed</span><span class="o">=</span><span class="n">False</span><span class="p">)</span> 
+</pre></div>
+
+
+<blockquote>
+<ul>
+<li>maxsize：最多可以缓存多少个此函数的调用结果，如果为None，则无限制，设置为 2 的幂时，性能最佳</li>
+<li>typed：若为 True，则不同参数类型的调用将分别缓存。</li>
+</ul>
+</blockquote>
+<ul>
+<li>斐波那契数列</li>
+</ul>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">import</span> <span class="n">timeit</span>  
+   <span class="p">...</span><span class="o">:</span>   
+   <span class="p">...</span><span class="o">:</span> <span class="n">def</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">:</span>  
+   <span class="p">...</span><span class="o">:</span>     <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="o">:</span>  
+   <span class="p">...</span><span class="o">:</span>         <span class="k">return</span> <span class="n">n</span>  
+   <span class="p">...</span><span class="o">:</span>     <span class="k">return</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  
+   <span class="p">...</span><span class="o">:</span>   
+   <span class="p">...</span><span class="o">:</span>   
+   <span class="p">...</span><span class="o">:</span>   
+   <span class="p">...</span><span class="o">:</span> <span class="n">print</span><span class="p">(</span><span class="n">timeit</span><span class="p">.</span><span class="n">timeit</span><span class="p">(</span><span class="n">lambda</span> <span class="o">:</span><span class="n">fib</span><span class="p">(</span><span class="mi">40</span><span class="p">),</span> <span class="n">number</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>                                                                                                                              
+<span class="mf">37.009518885000034</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span>                                                                                                                                                                             
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="n">import</span> <span class="n">timeit</span>  
+    <span class="p">...</span><span class="o">:</span> <span class="n">from</span> <span class="n">functools</span> <span class="n">import</span> <span class="n">lru_cache</span>  
+    <span class="p">...</span><span class="o">:</span>   
+    <span class="p">...</span><span class="o">:</span> <span class="err">@</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">None</span><span class="p">)</span>  
+    <span class="p">...</span><span class="o">:</span> <span class="n">def</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">:</span>  
+    <span class="p">...</span><span class="o">:</span>     <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="o">:</span>  
+    <span class="p">...</span><span class="o">:</span>         <span class="k">return</span> <span class="n">n</span>  
+    <span class="p">...</span><span class="o">:</span>     <span class="k">return</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  
+    <span class="p">...</span><span class="o">:</span>   
+    <span class="p">...</span><span class="o">:</span> <span class="n">print</span><span class="p">(</span><span class="n">timeit</span><span class="p">.</span><span class="n">timeit</span><span class="p">(</span><span class="n">lambda</span> <span class="o">:</span><span class="n">fib</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span> <span class="n">number</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>                                                                                                                            <span class="mf">0.000514715000463184</span>
+</pre></div>
+
+
+<h1 id="ordereddict">OrderedDict</h1>
+<h2 id="base64">实现base64</h2>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">collections</span> <span class="n">import</span> <span class="n">OrderedDict</span>
+
+<span class="n">base_tbl</span> <span class="o">=</span> <span class="n">b</span><span class="s">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&quot;</span>
+<span class="n">alphabet</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">zip</span><span class="p">(</span><span class="n">base_tbl</span><span class="p">,</span> <span class="n">range</span><span class="p">(</span><span class="mi">64</span><span class="p">)))</span>
+
+<span class="n">def</span> <span class="n">base64decode</span><span class="p">(</span><span class="n">src</span><span class="o">:</span><span class="n">bytes</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">bytearray</span><span class="p">()</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">len</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+
+    <span class="n">step</span> <span class="o">=</span> <span class="mi">4</span> <span class="err">#</span> <span class="err">对齐，每次取</span><span class="mi">4</span><span class="err">个</span>
+    <span class="k">for</span> <span class="n">offset</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="mh">0x00</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="n">src</span><span class="p">[</span><span class="n">offset</span><span class="o">:</span><span class="n">offset</span> <span class="o">+</span> <span class="n">step</span><span class="p">]</span>
+
+        <span class="err">#</span> <span class="err">开始移位计算</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">alphabet</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="n">is</span> <span class="n">not</span> <span class="n">None</span><span class="o">:</span>
+                <span class="n">tmp</span> <span class="o">+=</span> <span class="n">index</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="o">*</span><span class="mi">6</span> 
+
+        <span class="n">ret</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tmp</span><span class="p">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">big</span><span class="err">&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">bytes</span><span class="p">(</span><span class="n">ret</span><span class="p">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">b</span><span class="sc">&#39;\x00&#39;</span><span class="p">))</span>
+
+<span class="n">txt</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">TWFu</span><span class="err">&#39;</span>
+
+<span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span><span class="p">.</span><span class="n">encode</span><span class="p">()</span>
+<span class="n">print</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+
+<span class="n">print</span><span class="p">(</span><span class="n">base64decode</span><span class="p">(</span><span class="n">txt</span><span class="p">).</span><span class="n">decode</span><span class="p">())</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">b</span><span class="err">&#39;</span><span class="n">TWFu</span><span class="err">&#39;</span>
+<span class="n">Man</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

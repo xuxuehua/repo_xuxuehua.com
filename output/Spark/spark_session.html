@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>spark_session - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Spark">Spark</a>&nbsp;&#187;&nbsp;spark_session
+    <span class="updated">Page Updated&nbsp;
+      2020-07-18 16:04
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">spark_session</div>
+
+  <p>[toc]</p>
+<h1 id="sparksession">SparkSession</h1>
+<p>Spark程序的入口是Driver中的SparkContext。与Spark 1.x相比，在Spark 2.0中，有一个变化是用SparkSession统一了与用户交互的接口，曾经熟悉的SparkContext、SqlContext、HiveContext都是SparkSession的成员变量，这样更加简洁。SparkContext的作用是连接用户编写的代码与运行作业调度和任务分发的代码</p>
+<h2 id="_1">初始化</h2>
+<div class="hlcode"><pre>        <span class="n">val</span> <span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span>
+        <span class="p">.</span><span class="n">builder</span>
+        <span class="p">.</span><span class="n">master</span><span class="p">(</span><span class="s">&quot;yarn-client&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">&quot;spark.reducer.maxSizeInFlight&quot;</span><span class="p">,</span> <span class="s">&quot;128M&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">appName</span><span class="p">(</span><span class="s">&quot;your_app_name&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

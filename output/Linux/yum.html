@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>yum - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux">Linux</a>&nbsp;&#187;&nbsp;yum
+    <span class="updated">Page Updated&nbsp;
+      2020-02-27 16:48
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">yum</div>
+
+  <p>[toc]</p>
+<h1 id="yum">Yum</h1>
+<h2 id="clean">clean 清理缓存</h2>
+<h2 id="check-update">check-update</h2>
+<p>检查是否有可用的更新</p>
+<h2 id="deplist">deplist 依赖</h2>
+<p>显示yum 软件包的所有依赖</p>
+<h2 id="makecache">makecache</h2>
+<h1 id="local-repo">local repo</h1>
+<div class="hlcode"><pre><span class="n">mkdir</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">iso</span>
+<span class="cp">## CentOS-7-x86_64-DVD-1611.iso 所在 home/hadoop01 目录下</span>
+<span class="n">mount</span> <span class="o">-</span><span class="n">o</span> <span class="n">loop</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">hadoop01</span><span class="o">/</span><span class="n">CentOS</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">DVD</span><span class="o">-</span><span class="mf">1611.</span><span class="n">iso</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">iso</span>
+</pre></div>
+
+
+<p>Local.repo</p>
+<div class="hlcode"><pre><span class="k">[base]</span>
+<span class="na">name</span><span class="o">=</span><span class="s">CentOS-Local</span>
+<span class="na">baseurl</span><span class="o">=</span><span class="s">file:///var/iso</span>
+<span class="na">gpgcheck</span><span class="o">=</span><span class="s">1</span>
+<span class="na">enabled</span><span class="o">=</span><span class="s">1   #很重要，1才启用</span>
+<span class="na">gpgkey</span><span class="o">=</span><span class="s">file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7</span>
+</pre></div>
+
+
+<p>Remote.repo</p>
+<div class="hlcode"><pre><span class="k">[base]</span>
+<span class="na">name</span><span class="o">=</span><span class="s">CentOS-Local</span>
+<span class="na">baseurl</span><span class="o">=</span><span class="s">http://192.168.81.61/CentOS-7</span>
+<span class="na">gpgcheck</span><span class="o">=</span><span class="s">1</span>
+<span class="na">gpgkey</span><span class="o">=</span><span class="s">file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">yum</span> <span class="n">clean</span> <span class="n">all</span>
+<span class="n">yum</span> <span class="n">repolist</span>
+<span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">httpd</span>
+</pre></div>
+
+
+<h2 id="createrepo-repo">createrepo 管理配置repo</h2>
+<p>This software bundles several <strong>.rpm</strong> files together into a <strong>repomd</strong> repository.</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">yum</span> <span class="n">install</span> <span class="n">createrepo</span>
+<span class="n">sudo</span> <span class="n">yum</span> <span class="n">install</span> <span class="n">yum</span><span class="o">-</span><span class="n">utils</span>
+</pre></div>
+
+
+<p>create a directory for an HTTP repository using:</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">mkdir</span> <span class="err">–</span><span class="n">p</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">repos</span><span class="o">/</span><span class="p">{</span><span class="n">base</span><span class="p">,</span><span class="n">centosplus</span><span class="p">,</span><span class="n">extras</span><span class="p">,</span><span class="n">updates</span><span class="p">}</span>
+</pre></div>
+
+
+<p>Alternaticreate an FTP directory by typing the following:</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">mkdir</span> <span class="err">–</span><span class="n">p</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">ftp</span><span class="o">/</span><span class="n">repos</span>
+</pre></div>
+
+
+<p>Download a local copy of the official <strong>CentOS repositories</strong> to your server. This allows systems on the same network to install updates more efficiently.</p>
+<p>To download the repositories, use the commands:</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">reposync</span> <span class="o">-</span><span class="n">g</span> <span class="o">-</span><span class="n">l</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">m</span> <span class="o">--</span><span class="n">repoid</span><span class="o">=</span><span class="n">base</span> <span class="o">--</span><span class="n">newest</span><span class="o">-</span><span class="n">only</span> <span class="o">--</span><span class="n">download</span><span class="o">-</span><span class="n">metadata</span> <span class="o">--</span><span class="n">download_path</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">repos</span><span class="o">/</span>
+<span class="n">sudo</span> <span class="n">reposync</span> <span class="o">-</span><span class="n">g</span> <span class="o">-</span><span class="n">l</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">m</span> <span class="o">--</span><span class="n">repoid</span><span class="o">=</span><span class="n">centosplus</span> <span class="o">--</span><span class="n">newest</span><span class="o">-</span><span class="n">only</span> <span class="o">--</span><span class="n">download</span><span class="o">-</span><span class="n">metadata</span> <span class="o">--</span><span class="n">download_path</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">repos</span><span class="o">/</span>
+<span class="n">sudo</span> <span class="n">reposync</span> <span class="o">-</span><span class="n">g</span> <span class="o">-</span><span class="n">l</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">m</span> <span class="o">--</span><span class="n">repoid</span><span class="o">=</span><span class="n">extras</span> <span class="o">--</span><span class="n">newest</span><span class="o">-</span><span class="n">only</span> <span class="o">--</span><span class="n">download</span><span class="o">-</span><span class="n">metadata</span> <span class="o">--</span><span class="n">download_path</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">repos</span><span class="o">/</span>
+<span class="n">sudo</span> <span class="n">reposync</span> <span class="o">-</span><span class="n">g</span> <span class="o">-</span><span class="n">l</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">m</span> <span class="o">--</span><span class="n">repoid</span><span class="o">=</span><span class="n">updates</span> <span class="o">--</span><span class="n">newest</span><span class="o">-</span><span class="n">only</span> <span class="o">--</span><span class="n">download</span><span class="o">-</span><span class="n">metadata</span> <span class="o">--</span><span class="n">download_path</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">repos</span><span class="o">/</span>
+</pre></div>
+
+
+<p>The system should reach out and download copies of the official repositories.</p>
+<p>In the previous commands, the options are as follows:</p>
+<ul>
+<li><strong>–g</strong> – lets you <a href="https://phoenixnap.com/kb/centos-uninstall-remove-package">remove or uninstall packages on CentOS</a> that fail a GPG check</li>
+<li><strong>–l</strong> – yum plugin support</li>
+<li><strong>–d</strong> – lets you delete local packages that no longer exist in the repository</li>
+<li><strong>–m</strong> – lets you download comps.xml files, useful for bundling groups of packages by function</li>
+<li><strong>––repoid</strong> – specify repository ID</li>
+<li><strong>––newest-only</strong> – only download the latest package version, helps manage the size of the repository</li>
+<li><strong>––download-metadata</strong> – download non-default metadata</li>
+<li><strong>––download-path</strong> – specifies the location to save the packages</li>
+</ul>
+<p>use the <strong>createrepo utility</strong> to create a repository.</p>
+<p>To create the repository for HTTP use the command:</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">createrepo</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span>
+</pre></div>
+
+
+<h2 id="sync-repo-data">sync repo data</h2>
+<div class="hlcode"><pre><span class="cp"># local linux with public network</span>
+<span class="n">yum</span> <span class="n">install</span> <span class="n">yum</span><span class="o">-</span><span class="n">plugin</span><span class="o">-</span><span class="n">downloadonly</span> <span class="n">yum</span><span class="o">-</span><span class="n">utils</span> <span class="n">createrepo</span>
+<span class="n">PKG</span><span class="o">=</span><span class="n">nginx</span> <span class="err">#</span> <span class="n">NAME</span> <span class="n">OF</span> <span class="n">THE</span> <span class="n">PACKAGE</span> <span class="n">TO</span> <span class="n">INSTALL</span> <span class="n">ON</span> <span class="n">OFFLINE</span> <span class="n">MACHINE</span>
+<span class="n">yum</span> <span class="n">install</span> <span class="o">--</span><span class="n">downloadonly</span> <span class="o">--</span><span class="n">installroot</span><span class="o">=/</span><span class="n">tmp</span><span class="o">/</span><span class="err">$</span><span class="n">PKG</span><span class="o">-</span><span class="n">installroot</span> <span class="o">--</span><span class="n">releasever</span><span class="o">=</span><span class="mi">7</span> <span class="o">--</span><span class="n">downloaddir</span><span class="o">=/</span><span class="n">tmp</span><span class="o">/</span><span class="err">$</span><span class="n">PKG</span> <span class="err">$</span><span class="n">PKG</span>
+
+<span class="n">cp</span> <span class="o">-</span><span class="n">R</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">nginx</span><span class="o">*</span> <span class="n">leftServer</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">MiWiFi</span><span class="o">-</span><span class="n">R4A</span><span class="o">-</span><span class="n">srv</span> <span class="n">nginx</span><span class="o">-</span><span class="n">installroot</span><span class="p">]</span><span class="err">#</span> <span class="n">tree</span>
+
+
+<span class="cp"># leftServer</span>
+<span class="n">yum</span> <span class="n">clean</span> <span class="n">all</span>
+<span class="n">cp</span> <span class="n">nginx</span><span class="p">.</span><span class="n">rpm</span> 
+<span class="n">cp</span> <span class="n">above</span> <span class="n">to</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">centos7</span>
+<span class="n">createrepo</span> <span class="o">--</span><span class="n">database</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">centos7</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

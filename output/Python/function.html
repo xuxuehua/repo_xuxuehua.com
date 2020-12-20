@@ -1,0 +1,764 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>function - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python">Python</a>&nbsp;&#187;&nbsp;function
+    <span class="updated">Page Updated&nbsp;
+      2018-08-20 01:18
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">function</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">函数</a><ul>
+<li><a href="#_2">函数设计</a></li>
+<li><a href="#_3">变量作用域</a><ul>
+<li><a href="#_4">全局与局部变量</a></li>
+<li><a href="#_5">避免使用全局变量</a></li>
+</ul>
+</li>
+<li><a href="#_6">函数参数</a><ul>
+<li><a href="#_7">位置参数</a></li>
+<li><a href="#_8">关键字参数</a></li>
+<li><a href="#_9">位置，关键字参数混合使用</a></li>
+<li><a href="#_10">默认参数</a></li>
+<li><a href="#_11">可变参数 (可变位置参数)</a></li>
+<li><a href="#_12">关键字参数 (可变关键字参数)</a></li>
+<li><a href="#_13">可变参数和关键字参数混合使用</a></li>
+<li><a href="#_14">可变参数和非可变参数</a></li>
+<li><a href="#_15">参数解包</a><ul>
+<li><a href="#_16">位置参数解包</a></li>
+<li><a href="#_17">关键字参数解包</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_18">闭包</a><ul>
+<li><a href="#nonlocal">nonlocal</a></li>
+</ul>
+</li>
+<li><a href="#_19">函数调用和参数传递</a><ul>
+<li><a href="#_20">函数调用</a></li>
+<li><a href="#_21">参数传递</a></li>
+</ul>
+</li>
+<li><a href="#return">return 返回值</a></li>
+<li><a href="#lambda">匿名函数 Lambda</a></li>
+<li><a href="#_22">函数递归 (少用)</a></li>
+<li><a href="#_23">函数式编程</a></li>
+<li><a href="#annotations">函数注解 annotations</a><ul>
+<li><a href="#inspect">inspect 模块</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_24">函数拆分 （优化）</a></li>
+</ul>
+</div>
+<h1 id="_1">函数</h1>
+<p>函数是组织好的，可重复使用，实现单一功能的代码段<br />
+函数有输入（参数）和输出（返回值）<br />
+Python中，函数是一等对象</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">fn</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">pass</span>
+</pre></div>
+
+
+<h2 id="_2">函数设计</h2>
+<p>函数设计尽量短小，避免长函数导致翻滚屏幕去寻找某个变量</p>
+<p>嵌套层次不宜过深，控制在三层以内</p>
+<p>参数个数不宜太多，调用者需要花时间了解每个参数的意思</p>
+<p>一个函数只做一件事，尽量保证抽象层级的一致性</p>
+<h2 id="_3">变量作用域</h2>
+<h3 id="_4">全局与局部变量</h3>
+<p>在子程序中定义的变量称为局部变量，在程序的一开始定义的变量称为全局变量。</p>
+<p>全局变量作用域是整个程序，局部变量作用域是定义该变量的子程序。</p>
+<p>当全局变量与局部变量同名时：</p>
+<p>在定义局部变量的子程序内，局部变量起作用；在其它地方全局变量起作用。</p>
+<div class="hlcode"><pre><span class="n">a</span> <span class="o">=</span> <span class="mi">100</span>        <span class="c">#全局变量</span>
+<span class="k">def</span> <span class="nf">setNum</span><span class="p">():</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span>     <span class="c">#局部变量</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>   <span class="c">#打印局部变量</span>
+
+<span class="n">setNum</span><span class="p">()</span>       <span class="c">#调用函数</span>
+<span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>       <span class="c">#打印全局变量</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">def</span> <span class="n">grandpa</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">grandpa</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">def</span> <span class="n">dad</span><span class="p">()</span><span class="o">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">father</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">def</span> <span class="n">son</span><span class="p">()</span><span class="o">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span>
+            <span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">son</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">son</span><span class="p">()</span>
+    <span class="n">dad</span><span class="p">()</span>
+<span class="n">grandpa</span><span class="p">()</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">grandpa</span> <span class="mi">1</span>
+<span class="n">father</span> <span class="mi">2</span>
+<span class="n">son</span> <span class="mi">3</span>
+</pre></div>
+
+
+<h3 id="_5">避免使用全局变量</h3>
+<p>在实际开发中，我们应该尽量减少对全局变量的使用，因为全局变量的作用域和影响过于广泛，可能会发生意料之外的修改和使用，除此之外全局变量比局部变量拥有更长的生命周期，可能导致对象占用的内存长时间无法被<a href="https://zh.wikipedia.org/wiki/垃圾回收_(計算機科學)">垃圾回收</a>。事实上，减少对全局变量的使用，也是降低代码之间耦合度的一个重要举措，同时也是对<a href="https://zh.wikipedia.org/zh-hans/得墨忒耳定律">迪米特法则</a>的践行。减少全局变量的使用就意味着我们应该尽量让变量的作用域在函数的内部，但是如果我们希望将一个局部变量的生命周期延长，使其在函数调用结束后依然可以访问，这时候就需要使用<a href="https://zh.wikipedia.org/wiki/闭包_(计算机科学)">闭包</a>，</p>
+<h2 id="_6">函数参数</h2>
+<p>非默认非可变参数，可变位置参数，可变关键字参数<br />
+默认参数不要和可变参数放在一起</p>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">7</span>
+</pre></div>
+
+
+<p>参数引用 (在函数体内赋值，不会影响外部变量)</p>
+<div class="hlcode"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="k">def</span> <span class="nf">swap</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span>
+
+<span class="n">swap</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">1</span> <span class="mi">2</span>
+</pre></div>
+
+
+<p>直传递</p>
+<div class="hlcode"><pre><span class="n">L</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="n">L</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+<span class="n">append</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+</pre></div>
+
+
+<h3 id="_7">位置参数</h3>
+<p>位置参数，通过参数传递的位置来决定</p>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;x = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;y = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="mi">3</span>
+</pre></div>
+
+
+<h3 id="_8">关键字参数</h3>
+<p>关键字参数，通过参数名称来决定</p>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;x = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;y = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="mi">3</span>
+</pre></div>
+
+
+<h3 id="_9">位置，关键字参数混合使用</h3>
+<p>位置参数和关键字参数是在调用的时候决定的</p>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;x = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;y = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="mi">3</span>
+</pre></div>
+
+
+<p>关键字参数必须在位置参数之后</p>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;x = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;y = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span>
+  <span class="n">File</span> <span class="s">&quot;/Users/xhxu/python/python3/test/1.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">6</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+                  <span class="o">^</span>
+<span class="ne">SyntaxError</span><span class="p">:</span> <span class="n">positional</span> <span class="n">argument</span> <span class="n">follows</span> <span class="n">keyword</span> <span class="n">argument</span>
+</pre></div>
+
+
+<h3 id="_10">默认参数</h3>
+<p>如果参数赋予了默认值，且该参数最终没有被传递，将使用该默认值</p>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">inc</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">i</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">inc</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">inc</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">6</span>
+<span class="mi">7</span>
+</pre></div>
+
+
+<h3 id="_11">可变参数 (可变位置参数)</h3>
+<p>函数定义时，参数名前加*代表次参数是可变的位置参数<br />
+函数调用是，参数列表封装成一个元组传递给args</p>
+<p>使用列表的调用方法</p>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">sum</span><span class="p">(</span><span class="n">L</span><span class="p">):</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">L</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">+=</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+<span class="k">print</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]))</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">15</span>
+</pre></div>
+
+
+<p>使用可变参数的调用方法 (调用参数的时候，自动组装成元组)</p>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">sum</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">+=</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+<span class="k">print</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">16</span>
+</pre></div>
+
+
+<h3 id="_12">关键字参数 (可变关键字参数)</h3>
+<p>使用可变关键字参数  (调用参数的时候，自动组装成字典)</p>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">print_info</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;{0} -&gt; {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">print_info</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">b</span> <span class="o">-&gt;</span> <span class="mi">2</span>
+<span class="n">a</span> <span class="o">-&gt;</span> <span class="mi">1</span>
+</pre></div>
+
+
+<p>调用的时候, 会决定参数是位置参数还是关键字参数</p>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">print_info</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;{0} -&gt; {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+
+<span class="n">print_info</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+  <span class="n">File</span> <span class="s">&quot;/Users/xhxu/python/python3/test/1.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">5</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="n">print_info</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="ne">TypeError</span><span class="p">:</span> <span class="n">print_info</span><span class="p">()</span> <span class="n">takes</span> <span class="mi">0</span> <span class="n">positional</span> <span class="n">arguments</span> <span class="n">but</span> <span class="mi">3</span> <span class="n">were</span> <span class="n">given</span>
+</pre></div>
+
+
+<h3 id="_13">可变参数和关键字参数混合使用</h3>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">print_info</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;{0} -&gt; {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+
+<span class="n">print_info</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">1</span>
+<span class="mi">2</span>
+<span class="mi">3</span>
+<span class="n">a</span> <span class="o">-&gt;</span> <span class="mi">4</span>
+<span class="n">b</span> <span class="o">-&gt;</span> <span class="mi">5</span>
+</pre></div>
+
+
+<h3 id="_14">可变参数和非可变参数</h3>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">print_info</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;x = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;y = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;{0} -&gt; {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+
+<span class="n">print_info</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="mi">3</span>
+<span class="mi">4</span>
+<span class="mi">5</span>
+<span class="mi">6</span>
+<span class="n">b</span> <span class="o">-&gt;</span> <span class="mi">8</span>
+<span class="n">a</span> <span class="o">-&gt;</span> <span class="mi">7</span>
+</pre></div>
+
+
+<h3 id="_15">参数解包</h3>
+<h4 id="_16">位置参数解包</h4>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;x = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;y = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="n">L</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="o">*</span><span class="n">L</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="mi">3</span>
+</pre></div>
+
+
+<h4 id="_17">关键字参数解包</h4>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;x = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;y = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="k">print</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="mi">3</span>
+</pre></div>
+
+
+<h2 id="_18">闭包</h2>
+<p>推荐在框架，包，类库中推荐使用闭包，闭包常常和装饰器(decorator)一起使用</p>
+<p>所谓的闭包就是一个包含有环境变量取值的函数对象。环境变量取值被保存在函数对象的<code>__closure__</code>属性中</p>
+<p>即内层函数引用到了外层函数的自由变量，就形成了闭包</p>
+<p>函数是一个对象，所以可以作为某个函数的返回结果</p>
+<p>可以根据参数生成不同的返回函数</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">curve_pre</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">25</span>
+    <span class="n">def</span> <span class="n">curve</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">x</span>
+    <span class="k">return</span> <span class="n">curve</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">curve_pre</span><span class="p">()</span>
+<span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">__closure__</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">__closure__</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">cell_contents</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">(</span><span class="o">&lt;</span><span class="n">cell</span> <span class="n">at</span> <span class="mh">0x10b60c468</span><span class="o">:</span> <span class="kt">int</span> <span class="n">object</span> <span class="n">at</span> <span class="mh">0x10b2e4210</span><span class="o">&gt;</span><span class="p">,)</span>
+<span class="mi">25</span>
+<span class="mi">100</span>
+</pre></div>
+
+
+<p><code>__closure__</code>包含一个元组，而第一个cell包含的就是闭包的环境变量b的取值</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">line_conf</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">def</span> <span class="n">line</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="n">b</span>  <span class="err">#这里只是调用</span><span class="n">b</span><span class="err">，不是重新定义</span><span class="n">b</span>
+    <span class="k">return</span> <span class="n">line</span>
+
+<span class="n">b</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">my_line</span> <span class="o">=</span> <span class="n">line_conf</span><span class="p">()</span>
+<span class="n">print</span><span class="p">(</span><span class="n">my_line</span><span class="p">.</span><span class="n">__closure__</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">my_line</span><span class="p">.</span><span class="n">__closure__</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">cell_contents</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">(</span><span class="o">&lt;</span><span class="n">cell</span> <span class="n">at</span> <span class="mh">0x10dfd2fd8</span><span class="o">:</span> <span class="kt">int</span> <span class="n">object</span> <span class="n">at</span> <span class="mh">0x10dce7830</span><span class="o">&gt;</span><span class="p">,)</span>
+<span class="mi">15</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="nx">def</span> <span class="nx">f1</span><span class="p">()</span><span class="o">:</span>
+    <span class="nx">a</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="nx">def</span> <span class="nx">f2</span><span class="p">()</span><span class="o">:</span>
+        <span class="nx">a</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="k">return</span> <span class="nx">f2</span>
+
+<span class="nx">f</span> <span class="o">=</span> <span class="nx">f1</span><span class="p">()</span>
+<span class="nx">print</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span>
+<span class="nx">print</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">__closure__</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="o">&lt;</span><span class="kd">function</span> <span class="nx">f1</span> <span class="nx">at</span> <span class="mh">0x1050937b8</span><span class="o">&gt;</span>
+<span class="nx">None</span>
+</pre></div>
+
+
+<p>函数line 与环境变量a, b 构成闭包</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">line_conf</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">def</span> <span class="n">line</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="n">x</span><span class="o">+</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="n">line</span>
+
+<span class="n">line1</span> <span class="o">=</span> <span class="n">line_conf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">line2</span> <span class="o">=</span> <span class="n">line_conf</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">line1</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">line2</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">6</span> <span class="mi">25</span>
+</pre></div>
+
+
+<h3 id="nonlocal">nonlocal</h3>
+<p>nonlocal 关键字，将变量标记为不在本地作用域定义，而在上面某一级局部作用域中定义，但不是在全局作用域中定义</p>
+<p>对于嵌套函数来说，内部函数可以访问外部函数定义的变量，但是无法修改，若要修改，必须加上nonlocal这个关键字</p>
+<p>如果不加上nonlocal这个关键字，而内部函数的变量又和外部函数变量同名，那么同样的，内部函数变量会覆盖外部函数的变量。</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">183</span><span class="p">]</span><span class="o">:</span> <span class="n">def</span> <span class="n">counter</span><span class="p">()</span><span class="o">:</span>
+     <span class="p">...</span><span class="o">:</span>     <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+     <span class="p">...</span><span class="o">:</span>     <span class="n">def</span> <span class="n">inc</span><span class="p">()</span><span class="o">:</span>
+     <span class="p">...</span><span class="o">:</span>         <span class="n">nonlocal</span> <span class="n">count</span> <span class="err">#</span> <span class="err">没有</span><span class="n">nonlocal</span><span class="err">会报错</span>
+     <span class="p">...</span><span class="o">:</span>         <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+     <span class="p">...</span><span class="o">:</span>         <span class="k">return</span> <span class="n">count</span>
+     <span class="p">...</span><span class="o">:</span>     <span class="k">return</span> <span class="n">inc</span>
+     <span class="p">...</span><span class="o">:</span>
+     <span class="p">...</span><span class="o">:</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">184</span><span class="p">]</span><span class="o">:</span> <span class="n">foo</span> <span class="o">=</span> <span class="n">counter</span><span class="p">()</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">185</span><span class="p">]</span><span class="o">:</span> <span class="n">foo</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">185</span><span class="p">]</span><span class="o">:</span> <span class="mi">1</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">186</span><span class="p">]</span><span class="o">:</span> <span class="n">foo</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">186</span><span class="p">]</span><span class="o">:</span> <span class="mi">2</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">187</span><span class="p">]</span><span class="o">:</span> <span class="n">foo</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">187</span><span class="p">]</span><span class="o">:</span> <span class="mi">3</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">origin</span> <span class="o">=</span> <span class="mi">0</span> 
+
+<span class="n">def</span> <span class="n">factory</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">def</span> <span class="n">go</span><span class="p">(</span><span class="n">step</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">nonlocal</span> <span class="n">pos</span>
+        <span class="n">new_pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">step</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">new_pos</span>
+        <span class="k">return</span> <span class="n">new_pos</span>
+    <span class="k">return</span> <span class="n">go</span>
+
+<span class="n">tourist</span> <span class="o">=</span> <span class="n">factory</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">tourist</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">tourist</span><span class="p">.</span><span class="n">__closure__</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">cell_contents</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">tourist</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">tourist</span><span class="p">.</span><span class="n">__closure__</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">cell_contents</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">tourist</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">tourist</span><span class="p">.</span><span class="n">__closure__</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">cell_contents</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">2</span>
+<span class="mi">2</span>
+<span class="mi">5</span>
+<span class="mi">5</span>
+<span class="mi">10</span>
+<span class="mi">10</span>
+</pre></div>
+
+
+<h2 id="_19">函数调用和参数传递</h2>
+<h3 id="_20">函数调用</h3>
+<p>整数变量传递给函数<br />
+对于基本数据类型的变量，变量传递给函数后，函数会在内存中复制一个新的变量，从而不影响原来的变量。（我们称此为值传递）</p>
+<div class="hlcode"><pre><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">def</span> <span class="n">change_integer</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">a</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">a</span>
+
+<span class="n">print</span><span class="p">(</span><span class="n">change_integer</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">2</span>
+<span class="mi">1</span>
+</pre></div>
+
+
+<h3 id="_21">参数传递</h3>
+<p>表传递给函数<br />
+对于表来说，表传递给函数的是一个指针，指针指向序列在内存中的位置，在函数中对表的操作将在原有内存中进行，从而影响原有变量。 （我们称此为指针传递）</p>
+<div class="hlcode"><pre><span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">def</span> <span class="n">change_list</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">b</span>
+
+<span class="n">print</span><span class="p">(</span><span class="n">change_list</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</pre></div>
+
+
+<p>函数的参数传递，本质上传递的就是引用</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">100</span>
+<span class="mi">1</span>
+</pre></div>
+
+
+<p>如果传递的是可变(mutable)对象，那么改变函数参数，有可能改变原对象</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="return">return 返回值</h2>
+<p>函数在执行过程中只要遇到return语句，就会停止执行并返回结果</p>
+<p>如果未在函数中指定return,那这个函数的返回值为None </p>
+<p>多个return只执行第一个语句</p>
+<p>return = 0, 返回None</p>
+<p>return = 1, 返回object</p>
+<p>return &gt; 1, 返回tuple</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">test1</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">pass</span>
+
+
+<span class="n">def</span> <span class="n">test2</span><span class="p">()</span><span class="o">:</span>
+    <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="n">def</span> <span class="n">test3</span><span class="p">()</span><span class="o">:</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">hello</span><span class="err">&#39;</span>
+
+<span class="n">def</span> <span class="n">test4</span><span class="p">()</span><span class="o">:</span>
+    <span class="k">return</span> 
+
+<span class="n">t1</span> <span class="o">=</span> <span class="n">test1</span><span class="p">()</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">test2</span><span class="p">()</span>
+<span class="n">t3</span> <span class="o">=</span> <span class="n">test3</span><span class="p">()</span>
+<span class="n">t4</span> <span class="o">=</span> <span class="n">test4</span><span class="p">()</span>
+
+<span class="n">print</span><span class="p">(</span><span class="n">type</span><span class="p">(</span><span class="n">t1</span><span class="p">),</span> <span class="n">t1</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">type</span><span class="p">(</span><span class="n">t2</span><span class="p">),</span> <span class="n">t2</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">type</span><span class="p">(</span><span class="n">t3</span><span class="p">),</span> <span class="n">t3</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">type</span><span class="p">(</span><span class="n">t4</span><span class="p">),</span> <span class="n">t4</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="o">&lt;</span><span class="n">class</span> <span class="err">&#39;</span><span class="n">NoneType</span><span class="err">&#39;</span><span class="o">&gt;</span> <span class="n">None</span>
+<span class="o">&lt;</span><span class="n">class</span> <span class="err">&#39;</span><span class="kt">int</span><span class="err">&#39;</span><span class="o">&gt;</span> <span class="mi">0</span>
+<span class="o">&lt;</span><span class="n">class</span> <span class="err">&#39;</span><span class="n">tuple</span><span class="err">&#39;</span><span class="o">&gt;</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">hello</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">class</span> <span class="err">&#39;</span><span class="n">NoneType</span><span class="err">&#39;</span><span class="o">&gt;</span> <span class="n">None</span>
+</pre></div>
+
+
+<h2 id="lambda">匿名函数 Lambda</h2>
+<p>匿名函数就是不需要显式的指定函数</p>
+<p>冒号用于分割参数列表和表达式</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">calc</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">return</span> <span class="n">n</span><span class="o">**</span><span class="n">n</span>
+<span class="n">print</span><span class="p">(</span><span class="n">calc</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+
+
+<p>换成匿名函数</p>
+<div class="hlcode"><pre><span class="n">calc</span> <span class="o">=</span> <span class="n">lambda</span> <span class="n">n</span><span class="o">:</span><span class="n">n</span><span class="o">**</span><span class="n">n</span>
+<span class="n">print</span><span class="p">(</span><span class="n">calc</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+
+
+<p>匿名函数主要是和其它函数搭配使用</p>
+<div class="hlcode"><pre><span class="n">res</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">lambda</span> <span class="n">x</span><span class="o">:</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">res</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">1</span>
+<span class="mi">25</span>
+<span class="mi">49</span>
+<span class="mi">16</span>
+<span class="mi">64</span>
+</pre></div>
+
+
+<h2 id="_22">函数递归 (少用)</h2>
+<p>在函数内部，可以调用其他函数。如果一个函数在内部调用自身本身，这个函数就是递归函数。</p>
+<p>递归函数深度越深，效率越低，若递归函数复杂，反复压栈，栈内存很快就溢出了</p>
+<p>递归函数必须明确结束条件</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">calc</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">if</span> <span class="kt">int</span><span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span><span class="mi">0</span><span class="o">:</span>
+        <span class="k">return</span> <span class="n">n</span>
+    <span class="k">return</span> <span class="n">calc</span><span class="p">(</span><span class="kt">int</span><span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="n">calc</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">10</span>
+<span class="mi">5</span>
+<span class="mi">2</span>
+<span class="mi">1</span>
+</pre></div>
+
+
+<h2 id="_23">函数式编程</h2>
+<p>函数式编程要求使用函数，可以把运算过程定义为不同的函数</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">result</span> <span class="o">=</span> <span class="n">subtract</span><span class="p">(</span><span class="n">multiply</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="annotations">函数注解 annotations</h2>
+<p>Python 3.5 引入</p>
+<p>对函数的参数进行类型注解</p>
+<p>对函数的返回值进行类型注解</p>
+<p>对函数做辅助说明，并不对函数参数进行类型检查</p>
+<p>默认保存在<code>__annotations__</code> 属性中</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">def</span> <span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="kt">int</span><span class="p">,</span> <span class="n">y</span><span class="o">:</span><span class="kt">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">int</span><span class="o">:</span>
+   <span class="p">...</span><span class="o">:</span>     <span class="s">&quot;&quot;&quot;</span>
+   <span class="p">...</span><span class="o">:</span>     <span class="o">:</span><span class="n">param</span> <span class="n">x</span><span class="o">:</span><span class="kt">int</span>
+   <span class="p">...</span><span class="o">:</span>     <span class="o">:</span><span class="n">param</span> <span class="n">y</span><span class="o">:</span><span class="kt">int</span>
+   <span class="p">...</span><span class="o">:</span>     <span class="o">:</span><span class="k">return</span><span class="o">:</span><span class="kt">int</span>
+   <span class="p">...</span><span class="o">:</span>     <span class="s">&quot;&quot;&quot;</span>
+   <span class="p">...</span><span class="o">:</span>     <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+   <span class="p">...</span><span class="o">:</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="n">help</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="n">add</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Rick</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Xu</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">RickXu</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="o">:</span> <span class="n">add</span><span class="p">.</span><span class="n">__annotations__</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="o">:</span> <span class="p">{</span><span class="err">&#39;</span><span class="k">return</span><span class="err">&#39;</span><span class="o">:</span> <span class="kt">int</span><span class="p">,</span> <span class="sc">&#39;x&#39;</span><span class="o">:</span> <span class="kt">int</span><span class="p">,</span> <span class="sc">&#39;y&#39;</span><span class="o">:</span> <span class="kt">int</span><span class="p">}</span>
+</pre></div>
+
+
+<h3 id="inspect">inspect 模块</h3>
+<p>对函数进行检测</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">:</span> <span class="n">import</span> <span class="n">inspect</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="n">def</span> <span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="kt">int</span><span class="p">,</span> <span class="n">y</span><span class="o">:</span><span class="kt">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">int</span><span class="o">:</span>
+    <span class="p">...</span><span class="o">:</span>     <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+    <span class="p">...</span><span class="o">:</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">:</span> <span class="n">sign</span> <span class="o">=</span> <span class="n">inspect</span><span class="p">.</span><span class="n">signature</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">:</span> <span class="n">type</span><span class="p">(</span><span class="n">sign</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">:</span> <span class="n">inspect</span><span class="p">.</span><span class="n">Signature</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">18</span><span class="p">]</span><span class="o">:</span> <span class="n">sign</span><span class="p">.</span><span class="n">parameters</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span><span class="o">:</span>
+<span class="n">mappingproxy</span><span class="p">({</span><span class="err">&#39;</span><span class="n">args</span><span class="err">&#39;</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">Parameter</span> <span class="s">&quot;*args&quot;</span><span class="o">&gt;</span><span class="p">,</span>
+              <span class="err">&#39;</span><span class="n">kwargs</span><span class="err">&#39;</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">Parameter</span> <span class="s">&quot;**kwargs&quot;</span><span class="o">&gt;</span><span class="p">,</span>
+              <span class="sc">&#39;x&#39;</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">Parameter</span> <span class="s">&quot;x:int&quot;</span><span class="o">&gt;</span><span class="p">,</span>
+              <span class="sc">&#39;y&#39;</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">Parameter</span> <span class="s">&quot;y:int&quot;</span><span class="o">&gt;</span><span class="p">})</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="n">sign</span><span class="p">.</span><span class="n">return_annotation</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="kt">int</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="o">:</span> <span class="n">sign</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sc">&#39;x&#39;</span><span class="p">],</span> <span class="n">type</span><span class="p">(</span><span class="n">sign</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sc">&#39;x&#39;</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="o">:</span> <span class="p">(</span><span class="o">&lt;</span><span class="n">Parameter</span> <span class="s">&quot;x:int&quot;</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">inspect</span><span class="p">.</span><span class="n">Parameter</span><span class="p">)</span>
+</pre></div>
+
+
+<h1 id="_24">函数拆分 （优化）</h1>
+<p>二分搜索举例。</p>
+<p>给定一个非递减整数数组，和一个 target，要求你找到数组中最小的一个数 x，可以满足 <code>x*x &gt; target</code>。一旦不存在，则返回 -1。</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">solve</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">l</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="o">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="c1">// 2</span>
+        <span class="k">if</span> <span class="n">arr</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">*</span> <span class="n">arr</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">target</span><span class="o">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">m</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="nl">else:</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="o">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="nl">else:</span>
+        <span class="k">return</span> <span class="n">arr</span><span class="p">[</span><span class="n">ret</span><span class="p">]</span>
+
+
+<span class="n">print</span><span class="p">(</span><span class="n">solve</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">solve</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="mi">9</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">solve</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">solve</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="mi">40</span><span class="p">))</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">comp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">target</span>
+
+
+<span class="n">def</span> <span class="n">binary_search</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">l</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">while</span> <span class="n">l</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="o">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="c1">// 2</span>
+        <span class="k">if</span> <span class="n">comp</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">target</span><span class="p">)</span><span class="o">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">m</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="nl">else:</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+
+<span class="n">def</span> <span class="n">solve</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">id</span> <span class="o">=</span> <span class="n">binary_search</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">id</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="o">:</span>
+        <span class="k">return</span> <span class="n">arr</span><span class="p">[</span><span class="n">id</span><span class="p">]</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+
+<span class="n">print</span><span class="p">(</span><span class="n">solve</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">solve</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="mi">9</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">solve</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">solve</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="mi">40</span><span class="p">))</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

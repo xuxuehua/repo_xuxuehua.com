@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>reflection 反射 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java">Java</a>&nbsp;&#187;&nbsp;reflection 反射
+    <span class="updated">Page Updated&nbsp;
+      2019-10-25 07:24
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">reflection 反射</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#reflection">Reflection</a><ul>
+<li><a href="#_1">原理</a></li>
+<li><a href="#_2">获取实例</a></li>
+<li><a href="#instanceof">子类比较 instanceof</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="reflection">Reflection</h1>
+<p>反射就是Reflection，Java的反射是指程序在运行期可以拿到一个对象的所有信息。</p>
+<p>反射是为了解决在运行期，对某个实例一无所知的情况下，如何调用其方法</p>
+<h2 id="_1">原理</h2>
+<p>除了<code>int</code>等基本类型外，Java的其他类型全部都是<code>class</code>（包括<code>interface</code>）。例如：</p>
+<ul>
+<li><code>String</code></li>
+<li><code>Object</code></li>
+<li><code>Runnable</code></li>
+<li><code>Exception</code></li>
+</ul>
+<p>可以得出结论：<code>class</code>（包括<code>interface</code>）的本质是数据类型（<code>Type</code>）。无继承关系的数据类型无法赋值：</p>
+<div class="hlcode"><pre><span class="n">Number</span> <span class="n">n</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Double</span><span class="p">(</span><span class="mf">123.456</span><span class="p">);</span> <span class="c1">// OK</span>
+<span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Double</span><span class="p">(</span><span class="mf">123.456</span><span class="p">);</span> <span class="c1">// compile error!</span>
+</pre></div>
+
+
+<p>而<code>class</code>是由JVM在执行过程中动态加载的。JVM在第一次读取到一种<code>class</code>类型时，将其加载进内存。</p>
+<p>每加载一种<code>class</code>，JVM就为其创建一个<code>Class</code>类型的实例，并关联起来。注意：这里的<code>Class</code>类型是一个名叫<code>Class</code>的<code>class</code>。它长这样：</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">final</span> <span class="n">class</span> <span class="n">Class</span> <span class="p">{</span>
+    <span class="n">private</span> <span class="n">Class</span><span class="p">()</span> <span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>以<code>String</code>类为例，当JVM加载<code>String</code>类时，它首先读取<code>String.class</code>文件到内存，然后，为<code>String</code>类创建一个<code>Class</code>实例并关联起来：</p>
+<div class="hlcode"><pre><span class="n">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Class</span><span class="p">(</span><span class="n">String</span><span class="p">);</span>
+</pre></div>
+
+
+<p>这个<code>Class</code>实例是JVM内部创建的，如果我们查看JDK源码，可以发现<code>Class</code>类的构造方法是<code>private</code>，只有JVM能创建<code>Class</code>实例，我们自己的Java程序是无法创建<code>Class</code>实例的。</p>
+<p>所以，JVM持有的每个<code>Class</code>实例都指向一个数据类型（<code>class</code>或<code>interface</code>）：</p>
+<div class="hlcode"><pre><span class="err">┌───────────────────────────┐</span>
+<span class="err">│</span>      <span class="n">Class</span> <span class="n">Instance</span>       <span class="err">│──────</span><span class="o">&gt;</span> <span class="n">String</span>
+<span class="err">├───────────────────────────┤</span>
+<span class="err">│</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;java.lang.String&quot;</span>  <span class="err">│</span>
+<span class="err">└───────────────────────────┘</span>
+<span class="err">┌───────────────────────────┐</span>
+<span class="err">│</span>      <span class="n">Class</span> <span class="n">Instance</span>       <span class="err">│──────</span><span class="o">&gt;</span> <span class="n">Random</span>
+<span class="err">├───────────────────────────┤</span>
+<span class="err">│</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;java.util.Random&quot;</span>  <span class="err">│</span>
+<span class="err">└───────────────────────────┘</span>
+<span class="err">┌───────────────────────────┐</span>
+<span class="err">│</span>      <span class="n">Class</span> <span class="n">Instance</span>       <span class="err">│──────</span><span class="o">&gt;</span> <span class="n">Runnable</span>
+<span class="err">├───────────────────────────┤</span>
+<span class="err">│</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;java.lang.Runnable&quot;</span><span class="err">│</span>
+<span class="err">└───────────────────────────┘</span>
+</pre></div>
+
+
+<p>一个<code>Class</code>实例包含了该<code>class</code>的所有完整信息：</p>
+<div class="hlcode"><pre><span class="err">┌───────────────────────────┐</span>
+<span class="err">│</span>      <span class="n">Class</span> <span class="n">Instance</span>       <span class="err">│──────</span><span class="o">&gt;</span> <span class="n">String</span>
+<span class="err">├───────────────────────────┤</span>
+<span class="err">│</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;java.lang.String&quot;</span>  <span class="err">│</span>
+<span class="err">├───────────────────────────┤</span>
+<span class="err">│</span><span class="n">package</span> <span class="o">=</span> <span class="s">&quot;java.lang&quot;</span>      <span class="err">│</span>
+<span class="err">├───────────────────────────┤</span>
+<span class="err">│</span><span class="n">super</span> <span class="o">=</span> <span class="s">&quot;java.lang.Object&quot;</span> <span class="err">│</span>
+<span class="err">├───────────────────────────┤</span>
+<span class="err">│</span><span class="n">interface</span> <span class="o">=</span> <span class="n">CharSequence</span><span class="p">...</span><span class="err">│</span>
+<span class="err">├───────────────────────────┤</span>
+<span class="err">│</span><span class="n">field</span> <span class="o">=</span> <span class="n">value</span><span class="p">[],</span><span class="n">hash</span><span class="p">,...</span>   <span class="err">│</span>
+<span class="err">├───────────────────────────┤</span>
+<span class="err">│</span><span class="n">method</span> <span class="o">=</span> <span class="n">indexOf</span><span class="p">()...</span>      <span class="err">│</span>
+<span class="err">└───────────────────────────┘</span>
+</pre></div>
+
+
+<p>由于JVM为每个加载的<code>class</code>创建了对应的<code>Class</code>实例，并在实例中保存了该<code>class</code>的所有信息，包括类名、包名、父类、实现的接口、所有方法、字段等，因此，如果获取了某个<code>Class</code>实例，我们就可以通过这个<code>Class</code>实例获取到该实例对应的<code>class</code>的所有信息。</p>
+<p>这种通过<code>Class</code>实例获取<code>class</code>信息的方法称为反射（Reflection）。</p>
+<h2 id="_2">获取实例</h2>
+<p>方法一：直接通过一个<code>class</code>的静态变量<code>class</code>获取：</p>
+<div class="hlcode"><pre><span class="n">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="n">String</span><span class="p">.</span><span class="n">class</span><span class="p">;</span>
+</pre></div>
+
+
+<p>方法二：如果我们有一个实例变量，可以通过该实例变量提供的<code>getClass()</code>方法获取：</p>
+<div class="hlcode"><pre><span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;Hello&quot;</span><span class="p">;</span>
+<span class="n">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">getClass</span><span class="p">();</span>
+</pre></div>
+
+
+<p>方法三：如果知道一个<code>class</code>的完整类名，可以通过静态方法<code>Class.forName()</code>获取：</p>
+<div class="hlcode"><pre><span class="n">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="n">Class</span><span class="p">.</span><span class="n">forName</span><span class="p">(</span><span class="s">&quot;java.lang.String&quot;</span><span class="p">);</span>
+</pre></div>
+
+
+<h2 id="instanceof">子类比较 instanceof</h2>
+<p><code>Class</code>实例比较和<code>instanceof</code>的差别：</p>
+<div class="hlcode"><pre><span class="n">Integer</span> <span class="n">n</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Integer</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span>
+
+<span class="n">boolean</span> <span class="n">b3</span> <span class="o">=</span> <span class="n">n</span> <span class="n">instanceof</span> <span class="n">Integer</span><span class="p">;</span> <span class="c1">// true</span>
+<span class="n">boolean</span> <span class="n">b4</span> <span class="o">=</span> <span class="n">n</span> <span class="n">instanceof</span> <span class="n">Number</span><span class="p">;</span> <span class="c1">// true</span>
+
+<span class="n">boolean</span> <span class="n">b1</span> <span class="o">=</span> <span class="n">n</span><span class="p">.</span><span class="n">getClass</span><span class="p">()</span> <span class="o">==</span> <span class="n">Integer</span><span class="p">.</span><span class="n">class</span><span class="p">;</span> <span class="c1">// true</span>
+<span class="n">boolean</span> <span class="n">b2</span> <span class="o">=</span> <span class="n">n</span><span class="p">.</span><span class="n">getClass</span><span class="p">()</span> <span class="o">==</span> <span class="n">Number</span><span class="p">.</span><span class="n">class</span><span class="p">;</span> <span class="c1">// false</span>
+</pre></div>
+
+
+<p>用<code>instanceof</code>不但匹配当前类型，还匹配当前类型的子类。而用<code>==</code>判断<code>class</code>实例可以精确地判断数据类型，但不能作子类型比较。</p>
+<p>通常情况下，我们应该用<code>instanceof</code>判断数据类型，因为面向抽象编程的时候，我们不关心具体的子类型。只有在需要精确判断一个类型是不是某个<code>class</code>的时候，我们才使用<code>==</code>判断<code>class</code>实例</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

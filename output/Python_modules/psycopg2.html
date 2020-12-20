@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>psycopg2 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;psycopg2
+    <span class="updated">Page Updated&nbsp;
+      2020-09-16 01:13
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">psycopg2</div>
+
+  <p>[toc]</p>
+<h1 id="psycopg2">psycopg2</h1>
+<h2 id="installation">installation</h2>
+<div class="hlcode"><pre><span class="n">pip</span> <span class="n">install</span> <span class="n">psycopg2</span><span class="o">-</span><span class="n">binary</span>
+</pre></div>
+
+
+<h1 id="hello-world">Hello World</h1>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">psycopg2</span>
+
+
+<span class="n">def</span> <span class="n">make_connection</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">database</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span>
+        <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span>
+        <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+        <span class="n">database</span><span class="o">=</span><span class="n">database</span>
+    <span class="p">)</span>
+    <span class="n">conn</span><span class="p">.</span><span class="n">autocommit</span> <span class="o">=</span> <span class="n">True</span>
+    <span class="k">return</span> <span class="n">conn</span>
+
+<span class="n">user</span><span class="o">=</span><span class="err">&#39;</span><span class="n">postgres</span><span class="err">&#39;</span>
+<span class="n">password</span><span class="o">=</span><span class="err">&#39;</span><span class="n">abc123</span><span class="err">&#39;</span>
+<span class="n">host</span><span class="o">=</span><span class="err">&#39;</span><span class="mf">127.0.0.1</span><span class="err">&#39;</span>
+<span class="n">port</span><span class="o">=</span><span class="mi">55433</span>
+<span class="n">database</span><span class="o">=</span><span class="err">&#39;</span><span class="n">postgres</span><span class="err">&#39;</span>
+
+<span class="n">connection</span> <span class="o">=</span> <span class="n">make_connection</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="n">database</span><span class="p">)</span>
+<span class="n">cursor</span> <span class="o">=</span> <span class="n">connection</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+
+<span class="n">cursor</span><span class="p">.</span><span class="n">execute</span><span class="p">()</span>
+<span class="n">cursor</span><span class="p">.</span><span class="n">fetchall</span><span class="p">()</span>
+</pre></div>
+
+
+<h1 id="cursor">cursor</h1>
+<h2 id="mogrify">.mogrify</h2>
+<p>for multiple insert into</p>
+<div class="hlcode"><pre><span class="n">data</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)]</span>
+<span class="n">args_str</span> <span class="o">=</span> <span class="sc">&#39;,&#39;</span><span class="p">.</span><span class="n">join</span><span class="p">([</span><span class="err">&#39;</span><span class="o">%</span><span class="n">s</span><span class="err">&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+<span class="n">sql</span> <span class="o">=</span> <span class="s">&quot;insert into t (a, b) values {}&quot;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="n">args_str</span><span class="p">)</span>
+
+<span class="n">print</span><span class="p">(</span><span class="n">cursor</span><span class="p">.</span><span class="n">mogrify</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">data</span><span class="p">).</span><span class="n">decode</span><span class="p">(</span><span class="err">&#39;</span><span class="n">utf8</span><span class="err">&#39;</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">insert</span> <span class="n">into</span> <span class="n">t</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="n">values</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">data</span> <span class="o">=</span> <span class="p">[(</span><span class="err">&#39;</span><span class="n">new_type_string1</span><span class="err">&#39;</span><span class="p">,</span> <span class="p">),</span> <span class="p">(</span><span class="err">&#39;</span><span class="n">new_type_string2</span><span class="err">&#39;</span><span class="p">,</span> <span class="p">)]</span>
+<span class="n">args_str</span> <span class="o">=</span> <span class="sc">&#39;,&#39;</span><span class="p">.</span><span class="n">join</span><span class="p">([</span><span class="err">&#39;</span><span class="o">%</span><span class="n">s</span><span class="err">&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+<span class="n">sql</span> <span class="o">=</span> <span class="s">&quot;insert into app4 () values {}&quot;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="n">args_str</span><span class="p">)</span>
+<span class="n">print</span> <span class="p">(</span><span class="n">cursor</span><span class="p">.</span><span class="n">mogrify</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">data</span><span class="p">).</span><span class="n">decode</span><span class="p">(</span><span class="err">&#39;</span><span class="n">utf8</span><span class="err">&#39;</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">insert</span> <span class="n">into</span> <span class="n">app4</span> <span class="p">()</span> <span class="n">values</span> <span class="p">(</span><span class="err">&#39;</span><span class="n">new_type_string1</span><span class="err">&#39;</span><span class="p">),(</span><span class="err">&#39;</span><span class="n">new_type_string2</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

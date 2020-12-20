@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>spark_conf - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Spark">Spark</a>&nbsp;&#187;&nbsp;spark_conf
+    <span class="updated">Page Updated&nbsp;
+      2020-07-12 19:31
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">spark_conf</div>
+
+  <p>[toc]</p>
+<h1 id="sparkconf">SparkConf</h1>
+<p>对 Spark 进行性能调优，通常就是修改 Spark 应用的运行时配置选项。Spark 中最主要的配 置机制是通过 SparkConf 类对 Spark 进行配置</p>
+<h2 id="sparkdrivermemory">spark.driver.memory</h2>
+<h2 id="sparkdrivercores">spark.driver.cores</h2>
+<h2 id="sparkdrivermemoryoverhead">spark.driver.memoryOverhead</h2>
+<h2 id="sparkexecutormemory">spark.executor.memory</h2>
+<p>为每个执行器进程分配的内存，格式与 JVM 内存字符串 格式一样(例如 512m，2g)</p>
+<h2 id="sparkexecutorcores">spark.executor.cores</h2>
+<p>限制应用使用的核心个数的配置项。在 YARN 模式下， spark.executor.cores 会为每个任务分配指定数目的核心</p>
+<h2 id="sparkexecutormemoryoverhead">spark.executor.memoryOverhead</h2>
+<h2 id="sparksqlshufflepartitions">spark.sql.shuffle.partitions</h2>
+<h2 id="sparkdefaultparallelism">spark.default.parallelism</h2>
+<h2 id="sparkjarspackages">spark.jars.packages</h2>
+<h2 id="sparkjarsrepositories">spark.jars.repositories</h2>
+<h2 id="sparkyarndistfiles">spark.yarn.dist.files</h2>
+<h2 id="sparkjars">spark.jars</h2>
+<h2 id="sparksubmitpyfiles">spark.submit.pyFiles</h2>
+<h2 id="sparkserializer">spark.serializer</h2>
+<p>默认值为<code>org.apache.spark.serializer.JavaSerializer</code></p>
+<p>指定用来进行序列化的类库，包括通过网络传输数据或 缓存数据时的序列化。默认的 Java 序列化对于任何可 以被序列化的 Java 对象都适用，但是速度很慢。我们 推 荐 在 追 求 速 度 时 使 用 org.apache.spark.serializer. KryoSerializer 并且对 Kryo 进行适当的调优。该项可以 配置为任何 org.apache.spark.Serializer 的子类</p>
+<h2 id="sparksqlcatalogimplementation">spark.sql.catalogImplementation</h2>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

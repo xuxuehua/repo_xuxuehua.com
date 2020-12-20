@@ -1,0 +1,223 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>ecs - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Aws">Aws</a>&nbsp;&#187;&nbsp;ecs
+    <span class="updated">Page Updated&nbsp;
+      2019-06-25 11:32
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">ecs</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#elastic-container-service">Elastic Container Service</a><ul>
+<li><a href="#task">Task</a><ul>
+<li><a href="#life-cycle">Life Cycle</a></li>
+<li><a href="#scheduled-tasks">Scheduled Tasks</a></li>
+<li><a href="#create-a-task-through-cli">Create a task through cli</a></li>
+<li><a href="#memory-softhard-limit">Memory Soft/Hard limit</a></li>
+</ul>
+</li>
+<li><a href="#services-tasks">Services (管理Tasks)</a><ul>
+<li><a href="#launch-type">Launch Type</a></li>
+</ul>
+</li>
+<li><a href="#auto-scaling-groups">Auto Scaling Groups</a></li>
+<li><a href="#local-balancers">Local Balancers</a></li>
+<li><a href="#cluster">Cluster</a></li>
+</ul>
+</li>
+<li><a href="#task-placement-engine">Task Placement Engine</a></li>
+<li><a href="#ecs-agent">ecs-agent</a><ul>
+<li><a href="#installation">Installation</a></li>
+</ul>
+</li>
+<li><a href="#ecs-refarch-cloudformation">ecs-refarch-cloudformation</a></li>
+</ul>
+</div>
+<h1 id="elastic-container-service">Elastic Container Service</h1>
+<p><img alt="image-20200116014636543" src="image-20200116014636543.png" /></p>
+<h2 id="task">Task</h2>
+<p>Defines work to be done</p>
+<p>Defines everything about the environment where it runs</p>
+<p>Placed wherever resources are available</p>
+<p>Tasks are immutable, which cannot be changed</p>
+<p>Only copy operation can change a task</p>
+<h3 id="life-cycle">Life Cycle</h3>
+<p><img alt="image-20200313141302522" src="ecs.assets/image-20200313141302522.png" /></p>
+<h3 id="scheduled-tasks">Scheduled Tasks</h3>
+<p>Like a super cron</p>
+<p>Scheduled through CloudWatch</p>
+<p>Scheduled through other services</p>
+<p>Started by lambda tasks</p>
+<h3 id="create-a-task-through-cli">Create a task through cli</h3>
+<div class="hlcode"><pre><span class="p">{</span>
+  <span class="s2">&quot;containerDefinitions&quot;</span><span class="o">:</span> <span class="cp">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;hello-server&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="s2">&quot;nginx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cpu&quot;</span><span class="p">:</span> <span class="mi">384</span><span class="p">,</span>
+        <span class="s2">&quot;memory&quot;</span><span class="p">:</span> <span class="mi">384</span><span class="p">,</span>
+        <span class="s2">&quot;essential&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="s2">&quot;portMappings&quot;</span><span class="p">:</span> <span class="err">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;containerPort&quot;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>
+                <span class="s2">&quot;hostPort&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;tcp&quot;</span>
+            <span class="p">}</span>
+        <span class="cp">]</span>
+    <span class="p">}</span>
+  <span class="o">],</span>
+  <span class="s2">&quot;family&quot;</span><span class="o">:</span> <span class="s2">&quot;hello-server&quot;</span>
+<span class="err">}</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">$</span> <span class="nt">aws</span> <span class="nt">ecs</span> <span class="nt">register-task-definition</span> <span class="nt">--cli-input-json</span> <span class="nt">file</span><span class="o">://</span><span class="nt">basic-task</span><span class="nc">.json</span>  <span class="nt">--region</span> <span class="nt">us-east-1</span>
+<span class="p">{</span>
+    <span class="s2">&quot;taskDefinition&quot;</span><span class="o">:</span> <span class="err">{</span>
+        <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="s2">&quot;ACTIVE&quot;</span><span class="o">,</span>
+        <span class="s2">&quot;family&quot;</span><span class="o">:</span> <span class="s2">&quot;hello-server&quot;</span><span class="o">,</span>
+        <span class="s2">&quot;placementConstraints&quot;</span><span class="o">:</span> <span class="cp">[]</span><span class="o">,</span>
+        <span class="s2">&quot;compatibilities&quot;</span><span class="o">:</span> <span class="cp">[</span>
+            <span class="s2">&quot;EC2&quot;</span>
+        <span class="cp">]</span><span class="o">,</span>
+        <span class="s2">&quot;volumes&quot;</span><span class="o">:</span> <span class="cp">[]</span><span class="o">,</span>
+        <span class="s2">&quot;taskDefinitionArn&quot;</span><span class="o">:</span> <span class="s2">&quot;arn:aws:ecs:us-east-1:193160586263:task-definition/hello-server:1&quot;</span><span class="o">,</span>
+        <span class="s2">&quot;containerDefinitions&quot;</span><span class="o">:</span> <span class="cp">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="err">[</span><span class="cp">]</span><span class="o">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;hello-server&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;mountPoints&quot;</span><span class="o">:</span> <span class="cp">[]</span><span class="o">,</span>
+                <span class="s2">&quot;image&quot;</span><span class="o">:</span> <span class="s2">&quot;nginx&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;cpu&quot;</span><span class="o">:</span> <span class="m">384</span><span class="o">,</span>
+                <span class="s2">&quot;portMappings&quot;</span><span class="o">:</span> <span class="cp">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;tcp&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;containerPort&quot;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>
+                        <span class="s2">&quot;hostPort&quot;</span><span class="p">:</span> <span class="mi">0</span>
+                    <span class="p">}</span>
+                <span class="cp">]</span><span class="o">,</span>
+                <span class="s2">&quot;memory&quot;</span><span class="o">:</span> <span class="m">384</span><span class="o">,</span>
+                <span class="s2">&quot;essential&quot;</span><span class="o">:</span> <span class="n">true</span><span class="o">,</span>
+                <span class="s2">&quot;volumesFrom&quot;</span><span class="o">:</span> <span class="cp">[]</span>
+            <span class="p">}</span>
+        <span class="o">],</span>
+        <span class="s2">&quot;revision&quot;</span><span class="o">:</span> <span class="nt">1</span>
+    <span class="err">}</span>
+<span class="err">}</span>
+
+
+<span class="err">$</span> <span class="nt">aws</span> <span class="nt">ecs</span> <span class="nt">list-task-definitions</span> <span class="nt">--region</span> <span class="nt">us-east-1</span>
+<span class="p">{</span>
+    <span class="s2">&quot;taskDefinitionArns&quot;</span><span class="o">:</span> <span class="cp">[</span>
+        <span class="s2">&quot;arn:aws:ecs:us-east-1:193160586263:task-definition/hello-server:1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;arn:aws:ecs:us-east-1:193160586263:task-definition/my-data-server:1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;arn:aws:ecs:us-east-1:193160586263:task-definition/my-data-server:2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;arn:aws:ecs:us-east-1:193160586263:task-definition/my-data-server:3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;arn:aws:ecs:us-east-1:193160586263:task-definition/web-test:1&quot;</span>
+    <span class="cp">]</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="memory-softhard-limit">Memory Soft/Hard limit</h3>
+<p><strong>memoryReservation</strong> (a soft limit) and <strong>memory</strong> (a hard limit)</p>
+<p>若只配置soft， hard默认为集群物理内存的最大值</p>
+<p>By specifying only a hard memory limit for your tasks you avoid running out of memory because ECS stops placing tasks on the instance, and docker kills any containers that try to go over the hard limit.</p>
+<p>如果二者均配置 <strong>memory</strong>(hard) must be greater than <strong>memoryReservation</strong>(soft)</p>
+<p>If a task-level memory value is not specified, you must specify a non-zero integer for one or both of <code>memory</code> or <code>memoryReservation</code> in a container definition. </p>
+<p><strong>memory</strong> 即container实际使用的memory，超过会被kill</p>
+<p><strong>memoryReservation</strong> 当系统内存处于争用状态时，Docker 会尝试将容器内存保持在此软限制内</p>
+<p>如果指定 <strong>memoryReservation</strong>，则将从容器所在的容器实例的可用内存资源中减去该值。否则，将使用 <strong>memory</strong> 的值。</p>
+<p>The soft memory limit feature is designed for CPU bound applications where you want to reserve a small minimum of memory (the soft limit) but allow occasional bursts up to the hard limit.</p>
+<p>If you are CPU bound then you can use the soft memory limit with an optional hard limit just as a failsafe. If you are memory bound then you will need to use just the hard limit with no soft limit.</p>
+<p>if your container normally uses 128 MiB of memory, but occasionally bursts to 256 MiB of memory for short periods of time, you can set a <code>memoryReservation</code> of 128 MiB, and a <code>memory</code> hard limit of 300 MiB. This configuration would allow the container to only reserve 128 MiB of memory from the remaining resources on the container instance, but also allow the container to consume more memory resources when needed.</p>
+<h2 id="services-tasks">Services (管理Tasks)</h2>
+<p>Supervisors of tasks</p>
+<p>Keep a group of tasks running</p>
+<p>One task per service</p>
+<p>Publish statistics and keep history</p>
+<h3 id="launch-type">Launch Type</h3>
+<p>Fargate Launch Type</p>
+<p>The Fargate launch type allows you to run your containerized applications without the need to provision and manage the backend infrastructure. Just register your task definition and Fargate launches the container for you.</p>
+<p>EC2 Launch Type</p>
+<p>The EC2 launch type allows you to run your containerized applications on a cluster of Amazon EC2 instances that you manage.</p>
+<h2 id="auto-scaling-groups">Auto Scaling Groups</h2>
+<p>A service that starts instances for you</p>
+<p>Start identical copies from a template</p>
+<p>Tries to maintain the proper number of healthy instances</p>
+<p>There are usually controlled by another service called ASG</p>
+<p><img alt="image-20200313141648498" src="ecs.assets/image-20200313141648498.png" /></p>
+<h2 id="local-balancers">Local Balancers</h2>
+<p>ELBs</p>
+<p>Data dispatchers for internet-facing relays</p>
+<p>Use CloudWatch to monitor the load</p>
+<p>Send grow and shrink signals to ASGs</p>
+<h2 id="cluster">Cluster</h2>
+<p>Logical group of EC2 instances that you can place containers onto</p>
+<h1 id="task-placement-engine">Task Placement Engine</h1>
+<p>支持多种容器任务调度策略</p>
+<p><img alt="image-20200116014813291" src="image-20200116014813291.png" /></p>
+<p>Binpacking：最少资源利用（根据 CPU 或者内存）的实例会优先被放置， 这种策略会先将任务放到可用资源最少的实例上，减少了启动过多的实例， 提高了资源利用率。 </p>
+<p>Spread：根据某个特定值进行平衡放置，这个特定值可以是一个键值对， 也可以是 instanceId 或者 host。一般可使用这种策略实现跨 AZ 的任务放 置。 </p>
+<p>Affinity：组合条件的放置策略，比如两个符合条件的 task 不能同时放到某 个实例中，或者两个符合条件的 task 必须同时放到某个实例中。 </p>
+<p>Distinct Instance：将每项任务放置在不同的容器实例中。</p>
+<h1 id="ecs-agent">ecs-agent</h1>
+<p>The Amazon ECS Container Agent is a component of Amazon Elastic Container Service (<a href="http://aws.amazon.com/ecs/">Amazon ECS</a>) and is responsible for managing containers on behalf of Amazon ECS.</p>
+<p><a href="https://github.com/aws/amazon-ecs-agent">https://github.com/aws/amazon-ecs-agent</a></p>
+<p>Manages the state of containers on a single Ec2 instance</p>
+<p>How ECS communicates with the docker daemon on the EC2 instance</p>
+<p>Must be on every EC2 instance in your ECS Cluster</p>
+<p>Included with the ECS-OPTIMIZED AMI</p>
+<h2 id="installation">Installation</h2>
+<div class="hlcode"><pre><span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">ecs</span><span class="o">-</span><span class="n">init</span>
+<span class="n">service</span> <span class="n">docker</span> <span class="n">start</span>
+<span class="n">start</span> <span class="n">ecs</span>
+</pre></div>
+
+
+<p>watch agent logs</p>
+<div class="hlcode"><pre><span class="n">tail</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">ecs</span><span class="o">/</span><span class="n">ecs</span><span class="o">-</span><span class="n">agent</span><span class="p">.</span><span class="n">log</span><span class="mf">.2019</span><span class="o">-</span><span class="mo">06</span><span class="o">-</span><span class="mi">26</span><span class="o">-</span><span class="mo">02</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="cp"># docker ps</span>
+<span class="n">CONTAINER</span> <span class="n">ID</span>        <span class="n">IMAGE</span>                                                <span class="n">COMMAND</span>                  <span class="n">CREATED</span>             <span class="n">STATUS</span>              <span class="n">PORTS</span>                   <span class="n">NAMES</span>
+<span class="n">e227b57f9ade</span>        <span class="n">amazon</span><span class="o">/</span><span class="n">amazon</span><span class="o">-</span><span class="n">ecs</span><span class="o">-</span><span class="n">agent</span><span class="o">:</span><span class="n">latest</span>                       <span class="s">&quot;/agent&quot;</span>                 <span class="mi">4</span> <span class="n">minutes</span> <span class="n">ago</span>       <span class="n">Up</span> <span class="mi">4</span> <span class="n">minutes</span>                                <span class="n">ecs</span><span class="o">-</span><span class="n">agent</span>
+<span class="n">e05b4c8e247c</span>        <span class="mf">193160586263.</span><span class="n">dkr</span><span class="p">.</span><span class="n">ecr</span><span class="p">.</span><span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">nginx</span>   <span class="s">&quot;nginx -g &#39;daemon of…&quot;</span>   <span class="n">About</span> <span class="n">an</span> <span class="n">hour</span> <span class="n">ago</span>   <span class="n">Up</span> <span class="n">About</span> <span class="n">an</span> <span class="n">hour</span>    <span class="mf">0.0.0.0</span><span class="o">:</span><span class="mi">32768</span><span class="o">-&gt;</span><span class="mi">80</span><span class="o">/</span><span class="n">tcp</span>   <span class="n">ecs</span><span class="o">-</span><span class="n">web</span><span class="o">-</span><span class="n">test</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">web</span><span class="o">-</span><span class="n">test</span><span class="o">-</span><span class="mi">8</span><span class="n">c8ac4ec95d4d6af2400</span>
+</pre></div>
+
+
+<h1 id="ecs-refarch-cloudformation">ecs-refarch-cloudformation</h1>
+<p>A reference architecture for deploying containerized microservices with Amazon ECS and AWS CloudFormation (YAML)</p>
+<p><a href="https://github.com/aws-samples/ecs-refarch-cloudformation">https://github.com/aws-samples/ecs-refarch-cloudformation</a></p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

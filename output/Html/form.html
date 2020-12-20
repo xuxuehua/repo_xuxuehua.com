@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>form - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Html">Html</a>&nbsp;&#187;&nbsp;form
+    <span class="updated">Page Updated&nbsp;
+      2019-07-21 11:07
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">form</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#form">&lt;form&gt; 表单</a><ul>
+<li><a href="#input">&lt;input&gt; 表单输入</a><ul>
+<li><a href="#autofocus">autofocus 自动焦点</a></li>
+<li><a href="#_1"></a></li>
+<li><a href="#autocomplete">autocomplete 属性</a></li>
+<li><a href="#placeholder">placeholder 文本框提示</a></li>
+<li><a href="#required">required 验证</a></li>
+<li><a href="#multiple">multiple 多选</a></li>
+</ul>
+</li>
+<li><a href="#novalidate">novalidate 关闭验证</a></li>
+<li><a href="#type">type 类型</a></li>
+</ul>
+</li>
+<li><a href="#_2"></a><ul>
+<li><a href="#datalist">&lt;datalist&gt; 数据列表</a></li>
+<li><a href="#select">&lt;select&gt; 菜单和列表</a></li>
+<li><a href="#option">&lt;option&gt; 菜单和列表项目</a></li>
+<li><a href="#textarea">&lt;textarea&gt; 文字域</a></li>
+<li><a href="#optgroup">&lt;optgroup&gt; 菜单和项目分组</a></li>
+</ul>
+</li>
+<li><a href="#form_1">form 属性</a><ul>
+<li><a href="#method">method</a><ul>
+<li><a href="#post">post</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="form"><code>&lt;form&gt;</code> 表单</h1>
+<p>表单本身在html中不可见</p>
+<p>完整表单由表单控件，提示信息，表单域构成</p>
+<div class="hlcode"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;UTF-8&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content=</span><span class="s">&quot;width=device-width, initial-scale=1.0&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">&quot;X-UA-Compatible&quot;</span> <span class="na">content=</span><span class="s">&quot;ie=edge&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>form example<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">&quot;backend processing address&quot;</span> <span class="na">method=</span><span class="s">&quot;POST&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">name=</span><span class="s">&quot;text_name&quot;</span> <span class="na">value=</span><span class="s">&quot;123&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;button&quot;</span> <span class="na">value=</span><span class="s">&quot;add&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/form&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+
+
+<h2 id="input"><code>&lt;input&gt;</code> 表单输入</h2>
+<h3 id="autofocus">autofocus 自动焦点</h3>
+<p>在页面加载的时候，域自动获得焦点，即加载光标到输入框</p>
+<div class="hlcode"><pre><span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">&quot;&quot;</span> <span class="na">method=</span><span class="s">&quot;get&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="na">value=</span><span class="s">&quot;submit&quot;</span> <span class="err">autofocus</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+</pre></div>
+
+
+<h3 id="_1"></h3>
+<h3 id="autocomplete">autocomplete 属性</h3>
+<p>form或者input 域拥有自动完成功能</p>
+<p>浏览器会记录输入的内容</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">form</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="n">method</span><span class="o">=</span><span class="s">&quot;get&quot;</span> <span class="n">autocomplete</span><span class="o">=</span><span class="s">&quot;off&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h3 id="placeholder">placeholder 文本框提示</h3>
+<h3 id="required">required 验证</h3>
+<p>当前表单元素必须有验证</p>
+<h3 id="multiple">multiple 多选</h3>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;file&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;file&quot;</span> <span class="n">multiple</span><span class="o">=</span><span class="s">&quot;multiple&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h2 id="novalidate">novalidate 关闭验证</h2>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">form</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="n">method</span><span class="o">=</span><span class="s">&quot;get&quot;</span> <span class="n">autocomplete</span><span class="o">=</span><span class="s">&quot;off&quot;</span> <span class="n">novalidate</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>enctype:     application/x-www-form-urlencoded multipart/form-data text/plain</p>
+<h2 id="type">type 类型</h2>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;email&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;email&quot;</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;date&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;date&quot;</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;month&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;month&quot;</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;week&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;week&quot;</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;time&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;time&quot;</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;datetime&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;datetime&quot;</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;datetime-local&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;datetime-local&quot;</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;range&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;range&quot;</span> <span class="n">min</span><span class="o">=</span><span class="s">&quot;1&quot;</span> <span class="n">max</span><span class="o">=</span><span class="s">&quot;10&quot;</span><span class="o">&gt;</span> <span class="c1">//拖拉条</span>
+</pre></div>
+
+
+<p>type: text 文本框</p>
+<p>password 密码框</p>
+<p>radio 单选</p>
+<div class="hlcode"><pre><span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;radio&quot;</span> <span class="na">name=</span><span class="s">&quot;r&quot;</span> <span class="na">id=</span><span class="s">&quot;r1&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;r1&quot;</span><span class="nt">&gt;</span>r1<span class="nt">&lt;/label&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;radio&quot;</span> <span class="na">name=</span><span class="s">&quot;r&quot;</span> <span class="na">id=</span><span class="s">&quot;r2&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;r2&quot;</span><span class="nt">&gt;</span>r2<span class="nt">&lt;/label&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+</pre></div>
+
+
+<p>checkbox 复选 </p>
+<div class="hlcode"><pre>    <span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span> <span class="na">name=</span><span class="s">&quot;ckk_lq&quot;</span> <span class="na">value=</span><span class="s">&quot;1&quot;</span><span class="err">,</span> <span class="na">id=</span><span class="s">&quot;ck_lq_id&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;ch_lq_id&quot;</span><span class="nt">&gt;</span>myinfo1<span class="nt">&lt;/label&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span> <span class="na">name=</span><span class="s">&quot;ckk_lq&quot;</span> <span class="na">id=</span><span class="s">&quot;ck_zq_id&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;ch_zq_id&quot;</span><span class="nt">&gt;</span>myinfo2<span class="nt">&lt;/label&gt;</span>
+    <span class="nt">&lt;/form&gt;</span>
+</pre></div>
+
+
+<p>​    submit</p>
+<p>​    reset</p>
+<p>​    image 图像式提交按钮</p>
+<p>​    hidden 隐藏域</p>
+<p>​    file 文件域</p>
+<h1 id="_2"></h1>
+<h3 id="datalist"><code>&lt;datalist&gt;</code> 数据列表</h3>
+<p>标签需要有自己的id值，然后配合list属性来使用，才可以有数据列表的效果</p>
+<div class="hlcode"><pre><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;&quot;</span> <span class="na">name=</span><span class="s">&quot;txtList&quot;</span> <span class="na">list=</span><span class="s">&quot;url_list&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;datalist</span> <span class="na">id=</span><span class="s">&quot;url_list&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;https://www.xurick.com&quot;</span><span class="nt">&gt;</span>Xu Rick<span class="nt">&lt;/option&gt;</span>
+    <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;https://www.xuxuehua.com&quot;</span><span class="nt">&gt;</span>Xu Xuehua<span class="nt">&lt;/option&gt;</span>
+    <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;https://www.english.page&quot;</span><span class="nt">&gt;</span>English Page<span class="nt">&lt;/option&gt;</span>
+<span class="nt">&lt;/datalist&gt;</span>
+</pre></div>
+
+
+<h2 id="select"><code>&lt;select&gt;</code> 菜单和列表</h2>
+<h2 id="option"><code>&lt;option&gt;</code> 菜单和列表项目</h2>
+<h2 id="textarea"><code>&lt;textarea&gt;</code> 文字域</h2>
+<h2 id="optgroup"><code>&lt;optgroup&gt;</code> 菜单和项目分组</h2>
+<h1 id="form_1">form 属性</h1>
+<p>name： 控件名称,在没有method的情况下，会把对应的key value 传入到URL中</p>
+<p>value： input控件中默认文本值</p>
+<p>size： input控件在页面中显示宽度</p>
+<p>readonly：只读，不能修改</p>
+<p>disabled：显示控件为灰色</p>
+<p>checked：默认被选中项</p>
+<p>maxlength：控件允许的最多字符数</p>
+<p>action:  路径， #表示当前页面</p>
+<p>target： _blank, _self, _parent, _top</p>
+<h2 id="method">method</h2>
+<h3 id="post">post</h3>
+<p>用户输入的数据通过请求体进行传输，即Form Data</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

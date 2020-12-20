@@ -1,0 +1,495 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>operate_images - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Docker">Docker</a>&nbsp;&#187;&nbsp;operate_images
+    <span class="updated">Page Updated&nbsp;
+      2018-10-24 15:52
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">operate_images</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">操作镜像</a><ul>
+<li><a href="#image">image 列出镜像</a><ul>
+<li><a href="#_2">完成镜像名</a></li>
+<li><a href="#_3">显示虚悬镜像</a></li>
+<li><a href="#_4">中间层镜像</a></li>
+</ul>
+</li>
+<li><a href="#pull">pull 获取镜像</a></li>
+<li><a href="#-filter-f">--filter/-f 过滤</a></li>
+<li><a href="#-q">-q 特定格式显示</a></li>
+<li><a href="#_5">删除本地镜像</a><ul>
+<li><a href="#id">用 ID、镜像名、摘要删除镜像</a><ul>
+<li><a href="#centosrhel">CentOS/RHEL 的用户需要注意的事项</a></li>
+</ul>
+</li>
+<li><a href="#untagged-deleted">Untagged 和 Deleted</a></li>
+</ul>
+</li>
+<li><a href="#import">Import 导入镜像</a></li>
+</ul>
+</li>
+<li><a href="#_6">管理镜像</a><ul>
+<li><a href="#save">save 保存镜像到本地</a><ul>
+<li><a href="#-o-output">-o output 写入到文件</a></li>
+</ul>
+</li>
+<li><a href="#load">load 加载本地镜像</a><ul>
+<li><a href="#-i-input-tar">-i --input 读取tar文件</a></li>
+</ul>
+</li>
+<li><a href="#history">history</a></li>
+<li><a href="#search">search 查找镜像</a></li>
+<li><a href="#system-prune">system prune 删除所有</a></li>
+</ul>
+</li>
+<li><a href="#dockerfile">Dockerfile 定制镜像</a><ul>
+<li><a href="#from">FROM 指定基础镜像</a></li>
+<li><a href="#run">RUN 执行命令</a><ul>
+<li><a href="#shell">shell 格式</a></li>
+<li><a href="#exec">exec 格式</a></li>
+</ul>
+</li>
+<li><a href="#union-fs">Union FS 实现原理</a></li>
+<li><a href="#build">build 构建镜像</a><ul>
+<li><a href="#-t-tag">-t tag 标签</a></li>
+<li><a href="#context">镜像构建上下文（Context）</a></li>
+<li><a href="#git-repo">Git repo 进行构建</a></li>
+<li><a href="#tar">tar 压缩包构建</a></li>
+<li><a href="#stdin-dockerfile">stdin 读取 Dockerfile 构建</a></li>
+<li><a href="#stdin">stdin 读取上下文压缩包构建</a></li>
+</ul>
+</li>
+<li><a href="#commit">commit 保存镜像</a><ul>
+<li><a href="#docker-commit">慎用 docker commit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">操作镜像</h1>
+<h2 id="image">image 列出镜像</h2>
+<p><code>docker images</code></p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="nx">docker</span> <span class="nx">images</span>
+<span class="nx">REPOSITORY</span>           <span class="kt">TAG</span>                 <span class="nb">IMAGE</span> <span class="nb">ID</span>            <span class="nx">CREATED</span>             <span class="nb">SIZE</span>
+<span class="nx">redis</span>                <span class="nx">latest</span>              <span class="mi">5</span><span class="nx">f515359c7f8</span>        <span class="mi">5</span> <span class="nb">days</span> <span class="nx">ago</span>          <span class="mi">183</span> <span class="nx">MB</span>
+<span class="nx">nginx</span>                <span class="nx">latest</span>              <span class="mi">05</span><span class="nx">a60462f8ba</span>        <span class="mi">5</span> <span class="nb">days</span> <span class="nx">ago</span>          <span class="mi">181</span> <span class="nx">MB</span>
+<span class="nx">mongo</span>                <span class="mf">3.2</span>                 <span class="nx">fe9198c04d62</span>        <span class="mi">5</span> <span class="nb">days</span> <span class="nx">ago</span>          <span class="mi">342</span> <span class="nx">MB</span>
+<span class="o">&lt;</span><span class="kc">none</span><span class="o">&gt;</span>               <span class="o">&lt;</span><span class="kc">none</span><span class="o">&gt;</span>              <span class="mi">00285</span><span class="nx">df0df87</span>        <span class="mi">5</span> <span class="nb">days</span> <span class="nx">ago</span>          <span class="mi">342</span> <span class="nx">MB</span>
+<span class="nx">ubuntu</span>               <span class="mf">16.04</span>               <span class="nx">f753707788c5</span>        <span class="mi">4</span> <span class="nx">weeks</span> <span class="nx">ago</span>         <span class="mi">127</span> <span class="nx">MB</span>
+<span class="nx">ubuntu</span>               <span class="nx">latest</span>              <span class="nx">f753707788c5</span>        <span class="mi">4</span> <span class="nx">weeks</span> <span class="nx">ago</span>         <span class="mi">127</span> <span class="nx">MB</span>
+<span class="nx">ubuntu</span>               <span class="mf">14.04</span>               <span class="mi">1</span><span class="nx">e0c3dd64ccd</span>        <span class="mi">4</span> <span class="nx">weeks</span> <span class="nx">ago</span>         <span class="mi">188</span> <span class="nx">MB</span>
+</pre></div>
+
+
+<p><strong>获取所有的IDs</strong></p>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">images</span> <span class="o">|</span> <span class="n">col</span> <span class="mi">3</span>
+
+<span class="n">IMAGE</span>
+<span class="mi">65</span><span class="n">a9e3ef7171</span>
+<span class="mi">7</span><span class="n">c01ca6c30f2</span>
+<span class="mf">9518620e6</span><span class="n">a0e</span>
+<span class="mi">430707</span><span class="n">ee7fe8</span>
+<span class="mi">1</span><span class="n">dbd7ebffe31</span>
+<span class="n">f47686df00df</span>
+<span class="n">df1e39df8dbf</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">images</span> <span class="o">|</span> <span class="n">col</span> <span class="mi">3</span> <span class="o">|</span> <span class="n">xargs</span>
+
+<span class="n">IMAGE</span> <span class="mi">65</span><span class="n">a9e3ef7171</span> <span class="mi">7</span><span class="n">c01ca6c30f2</span> <span class="mf">9518620e6</span><span class="n">a0e</span> <span class="mi">430707</span><span class="n">ee7fe8</span> <span class="mi">1</span><span class="n">dbd7ebffe31</span> <span class="n">f47686df00df</span> <span class="n">df1e39df8dbf</span> <span class="n">c5e6cf38d985</span> <span class="n">e426f6ef897e</span> <span class="mi">8</span><span class="n">cdd417ec611</span> <span class="mi">511136</span><span class="n">ea3c5a</span>
+</pre></div>
+
+
+<p><strong>前面的”IMAGE”字符去掉</strong></p>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">images</span> <span class="o">|</span> <span class="n">col</span> <span class="mi">3</span> <span class="o">|</span> <span class="n">xargs</span> <span class="o">|</span> <span class="n">skip</span> <span class="mi">1</span>
+
+<span class="mi">65</span><span class="n">a9e3ef7171</span> <span class="mi">7</span><span class="n">c01ca6c30f2</span> <span class="mf">9518620e6</span><span class="n">a0e</span> <span class="mi">430707</span><span class="n">ee7fe8</span> <span class="mi">1</span><span class="n">dbd7ebffe31</span> <span class="n">f47686df00df</span> <span class="n">df1e39df8dbf</span> <span class="n">c5e6cf38d985</span> <span class="n">e426f6ef897e</span> <span class="mi">8</span><span class="n">cdd417ec611</span> <span class="mi">511136</span><span class="n">ea3c5a</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">rmi</span> <span class="err">$</span><span class="p">(</span><span class="n">docker</span> <span class="n">images</span> <span class="o">|</span> <span class="n">col</span> <span class="mi">3</span> <span class="o">|</span> <span class="n">xargs</span> <span class="o">|</span> <span class="n">skip</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="_2">完成镜像名</h3>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">image</span> <span class="n">ls</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">trunc</span>
+<span class="n">REPOSITORY</span>                   <span class="n">TAG</span>                 <span class="n">IMAGE</span> <span class="n">ID</span>                                                                  <span class="n">CREATED</span>             <span class="n">SIZE</span>
+<span class="n">selenium</span><span class="o">/</span><span class="n">standalone</span><span class="o">-</span><span class="n">chrome</span>   <span class="n">latest</span>              <span class="n">sha256</span><span class="o">:</span><span class="mf">9e599</span><span class="n">fb82f84937004eedba8fa498886f095a959421e5f522af9c1b5e04c522a</span>   <span class="mi">9</span> <span class="n">days</span> <span class="n">ago</span>          <span class="mi">840</span><span class="n">MB</span>
+<span class="n">browserless</span><span class="o">/</span><span class="n">chrome</span>           <span class="n">latest</span>              <span class="n">sha256</span><span class="o">:</span><span class="n">d2904ed5f20f33d85c102029561483aee7d9bf94138c1b1888ea6e84d0306819</span>   <span class="mi">2</span> <span class="n">weeks</span> <span class="n">ago</span>         <span class="mf">2.14</span><span class="n">GB</span>
+<span class="n">consul</span>                       <span class="n">latest</span>              <span class="n">sha256</span><span class="o">:</span><span class="mi">7</span><span class="n">d52b83f718fbd487246da5f655b048a2078cfb8d21fb6b06539608a3961dcba</span>   <span class="mi">6</span> <span class="n">weeks</span> <span class="n">ago</span>         <span class="mi">115</span><span class="n">MB</span>
+</pre></div>
+
+
+<h3 id="_3">显示虚悬镜像</h3>
+<div class="hlcode"><pre><span class="err">$</span> <span class="nx">docker</span> <span class="nx">images</span> <span class="na">-f</span> <span class="n">dangling</span><span class="o">=</span><span class="kc">true</span>
+<span class="nx">REPOSITORY</span>          <span class="kt">TAG</span>                 <span class="nb">IMAGE</span> <span class="nb">ID</span>            <span class="nx">CREATED</span>             <span class="nb">SIZE</span>
+<span class="o">&lt;</span><span class="kc">none</span><span class="o">&gt;</span>              <span class="o">&lt;</span><span class="kc">none</span><span class="o">&gt;</span>              <span class="mi">00285</span><span class="nx">df0df87</span>        <span class="mi">5</span> <span class="nb">days</span> <span class="nx">ago</span>          <span class="mi">342</span> <span class="nx">MB</span>
+</pre></div>
+
+
+<p>一般来说，虚悬镜像已经失去了存在的价值，是可以随意删除的，可以用下面的命令删除。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">rmi</span> <span class="err">$</span><span class="p">(</span><span class="n">docker</span> <span class="n">images</span> <span class="o">-</span><span class="n">q</span> <span class="o">-</span><span class="n">f</span> <span class="n">dangling</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="_4">中间层镜像</h3>
+<p>为了加速镜像构建、重复利用资源，Docker 会利用 中间层镜像。所以在使用一段时间后，可能会看到一些依赖的中间层镜像。默认的 docker images 列表中只会显示顶层镜像，如果希望显示包括中间层镜像在内的所有镜像的话，需要加 -a 参数。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">images</span> <span class="o">-</span><span class="n">a</span>
+</pre></div>
+
+
+<blockquote>
+<p>这样会看到很多无标签的镜像，与之前的虚悬镜像不同，这些无标签的镜像很多都是中间层镜像，是其它镜像所依赖的镜像。这些无标签镜像不应该删除，否则会导致上层镜像因为依赖丢失而出错。实际上，这些镜像也没必要删除，因为之前说过，相同的层只会存一遍，而这些镜像是别的镜像的依赖，因此并不会因为它们被列出来而多存了一份，无论如何你也会需要它们。只要删除那些依赖它们的镜像后，这些依赖的中间层镜像也会被连带删除。</p>
+</blockquote>
+<h2 id="pull">pull 获取镜像</h2>
+<p><code>docker pull [选项] [Docker Registry地址]&lt;仓库名&gt;:&lt;标签&gt;</code></p>
+<p>下载也是一层层的去下载，并非单一文件。下载过程中给出了每一层的 ID 的前 12 位。并且下载结束后，给出该镜像完整的 sha256 的摘要</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">instance</span><span class="o">-</span><span class="mi">3</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">docker</span> <span class="n">pull</span> <span class="n">ubuntu</span><span class="o">:</span><span class="mf">14.04</span>
+<span class="mf">14.04</span><span class="o">:</span> <span class="n">Pulling</span> <span class="n">from</span> <span class="n">library</span><span class="o">/</span><span class="n">ubuntu</span>
+<span class="nl">bae382666908:</span> <span class="n">Pull</span> <span class="n">complete</span>
+<span class="mi">29</span><span class="n">ede3c02ff2</span><span class="o">:</span> <span class="n">Pull</span> <span class="n">complete</span>
+<span class="nl">da4e69f33106:</span> <span class="n">Pull</span> <span class="n">complete</span>
+<span class="mi">8</span><span class="n">d43e5f5d27f</span><span class="o">:</span> <span class="n">Pull</span> <span class="n">complete</span>
+<span class="nl">b0de1abb17d6:</span> <span class="n">Pull</span> <span class="n">complete</span>
+<span class="nl">Digest:</span> <span class="n">sha256</span><span class="o">:</span><span class="mf">6e3</span><span class="n">e3f3c5c36a91ba17ea002f63e5607ed6a8c8e5fbbddb31ad3e15638b51ebc</span>
+<span class="nl">Status:</span> <span class="n">Downloaded</span> <span class="n">newer</span> <span class="n">image</span> <span class="k">for</span> <span class="n">ubuntu</span><span class="o">:</span><span class="mf">14.04</span>
+</pre></div>
+
+
+<h2 id="-filter-f">--filter/-f 过滤</h2>
+<p>docker images 还支持强大的过滤器参数 --filter，或者简写 -f。之前我们已经看到了使用过滤器来列出虚悬镜像的用法，它还有更多的用法。比如，我们希望看到在 mongo:3.2 之后建立的镜像，可以用下面的命令：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">images</span> <span class="o">-</span><span class="n">f</span> <span class="n">since</span><span class="o">=</span><span class="n">mongo</span><span class="o">:</span><span class="mf">3.2</span>
+<span class="n">REPOSITORY</span>          <span class="n">TAG</span>                 <span class="n">IMAGE</span> <span class="n">ID</span>            <span class="n">CREATED</span>             <span class="n">SIZE</span>
+<span class="n">redis</span>               <span class="n">latest</span>              <span class="mf">5f</span><span class="mi">515359</span><span class="n">c7f8</span>        <span class="mi">5</span> <span class="n">days</span> <span class="n">ago</span>          <span class="mi">183</span> <span class="n">MB</span>
+<span class="n">nginx</span>               <span class="n">latest</span>              <span class="mo">05</span><span class="n">a60462f8ba</span>        <span class="mi">5</span> <span class="n">days</span> <span class="n">ago</span>          <span class="mi">181</span> <span class="n">MB</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">images</span> <span class="o">-</span><span class="n">f</span> <span class="n">label</span><span class="o">=</span><span class="n">com</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">version</span><span class="o">=</span><span class="mf">0.1</span>
+</pre></div>
+
+
+<h2 id="-q">-q 特定格式显示</h2>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">images</span> <span class="o">-</span><span class="n">q</span>
+<span class="mf">5f</span><span class="mi">515359</span><span class="n">c7f8</span>
+<span class="mo">05</span><span class="n">a60462f8ba</span>
+<span class="n">fe9198c04d62</span>
+<span class="mo">002</span><span class="mi">85</span><span class="n">df0df87</span>
+<span class="n">f753707788c5</span>
+<span class="n">f753707788c5</span>
+<span class="mf">1e0</span><span class="n">c3dd64ccd</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">$</span> <span class="nx">docker</span> <span class="nx">images</span> <span class="o">--</span><span class="nb">format</span> <span class="s2">&quot;{{.ID}}: {{.Repository}}&quot;</span>
+<span class="mi">5</span><span class="nx">f515359c7f8</span><span class="p">:</span> <span class="nx">redis</span>
+<span class="mi">05</span><span class="nx">a60462f8ba</span><span class="p">:</span> <span class="nx">nginx</span>
+<span class="nx">fe9198c04d62</span><span class="p">:</span> <span class="nx">mongo</span>
+<span class="mi">00285</span><span class="nx">df0df87</span><span class="p">:</span> <span class="o">&lt;</span><span class="kc">none</span><span class="o">&gt;</span>
+<span class="nx">f753707788c5</span><span class="p">:</span> <span class="nx">ubuntu</span>
+<span class="nx">f753707788c5</span><span class="p">:</span> <span class="nx">ubuntu</span>
+<span class="mi">1</span><span class="nx">e0c3dd64ccd</span><span class="p">:</span> <span class="nx">ubuntu</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">$</span> <span class="nx">docker</span> <span class="nx">images</span> <span class="o">--</span><span class="nb">format</span> <span class="s2">&quot;table {{.ID}}</span><span class="se">\t</span><span class="s2">{{.Repository}}</span><span class="se">\t</span><span class="s2">{{.Tag}}&quot;</span>
+<span class="nb">IMAGE</span> <span class="nb">ID</span>            <span class="nx">REPOSITORY</span>          <span class="kt">TAG</span>
+<span class="mi">5</span><span class="nx">f515359c7f8</span>        <span class="nx">redis</span>               <span class="nx">latest</span>
+<span class="mi">05</span><span class="nx">a60462f8ba</span>        <span class="nx">nginx</span>               <span class="nx">latest</span>
+<span class="nx">fe9198c04d62</span>        <span class="nx">mongo</span>               <span class="mf">3.2</span>
+<span class="mi">00285</span><span class="nx">df0df87</span>        <span class="o">&lt;</span><span class="kc">none</span><span class="o">&gt;</span>              <span class="o">&lt;</span><span class="kc">none</span><span class="o">&gt;</span>
+<span class="nx">f753707788c5</span>        <span class="nx">ubuntu</span>              <span class="mf">16.04</span>
+<span class="nx">f753707788c5</span>        <span class="nx">ubuntu</span>              <span class="nx">latest</span>
+<span class="mi">1</span><span class="nx">e0c3dd64ccd</span>        <span class="nx">ubuntu</span>              <span class="mf">14.04</span>
+</pre></div>
+
+
+<h2 id="_5">删除本地镜像</h2>
+<p><code>docker rmi [选项] &lt;镜像1&gt; [&lt;镜像2&gt; ...]</code></p>
+<p>使用 docker images -q 来配合使用 docker rmi，这样可以成批的删除希望删除的镜像。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">rmi</span> <span class="err">$</span><span class="p">(</span><span class="n">docker</span> <span class="n">images</span> <span class="o">-</span><span class="n">q</span> <span class="o">-</span><span class="n">f</span> <span class="n">dangling</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+
+
+<p>删除所有仓库名为 redis 的镜像：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">rmi</span> <span class="err">$</span><span class="p">(</span><span class="n">docker</span> <span class="n">images</span> <span class="o">-</span><span class="n">q</span> <span class="n">redis</span><span class="p">)</span>
+</pre></div>
+
+
+<p>删除所有在 mongo:3.2 之前的镜像：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">rmi</span> <span class="err">$</span><span class="p">(</span><span class="n">docker</span> <span class="n">images</span> <span class="o">-</span><span class="n">q</span> <span class="o">-</span><span class="n">f</span> <span class="n">before</span><span class="o">=</span><span class="n">mongo</span><span class="o">:</span><span class="mf">3.2</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="id">用 ID、镜像名、摘要删除镜像</h3>
+<p>&lt;镜像&gt; 可以是 镜像短 ID、镜像长 ID、镜像名 或者 镜像摘要</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">images</span> <span class="o">--</span><span class="n">digests</span>
+<span class="n">REPOSITORY</span>                  <span class="n">TAG</span>                 <span class="n">DIGEST</span>                                                                    <span class="n">IMAGE</span> <span class="n">ID</span>            <span class="n">CREATED</span>             <span class="n">SIZE</span>
+<span class="n">node</span>                        <span class="n">slim</span>                <span class="n">sha256</span><span class="o">:</span><span class="n">b4f0e0bdeb578043c1ea6862f0d40cc4afe32a4a582f3be235a3b164422be228</span>   <span class="mf">6e0</span><span class="n">c4c8e3913</span>        <span class="mi">3</span> <span class="n">weeks</span> <span class="n">ago</span>         <span class="mi">214</span> <span class="n">MB</span>
+
+<span class="err">$</span> <span class="n">docker</span> <span class="n">rmi</span> <span class="n">node</span><span class="err">@</span><span class="n">sha256</span><span class="o">:</span><span class="n">b4f0e0bdeb578043c1ea6862f0d40cc4afe32a4a582f3be235a3b164422be228</span>
+<span class="nl">Untagged:</span> <span class="n">node</span><span class="err">@</span><span class="n">sha256</span><span class="o">:</span><span class="n">b4f0e0bdeb578043c1ea6862f0d40cc4afe32a4a582f3be235a3b164422be228</span>
+</pre></div>
+
+
+<h4 id="centosrhel">CentOS/RHEL 的用户需要注意的事项</h4>
+<p>在 Ubuntu/Debian 上有 UnionFS 可以使用，如 aufs 或者 overlay2，而 CentOS 和 RHEL 的内核中没有相关驱动。因此对于这类系统，一般使用 devicemapper 驱动利用 LVM 的一些机制来模拟分层存储。这样的做法除了性能比较差外，稳定性一般也不好，而且配置相对复杂。Docker 安装在 CentOS/RHEL 上后，会默认选择 devicemapper，但是为了简化配置，其 devicemapper 是跑在一个稀疏文件模拟的块设备上，也被称为 loop-lvm。这样的选择是因为不需要额外配置就可以运行 Docker，这是自动配置唯一能做到的事情。但是 loop-lvm 的做法非常不好，其稳定性、性能更差，无论是日志还是 docker info 中都会看到警告信息。官方文档有明确的文章讲解了如何配置块设备给 devicemapper 驱动做存储层的做法，这类做法也被称为配置 direct-lvm。<br />
+除了前面说到的问题外，devicemapper + loop-lvm 还有一个缺陷，因为它是稀疏文件，所以它会不断增长。用户在使用过程中会注意到 /var/lib/docker/devicemapper/devicemapper/data 不断增长，而且无法控制。很多人会希望删除镜像或者可以解决这个问题，结果发现效果并不明显。原因就是这个稀疏文件的空间释放后基本不进行垃圾回收的问题。因此往往会出现即使删除了文件内容，空间却无法回收，随着使用这个稀疏文件一直在不断增长。<br />
+所以对于 CentOS/RHEL 的用户来说，在没有办法使用 UnionFS 的情况下，一定要配置 direct-lvm 给 devicemapper，无论是为了性能、稳定性还是空间利用率。<br />
+或许有人注意到了 CentOS 7 中存在被 backports 回来的 overlay 驱动，不过 CentOS 里的这个驱动达不到生产环境使用的稳定程度，所以不推荐使用。</p>
+<h3 id="untagged-deleted">Untagged 和 Deleted</h3>
+<p>镜像的唯一标识是其 ID 和摘要，而一个镜像可以有多个标签。<br />
+因此当我们使用上面命令删除镜像的时候，实际上是在要求删除某个标签的镜像。所以首先需要做的是将满足我们要求的所有镜像标签都取消，这就是我们看到的 Untagged 的信息。因为一个镜像可以对应多个标签，因此当我们删除了所指定的标签后，可能还有别的标签指向了这个镜像，如果是这种情况，那么 Delete 行为就不会发生。所以并非所有的 docker rmi 都会产生删除镜像的行为，有可能仅仅是取消了某个标签而已。</p>
+<ul>
+<li>当该镜像所有的标签都被取消了，该镜像很可能会失去了存在的意义，因此会触发删除行为。镜像是多层存储结构，因此在删除的时候也是从上层向基础层方向依次进行判断删除。</li>
+</ul>
+<h2 id="import">Import 导入镜像</h2>
+<p>从 rootfs 压缩包导入</p>
+<p><code>docker import [选项] &lt;文件&gt;|&lt;URL&gt;|- [&lt;仓库名&gt;[:&lt;标签&gt;]]</code></p>
+<p>创建 OpenVZ 的 Ubuntu 14.04 模板的镜像</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">import</span> \
+    <span class="nl">http:</span><span class="c1">//download.openvz.org/template/precreated/ubuntu-14.04-x86_64-minimal.tar.gz \</span>
+<span class="c1">    openvz/ubuntu:14.04</span>
+<span class="n">Downloading</span> <span class="n">from</span> <span class="n">http</span><span class="o">:</span><span class="c1">//download.openvz.org/template/precreated/ubuntu-14.04-x86_64-minimal.tar.gz</span>
+<span class="nl">sha256:</span><span class="n">f477a6e18e989839d25223f301ef738b69621c4877600ae6467c4e5289822a79B</span><span class="o">/</span><span class="mf">78.42</span> <span class="n">MB</span> 
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">cat</span> <span class="n">ubuntu</span><span class="p">.</span><span class="n">tar</span> <span class="o">|</span> <span class="n">sudo</span> <span class="n">docker</span> <span class="n">import</span> <span class="o">-</span> <span class="n">test</span><span class="o">/</span><span class="n">ubuntu</span><span class="o">:</span><span class="n">v1</span><span class="mf">.0</span>
+<span class="cp"># 也可以通过指定 URL 或者某个目录来导入，例如</span>
+<span class="n">docker</span> <span class="n">import</span> <span class="n">http</span><span class="o">:</span><span class="c1">//example.com/exampleimage.tgz example/imagerepo</span>
+</pre></div>
+
+
+<h1 id="_6">管理镜像</h1>
+<h2 id="save">save 保存镜像到本地</h2>
+<p>以将镜像保存为一个 tar 文件，然后传输到另一个位置上，再加载进来。这是在没有 Docker Registry 时的做法，现在已经不推荐，镜像迁移应该直接使用 Docker Registry，无论是直接使用 Docker Hub 还是使用内网私有 Registry 都可以。</p>
+<p><code>$ docker save alpine | gzip &gt; alpine-latest.tar.gz</code></p>
+<p>从一个机器将镜像迁移到另一个机器,并且带进度条的功能</p>
+<p><code>docker save &lt;镜像名&gt; | bzip2 | pv | ssh &lt;用户名&gt;@&lt;主机名&gt; 'cat | docker load'</code></p>
+<h3 id="-o-output">-o output 写入到文件</h3>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">save</span> <span class="o">-</span><span class="n">o</span> <span class="n">wdx</span><span class="o">-</span><span class="n">local</span><span class="o">-</span><span class="n">whale</span><span class="p">.</span><span class="n">tar</span> <span class="n">wdxtub</span><span class="o">/</span><span class="n">wdx</span><span class="o">-</span><span class="n">whale</span>
+</pre></div>
+
+
+<h2 id="load">load 加载本地镜像</h2>
+<h3 id="-i-input-tar">-i --input 读取tar文件</h3>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">load</span> <span class="o">-</span><span class="n">i</span> <span class="n">alpine</span><span class="o">-</span><span class="n">latest</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span>
+<span class="n">Loaded</span> <span class="n">image</span><span class="o">:</span> <span class="n">alpine</span><span class="o">:</span><span class="n">latest</span>
+</pre></div>
+
+
+<h2 id="history">history</h2>
+<p>查看其历史</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">history</span> <span class="n">openvz</span><span class="o">/</span><span class="n">ubuntu</span><span class="o">:</span><span class="mf">14.04</span>
+<span class="n">IMAGE</span>               <span class="n">CREATED</span>              <span class="n">CREATED</span> <span class="n">BY</span>          <span class="n">SIZE</span>                <span class="n">COMMENT</span>
+<span class="n">f477a6e18e98</span>        <span class="n">About</span> <span class="n">a</span> <span class="n">minute</span> <span class="n">ago</span>                       <span class="mf">214.9</span> <span class="n">MB</span>            <span class="n">Imported</span> <span class="n">from</span> <span class="n">http</span><span class="o">:</span><span class="c1">//download.openvz.org/template/precreated/ubuntu-14.04-x86_64-minimal.tar.gz</span>
+</pre></div>
+
+
+<h2 id="search">search 查找镜像</h2>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">search</span>
+</pre></div>
+
+
+<h2 id="system-prune">system prune 删除所有</h2>
+<p>Purging All Unused or Dangling Images, Containers, Volumes, and Networks</p>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">system</span> <span class="n">prune</span>
+</pre></div>
+
+
+<h1 id="dockerfile">Dockerfile 定制镜像</h1>
+<p>Dockerfile 是一个文本文件，其内包含了一条条的指令(Instruction)，每一条指令构建一层，因此每一条指令的内容，就是描述该层应当如何构建。</p>
+<h2 id="from">FROM 指定基础镜像</h2>
+<p>FROM 就是指定基础镜像，因此一个 Dockerfile 中 FROM 是必备的指令，并且必须是第一条指令。</p>
+<p>scratch 镜像是虚拟的概念，并不实际存在，它表示一个空白的镜像。</p>
+<div class="hlcode"><pre><span class="n">FROM</span> <span class="n">scratch</span>
+<span class="p">...</span>
+</pre></div>
+
+
+<blockquote>
+<p>如果你以 scratch 为基础镜像的话，意味着你不以任何镜像为基础，接下来所写的指令将作为镜像第一层开始存在。</p>
+</blockquote>
+<h2 id="run">RUN 执行命令</h2>
+<p>RUN 指令是用来执行命令行命令的。由于命令行的强大能力，RUN 指令在定制镜像时是最常用的指令之一</p>
+<p><code>RUN ["可执行文件", "参数1", "参数2"]，这更像是函数调用中的格式。</code></p>
+<h3 id="shell">shell 格式</h3>
+<p>RUN &lt;命令&gt;，就像直接在命令行中输入的命令一样。刚才写的 Dockerfile 中的 RUN 指令就是这种格式。 </p>
+<p><code>RUN echo '&lt;h1&gt;Hello, Docker!&lt;/h1&gt;' &gt; /usr/share/nginx/html/index.html</code></p>
+<h3 id="exec">exec 格式</h3>
+<div class="hlcode"><pre><span class="n">FROM</span> <span class="n">debian</span><span class="o">:</span><span class="n">jessie</span>
+
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">gcc</span> <span class="n">libc6</span><span class="o">-</span><span class="n">dev</span> <span class="n">make</span>
+<span class="n">RUN</span> <span class="n">wget</span> <span class="o">-</span><span class="n">O</span> <span class="n">redis</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span> <span class="s">&quot;http://download.redis.io/releases/redis-3.2.5.tar.gz&quot;</span>
+<span class="n">RUN</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">redis</span>
+<span class="n">RUN</span> <span class="n">tar</span> <span class="o">-</span><span class="n">xzf</span> <span class="n">redis</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span> <span class="o">-</span><span class="n">C</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">redis</span> <span class="o">--</span><span class="n">strip</span><span class="o">-</span><span class="n">components</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">RUN</span> <span class="n">make</span> <span class="o">-</span><span class="n">C</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">redis</span>
+<span class="n">RUN</span> <span class="n">make</span> <span class="o">-</span><span class="n">C</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">redis</span> <span class="n">install</span>
+</pre></div>
+
+
+<blockquote>
+<p>而上面的这种写法，创建了 7 层镜像。这是完全没有意义的，而且很多运行时不需要的东西，都被装进了镜像里，比如编译环境、更新的软件包等等。结果就是产生非常臃肿、非常多层的镜像，不仅仅增加了构建部署的时间，也很容易出错。 这是很多初学 Docker 的人常犯的一个错误。</p>
+</blockquote>
+<h2 id="union-fs">Union FS 实现原理</h2>
+<p>通常Union FS 有两个用途, 一方面可以实现不借助 LVM、RAID 将多个 disk <br />
+挂到同一个目录下,另一个更常用的就是将一个只读的分支和一个可写的分支联合在一起，Live CD <br />
+正是基于此方法可以允许在镜像不变的基础上允许用户在其上进行一些写操作。 Docker 在 AUFS 上构建的容器也是利用了类似的原理。</p>
+<p>Union FS 是有最大层数限制的，比如 AUFS，曾经是最大不得超过 42 层，现在是不得超过 127 层。</p>
+<p>上面的正确写法 (包含清理工作)</p>
+<div class="hlcode"><pre><span class="n">FROM</span> <span class="n">debian</span><span class="o">:</span><span class="n">jessie</span>
+
+<span class="n">RUN</span> <span class="n">buildDeps</span><span class="o">=</span><span class="err">&#39;</span><span class="n">gcc</span> <span class="n">libc6</span><span class="o">-</span><span class="n">dev</span> <span class="n">make</span><span class="err">&#39;</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="err">$</span><span class="n">buildDeps</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">wget</span> <span class="o">-</span><span class="n">O</span> <span class="n">redis</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span> <span class="s">&quot;http://download.redis.io/releases/redis-3.2.5.tar.gz&quot;</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">redis</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">tar</span> <span class="o">-</span><span class="n">xzf</span> <span class="n">redis</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span> <span class="o">-</span><span class="n">C</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">redis</span> <span class="o">--</span><span class="n">strip</span><span class="o">-</span><span class="n">components</span><span class="o">=</span><span class="mi">1</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">make</span> <span class="o">-</span><span class="n">C</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">redis</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">make</span> <span class="o">-</span><span class="n">C</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">redis</span> <span class="n">install</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">lists</span><span class="o">/*</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">rm</span> <span class="n">redis</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">rm</span> <span class="o">-</span><span class="n">r</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">redis</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">purge</span> <span class="o">-</span><span class="n">y</span> <span class="o">--</span><span class="k">auto</span><span class="o">-</span><span class="n">remove</span> <span class="err">$</span><span class="n">buildDeps</span>
+</pre></div>
+
+
+<h2 id="build">build 构建镜像</h2>
+<p><code>docker build [选项] &lt;上下文路径/URL/-&gt;</code></p>
+<p>在Dockerfile文件所在目录中执行</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="nx">docker</span> <span class="nx">build</span> <span class="na">-t</span> <span class="nx">nginx</span><span class="p">:</span><span class="nx">v3</span> <span class="nx">.</span>
+<span class="nx">Sending</span> <span class="nx">build</span> <span class="nx">context</span> <span class="k">to</span> <span class="nx">Docker</span> <span class="nx">daemon</span> <span class="mf">2.048</span> <span class="nx">kB</span>
+<span class="nb">Step</span> <span class="mi">1</span> <span class="p">:</span> <span class="nb">FROM</span> <span class="nx">nginx</span>
+ <span class="o">---&gt;</span> <span class="nx">e43d811ce2f4</span>
+<span class="nb">Step</span> <span class="mi">2</span> <span class="p">:</span> <span class="nb">RUN</span> <span class="nx">echo</span> <span class="s1">&#39;&lt;h1&gt;Hello, Docker!&lt;/h1&gt;&#39;</span> <span class="o">&gt;</span> <span class="p">/</span><span class="nx">usr</span><span class="p">/</span><span class="nx">share</span><span class="p">/</span><span class="nx">nginx</span><span class="p">/</span><span class="nx">html</span><span class="p">/</span><span class="nx">index.html</span>
+ <span class="o">---&gt;</span> <span class="n">Running</span> <span class="k">in</span> <span class="mi">9</span><span class="nx">cdc27646c7b</span>
+ <span class="o">---&gt;</span> <span class="mi">44</span><span class="nx">aa4490ce2c</span>
+<span class="nx">Removing</span> <span class="nx">intermediate</span> <span class="nx">container</span> <span class="mi">9</span><span class="nx">cdc27646c7b</span>
+<span class="nx">Successfully</span> <span class="nx">built</span> <span class="mi">44</span><span class="nx">aa4490ce2c</span>
+</pre></div>
+
+
+<h3 id="-t-tag">-t tag 标签</h3>
+<p>给镜像打上标签</p>
+<h3 id="context">镜像构建上下文（Context）</h3>
+<p>如果在 Dockerfile 中这么写：</p>
+<p><code>COPY ./package.json /app/</code></p>
+<blockquote>
+<p>这并不是要复制执行 docker build 命令所在的目录下的 package.json，也不是复制 Dockerfile 所在目录下的 package.json，而是复制 上下文（context） 目录下的 package.json。</p>
+</blockquote>
+<p>一般来说，应该会将 Dockerfile 置于一个空目录下，或者项目根目录下。</p>
+<blockquote>
+<p>如果该目录下没有所需文件，那么应该把所需文件复制一份过来。如果目录下有些东西确实不希望构建时传给 Docker 引擎，那么可以用 .gitignore 一样的语法写一个 .dockerignore，该文件是用于剔除不需要作为上下文传递给 Docker 引擎的。</p>
+</blockquote>
+<p>实际上 Dockerfile 的文件名并不要求必须为 Dockerfile，而且并不要求必须位于上下文目录中，比如可以用 -f ../Dockerfile.php 参数指定某个文件作为 Dockerfile。</p>
+<p>当然，一般大家习惯性的会使用默认的文件名 Dockerfile，以及会将其置于镜像构建上下文目录中。</p>
+<h3 id="git-repo">Git repo 进行构建</h3>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">build</span> <span class="n">https</span><span class="o">:</span><span class="c1">//github.com/twang2218/gitlab-ce-zh.git#:8.14</span>
+<span class="n">docker</span> <span class="n">build</span> <span class="n">https</span><span class="o">:</span><span class="c1">//github.com/twang2218/gitlab-ce-zh.git\#:8.14</span>
+<span class="n">Sending</span> <span class="n">build</span> <span class="n">context</span> <span class="n">to</span> <span class="n">Docker</span> <span class="n">daemon</span> <span class="mf">2.048</span> <span class="n">kB</span>
+<span class="n">Step</span> <span class="mi">1</span> <span class="o">:</span> <span class="n">FROM</span> <span class="n">gitlab</span><span class="o">/</span><span class="n">gitlab</span><span class="o">-</span><span class="n">ce</span><span class="o">:</span><span class="mf">8.14.0</span><span class="o">-</span><span class="n">ce</span><span class="mf">.0</span>
+<span class="mf">8.14.0</span><span class="o">-</span><span class="n">ce</span><span class="mf">.0</span><span class="o">:</span> <span class="n">Pulling</span> <span class="n">from</span> <span class="n">gitlab</span><span class="o">/</span><span class="n">gitlab</span><span class="o">-</span><span class="n">ce</span>
+<span class="nl">aed15891ba52:</span> <span class="n">Already</span> <span class="n">exists</span>
+<span class="mi">773</span><span class="n">ae8583d14</span><span class="o">:</span> <span class="n">Already</span> <span class="n">exists</span>
+<span class="p">...</span>
+</pre></div>
+
+
+<h3 id="tar">tar 压缩包构建</h3>
+<p><code>$ docker build http://server/context.tar.gz</code></p>
+<h3 id="stdin-dockerfile">stdin 读取 Dockerfile 构建</h3>
+<p>这种形式由于直接从标准输入中读取 Dockerfile 的内容，它没有上下文，因此不可以像其他方法那样可以将本地文件 COPY 进镜像之类的事情。</p>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">build</span> <span class="o">-</span> <span class="o">&lt;</span> <span class="n">Dockerfile</span>
+<span class="n">or</span> 
+<span class="n">cat</span> <span class="n">Dockerfile</span> <span class="o">|</span> <span class="n">docker</span> <span class="n">build</span> <span class="o">-</span>
+</pre></div>
+
+
+<h3 id="stdin">stdin 读取上下文压缩包构建</h3>
+<p><code>$ docker build - &lt; context.tar.gz</code></p>
+<h2 id="commit">commit 保存镜像</h2>
+<p>Docker 提供了一个 docker commit 命令，可以将容器的存储层保存下来成为镜像。</p>
+<blockquote>
+<p>就是在原有镜像的基础上，再叠加上容器的存储层，并构成新的镜像。以后我们运行这个新镜像的时候，就会拥有原有容器最后的文件变化。</p>
+</blockquote>
+<p><code>docker commit [选项] &lt;容器ID或容器名&gt; [&lt;仓库名&gt;[:&lt;标签&gt;]]</code></p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">commit</span> \
+    <span class="o">--</span><span class="n">author</span> <span class="s">&quot;Tao Wang &lt;twang2218@gmail.com&gt;&quot;</span> \
+    <span class="o">--</span><span class="n">message</span> <span class="s">&quot;修改了默认网页&quot;</span> \
+    <span class="n">webserver</span> \
+    <span class="nl">nginx:</span><span class="n">v2</span>
+<span class="nl">sha256:</span><span class="mf">07e33465974800</span><span class="n">ce65751acc279adc6ed2dc5ed4e0838f8b86f0c87aa1795214</span>
+</pre></div>
+
+
+<p><code>docker exec</code> 命令进入容器</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="nx">docker</span> <span class="nx">exec</span> <span class="na">-it</span> <span class="nx">webserver</span> <span class="nx">bash</span>
+<span class="nb">root</span><span class="p">@</span><span class="mi">3729</span><span class="nx">b97e8226</span><span class="p">:</span><span class="o">/</span><span class="err">#</span> <span class="nx">echo</span> <span class="s1">&#39;&lt;h1&gt;Hello, Docker!&lt;/h1&gt;&#39;</span> <span class="o">&gt;</span> <span class="p">/</span><span class="nx">usr</span><span class="p">/</span><span class="nx">share</span><span class="p">/</span><span class="nx">nginx</span><span class="p">/</span><span class="nx">html</span><span class="p">/</span><span class="nx">index.html</span>
+<span class="nb">root</span><span class="p">@</span><span class="mi">3729</span><span class="nx">b97e8226</span><span class="p">:</span><span class="o">/</span><span class="err">#</span> <span class="nx">exit</span>
+<span class="nx">exit</span>
+</pre></div>
+
+
+<p>修改了容器的文件，也就是改动了容器的存储层</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">diff</span> <span class="n">webserver</span>
+<span class="n">C</span> <span class="o">/</span><span class="n">root</span>
+<span class="n">A</span> <span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="p">.</span><span class="n">bash_history</span>
+<span class="n">C</span> <span class="o">/</span><span class="n">run</span>
+<span class="n">C</span> <span class="o">/</span><span class="n">usr</span>
+<span class="n">C</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span>
+<span class="n">C</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span>
+<span class="n">C</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span>
+<span class="n">C</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">index</span><span class="p">.</span><span class="n">html</span>
+<span class="n">C</span> <span class="o">/</span><span class="n">var</span>
+<span class="n">C</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">cache</span>
+<span class="n">C</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">nginx</span>
+<span class="n">A</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">client_temp</span>
+<span class="n">A</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">fastcgi_temp</span>
+<span class="n">A</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">proxy_temp</span>
+<span class="n">A</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">scgi_temp</span>
+<span class="n">A</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">cache</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">uwsgi_temp</span>
+</pre></div>
+
+
+<h3 id="docker-commit">慎用 docker commit</h3>
+<p>使用 docker commit 命令虽然可以比较直观的帮助理解镜像分层存储的概念，但是实际环境中并不会这样使用</p>
+<blockquote>
+<p>使用 docker commit 意味着所有对镜像的操作都是黑箱操作，生成的镜像也被称为黑箱镜像，就是除了制作镜像的人知道执行过什么命令、怎么生成的镜像，别人根本无从得知。而且，即使是这个制作镜像的人，过一段时间后也无法记清具体在操作的。虽然 docker diff 或许可以告诉得到一些线索，但是远远不到可以确保生成一致镜像的地步。这种黑箱镜像的维护工作是非常痛苦的。</p>
+</blockquote>
+<p>docker commit 命令除了学习之外，还有一些特殊的应用场合，比如被入侵后保存现场等。</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

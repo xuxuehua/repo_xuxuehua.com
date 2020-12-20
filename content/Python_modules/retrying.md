@@ -153,6 +153,41 @@ def wait_random_1_to_2_s():
 
 每調用一次則會增加的時長，默認 100毫秒
 
+```
+from retrying import retry
+import time
+
+
+@retry(stop_max_attempt_number=50, wait_fixed=1000, wait_incrementing_increment=7000)
+def run():
+    start_time = time.perf_counter()
+    print('start_time', start_time)
+    print('start run')
+    raise NameError
+
+
+if __name__ == "__main__":
+    run()
+
+>>>
+start_time 0.051161544
+start run
+start_time 1.055089371
+start run
+start_time 8.058492401
+start run
+start_time 22.063655449
+start run
+start_time 43.067897729
+start run
+start_time 71.068411969
+start run
+start_time 106.071816208
+start run
+start_time 148.075782706
+start run
+```
+
 
 
 

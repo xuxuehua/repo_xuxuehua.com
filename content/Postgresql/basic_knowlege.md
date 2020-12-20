@@ -28,6 +28,18 @@ sudo apt-get install postgresql-client
 
 
 
+### psql
+
+```
+cd /tmp
+wget https://ftp.postgresql.org/pub/source/v11.5/postgresql-11.5.tar.gz
+tar zxvf postgresql-11.5.tar.gz
+cd postgresql-11.5
+./configure --without-readline && make && make install
+```
+
+> By default, it will install pg_dump into `/usr/local/pgsql/bin/pg_dump`
+
 
 
 ## docker
@@ -155,6 +167,15 @@ select * from information_schema.routine_privileges where grantee='user_name';
 create user user_name;
 alter user user_name with password '';
 alter user user_name with CONNECTION LIMIT  20;#连接数限制
+
+
+
+
+pg=> CREATE SCHEMA anomaly_detection;
+CREATE SCHEMA
+pg=>
+pg=> GRANT USAGE ON SCHEMA anomaly_detection TO pg_user_rxu;
+GRANT
 ```
 
 
@@ -400,6 +421,21 @@ admin=> \q
 
 
 
+
+# example
+
+## select count
+
+```
+SELECT task_id, attempt, COUNT(attempt) FROM  schema_name.task_attempts GROUP BY task_id, attempt HAVING COUNT(attempt) > 1;
+ task_id | attempt | count
+---------+---------+-------
+      15 |       0 |     2
+     619 |       0 |     2
+     621 |       0 |     2
+    1113 |       0 |     2
+     727 |       0 |     2
+```
 
 
 

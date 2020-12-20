@@ -1,0 +1,399 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>logs 日志 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Mysql">Mysql</a>&nbsp;&#187;&nbsp;logs 日志
+    <span class="updated">Page Updated&nbsp;
+      2019-01-07 12:21
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">logs 日志</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">日志</a><ul>
+<li><a href="#write-ahead-logging-wal">Write-Ahead-Logging (WAL) 机制</a><ul>
+<li><a href="#redo-log">重做日志 redo log</a></li>
+<li><a href="#bin-log">归档日志 bin log</a></li>
+</ul>
+</li>
+<li><a href="#query-log">查询日志 query log</a><ul>
+<li><a href="#_2">配置管理</a></li>
+</ul>
+</li>
+<li><a href="#slow-query-log">慢查询日志 slow query log</a><ul>
+<li><a href="#_3">配置管理</a></li>
+<li><a href="#_4">设置时常</a></li>
+<li><a href="#mysqldumpslow">mysqldumpslow</a></li>
+</ul>
+</li>
+<li><a href="#error-log">错误日志 error log</a><ul>
+<li><a href="#_5">配置管理</a></li>
+</ul>
+</li>
+<li><a href="#binary-log">二进制日志 binary log (重要)</a><ul>
+<li><a href="#_6">功能</a></li>
+<li><a href="#_7">配置管理</a></li>
+<li><a href="#_8">日志记录格式</a><ul>
+<li><a href="#statement">statement</a></li>
+<li><a href="#row">row</a></li>
+<li><a href="#mixed">mixed</a></li>
+</ul>
+</li>
+<li><a href="#_9">日志构成</a><ul>
+<li><a href="#mysql-bin">mysql-bin.文件名后缀</a></li>
+<li><a href="#mysql-binindex">mysql-bin.index</a></li>
+</ul>
+</li>
+<li><a href="#_10">服务器变量</a></li>
+<li><a href="#_11">命令操作</a><ul>
+<li><a href="#mysqlbinlog">mysqlbinlog</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#relay-log">中继日志 relay log</a></li>
+<li><a href="#transaction-log">事务日志 transaction log</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">日志</h1>
+<h2 id="write-ahead-logging-wal">Write-Ahead-Logging (WAL) 机制</h2>
+<p>即先写日志，再写入磁盘</p>
+<h3 id="redo-log">重做日志 redo log</h3>
+<p>InnoDB 会先把记录写入redo log 中，并更新内存，此时更新就算完成。</p>
+<p>同时，InnoDB引擎会在适当的时候，将操作记录更新到磁盘里面，而这个更新往往是系统比较空闲的时候做。</p>
+<p>InnoDB 中的redo log是固定大小</p>
+<p>redo log是物理日志，记录的是在某个数据页上做了什么修改</p>
+<p>redo log 是循环写入，空间由于固定会用完</p>
+<div class="hlcode"><pre><span class="n">innodb_flush_log_at_trx_commit</span><span class="o">=</span><span class="mi">1</span>
+</pre></div>
+
+
+<blockquote>
+<p>表示每次事务的redo log都是直接持久化到磁盘，即MySQL异常重启之后不会丢失数据</p>
+</blockquote>
+<h3 id="bin-log">归档日志 bin log</h3>
+<p>MySQL在Server层面实现的，所有引擎都可以使用</p>
+<p>binlog 是逻辑日志，记录的是这个语句的原始逻辑，即所有的逻辑操作</p>
+<p>binlog 是可以追加写入，即文件大到一定程度会切换到下一个，并不会覆盖之前的日志</p>
+<div class="hlcode"><pre><span class="n">sync_binlog</span><span class="o">=</span><span class="mi">1</span>
+</pre></div>
+
+
+<blockquote>
+<p>表示每次事务的binlog都持久化到磁盘，保证MySQL异常重启后binlog不丢失</p>
+</blockquote>
+<h2 id="query-log">查询日志 query log</h2>
+<p>查询操作的日志，默认是关闭</p>
+<p>可以记录在文件中，或者表中</p>
+<h3 id="_2">配置管理</h3>
+<div class="hlcode"><pre><span class="n">MariaDB</span> <span class="p">[(</span><span class="n">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">GLOBAL</span> <span class="n">VARIABLES</span> <span class="n">LIKE</span> <span class="s">&quot;%log%&quot;</span><span class="p">;</span>
+
+<span class="n">general_log</span><span class="o">=</span><span class="n">ON</span><span class="o">|</span><span class="n">OFF</span>
+<span class="n">general_log_file</span><span class="o">=</span><span class="n">HOSTNAME</span><span class="p">.</span><span class="n">log</span> 
+<span class="n">log_output</span><span class="o">=</span><span class="n">TABLE</span><span class="o">|</span><span class="kt">FILE</span><span class="o">|</span><span class="n">NONE</span>
+</pre></div>
+
+
+<h2 id="slow-query-log">慢查询日志 slow query log</h2>
+<p>用来记录MySQL中响应时间超过阈值的语句，即运行时间超过long_query_time的SQL会被记录</p>
+<p>查询操作超出指定时常的查询操作。一般开启，查看查询语句过慢的原因，如果不是调优需要，不建议开启</p>
+<h3 id="_3">配置管理</h3>
+<div class="hlcode"><pre><span class="n">MariaDB</span> <span class="p">[(</span><span class="n">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">GLOBAL</span> <span class="n">VARIABLES</span> <span class="n">LIKE</span> <span class="err">&#39;</span><span class="n">long_query_time</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="o">+-----------------+-----------+</span>
+<span class="o">|</span> <span class="n">Variable_name</span>   <span class="o">|</span> <span class="n">Value</span>     <span class="o">|</span>
+<span class="o">+-----------------+-----------+</span>
+<span class="o">|</span> <span class="n">long_query_time</span> <span class="o">|</span> <span class="mf">10.000000</span> <span class="o">|</span>
+<span class="o">+-----------------+-----------+</span>
+<span class="mi">1</span> <span class="n">row</span> <span class="n">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.01</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">MariaDB</span> <span class="p">[(</span><span class="n">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="n">SELECT</span> <span class="err">@@</span><span class="n">GLOBAL</span><span class="p">.</span><span class="n">long_query_time</span><span class="p">;</span>
+<span class="o">+--------------------------+</span>
+<span class="o">|</span> <span class="err">@@</span><span class="n">GLOBAL</span><span class="p">.</span><span class="n">long_query_time</span> <span class="o">|</span>
+<span class="o">+--------------------------+</span>
+<span class="o">|</span>                <span class="mf">10.000000</span> <span class="o">|</span>
+<span class="o">+--------------------------+</span>
+<span class="mi">1</span> <span class="n">row</span> <span class="n">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="_4">设置时常</h3>
+<div class="hlcode"><pre><span class="n">SET</span> <span class="n">GLOBAL</span> <span class="n">long_query_time</span><span class="o">=</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">MariaDB</span> <span class="p">[(</span><span class="n">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">GLOBAL</span> <span class="n">VARIABLES</span> <span class="n">LIKE</span> <span class="s">&quot;%slow_query%&quot;</span><span class="p">;</span>
+<span class="o">+---------------------+--------------------+</span>
+<span class="o">|</span> <span class="n">Variable_name</span>       <span class="o">|</span> <span class="n">Value</span>              <span class="o">|</span>
+<span class="o">+---------------------+--------------------+</span>
+<span class="o">|</span> <span class="n">slow_query_log</span>      <span class="o">|</span> <span class="n">OFF</span>                <span class="o">|</span>
+<span class="o">|</span> <span class="n">slow_query_log_file</span> <span class="o">|</span> <span class="n">localhost</span><span class="o">-</span><span class="n">slow</span><span class="p">.</span><span class="n">log</span> <span class="o">|</span>
+<span class="o">+---------------------+--------------------+</span>
+<span class="mi">2</span> <span class="n">rows</span> <span class="n">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">slow_query_log</span><span class="o">=</span><span class="n">ON</span><span class="o">|</span><span class="n">OFF</span>
+<span class="n">slow_query_log_file</span><span class="o">=</span><span class="n">HOSTNAME</span><span class="o">-</span><span class="n">slow</span><span class="p">.</span><span class="n">log</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">MariaDB</span> <span class="p">[(</span><span class="n">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">GLOBAL</span> <span class="n">VARIABLES</span> <span class="n">LIKE</span> <span class="err">&#39;</span><span class="o">%</span><span class="n">log_slow_</span><span class="o">%</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="o">+---------------------+--------------------------------------------------------------------------------------------------------------+</span>
+<span class="o">|</span> <span class="n">Variable_name</span>       <span class="o">|</span> <span class="n">Value</span>                                                                                                        <span class="o">|</span>
+<span class="o">+---------------------+--------------------------------------------------------------------------------------------------------------+</span>
+<span class="o">|</span> <span class="n">log_slow_filter</span>     <span class="o">|</span> <span class="n">admin</span><span class="p">,</span><span class="n">filesort</span><span class="p">,</span><span class="n">filesort_on_disk</span><span class="p">,</span><span class="n">full_join</span><span class="p">,</span><span class="n">full_scan</span><span class="p">,</span><span class="n">query_cache</span><span class="p">,</span><span class="n">query_cache_miss</span><span class="p">,</span><span class="n">tmp_table</span><span class="p">,</span><span class="n">tmp_table_on_disk</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">log_slow_queries</span>    <span class="o">|</span> <span class="n">OFF</span>                                                                                                          <span class="o">|</span>
+<span class="o">|</span> <span class="n">log_slow_rate_limit</span> <span class="o">|</span> <span class="mi">1</span>                                                                                                            <span class="o">|</span>
+<span class="o">|</span> <span class="n">log_slow_verbosity</span>  <span class="o">|</span>                                                                                                              <span class="o">|</span>
+<span class="o">+---------------------+--------------------------------------------------------------------------------------------------------------+</span>
+<span class="mi">4</span> <span class="n">rows</span> <span class="n">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="mysqldumpslow">mysqldumpslow</h3>
+<p>日志分析工具</p>
+<p>-s: 是表示按照何种方式排序</p>
+<p>c: 访问次数</p>
+<p>l: 锁定时间</p>
+<p>r: 返回记录</p>
+<p>t: 查询时间</p>
+<p>al:平均锁定时间</p>
+<p>ar:平均返回记录数</p>
+<p>at:平均查询时间</p>
+<p>-t:即为返回前面多少条的数据；</p>
+<p>-g:后边搭配一个正则匹配模式，大小写不敏感的；</p>
+<div class="hlcode"><pre><span class="err">得到返回记录集最多的</span><span class="mi">10</span><span class="err">个</span><span class="n">SQL</span> 
+<span class="n">mysqldumpslow</span> <span class="o">-</span><span class="n">s</span> <span class="n">r</span> <span class="o">-</span><span class="n">t</span> <span class="mi">10</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">atguigu</span><span class="o">-</span><span class="n">slow</span><span class="p">.</span><span class="n">log</span> 
+ 
+<span class="err">得到访问次数最多的</span><span class="mi">10</span><span class="err">个</span><span class="n">SQL</span> 
+<span class="n">mysqldumpslow</span> <span class="o">-</span><span class="n">s</span> <span class="n">c</span> <span class="o">-</span><span class="n">t</span> <span class="mi">10</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">atguigu</span><span class="o">-</span><span class="n">slow</span><span class="p">.</span><span class="n">log</span> 
+ 
+<span class="err">得到按照时间排序的前</span><span class="mi">10</span><span class="err">条里面含有左连接的查询语句</span> 
+<span class="n">mysqldumpslow</span> <span class="o">-</span><span class="n">s</span> <span class="n">t</span> <span class="o">-</span><span class="n">t</span> <span class="mi">10</span> <span class="o">-</span><span class="n">g</span> <span class="s">&quot;left join&quot;</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">atguigu</span><span class="o">-</span><span class="n">slow</span><span class="p">.</span><span class="n">log</span> 
+ 
+<span class="err">另外建议在使用这些命令时结合</span> <span class="o">|</span> <span class="err">和</span><span class="n">more</span> <span class="err">使用</span> <span class="err">，否则有可能出现爆屏情况</span> 
+<span class="n">mysqldumpslow</span> <span class="o">-</span><span class="n">s</span> <span class="n">r</span> <span class="o">-</span><span class="n">t</span> <span class="mi">10</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">atguigu</span><span class="o">-</span><span class="n">slow</span><span class="p">.</span><span class="n">log</span> <span class="o">|</span> <span class="n">more</span> 
+</pre></div>
+
+
+<h2 id="error-log">错误日志 error log</h2>
+<p>也包括服务启动关闭的正常日志， 默认是关闭的</p>
+<p>mysqld启动和关闭过程中输出的事件信息</p>
+<p>mysqld运行中产生的错误信息</p>
+<p>event scheduler 运行一个event时产生的日志信息</p>
+<p>在主从复置架构中的从服务器</p>
+<h3 id="_5">配置管理</h3>
+<div class="hlcode"><pre><span class="n">MariaDB</span> <span class="p">[(</span><span class="n">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">GLOBAL</span> <span class="n">VARIABLES</span> <span class="n">LIKE</span> <span class="err">&#39;</span><span class="o">%</span><span class="n">log_e</span><span class="o">%</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="o">+---------------+-------------------------------+</span>
+<span class="o">|</span> <span class="n">Variable_name</span> <span class="o">|</span> <span class="n">Value</span>                         <span class="o">|</span>
+<span class="o">+---------------+-------------------------------+</span>
+<span class="o">|</span> <span class="n">log_error</span>     <span class="o">|</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">centos7</span><span class="p">.</span><span class="n">is</span><span class="p">.</span><span class="n">cc</span><span class="p">.</span><span class="n">err</span> <span class="o">|</span>
+<span class="o">+---------------+-------------------------------+</span>
+<span class="mi">1</span> <span class="n">row</span> <span class="n">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">log_error</span><span class="o">=/</span><span class="n">PATH</span><span class="o">/</span><span class="n">TO</span><span class="o">/</span><span class="n">LOG_ERROR_FILE</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">MariaDB</span> <span class="p">[(</span><span class="n">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">GLOBAL</span> <span class="n">VARIABLES</span> <span class="n">LIKE</span> <span class="err">&#39;</span><span class="o">%</span><span class="n">log_w</span><span class="o">%</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="o">+---------------+-------+</span>
+<span class="o">|</span> <span class="n">Variable_name</span> <span class="o">|</span> <span class="n">Value</span> <span class="o">|</span>
+<span class="o">+---------------+-------+</span>
+<span class="o">|</span> <span class="n">log_warnings</span>  <span class="o">|</span> <span class="mi">1</span>     <span class="o">|</span>
+<span class="o">+---------------+-------+</span>
+<span class="mi">1</span> <span class="n">row</span> <span class="n">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">log_warnings</span><span class="o">=</span><span class="mi">1</span><span class="o">|</span><span class="mi">0</span>  <span class="err">#</span> <span class="err">是否记录警报信息至错误日志中</span>
+</pre></div>
+
+
+<h2 id="binary-log">二进制日志 binary log (重要)</h2>
+<p>非常重要，以二进制格式存储，不能使用cat等方式查看日志</p>
+<p>记录导致数据改变或者潜在导致数据改变的SQL语句</p>
+<h3 id="_6">功能</h3>
+<p>用于通过重放日志文件中的事件来生成服务器副本</p>
+<h3 id="_7">配置管理</h3>
+<div class="hlcode"><pre><span class="n">MariaDB</span> <span class="p">[(</span><span class="n">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">BINARY</span> <span class="n">LOGS</span><span class="p">;</span>
+<span class="o">+------------------+-----------+</span>
+<span class="o">|</span> <span class="n">Log_name</span>         <span class="o">|</span> <span class="n">File_size</span> <span class="o">|</span>
+<span class="o">+------------------+-----------+</span>
+<span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="n">bin</span><span class="mf">.000001</span> <span class="o">|</span>     <span class="mi">28415</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="n">bin</span><span class="mf">.000002</span> <span class="o">|</span>   <span class="mi">1038814</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="n">bin</span><span class="mf">.000003</span> <span class="o">|</span>       <span class="mi">245</span> <span class="o">|</span>
+<span class="o">+------------------+-----------+</span>
+<span class="mi">3</span> <span class="n">rows</span> <span class="n">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">MariaDB</span> <span class="p">[(</span><span class="n">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">MASTER</span> <span class="n">LOGS</span><span class="p">;</span>
+<span class="o">+------------------+-----------+</span>
+<span class="o">|</span> <span class="n">Log_name</span>         <span class="o">|</span> <span class="n">File_size</span> <span class="o">|</span>
+<span class="o">+------------------+-----------+</span>
+<span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="n">bin</span><span class="mf">.000001</span> <span class="o">|</span>     <span class="mi">28415</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="n">bin</span><span class="mf">.000002</span> <span class="o">|</span>   <span class="mi">1038814</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="n">bin</span><span class="mf">.000003</span> <span class="o">|</span>       <span class="mi">245</span> <span class="o">|</span>
+<span class="o">+------------------+-----------+</span>
+<span class="mi">3</span> <span class="n">rows</span> <span class="n">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">MariaDB</span> <span class="p">[(</span><span class="n">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">BINLOG</span> <span class="n">EVENTS</span> <span class="n">IN</span> <span class="err">&#39;</span><span class="n">mysql</span><span class="o">-</span><span class="n">bin</span><span class="mf">.000003</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="o">+------------------+-----+-------------+-----------+-------------+-------------------------------------------+</span>
+<span class="o">|</span> <span class="n">Log_name</span>         <span class="o">|</span> <span class="n">Pos</span> <span class="o">|</span> <span class="n">Event_type</span>  <span class="o">|</span> <span class="n">Server_id</span> <span class="o">|</span> <span class="n">End_log_pos</span> <span class="o">|</span> <span class="n">Info</span>                                      <span class="o">|</span>
+<span class="o">+------------------+-----+-------------+-----------+-------------+-------------------------------------------+</span>
+<span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="n">bin</span><span class="mf">.000003</span> <span class="o">|</span>   <span class="mi">4</span> <span class="o">|</span> <span class="n">Format_desc</span> <span class="o">|</span>         <span class="mi">1</span> <span class="o">|</span>         <span class="mi">245</span> <span class="o">|</span> <span class="n">Server</span> <span class="n">ver</span><span class="o">:</span> <span class="mf">5.5.62</span><span class="o">-</span><span class="n">MariaDB</span><span class="p">,</span> <span class="n">Binlog</span> <span class="n">ver</span><span class="o">:</span> <span class="mi">4</span> <span class="o">|</span>
+<span class="o">+------------------+-----+-------------+-----------+-------------+-------------------------------------------+</span>
+<span class="mi">1</span> <span class="n">row</span> <span class="n">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>Pos 日志位置</p>
+<p>End_log_pos 下一个事件的开始位置</p>
+<p>Server_id 需要全局唯一</p>
+<p>Info 记录事件本身是什么</p>
+</blockquote>
+<p>查看正在使用的二进制文件</p>
+<div class="hlcode"><pre><span class="n">MariaDB</span> <span class="p">[(</span><span class="n">none</span><span class="p">)]</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">MASTER</span> <span class="n">STATUS</span><span class="p">;</span>
+<span class="o">+------------------+----------+--------------+------------------+</span>
+<span class="o">|</span> <span class="n">File</span>             <span class="o">|</span> <span class="n">Position</span> <span class="o">|</span> <span class="n">Binlog_Do_DB</span> <span class="o">|</span> <span class="n">Binlog_Ignore_DB</span> <span class="o">|</span>
+<span class="o">+------------------+----------+--------------+------------------+</span>
+<span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="n">bin</span><span class="mf">.000003</span> <span class="o">|</span>      <span class="mi">245</span> <span class="o">|</span>              <span class="o">|</span>                  <span class="o">|</span>
+<span class="o">+------------------+----------+--------------+------------------+</span>
+<span class="mi">1</span> <span class="n">row</span> <span class="n">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">SHOW</span> <span class="n">BINLOG</span> <span class="n">EVENTS</span> <span class="p">[</span><span class="n">IN</span> <span class="err">&#39;</span><span class="n">log_name</span><span class="err">&#39;</span><span class="p">]</span> <span class="p">[</span><span class="n">FROM</span> <span class="n">pos</span><span class="p">]</span> <span class="p">[</span><span class="n">LIMIT</span> <span class="p">[</span><span class="n">offset</span><span class="p">,]</span> <span class="n">row_count</span><span class="p">]</span>
+</pre></div>
+
+
+<h3 id="_8">日志记录格式</h3>
+<h4 id="statement">statement</h4>
+<p>基于语句记录</p>
+<h4 id="row">row</h4>
+<p>基于行记录，需要精确记录</p>
+<h4 id="mixed">mixed</h4>
+<p>混合模式，让系统自行判断其基于哪种方式进行</p>
+<h3 id="_9">日志构成</h3>
+<h4 id="mysql-bin">mysql-bin.文件名后缀</h4>
+<p>日志文件，二进制格式</p>
+<h4 id="mysql-binindex">mysql-bin.index</h4>
+<p>索引文件，文本格式</p>
+<h3 id="_10">服务器变量</h3>
+<div class="hlcode"><pre><span class="n">sql_log_bin</span><span class="o">=</span><span class="n">ON</span><span class="o">|</span><span class="n">OFF</span>
+</pre></div>
+
+
+<blockquote>
+<p>是否记录二进制日志</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">log_bin</span><span class="o">=/</span><span class="n">PATH</span><span class="o">/</span><span class="n">TO</span><span class="o">/</span><span class="n">BIN_LOG_FILE</span>
+</pre></div>
+
+
+<blockquote>
+<p>记录的文件位置，通常为ON</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">binlog_format</span><span class="o">=</span><span class="n">STATEMENT</span><span class="o">|</span><span class="n">ROW</span><span class="o">|</span><span class="n">MIXED</span>
+</pre></div>
+
+
+<blockquote>
+<p>二进制日志的记录格式</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">max_binlog_size</span><span class="o">=</span><span class="mi">1073741824</span>
+</pre></div>
+
+
+<blockquote>
+<p>单个二进制文件的最大体积，默认为1G</p>
+<p>到达最大值会自动滚动</p>
+<p>文件到达上限时的大小未必为指定的精确值</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">expire_logs_days</span><span class="o">=</span><span class="mi">0</span>
+</pre></div>
+
+
+<blockquote>
+<p>log过期时间</p>
+<p>0 表示不清理log</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">sync_binlog</span><span class="o">=</span><span class="mi">0</span><span class="o">|</span><span class="mi">1</span>
+</pre></div>
+
+
+<blockquote>
+<p>设定是否启动二进制日志同步功能</p>
+<p>0 会影响数据</p>
+<p>1 会影响性能</p>
+</blockquote>
+<h3 id="_11">命令操作</h3>
+<h4 id="mysqlbinlog">mysqlbinlog</h4>
+<div class="hlcode"><pre><span class="n">mysqlbinlog</span> <span class="p">[</span><span class="n">OPTIONS</span><span class="p">]</span> <span class="n">log_file</span>
+    <span class="o">--</span><span class="n">start</span><span class="o">-</span><span class="n">position</span>
+    <span class="o">--</span><span class="n">stop</span><span class="o">-</span><span class="n">position</span>
+    <span class="o">--</span><span class="n">start</span><span class="o">-</span><span class="n">datetime</span><span class="o">=</span>
+    <span class="o">--</span><span class="n">stop</span><span class="o">-</span><span class="n">datetime</span><span class="o">=</span>
+        <span class="n">YYYY</span><span class="o">-</span><span class="n">MM</span><span class="o">-</span><span class="n">DD</span> <span class="n">hh</span><span class="o">:</span><span class="n">mm</span><span class="o">:</span><span class="n">ss</span>
+</pre></div>
+
+
+<p>客户端命令工具</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">centos7</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">mysqlbinlog</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">mysql</span><span class="o">-</span><span class="n">bin</span><span class="mf">.000002</span>
+<span class="cp"># at 245</span>
+<span class="cp">#190107 23:50:04 server id 1  end_log_pos 314   Query   thread_id=1 exec_time=0 error_code=0</span>
+<span class="n">SET</span> <span class="n">TIMESTAMP</span><span class="o">=</span><span class="mi">1546923004</span><span class="cm">/*!*/</span><span class="p">;</span>
+<span class="n">SET</span> <span class="err">@@</span><span class="n">session</span><span class="p">.</span><span class="n">pseudo_thread_id</span><span class="o">=</span><span class="mi">1</span><span class="cm">/*!*/</span><span class="p">;</span>
+<span class="n">SET</span> <span class="err">@@</span><span class="n">session</span><span class="p">.</span><span class="n">foreign_key_checks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="err">@@</span><span class="n">session</span><span class="p">.</span><span class="n">sql_auto_is_null</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="err">@@</span><span class="n">session</span><span class="p">.</span><span class="n">unique_checks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="err">@@</span><span class="n">session</span><span class="p">.</span><span class="n">autocommit</span><span class="o">=</span><span class="mi">1</span><span class="cm">/*!*/</span><span class="p">;</span>
+<span class="n">SET</span> <span class="err">@@</span><span class="n">session</span><span class="p">.</span><span class="n">sql_mode</span><span class="o">=</span><span class="mi">0</span><span class="cm">/*!*/</span><span class="p">;</span>
+<span class="n">SET</span> <span class="err">@@</span><span class="n">session</span><span class="p">.</span><span class="n">auto_increment_increment</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="err">@@</span><span class="n">session</span><span class="p">.</span><span class="n">auto_increment_offset</span><span class="o">=</span><span class="mi">1</span><span class="cm">/*!*/</span><span class="p">;</span>
+<span class="cm">/*!\C utf8 *//*!*/</span><span class="p">;</span>
+<span class="n">SET</span> <span class="err">@@</span><span class="n">session</span><span class="p">.</span><span class="n">character_set_client</span><span class="o">=</span><span class="mi">33</span><span class="p">,</span><span class="err">@@</span><span class="n">session</span><span class="p">.</span><span class="n">collation_connection</span><span class="o">=</span><span class="mi">33</span><span class="p">,</span><span class="err">@@</span><span class="n">session</span><span class="p">.</span><span class="n">collation_server</span><span class="o">=</span><span class="mi">33</span><span class="cm">/*!*/</span><span class="p">;</span>
+<span class="n">SET</span> <span class="err">@@</span><span class="n">session</span><span class="p">.</span><span class="n">lc_time_names</span><span class="o">=</span><span class="mi">0</span><span class="cm">/*!*/</span><span class="p">;</span>
+<span class="n">SET</span> <span class="err">@@</span><span class="n">session</span><span class="p">.</span><span class="n">collation_database</span><span class="o">=</span><span class="n">DEFAULT</span><span class="cm">/*!*/</span><span class="p">;</span>
+<span class="n">BEGIN</span>
+<span class="cm">/*!*/</span><span class="p">;</span>
+</pre></div>
+
+
+<blockquote>
+<p>190107 23:50:04: 事件发生的日期和时间</p>
+<p>server id 1： 时间发生的服务器标识</p>
+<p>end_log_pos 314： 事件的结束位置</p>
+<p>Query：事件类型</p>
+<p>thread_id=1： 事件发生时所在服务器执行此事件的线程ID</p>
+<p>exec_time=0： 语句的时间戳与将其写入二进制文件中的时间差</p>
+<p>error_code=0： 错误代码</p>
+</blockquote>
+<h2 id="relay-log">中继日志 relay log</h2>
+<p>复制架构中，从服务器用于保存来自主服务器的二进制日志读取到的事件</p>
+<h2 id="transaction-log">事务日志 transaction log</h2>
+<p>ACID测试是依赖事务日志完成其特性，事务型存储引擎自行管理和使用</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

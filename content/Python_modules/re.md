@@ -185,10 +185,13 @@ re.match(pattern, string, flags=0)
 从头开始检查字符串是否符合正则表达式。必须从字符串的第一个字符开始就相符
 
 ```
-In [45]: ret = re.match('^Rick', "Rickwithyou")
+In [8]: ret = re.match('^Rick', "Rickwithyou")
 
-In [46]: ret.group()
-Out[46]: 'Rick'
+In [9]: print(ret)
+<re.Match object; span=(0, 4), match='Rick'>
+
+In [10]: ret.group()
+Out[10]: 'Rick'
 ```
 
 
@@ -233,13 +236,18 @@ print(m.group(0))
 
 ### re.fullmatch 整个匹配
 
-返回结果是列表
+整个字符串和正则匹配, 返回结果是列表
 
 ```
 re.fullmatch(pattern, string, flags=0)
 ```
 
-整个字符串和正则匹配
+
+
+```
+In [5]: print(re.fullmatch('seg_by_app_usage', 'seg_by_app_usage_cross'))
+None
+```
 
  
 

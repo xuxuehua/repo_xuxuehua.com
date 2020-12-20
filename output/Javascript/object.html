@@ -1,0 +1,242 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>object 对象 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Javascript">Javascript</a>&nbsp;&#187;&nbsp;object 对象
+    <span class="updated">Page Updated&nbsp;
+      2018-06-05 09:55
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">object 对象</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#object">object 对象</a><ul>
+<li><a href="#javascript">创建 JavaScript 对象</a><ul>
+<li><a href="#_1">使用函数来构造对象</a></li>
+<li><a href="#_2">构造器函数内部定义对象的方法</a></li>
+</ul>
+</li>
+<li><a href="#_3">获取对象的属性</a></li>
+<li><a href="#_4">添加删除属性</a><ul>
+<li><a href="#_5">判断属性是否存在</a></li>
+</ul>
+</li>
+<li><a href="#_6">内建方法</a><ul>
+<li><a href="#length">length</a></li>
+<li><a href="#touppercase">toUpperCase</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="object">object 对象</h1>
+<h2 id="javascript">创建 JavaScript 对象</h2>
+<p>JavaScript的对象是一组由键-值组成的无序集合</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">person</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nl">name:</span> <span class="err">&#39;</span><span class="n">Bob</span><span class="err">&#39;</span><span class="p">,</span>
+    <span class="nl">age:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="nl">tags:</span> <span class="p">[</span><span class="err">&#39;</span><span class="n">js</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">web</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">mobile</span><span class="err">&#39;</span><span class="p">],</span>
+    <span class="nl">city:</span> <span class="err">&#39;</span><span class="n">Beijing</span><span class="err">&#39;</span><span class="p">,</span>
+    <span class="nl">hasCar:</span> <span class="nb">true</span><span class="p">,</span>
+    <span class="nl">zipcode:</span> <span class="n">null</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<blockquote>
+<p>JavaScript对象的键都是字符串类型，值可以是任意数据类型。上述<code>person</code>对象一共定义了6个键值对，其中每个键又称为对象的属性，例如，<code>person</code>的<code>name</code>属性为<code>'Bob'</code>，<code>zipcode</code>属性为<code>null</code></p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">person</span><span class="o">=</span><span class="n">new</span> <span class="n">Object</span><span class="p">();</span>
+<span class="n">person</span><span class="p">.</span><span class="n">firstname</span><span class="o">=</span><span class="s">&quot;Bill&quot;</span><span class="p">;</span>
+<span class="n">person</span><span class="p">.</span><span class="n">lastname</span><span class="o">=</span><span class="s">&quot;Gates&quot;</span><span class="p">;</span>
+<span class="n">person</span><span class="p">.</span><span class="n">age</span><span class="o">=</span><span class="mi">56</span><span class="p">;</span>
+<span class="n">person</span><span class="p">.</span><span class="n">eyecolor</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">;</span>
+</pre></div>
+
+
+<h3 id="_1">使用函数来构造对象</h3>
+<div class="hlcode"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+function person(firstname,lastname,age,eyecolor)
+{
+this.firstname=firstname;
+this.lastname=lastname;
+this.age=age;
+this.eyecolor=eyecolor;
+}
+
+myFather=new person(&quot;Bill&quot;,&quot;Gates&quot;,56,&quot;blue&quot;);
+
+document.write(myFather.firstname + &quot; is &quot; + myFather.age + &quot; years old.&quot;);
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+
+&gt;&gt;&gt;
+Bill is 56 years old.
+</pre></div>
+
+
+<h3 id="_2">构造器函数内部定义对象的方法</h3>
+<div class="hlcode"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+function person(firstname,lastname,age,eyecolor)
+{
+this.firstname=firstname;
+this.lastname=lastname;
+this.age=age;
+this.eyecolor=eyecolor;
+
+this.changeName=changeName;
+function changeName(name)
+{
+this.lastname=name;
+}
+}
+myMother=new person(&quot;Steve&quot;,&quot;Jobs&quot;,56,&quot;green&quot;);
+myMother.changeName(&quot;Ballmer&quot;);
+document.write(myMother.lastname);
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+
+&gt;&gt;&gt;
+Ballmer
+</pre></div>
+
+
+<h2 id="_3">获取对象的属性</h2>
+<p>要获取一个对象的属性，我们用<code>对象变量.属性名</code>的方式，但这要求属性名必须是一个有效的变量名。如果属性名包含特殊字符，就必须用<code>''</code>括起来：</p>
+<p>或使用<code>对象名[属性名]</code> 的方式来访问</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">xiaohong</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nl">name:</span> <span class="err">&#39;小红&#39;</span><span class="p">,</span>
+    <span class="err">&#39;</span><span class="n">middle</span><span class="o">-</span><span class="n">school</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">No</span><span class="mf">.1</span> <span class="n">Middle</span> <span class="n">School</span><span class="err">&#39;</span>
+    <span class="p">};</span>
+<span class="n">xiaohong</span><span class="p">[</span><span class="err">&#39;</span><span class="n">middle</span><span class="o">-</span><span class="n">school</span><span class="err">&#39;</span><span class="p">];</span> <span class="c1">// &#39;No.1 Middle School&#39;</span>
+<span class="n">xiaohong</span><span class="p">[</span><span class="err">&#39;</span><span class="n">name</span><span class="err">&#39;</span><span class="p">];</span> <span class="c1">// &#39;小红&#39;</span>
+<span class="n">xiaohong</span><span class="p">.</span><span class="n">name</span><span class="p">;</span> <span class="c1">// &#39;小红&#39;</span>
+</pre></div>
+
+
+<ul>
+<li>JavaScript规定，访问不存在的属性不报错，而是返回<code>undefined</code></li>
+</ul>
+<div class="hlcode"><pre><span class="err">&#39;</span><span class="n">use</span> <span class="n">strict</span><span class="err">&#39;</span><span class="p">;</span>
+
+<span class="n">var</span> <span class="n">xiaoming</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nl">name:</span> <span class="err">&#39;小明&#39;</span>
+<span class="p">};</span>
+<span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">xiaoming</span><span class="p">.</span><span class="n">name</span><span class="p">);</span>
+<span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">xiaoming</span><span class="p">.</span><span class="n">age</span><span class="p">);</span> <span class="c1">// undefined</span>
+</pre></div>
+
+
+<h2 id="_4">添加删除属性</h2>
+<ul>
+<li>由于JavaScript的对象是动态类型，你可以自由地给一个对象添加或删除属性</li>
+</ul>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">xiaoming</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nl">name:</span> <span class="err">&#39;小明&#39;</span>
+<span class="p">};</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">age</span><span class="p">;</span> <span class="c1">// undefined</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">age</span> <span class="o">=</span> <span class="mi">18</span><span class="p">;</span> <span class="c1">// 新增一个age属性</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">age</span><span class="p">;</span> <span class="c1">// 18</span>
+<span class="n">delete</span> <span class="n">xiaoming</span><span class="p">.</span><span class="n">age</span><span class="p">;</span> <span class="c1">// 删除age属性</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">age</span><span class="p">;</span> <span class="c1">// undefined</span>
+<span class="n">delete</span> <span class="n">xiaoming</span><span class="p">[</span><span class="err">&#39;</span><span class="n">name</span><span class="err">&#39;</span><span class="p">];</span> <span class="c1">// 删除name属性</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">name</span><span class="p">;</span> <span class="c1">// undefined</span>
+<span class="n">delete</span> <span class="n">xiaoming</span><span class="p">.</span><span class="n">school</span><span class="p">;</span> <span class="c1">// 删除一个不存在的school属性也不会报错</span>
+</pre></div>
+
+
+<h3 id="_5">判断属性是否存在</h3>
+<ul>
+<li>如果我们要检测<code>xiaoming</code>是否拥有某一属性，可以用<code>in</code>操作符：</li>
+</ul>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">xiaoming</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nl">name:</span> <span class="err">&#39;小明&#39;</span><span class="p">,</span>
+    <span class="nl">birth:</span> <span class="mi">1990</span><span class="p">,</span>
+    <span class="nl">school:</span> <span class="err">&#39;</span><span class="n">No</span><span class="mf">.1</span> <span class="n">Middle</span> <span class="n">School</span><span class="err">&#39;</span><span class="p">,</span>
+    <span class="nl">height:</span> <span class="mf">1.70</span><span class="p">,</span>
+    <span class="nl">weight:</span> <span class="mi">65</span><span class="p">,</span>
+    <span class="nl">score:</span> <span class="n">null</span>
+<span class="p">};</span>
+<span class="err">&#39;</span><span class="n">name</span><span class="err">&#39;</span> <span class="n">in</span> <span class="n">xiaoming</span><span class="p">;</span> <span class="c1">// true</span>
+<span class="err">&#39;</span><span class="n">grade</span><span class="err">&#39;</span> <span class="n">in</span> <span class="n">xiaoming</span><span class="p">;</span> <span class="c1">// false</span>
+</pre></div>
+
+
+<ul>
+<li>如果<code>in</code>判断一个属性存在，这个属性不一定是<code>xiaoming</code>的，它可能是<code>xiaoming</code>继承得到的</li>
+</ul>
+<div class="hlcode"><pre><span class="err">&#39;</span><span class="n">toString</span><span class="err">&#39;</span> <span class="n">in</span> <span class="n">xiaoming</span><span class="p">;</span> <span class="c1">// true</span>
+</pre></div>
+
+
+<blockquote>
+<p>因为<code>toString</code>定义在<code>object</code>对象中，而所有对象最终都会在原型链上指向<code>object</code>，所以<code>xiaoming</code>也拥有<code>toString</code>属性。</p>
+</blockquote>
+<ul>
+<li>要判断一个属性是否是<code>xiaoming</code>自身拥有的，而不是继承得到的，可以用<code>hasOwnProperty()</code>方法：</li>
+</ul>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">xiaoming</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nl">name:</span> <span class="err">&#39;小明&#39;</span>
+<span class="p">};</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">hasOwnProperty</span><span class="p">(</span><span class="err">&#39;</span><span class="n">name</span><span class="err">&#39;</span><span class="p">);</span> <span class="c1">// true</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">hasOwnProperty</span><span class="p">(</span><span class="err">&#39;</span><span class="n">toString</span><span class="err">&#39;</span><span class="p">);</span> <span class="c1">// false</span>
+</pre></div>
+
+
+<h2 id="_6">内建方法</h2>
+<h3 id="length">length</h3>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">test</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">test</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="n">test</span><span class="p">.</span><span class="n">length</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">4</span>
+</pre></div>
+
+
+<h3 id="touppercase">toUpperCase</h3>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Hello world!&quot;</span><span class="p">;</span>
+<span class="n">var</span> <span class="n">x</span><span class="o">=</span><span class="n">message</span><span class="p">.</span><span class="n">toUpperCase</span><span class="p">();</span>
+<span class="n">x</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="s">&quot;HELLO WORLD!&quot;</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

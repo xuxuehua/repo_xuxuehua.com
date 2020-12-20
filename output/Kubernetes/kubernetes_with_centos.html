@@ -1,0 +1,431 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>kubernetes_with_centos - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Kubernetes">Kubernetes</a>&nbsp;&#187;&nbsp;kubernetes_with_centos
+    <span class="updated">Page Updated&nbsp;
+      2019-03-31 18:26
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">kubernetes_with_centos</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#master-node">master node</a><ul>
+<li><a href="#repo">repo</a></li>
+<li><a href="#install">install</a></li>
+<li><a href="#docker-config">docker config</a></li>
+<li><a href="#iptables-call">激活iptables call</a></li>
+<li><a href="#kubelet-local">kubelet (local)</a></li>
+<li><a href="#kubelet-cloud">kubelet (cloud)</a></li>
+<li><a href="#kubeadm">kubeadm</a></li>
+<li><a href="#flannel">flannel</a></li>
+</ul>
+</li>
+<li><a href="#worker-nodes">Worker nodes</a><ul>
+<li><a href="#install_1">Install</a></li>
+<li><a href="#kubelet">kubelet</a><ul>
+<li><a href="#aliyun">aliyun</a></li>
+<li><a href="#gce">GCE</a></li>
+</ul>
+</li>
+<li><a href="#add-to-master">add to master</a></li>
+<li><a href="#kubedns">kubedns</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="master-node">master node</h1>
+<h2 id="repo">repo</h2>
+<p>docker ce</p>
+<div class="hlcode"><pre><span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">yum</span><span class="o">-</span><span class="n">utils</span> \
+  <span class="n">device</span><span class="o">-</span><span class="n">mapper</span><span class="o">-</span><span class="n">persistent</span><span class="o">-</span><span class="n">data</span> \
+  <span class="n">lvm2</span>
+</pre></div>
+
+
+<p>Use the following command to set up the <strong>stable</strong> repository.</p>
+<div class="hlcode"><pre><span class="n">yum</span><span class="o">-</span><span class="n">config</span><span class="o">-</span><span class="n">manager</span> \
+    <span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">repo</span> \
+    <span class="nl">https:</span><span class="c1">//download.docker.com/linux/centos/docker-ce.repo</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="nx">yum</span> <span class="nb">list</span> <span class="nx">docker</span><span class="na">-ce</span> <span class="o">--</span><span class="nx">showduplicates</span> <span class="o">|</span> <span class="nb">sort</span> <span class="na">-r</span>
+
+<span class="nx">yum</span> <span class="nb">install</span> <span class="nx">docker</span><span class="na">-ce</span><span class="o">-&lt;</span><span class="nx">VERSION_STRING</span><span class="o">&gt;</span> <span class="nx">docker</span><span class="na">-ce-cli</span><span class="o">-&lt;</span><span class="nx">VERSION_STRING</span><span class="o">&gt;</span> <span class="nx">containerd.io</span>
+
+<span class="nx">yum</span> <span class="na">-y</span> <span class="nb">install</span> <span class="nx">docker</span><span class="na">-ce</span><span class="o">-</span><span class="mf">18.09.0</span> <span class="nx">docker</span><span class="na">-ce-cli</span><span class="o">-</span><span class="mf">18.09.0</span> <span class="nx">containerd.io</span>
+
+<span class="nx">systemctl</span> <span class="nb">start</span> <span class="nx">docker</span> <span class="o">&amp;&amp;</span> <span class="nx">systemctl</span> <span class="nx">enable</span> <span class="nx">docker</span> <span class="o">&amp;&amp;</span> <span class="nx">systemctl</span> <span class="nb">status</span> <span class="nx">docker</span>
+</pre></div>
+
+
+<p>kubernetes.repo</p>
+<div class="hlcode"><pre><span class="k">[kubernetes]</span>
+<span class="na">name</span><span class="o">=</span><span class="s">Kubernetes Repo</span>
+<span class="na">baseurl</span><span class="o">=</span><span class="s">https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/</span>
+<span class="na">gpgcheck</span><span class="o">=</span><span class="s">1</span>
+<span class="na">gpgkey</span><span class="o">=</span><span class="s">https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg</span>
+<span class="na">enabled</span><span class="o">=</span><span class="s">1</span>
+</pre></div>
+
+
+<p>查看每台机器上是否可以读取docker 和kubernetes repo</p>
+<div class="hlcode"><pre><span class="n">yum</span> <span class="n">repolist</span>
+</pre></div>
+
+
+<h2 id="install">install</h2>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="n">https</span><span class="o">:</span><span class="c1">//mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</span>
+
+<span class="n">rpm</span> <span class="o">--</span><span class="n">import</span> <span class="n">rpm</span><span class="o">-</span><span class="n">package</span><span class="o">-</span><span class="n">key</span><span class="p">.</span><span class="n">gpg</span>
+
+<span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">docker</span><span class="o">-</span><span class="n">ce</span> <span class="n">kubelet</span> <span class="n">kubeadm</span> <span class="n">kubectl</span> 
+</pre></div>
+
+
+<h2 id="docker-config">docker config</h2>
+<p>Use your own proxy </p>
+<div class="hlcode"><pre><span class="n">vim</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">systemd</span><span class="o">/</span><span class="n">system</span><span class="o">/</span><span class="n">docker</span><span class="p">.</span><span class="n">service</span>
+
+<span class="cp"># Add new env</span>
+<span class="p">[</span><span class="n">Service</span><span class="p">]</span>
+<span class="n">Environment</span><span class="o">=</span><span class="s">&quot;HTTPS_PROXY=http://www.ik8s.io:10080&quot;</span>
+<span class="n">Environment</span><span class="o">=</span><span class="s">&quot;NO_PROXY=127.0.0.0/8,172.20.0.0/16&quot;</span>
+</pre></div>
+
+
+<h2 id="iptables-call">激活iptables call</h2>
+<div class="hlcode"><pre><span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysctl</span><span class="p">.</span><span class="n">conf</span>
+
+<span class="n">net</span><span class="p">.</span><span class="n">bridge</span><span class="p">.</span><span class="n">bridge</span><span class="o">-</span><span class="n">nf</span><span class="o">-</span><span class="n">call</span><span class="o">-</span><span class="n">iptables</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">net</span><span class="p">.</span><span class="n">bridge</span><span class="p">.</span><span class="n">bridge</span><span class="o">-</span><span class="n">nf</span><span class="o">-</span><span class="n">call</span><span class="o">-</span><span class="n">ip6tables</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">cat</span> <span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">net</span><span class="o">/</span><span class="n">bridge</span><span class="o">/</span><span class="n">bridge</span><span class="o">-</span><span class="n">nf</span><span class="o">-</span><span class="n">call</span><span class="o">-</span><span class="n">ip6tables</span>
+<span class="n">cat</span> <span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">net</span><span class="o">/</span><span class="n">bridge</span><span class="o">/</span><span class="n">bridge</span><span class="o">-</span><span class="n">nf</span><span class="o">-</span><span class="n">call</span><span class="o">-</span><span class="n">iptables</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">systemctl</span> <span class="n">enable</span> <span class="n">docker</span> <span class="o">&amp;&amp;</span> <span class="n">systemctl</span> <span class="n">start</span> <span class="n">docker</span> <span class="o">&amp;&amp;</span> <span class="n">systemctl</span> <span class="n">status</span> <span class="n">docker</span>
+</pre></div>
+
+
+<h2 id="kubelet-local">kubelet (local)</h2>
+<p>关闭swap以防止报错</p>
+<div class="hlcode"><pre><span class="n">swapoff</span> <span class="o">-</span><span class="n">a</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">systemctl</span> <span class="n">enable</span> <span class="n">kubelet</span> <span class="o">&amp;&amp;</span> <span class="n">systemctl</span> <span class="n">start</span> <span class="n">kubelet</span> <span class="o">&amp;&amp;</span> <span class="n">systemctl</span> <span class="n">status</span> <span class="n">kubelet</span>
+</pre></div>
+
+
+<p>添加ipvs 模块 (未测试)</p>
+<div class="hlcode"><pre><span class="n">KUBE_PROXY_MODE</span><span class="o">=</span><span class="n">ipvs</span>
+</pre></div>
+
+
+<p>并且导入模块</p>
+<div class="hlcode"><pre><span class="n">ip_vs</span><span class="p">,</span> <span class="n">ip_vs_rr</span><span class="p">,</span> <span class="n">ip_vs_wrr</span><span class="p">,</span> <span class="n">ip_vs_sh</span><span class="p">,</span> <span class="n">nf_conntrack_ipv4</span>
+</pre></div>
+
+
+<p>若无法启动服务</p>
+<div class="hlcode"><pre><span class="n">kubeadm</span> <span class="n">reset</span> 
+<span class="n">echo</span> <span class="err">&#39;</span><span class="n">Environment</span><span class="o">=</span><span class="s">&quot;KUBELET_EXTRA_ARGS=--fail-swap-on=false&quot;</span><span class="err">&#39;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">systemd</span><span class="o">/</span><span class="n">system</span><span class="o">/</span><span class="n">kubelet</span><span class="p">.</span><span class="n">service</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="mi">10</span><span class="o">-</span><span class="n">kubeadm</span><span class="p">.</span><span class="n">conf</span>
+
+<span class="n">systemctl</span> <span class="n">daemon</span><span class="o">-</span><span class="n">reload</span>
+<span class="n">systemctl</span> <span class="n">restart</span> <span class="n">kubelet</span>
+</pre></div>
+
+
+<h2 id="kubelet-cloud">kubelet (cloud)</h2>
+<div class="hlcode"><pre><span class="n">cat</span> <span class="o">&lt;&lt;</span><span class="n">EOF</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="p">.</span><span class="n">repos</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">kubernetes</span><span class="p">.</span><span class="n">repo</span>
+<span class="p">[</span><span class="n">kubernetes</span><span class="p">]</span>
+<span class="n">name</span><span class="o">=</span><span class="n">Kubernetes</span>
+<span class="n">baseurl</span><span class="o">=</span><span class="n">https</span><span class="o">:</span><span class="c1">//packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64</span>
+<span class="n">enabled</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">gpgcheck</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">repo_gpgcheck</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">gpgkey</span><span class="o">=</span><span class="n">https</span><span class="o">:</span><span class="c1">//packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg</span>
+<span class="n">exclude</span><span class="o">=</span><span class="n">kube</span><span class="o">*</span>
+<span class="n">EOF</span>
+
+<span class="cp"># Set SELinux in permissive mode (effectively disabling it)</span>
+<span class="n">setenforce</span> <span class="mi">0</span>
+<span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="err">&#39;</span><span class="n">s</span><span class="o">/^</span><span class="n">SELINUX</span><span class="o">=</span><span class="n">enforcing</span><span class="err">$</span><span class="o">/</span><span class="n">SELINUX</span><span class="o">=</span><span class="n">permissive</span><span class="o">/</span><span class="err">&#39;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">selinux</span><span class="o">/</span><span class="n">config</span>
+
+<span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">kubelet</span> <span class="n">kubeadm</span> <span class="n">kubectl</span> <span class="o">--</span><span class="n">disableexcludes</span><span class="o">=</span><span class="n">kubernetes</span>
+
+<span class="n">systemctl</span> <span class="n">enable</span> <span class="o">--</span><span class="n">now</span> <span class="n">kubelet</span>
+</pre></div>
+
+
+<h2 id="kubeadm">kubeadm</h2>
+<div class="hlcode"><pre><span class="n">kubeadm</span> <span class="n">init</span> <span class="o">--</span><span class="n">kubernetes</span><span class="o">-</span><span class="n">version</span><span class="o">=</span><span class="n">v1</span><span class="mf">.16.0</span> <span class="o">--</span><span class="n">pod</span><span class="o">-</span><span class="n">network</span><span class="o">-</span><span class="n">cidr</span><span class="o">=</span><span class="mf">10.244.0.0</span><span class="o">/</span><span class="mi">16</span> <span class="o">--</span><span class="n">service</span><span class="o">-</span><span class="n">cidr</span><span class="o">=</span><span class="mf">10.96.0.0</span><span class="o">/</span><span class="mi">12</span> <span class="o">--</span><span class="n">ignore</span><span class="o">-</span><span class="n">preflight</span><span class="o">-</span><span class="n">errors</span><span class="o">=</span><span class="n">Swap</span>
+</pre></div>
+
+
+<p>返回结果</p>
+<div class="hlcode"><pre><span class="n">To</span> <span class="n">start</span> <span class="n">using</span> <span class="n">your</span> <span class="n">cluster</span><span class="p">,</span> <span class="n">you</span> <span class="n">need</span> <span class="n">to</span> <span class="n">run</span> <span class="n">the</span> <span class="n">following</span> <span class="n">as</span> <span class="n">a</span> <span class="n">regular</span> <span class="n">user</span><span class="o">:</span>
+
+  <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="err">$</span><span class="n">HOME</span><span class="o">/</span><span class="p">.</span><span class="n">kube</span>
+  <span class="n">sudo</span> <span class="n">cp</span> <span class="o">-</span><span class="n">i</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">kubernetes</span><span class="o">/</span><span class="n">admin</span><span class="p">.</span><span class="n">conf</span> <span class="err">$</span><span class="n">HOME</span><span class="o">/</span><span class="p">.</span><span class="n">kube</span><span class="o">/</span><span class="n">config</span>
+  <span class="n">sudo</span> <span class="n">chown</span> <span class="err">$</span><span class="p">(</span><span class="n">id</span> <span class="o">-</span><span class="n">u</span><span class="p">)</span><span class="o">:</span><span class="err">$</span><span class="p">(</span><span class="n">id</span> <span class="o">-</span><span class="n">g</span><span class="p">)</span> <span class="err">$</span><span class="n">HOME</span><span class="o">/</span><span class="p">.</span><span class="n">kube</span><span class="o">/</span><span class="n">config</span>
+
+<span class="n">You</span> <span class="n">should</span> <span class="n">now</span> <span class="n">deploy</span> <span class="n">a</span> <span class="n">pod</span> <span class="n">network</span> <span class="n">to</span> <span class="n">the</span> <span class="n">cluster</span><span class="p">.</span>
+<span class="n">Run</span> <span class="s">&quot;kubectl apply -f [podnetwork].yaml&quot;</span> <span class="n">with</span> <span class="n">one</span> <span class="n">of</span> <span class="n">the</span> <span class="n">options</span> <span class="n">listed</span> <span class="n">at</span><span class="o">:</span>
+  <span class="nl">https:</span><span class="c1">//kubernetes.io/docs/concepts/cluster-administration/addons/</span>
+
+<span class="n">Then</span> <span class="n">you</span> <span class="n">can</span> <span class="n">join</span> <span class="n">any</span> <span class="n">number</span> <span class="n">of</span> <span class="n">worker</span> <span class="n">nodes</span> <span class="n">by</span> <span class="n">running</span> <span class="n">the</span> <span class="n">following</span> <span class="n">on</span> <span class="n">each</span> <span class="n">as</span> <span class="n">root</span><span class="o">:</span>
+
+<span class="n">kubeadm</span> <span class="n">join</span> <span class="mf">10.0.3.15</span><span class="o">:</span><span class="mi">6443</span> <span class="o">--</span><span class="n">token</span> <span class="mi">4</span><span class="n">r0o8m</span><span class="p">.</span><span class="n">uq64pq6xmvsdejip</span> \
+    <span class="o">--</span><span class="n">discovery</span><span class="o">-</span><span class="n">token</span><span class="o">-</span><span class="n">ca</span><span class="o">-</span><span class="n">cert</span><span class="o">-</span><span class="n">hash</span> <span class="n">sha256</span><span class="o">:</span><span class="mi">657</span><span class="n">d1fb969a9c1f08c0b2fe763d06adfe3d33fe21d89dedda2c0ddbbb5569a2c</span>
+</pre></div>
+
+
+<blockquote>
+<p>可通过<code>kubeadm token create --print-join-command</code> 再次获取token</p>
+</blockquote>
+<p>查看状态</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="n">yum</span><span class="p">.</span><span class="n">repos</span><span class="p">.</span><span class="n">d</span><span class="p">]</span><span class="err">#</span> <span class="n">kubectl</span> <span class="n">get</span> <span class="n">cs</span>
+<span class="n">NAME</span>                 <span class="n">STATUS</span>    <span class="n">MESSAGE</span>             <span class="n">ERROR</span>
+<span class="n">scheduler</span>            <span class="n">Healthy</span>   <span class="n">ok</span>
+<span class="n">controller</span><span class="o">-</span><span class="n">manager</span>   <span class="n">Healthy</span>   <span class="n">ok</span>
+<span class="n">etcd</span><span class="o">-</span><span class="mi">0</span>               <span class="n">Healthy</span>   <span class="p">{</span><span class="s">&quot;health&quot;</span><span class="o">:</span><span class="s">&quot;true&quot;</span><span class="p">}</span>
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="n">yum</span><span class="p">.</span><span class="n">repos</span><span class="p">.</span><span class="n">d</span><span class="p">]</span><span class="err">#</span> <span class="n">kubectl</span> <span class="n">get</span> <span class="n">componentstatus</span>
+<span class="n">NAME</span>                 <span class="n">STATUS</span>    <span class="n">MESSAGE</span>             <span class="n">ERROR</span>
+<span class="n">controller</span><span class="o">-</span><span class="n">manager</span>   <span class="n">Healthy</span>   <span class="n">ok</span>
+<span class="n">scheduler</span>            <span class="n">Healthy</span>   <span class="n">ok</span>
+<span class="n">etcd</span><span class="o">-</span><span class="mi">0</span>               <span class="n">Healthy</span>   <span class="p">{</span><span class="s">&quot;health&quot;</span><span class="o">:</span><span class="s">&quot;true&quot;</span><span class="p">}</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">kubectl</span> <span class="n">get</span> <span class="n">nodes</span>
+<span class="n">NAME</span>                    <span class="n">STATUS</span>     <span class="n">ROLES</span>    <span class="n">AGE</span>     <span class="n">VERSION</span>
+<span class="n">localhost</span><span class="p">.</span><span class="n">localdomain</span>   <span class="n">NotReady</span>   <span class="n">master</span>   <span class="mi">6</span><span class="n">m40s</span>   <span class="n">v1</span><span class="mf">.14.0</span>
+</pre></div>
+
+
+<blockquote>
+<p>这里是NotReady，表示flannel网络组件没有安装</p>
+</blockquote>
+<h2 id="flannel">flannel</h2>
+<p>For Kubernetes v1.7+ </p>
+<div class="hlcode"><pre><span class="n">kubectl</span> <span class="n">apply</span> <span class="o">-</span><span class="n">f</span> <span class="n">https</span><span class="o">:</span><span class="c1">//raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</span>
+</pre></div>
+
+
+<p>For v1.6+</p>
+<div class="hlcode"><pre><span class="n">kubectl</span> <span class="n">create</span> <span class="o">-</span><span class="n">f</span> <span class="n">https</span><span class="o">:</span><span class="c1">//raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml</span>
+<span class="n">kubectl</span> <span class="n">create</span> <span class="o">-</span><span class="n">f</span> <span class="n">https</span><span class="o">:</span><span class="c1">//raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</span>
+</pre></div>
+
+
+<p>可以看到加载的镜像文件</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">docker</span> <span class="n">images</span> <span class="o">-</span><span class="n">a</span>
+<span class="n">REPOSITORY</span>                           <span class="n">TAG</span>                 <span class="n">IMAGE</span> <span class="n">ID</span>            <span class="n">CREATED</span>             <span class="n">SIZE</span>
+<span class="n">k8s</span><span class="p">.</span><span class="n">gcr</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">kube</span><span class="o">-</span><span class="n">proxy</span>                <span class="n">v1</span><span class="mf">.14.0</span>             <span class="mi">5</span><span class="n">cd54e388aba</span>        <span class="mi">5</span> <span class="n">days</span> <span class="n">ago</span>          <span class="mf">82.1</span><span class="n">MB</span>
+<span class="n">k8s</span><span class="p">.</span><span class="n">gcr</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">kube</span><span class="o">-</span><span class="n">apiserver</span>            <span class="n">v1</span><span class="mf">.14.0</span>             <span class="n">ecf910f40d6e</span>        <span class="mi">5</span> <span class="n">days</span> <span class="n">ago</span>          <span class="mi">210</span><span class="n">MB</span>
+<span class="n">k8s</span><span class="p">.</span><span class="n">gcr</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">kube</span><span class="o">-</span><span class="n">controller</span><span class="o">-</span><span class="n">manager</span>   <span class="n">v1</span><span class="mf">.14.0</span>             <span class="n">b95b1efa0436</span>        <span class="mi">5</span> <span class="n">days</span> <span class="n">ago</span>          <span class="mi">158</span><span class="n">MB</span>
+<span class="n">k8s</span><span class="p">.</span><span class="n">gcr</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">kube</span><span class="o">-</span><span class="n">scheduler</span>            <span class="n">v1</span><span class="mf">.14.0</span>             <span class="mo">0063</span><span class="mi">8</span><span class="n">a24688b</span>        <span class="mi">5</span> <span class="n">days</span> <span class="n">ago</span>          <span class="mf">81.6</span><span class="n">MB</span>
+<span class="n">quay</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">coreos</span><span class="o">/</span><span class="n">flannel</span>               <span class="n">v0</span><span class="mf">.11.0</span><span class="o">-</span><span class="n">amd64</span>       <span class="n">ff281650a721</span>        <span class="mi">2</span> <span class="n">months</span> <span class="n">ago</span>        <span class="mf">52.6</span><span class="n">MB</span>
+<span class="n">k8s</span><span class="p">.</span><span class="n">gcr</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">coredns</span>                   <span class="mf">1.3.1</span>               <span class="n">eb516548c180</span>        <span class="mi">2</span> <span class="n">months</span> <span class="n">ago</span>        <span class="mf">40.3</span><span class="n">MB</span>
+<span class="n">k8s</span><span class="p">.</span><span class="n">gcr</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">etcd</span>                      <span class="mf">3.3.10</span>              <span class="mi">2</span><span class="n">c4adeb21b4f</span>        <span class="mi">4</span> <span class="n">months</span> <span class="n">ago</span>        <span class="mi">258</span><span class="n">MB</span>
+<span class="n">k8s</span><span class="p">.</span><span class="n">gcr</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">pause</span>                     <span class="mf">3.1</span>                 <span class="n">da86e6ba6ca1</span>        <span class="mi">15</span> <span class="n">months</span> <span class="n">ago</span>       <span class="mi">742</span><span class="n">kB</span>
+</pre></div>
+
+
+<h1 id="worker-nodes">Worker nodes</h1>
+<h2 id="install_1">Install</h2>
+<p>docker ce</p>
+<div class="hlcode"><pre><span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">yum</span><span class="o">-</span><span class="n">utils</span> \
+  <span class="n">device</span><span class="o">-</span><span class="n">mapper</span><span class="o">-</span><span class="n">persistent</span><span class="o">-</span><span class="n">data</span> \
+  <span class="n">lvm2</span>
+</pre></div>
+
+
+<p>Use the following command to set up the <strong>stable</strong> repository.</p>
+<div class="hlcode"><pre><span class="n">yum</span><span class="o">-</span><span class="n">config</span><span class="o">-</span><span class="n">manager</span> \
+    <span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">repo</span> \
+    <span class="nl">https:</span><span class="c1">//download.docker.com/linux/centos/docker-ce.repo</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="nx">yum</span> <span class="nb">list</span> <span class="nx">docker</span><span class="na">-ce</span> <span class="o">--</span><span class="nx">showduplicates</span> <span class="o">|</span> <span class="nb">sort</span> <span class="na">-r</span>
+
+<span class="nx">yum</span> <span class="nb">install</span> <span class="nx">docker</span><span class="na">-ce</span><span class="o">-&lt;</span><span class="nx">VERSION_STRING</span><span class="o">&gt;</span> <span class="nx">docker</span><span class="na">-ce-cli</span><span class="o">-&lt;</span><span class="nx">VERSION_STRING</span><span class="o">&gt;</span> <span class="nx">containerd.io</span>
+
+<span class="nx">yum</span> <span class="na">-y</span> <span class="nb">install</span> <span class="nx">docker</span><span class="na">-ce</span><span class="o">-</span><span class="mf">18.09.0</span> <span class="nx">docker</span><span class="na">-ce-cli</span><span class="o">-</span><span class="mf">18.09.0</span> <span class="nx">containerd.io</span> 
+
+<span class="nx">systemctl</span> <span class="nb">start</span> <span class="nx">docker</span> <span class="o">&amp;&amp;</span> <span class="nx">systemctl</span> <span class="nx">enable</span> <span class="nx">docker</span> <span class="o">&amp;&amp;</span> <span class="nx">systemctl</span> <span class="nb">status</span> <span class="nx">docker</span>
+</pre></div>
+
+
+<h2 id="kubelet">kubelet</h2>
+<h3 id="aliyun">aliyun</h3>
+<p>kubernetes.repo</p>
+<div class="hlcode"><pre><span class="k">[kubernetes]</span>
+<span class="na">name</span><span class="o">=</span><span class="s">Kubernetes Repo</span>
+<span class="na">baseurl</span><span class="o">=</span><span class="s">https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/</span>
+<span class="na">gpgcheck</span><span class="o">=</span><span class="s">1</span>
+<span class="na">gpgkey</span><span class="o">=</span><span class="s">https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg</span>
+<span class="na">enabled</span><span class="o">=</span><span class="s">1</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">wget</span> <span class="n">https</span><span class="o">:</span><span class="c1">//mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</span>
+
+<span class="n">rpm</span> <span class="o">--</span><span class="n">import</span> <span class="n">rpm</span><span class="o">-</span><span class="n">package</span><span class="o">-</span><span class="n">key</span><span class="p">.</span><span class="n">gpg</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">kubelet</span> <span class="n">kubeadm</span>
+</pre></div>
+
+
+<p>激活iptables call</p>
+<div class="hlcode"><pre><span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysctl</span><span class="p">.</span><span class="n">conf</span>
+
+<span class="n">net</span><span class="p">.</span><span class="n">bridge</span><span class="p">.</span><span class="n">bridge</span><span class="o">-</span><span class="n">nf</span><span class="o">-</span><span class="n">call</span><span class="o">-</span><span class="n">iptables</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">net</span><span class="p">.</span><span class="n">bridge</span><span class="p">.</span><span class="n">bridge</span><span class="o">-</span><span class="n">nf</span><span class="o">-</span><span class="n">call</span><span class="o">-</span><span class="n">ip6tables</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">sysctl</span> <span class="o">-</span><span class="n">p</span> 
+</pre></div>
+
+
+<p>关闭swap以防止报错</p>
+<div class="hlcode"><pre><span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">kubelet</span>
+
+<span class="n">KUBELET_EXTRA_ARGS</span><span class="o">=</span><span class="s">&quot;--fail-swap-on=false&quot;</span>
+</pre></div>
+
+
+<p>若无法启动服务</p>
+<div class="hlcode"><pre><span class="n">kubeadm</span> <span class="n">reset</span> 
+
+<span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">systemd</span><span class="o">/</span><span class="n">system</span><span class="o">/</span><span class="n">kubelet</span><span class="p">.</span><span class="n">service</span><span class="p">.</span><span class="n">d</span><span class="o">/</span>
+<span class="n">echo</span> <span class="err">&#39;</span><span class="n">Environment</span><span class="o">=</span><span class="s">&quot;KUBELET_EXTRA_ARGS=--fail-swap-on=false&quot;</span><span class="err">&#39;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">systemd</span><span class="o">/</span><span class="n">system</span><span class="o">/</span><span class="n">kubelet</span><span class="p">.</span><span class="n">service</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="mi">10</span><span class="o">-</span><span class="n">kubeadm</span><span class="p">.</span><span class="n">conf</span>
+
+<span class="n">systemctl</span> <span class="n">daemon</span><span class="o">-</span><span class="n">reload</span>
+<span class="n">systemctl</span> <span class="n">restart</span> <span class="n">kubelet</span>
+</pre></div>
+
+
+<h3 id="gce">GCE</h3>
+<div class="hlcode"><pre><span class="n">cat</span> <span class="o">&lt;&lt;</span><span class="n">EOF</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="p">.</span><span class="n">repos</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">kubernetes</span><span class="p">.</span><span class="n">repo</span>
+<span class="p">[</span><span class="n">kubernetes</span><span class="p">]</span>
+<span class="n">name</span><span class="o">=</span><span class="n">Kubernetes</span>
+<span class="n">baseurl</span><span class="o">=</span><span class="n">https</span><span class="o">:</span><span class="c1">//packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64</span>
+<span class="n">enabled</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">gpgcheck</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">repo_gpgcheck</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">gpgkey</span><span class="o">=</span><span class="n">https</span><span class="o">:</span><span class="c1">//packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg</span>
+<span class="n">exclude</span><span class="o">=</span><span class="n">kube</span><span class="o">*</span>
+<span class="n">EOF</span>
+
+<span class="cp"># Set SELinux in permissive mode (effectively disabling it)</span>
+<span class="n">setenforce</span> <span class="mi">0</span>
+<span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="err">&#39;</span><span class="n">s</span><span class="o">/^</span><span class="n">SELINUX</span><span class="o">=</span><span class="n">enforcing</span><span class="err">$</span><span class="o">/</span><span class="n">SELINUX</span><span class="o">=</span><span class="n">permissive</span><span class="o">/</span><span class="err">&#39;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">selinux</span><span class="o">/</span><span class="n">config</span>
+
+<span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">kubelet</span> <span class="n">kubeadm</span> <span class="n">kubectl</span> <span class="o">--</span><span class="n">disableexcludes</span><span class="o">=</span><span class="n">kubernetes</span>
+
+<span class="n">systemctl</span> <span class="n">enable</span> <span class="o">--</span><span class="n">now</span> <span class="n">kubelet</span>
+</pre></div>
+
+
+<h2 id="add-to-master">add to master</h2>
+<div class="hlcode"><pre><span class="n">kubeadm</span> <span class="n">join</span> <span class="mf">172.20.1.102</span><span class="o">:</span><span class="mi">6443</span> <span class="o">--</span><span class="n">token</span> <span class="mi">4</span><span class="n">r0o8m</span><span class="p">.</span><span class="n">uq64pq6xmvsdejip</span> \
+    <span class="o">--</span><span class="n">discovery</span><span class="o">-</span><span class="n">token</span><span class="o">-</span><span class="n">ca</span><span class="o">-</span><span class="n">cert</span><span class="o">-</span><span class="n">hash</span> <span class="n">sha256</span><span class="o">:</span><span class="mi">657</span><span class="n">d1fb969a9c1f08c0b2fe763d06adfe3d33fe21d89dedda2c0ddbbb5569a2c</span> <span class="o">--</span><span class="n">ignore</span><span class="o">-</span><span class="n">preflight</span><span class="o">-</span><span class="n">errors</span><span class="o">=</span><span class="n">Swap</span>
+</pre></div>
+
+
+<blockquote>
+<p>需要添加swap ignore</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">kubeadm</span> <span class="n">join</span> <span class="mf">198.13.42.46</span><span class="o">:</span><span class="mi">6443</span> <span class="o">--</span><span class="n">token</span> <span class="mi">9</span><span class="n">tq75r</span><span class="mf">.423</span><span class="n">i3wru3pde14xd</span> \
+    <span class="o">--</span><span class="n">discovery</span><span class="o">-</span><span class="n">token</span><span class="o">-</span><span class="n">ca</span><span class="o">-</span><span class="n">cert</span><span class="o">-</span><span class="n">hash</span> <span class="n">sha256</span><span class="o">:</span><span class="n">d1922d52df8870b787d4e068997bc9890e44bcc580206c08e965c043c6c8c58f</span>
+</pre></div>
+
+
+<p>查看加入的node状态</p>
+<div class="hlcode"><pre><span class="cp">[</span><span class="nb">root</span><span class="p">@</span><span class="nx">master</span> <span class="err">~</span><span class="cp">]</span># kubectl get nodes
+NAME     STATUS   ROLES    AGE     VERSION
+master   Ready    master   154m    v1.14.0
+node01   Ready    <span class="nt">&lt;none&gt;</span>   3m52s   v1.14.0
+node02   Ready    <span class="nt">&lt;none&gt;</span>   3m14s   v1.14.0
+</pre></div>
+
+
+<h2 id="kubedns">kubedns</h2>
+<div class="hlcode"><pre><span class="cp">[</span><span class="nb">root</span><span class="p">@</span><span class="nx">master</span> <span class="err">~</span><span class="cp">]</span># kubectl get svc -n kube-system
+NAME       TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+kube-dns   ClusterIP   10.96.0.10   <span class="nt">&lt;none&gt;</span>        53/UDP,53/TCP,9153/TCP   12h
+</pre></div>
+
+
+<p>解析pod的地址，需要指定所在的default domain</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">master</span> <span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">kubectl</span> <span class="n">run</span> <span class="n">client</span> <span class="o">--</span><span class="n">image</span><span class="o">=</span><span class="n">busybox</span> <span class="o">--</span><span class="n">replicas</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span><span class="n">it</span> <span class="o">--</span><span class="n">restart</span><span class="o">=</span><span class="n">Never</span>
+<span class="n">If</span> <span class="n">you</span> <span class="n">don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">see</span> <span class="n">a</span> <span class="n">command</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">try</span> <span class="n">pressing</span> <span class="n">enter</span><span class="p">.</span>
+<span class="o">/</span> <span class="err">#</span> <span class="n">cat</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">resolv</span><span class="p">.</span><span class="n">conf</span>
+<span class="n">nameserver</span> <span class="mf">10.96.0.10</span>
+<span class="n">search</span> <span class="k">default</span><span class="p">.</span><span class="n">svc</span><span class="p">.</span><span class="n">cluster</span><span class="p">.</span><span class="n">local</span> <span class="n">svc</span><span class="p">.</span><span class="n">cluster</span><span class="p">.</span><span class="n">local</span> <span class="n">cluster</span><span class="p">.</span><span class="n">local</span>
+<span class="n">options</span> <span class="n">ndots</span><span class="o">:</span><span class="mi">5</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="p">[</span>root<span class="o">@</span>master <span class="o">~</span><span class="p">]</span><span class="c1"># dig -t A nginx.default.svc.cluster.local @10.96.0.10</span>
+
+<span class="p">;</span> <span class="o">&lt;&lt;&gt;&gt;</span> DiG <span class="m">9.9.4</span><span class="o">-</span>RedHat<span class="m">-9.9.4-73</span>.el7_6 <span class="o">&lt;&lt;&gt;&gt;</span> <span class="o">-</span>t A nginx.default.svc.cluster.local <span class="o">@</span><span class="m">10.96.0.10</span>
+<span class="p">;;</span> global options<span class="o">:</span> <span class="o">+</span>cmd
+<span class="p">;;</span> Got answer<span class="o">:</span>
+<span class="p">;;</span> <span class="o">-&gt;&gt;</span>HEADER<span class="o">&lt;&lt;-</span> opcode<span class="o">:</span> QUERY<span class="p">,</span> status<span class="o">:</span> NOERROR<span class="p">,</span> id<span class="o">:</span> <span class="m">61822</span>
+<span class="p">;;</span> flags<span class="o">:</span> qr aa rd<span class="p">;</span> QUERY<span class="o">:</span> <span class="m">1</span><span class="p">,</span> ANSWER<span class="o">:</span> <span class="m">1</span><span class="p">,</span> AUTHORITY<span class="o">:</span> <span class="m">0</span><span class="p">,</span> ADDITIONAL<span class="o">:</span> <span class="m">1</span>
+<span class="p">;;</span> WARNING<span class="o">:</span> recursion requested but not available
+
+<span class="p">;;</span> OPT PSEUDOSECTION<span class="o">:</span>
+<span class="p">;</span> EDNS<span class="o">:</span> version<span class="o">:</span> <span class="m">0</span><span class="p">,</span> flags<span class="o">:</span><span class="p">;</span> udp<span class="o">:</span> <span class="m">4096</span>
+<span class="p">;;</span> QUESTION SECTION<span class="o">:</span>
+<span class="p">;</span>nginx.default.svc.cluster.local. IN    A
+
+<span class="p">;;</span> ANSWER SECTION<span class="o">:</span>
+nginx.default.svc.cluster.local. <span class="m">5</span> IN   A       <span class="m">10.96.216.63</span>
+
+<span class="p">;;</span> Query time<span class="o">:</span> <span class="m">0</span> msec
+<span class="p">;;</span> SERVER<span class="o">:</span> <span class="m">10.96.0.10</span><span class="c1">#53(10.96.0.10)</span>
+<span class="p">;;</span> WHEN<span class="o">:</span> Tue Apr <span class="m">02</span> <span class="m">00</span><span class="o">:</span><span class="m">44</span><span class="o">:</span><span class="m">52</span> UTC <span class="m">2019</span>
+<span class="p">;;</span> MSG SIZE  rcvd<span class="o">:</span> <span class="m">107</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

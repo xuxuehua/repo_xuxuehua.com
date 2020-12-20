@@ -62,7 +62,9 @@ SQL Thread： 从中继日志中读取日志事件，在本地完成重放
 
 MySQL之间数据复制的基础是二进制日志文件（binary log file）。一台MySQL数据库一旦启用二进制日志后，其作为master，它的数据库中所有操作都会以“事件”的方式记录在二进制日志中，其他数据库作为slave通过一个I/O线程与主服务器保持通信，并监控master的二进制日志文件的变化，如果发现master二进制日志文件发生变化，则会把变化复制到自己的中继日志中，然后slave的一个SQL线程会把相关的“事件”执行到自己的数据库中，以此实现从数据库和主数据库的一致性，也就实现了主从复制。
 
-mysql实现主从复制的方案主要有两种：基于二进制日志的主从复制和基于GTID的主从复制。传统复制是基于主库的二进制日志进行复制，在主站和从站之间同步二进制日志文件和日志文件中的位置标识。
+mysql实现主从复制的方案主要有两种：基于二进制日志的主从复制和基于GTID的主从复制。
+
+传统复制是基于主库的二进制日志进行复制，在主站和从站之间同步二进制日志文件和日志文件中的位置标识。
 
 
 
@@ -81,11 +83,108 @@ mysql实现主从复制的方案主要有两种：基于二进制日志的主从
 
 
 
+#### 复制实现细节分析
+
+MySQL主从复制功能使用**三个线程实现**，**一个在主服务器上**，**两个在从服务器上**
+
+1.Binlog转储线程。
+
+当从服务器与主服务器连接时，主服务器会创建一个线程将二进制日志内容发送到从服务器。
+该线程可以使用 语句 `SHOW PROCESSLIST`(下面有示例介绍) 在服务器 sql 控制台输出中标识为Binlog Dump线程。
+
+二进制日志转储线程获取服务器上二进制日志上的锁，用于读取要发送到从服务器的每个事件。一旦事件被读取，即使在将事件发送到从服务器之前，锁会被释放。
 
 
 
+2.从服务器I/O线程。
 
-#### binlog
+当在从服务器sql 控制台发出 `START SLAVE`语句时，从服务器将创建一个I/O线程，该线程连接到主服务器，并要求它发送记录在主服务器上的二进制更新日志。
+
+从机I/O线程读取主服务器Binlog Dump线程发送的更新 （参考上面 Binlog转储线程 介绍），并将它们复制到自己的本地文件二进制日志中。
+
+该线程的状态显示详情 Slave_IO_running 在输出端 使用 命令`SHOW SLAVE STATUS`
+
+使用`\G`语句终结符,而不是分号,是为了，易读的垂直布局
+
+这个命令在上面 **查看从服务器状态** 用到过
+
+```
+mysql> SHOW SLAVE STATUS\G
+```
+
+
+
+3.从服务器SQL线程。
+
+从服务器创建一条SQL线程来读取由主服务器I/O线程写入的二级制日志，并执行其中包含的事件。
+
+在前面的描述中，每个主/从连接有三个线程。主服务器为每个当前连接的从服务器创建一个二进制日志转储线程，每个从服务器都有自己的I/O和SQL线程。
+从服务器使用两个线程将读取更新与主服务器更新事件，并将其执行为独立任务。因此，如果语句执行缓慢，则读取语句的任务不会减慢。
+
+例如，如果从服务器开始几分钟没有运行，或者即使SQL线程远远落后，它的I/O线程也可以从主服务器建立连接时，快速获取所有二进制日志内容。
+
+如果从服务器在SQL线程执行所有获取的语句之前停止，则I/O线程至少获取已经读取到的内容，以便将语句的安全副本存储在自己的二级制日志文件中，准备下次执行主从服务器建立连接，继续同步。
+
+使用命令 `SHOW PROCESSLIST\G` 可以查看有关复制的信息
+
+命令 SHOW FULL PROCESSLISTG
+
+**在 Master 主服务器 执行的数据示例**
+
+```
+mysql>  SHOW FULL PROCESSLIST\G
+*************************** 1. row ***************************
+     Id: 22
+   User: repl
+   Host: node2:39114
+     db: NULL
+Command: Binlog Dump
+   Time: 4435
+  State: Master has sent all binlog to slave; waiting for more updates
+   Info: NULL
+```
+
+Id: 22是Binlog Dump服务连接的从站的复制线程
+Host: node2:39114 是从服务，主机名 级及端口
+State: 信息表示所有更新都已同步发送到从服务器，并且主服务器正在等待更多更新发生。
+如果Binlog Dump在主服务器上看不到 线程，意味着主从复制没有配置成功; 也就是说，没有从服务器连接主服务器。
+
+命令 SHOW PROCESSLISTG
+
+**在 Slave 从服务器 ，查看两个线程的更新状态**
+
+```
+mysql> SHOW PROCESSLIST\G
+*************************** 1. row ***************************
+     Id: 6
+   User: system user
+   Host: 
+     db: NULL
+Command: Connect
+   Time: 6810
+  State: Waiting for master to send event
+   Info: NULL
+*************************** 2. row ***************************
+     Id: 7
+   User: system user
+   Host: 
+     db: NULL
+Command: Connect
+   Time: 3069
+  State: Slave has read all relay log; waiting for more updates
+   Info: NULL
+```
+
+**Id: 6**是与主服务器通信的I/O线程
+**Id: 7**是正在处理存储在中继日志中的更新的SQL线程
+
+在 运行 `SHOW PROCESSLIST` 命令时，两个线程都空闲，等待进一步更新
+
+如果在主服务器上在设置的超时，时间内 Binlog Dump线程没有活动，则主服务器会和从服务器断开连接。超时取决于的 **服务器系统变量** 值 net_write_timeout(在中止写入之前等待块写入连接的秒数，默认10秒)和 net_retry_count;(如果通信端口上的读取或写入中断，请在重试次数，默认10次) 设置 [服务器系统变量](https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html)
+
+该SHOW SLAVE STATUS语句提供了有关从服务器上复制处理的附加信息。请参见 第16.1.7.1节“检查复制状态”。
+
+
 
 
 
@@ -541,6 +640,73 @@ Rpl_semi_sync_slave_status #从库是否可运行半同步复制
 
 
 
+```
+wget -i -c http://dev.mysql.com/get/mysql57-community-release-el7-10.noarch.rpm
+
+yum -y install mysql57-community-release-el7-10.noarch.rpm
+
+yum -y install mysql-community-server 
+
+systemctl start mysqld
+
+grep "password" /var/log/mysqld.log
+
+```
+
+
+
+开启mysql的远程访问
+
+执行以下命令开启远程访问限制（注意：下面命令开启的IP是 192.168.0.1，如要开启所有的，用%代替IP）：
+
+```
+grant all privileges on *.* to 'root'@'192.168.0.1' identified by 'password' with grant option;
+```
+
+然后再输入下面两行命令
+
+```
+flush privileges; 
+exit;
+```
+
+
+
+为firewalld添加开放端口
+
+添加mysql端口3306
+
+```
+firewall-cmd --zone=public --add-port=3306/tcp --permanent
+```
+
+然后再重新载入
+
+```
+firewall-cmd --reload
+```
+
+
+
+修改mysql的字符编码（不修改会产生中文乱码问题）
+
+显示原来编码：
+
+```
+show variables like '%character%';
+```
+
+修改/etc/my.cnf
+
+```
+[mysqld]
+character-set-server=utf8mb4
+[mysql]
+default-character-set=utf8mb4
+```
+
+
+
 ## 主节点
 
 启动二进制日志
@@ -554,8 +720,16 @@ vim /etc/my.cnf
 log-bin=master-bin
 server-id=1
 innodb_file_per_table=ON
+character-set-server=utf8mb4
 skip_name_resolve=ON
 ```
+
+> /var/lib/mysql/master-bin.index                                                
+> /var/lib/mysql/master-bin.000001                                               
+> /var/lib/mysql/master-bin.000002                                              
+> /var/lib/mysql/master-bin.000003  
+>
+> 可以指定绝对路径 `log-bin=/var/log/mysql/mysql-bin`
 
 
 
@@ -598,11 +772,133 @@ MariaDB [(none)]> SHOW GLOBAL VARIABLES LIKE '%server%';
 创建有复制权限的用户账号
 
 ```
+mysql> create user  'replica_user'@'%'  identified by 'replica_passwd';
+```
+
+
+
+```
 MariaDB [(none)]> GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'repluser'@'208.73.201.%' IDENTIFIED BY 'replpass';
 Query OK, 0 rows affected (0.00 sec)
 
 MariaDB [(none)]> FLUSH PRIVILEGES;
 Query OK, 0 rows affected (0.01 sec)
+```
+
+> 需要指定为 `*.*`   而不能单独对某个库、表授权
+
+
+
+为了主从数据库一致，将进行先锁表，并且导出数据
+
+```undefined
+mysql> FLUSH TABLES WITH READ LOCK
+```
+
+
+
+
+
+```
+mysqldump -u root -p --databases DB_master > DB_masterSlave.sql
+```
+
+
+
+登陆数据库查看Pos值并且解锁数据表
+
+```
+mysql> show master status;
+mysql> unlock tables;
+```
+
+
+
+将备份的sql导入到slave节点
+
+```
+mysql -uroot -p < DB_masterSlave.sql
+```
+
+
+
+
+
+### 查看binlog 
+
+查看主服务器的运行状态
+
+```
+mysql> show master status;
++------------------+----------+--------------+------------------+-------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++------------------+----------+--------------+------------------+-------------------+
+| mysql-bin.000001 |     1190 |              |                  |                   |
++------------------+----------+--------------+------------------+-------------------+
+```
+
+
+
+查看从服务器主机列表
+
+```
+mysql> show slave hosts;
++-----------+------+------+-----------+--------------------------------------+
+| Server_id | Host | Port | Master_id | Slave_UUID                           |
++-----------+------+------+-----------+--------------------------------------+
+|         2 |      | 3306 |         1 | 6b831bf2-8ae7-11e7-a178-000c29cb5cbc |
++-----------+------+------+-----------+--------------------------------------+
+```
+
+
+
+获取binlog文件列表
+
+```
+mysql> show binary logs;
++------------------+-----------+
+| Log_name         | File_size |
++------------------+-----------+
+| mysql-bin.000001 |      1190 |
++------------------+-----------+
+```
+
+
+
+只查看第一个binlog文件的内容
+
+```
+mysql> show binlog events;
++------------------+-----+----------------+-----------+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Log_name         | Pos | Event_type     | Server_id | End_log_pos | Info                                                                                                                                                                                                  |
++------------------+-----+----------------+-----------+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| mysql-bin.000001 |   4 | Format_desc    |         1 |         123 | Server ver: 5.7.19-log, Binlog ver: 4                                                                                                                                                                 |
+| mysql-bin.000001 | 123 | Previous_gtids |         1 |         154 |                                                                                                                                                                                                       |
+| mysql-bin.000001 | 420 | Anonymous_Gtid |         1 |         485 | SET @@SESSION.GTID_NEXT= 'ANONYMOUS'                                                                                                                                                                  |
+| mysql-bin.000001 | 485 | Query          |         1 |         629 | GRANT REPLICATION SLAVE ON *.* TO 'replication'@'192.168.252.124'                                                                                                                                     |
+| mysql-bin.000001 | 629 | Anonymous_Gtid |         1 |         694 | SET @@SESSION.GTID_NEXT= 'ANONYMOUS'                                                                                                                                                                  |
+| mysql-bin.000001 | 694 | Query          |         1 |         847 | CREATE DATABASE `replication_wwww.ymq.io`                                                                                                                                                             |
+| mysql-bin.000001 | 847 | Anonymous_Gtid |         1 |         912 | SET @@SESSION.GTID_NEXT= 'ANONYMOUS'                                                                                                                                                                  |
+| mysql-bin.000001 | 912 | Query          |         1 |        1190 | use `replication_wwww.ymq.io`; CREATE TABLE `sync_test` (`id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 |
++------------------+-----+----------------+-----------+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+```
+
+查看指定binlog文件的内容
+
+```
+mysql> mysql> show binlog events in 'mysql-bin.000001';
++------------------+-----+----------------+-----------+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Log_name         | Pos | Event_type     | Server_id | End_log_pos | Info                                                                                                                                                                                                  |
++------------------+-----+----------------+-----------+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| mysql-bin.000001 |   4 | Format_desc    |         1 |         123 | Server ver: 5.7.19-log, Binlog ver: 4                                                                                                                                                                 |
+| mysql-bin.000001 | 123 | Previous_gtids |         1 |         154 |                                                                                                                                                                                                       |
+| mysql-bin.000001 | 420 | Anonymous_Gtid |         1 |         485 | SET @@SESSION.GTID_NEXT= 'ANONYMOUS'                                                                                                                                                                  |
+| mysql-bin.000001 | 485 | Query          |         1 |         629 | GRANT REPLICATION SLAVE ON *.* TO 'replication'@'192.168.252.124'                                                                                                                                     |
+| mysql-bin.000001 | 629 | Anonymous_Gtid |         1 |         694 | SET @@SESSION.GTID_NEXT= 'ANONYMOUS'                                                                                                                                                                  |
+| mysql-bin.000001 | 694 | Query          |         1 |         847 | CREATE DATABASE `replication_wwww.ymq.io`                                                                                                                                                             |
+| mysql-bin.000001 | 847 | Anonymous_Gtid |         1 |         912 | SET @@SESSION.GTID_NEXT= 'ANONYMOUS'                                                                                                                                                                  |
+| mysql-bin.000001 | 912 | Query          |         1 |        1190 | use `replication_wwww.ymq.io`; CREATE TABLE `sync_test` (`id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 |
++------------------+-----+----------------+-----------+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 ```
 
 
@@ -744,11 +1040,40 @@ Master_SSL_Verify_Server_Cert: No
 1 row in set (0.00 sec)
 ```
 
+> `Slave_IO_State` #从站的当前状态
+> `Slave_IO_Running： Yes` #读取主程序二进制日志的I/O线程是否正在运行
+> `Slave_SQL_Running： Yes` #执行读取主服务器中二进制日志事件的SQL线程是否正在运行。与I/O线程一样
+> `Seconds_Behind_Master `#是否为0，0就是已经同步了
+
+**必须都是 Yes**
+
+如果不是原因主要有以下 4 个方面：
+
+1、网络不通
+2、密码不对
+3、MASTER_LOG_POS 不对 ps
+4、mysql 的 `auto.cnf` server-uuid 一样（可能你是复制的mysql）
+
+```
+$ find / -name 'auto.cnf'
+$ cat /var/lib/mysql/auto.cnf
+[auto]
+server-uuid=6b831bf3-8ae7-11e7-a178-000c29cb5cbc # 按照这个16进制格式，修改server-uuid，重启mysql即可
+```
+
+
+
 可能需要操作
 
 ```
 MariaDB [(none)]> change master to master_password ='replpass';
 Query OK, 0 rows affected (0.00 sec)
+```
+
+清理之前的配置
+
+```
+mysql> reset slave all; 
 ```
 
 
@@ -1045,6 +1370,10 @@ Query OK, 0 rows affected (0.01 sec)
 > log_file 及其pos 需去主机器上`show master status`查看
 
 
+
+```
+mysql> set global validate_password_policy='low';
+```
 
 
 

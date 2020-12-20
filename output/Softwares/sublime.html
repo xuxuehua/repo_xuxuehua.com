@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>sublime - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Softwares">Softwares</a>&nbsp;&#187;&nbsp;sublime
+    <span class="updated">Page Updated&nbsp;
+      2018-12-18 20:03
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">sublime</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#sublime">sublime</a><ul>
+<li><a href="#actualvim">ActualVim</a></li>
+<li><a href="#vintage-mode-enable-vim-not-recommended">Vintage Mode (Enable VIM) (Not  recommended)</a></li>
+<li><a href="#enable-utf-8">Enable UTF-8</a></li>
+<li><a href="#initialization">Initialization</a></li>
+<li><a href="#installation">Installation</a><ul>
+<li><a href="#ubuntu">Ubuntu</a></li>
+<li><a href="#centos">CentOS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="sublime">sublime</h1>
+<h2 id="actualvim">ActualVim</h2>
+<p>先安装依赖NeoVim</p>
+<p>下载并解压到任意位置 https://github.com/neovim/neovim/releases</p>
+<p>添加到环境变量</p>
+<div class="hlcode"><pre><span class="n">vim</span> <span class="o">~/</span><span class="p">.</span><span class="n">bash_profile</span>
+<span class="n">export</span> <span class="n">PATH</span><span class="o">=</span><span class="s">&quot;/Users/rxu/coding/nvim-osx64/bin:$PATH&quot;</span>
+</pre></div>
+
+
+<p>安装ActualVim</p>
+<p>Ctrl+Shift+P 安装package control</p>
+<p>Ctrl+Shift+P  install package </p>
+<p>弹出选项选择 ActualVim</p>
+<p>重启Sublime后，完美的Vim已经可以正常使用了</p>
+<h2 id="vintage-mode-enable-vim-not-recommended">Vintage Mode (Enable VIM) (Not  recommended)</h2>
+<p>Preferences -&gt; Settings </p>
+<div class="hlcode"><pre><span class="p">{</span>
+    <span class="s">&quot;font_size&quot;</span><span class="o">:</span> <span class="mi">17</span><span class="p">,</span>
+    <span class="s">&quot;ignored_packages&quot;</span><span class="o">:</span> <span class="p">[],</span>
+    <span class="s">&quot;vintage_start_in_command_mode&quot;</span><span class="o">:</span> <span class="nb">true</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="enable-utf-8">Enable UTF-8</h2>
+<p>调出console</p>
+<div class="hlcode"><pre><span class="n">ctrl</span> <span class="o">+</span> <span class="err">`</span> 
+</pre></div>
+
+
+<p>install package 选项， 然后输入ConvertToUTF8</p>
+<h2 id="initialization">Initialization</h2>
+<p>Prefernces -&gt; Setting-User</p>
+<div class="hlcode"><pre><span class="p">{</span>
+    <span class="s">&quot;font_size&quot;</span><span class="o">:</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="s">&quot;tab_size&quot;</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s">&quot;translate_tabs_to_spaces&quot;</span><span class="o">:</span> <span class="nb">true</span><span class="p">,</span>
+    <span class="s">&quot;update_check&quot;</span><span class="o">:</span> <span class="nb">false</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="installation">Installation</h2>
+<h3 id="ubuntu">Ubuntu</h3>
+<p>Install the GPG key:</p>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="o">-</span><span class="n">qO</span> <span class="o">-</span> <span class="n">https</span><span class="o">:</span><span class="c1">//download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -</span>
+</pre></div>
+
+
+<p>Ensure apt is set up to work with https sources:</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">apt</span><span class="o">-</span><span class="n">transport</span><span class="o">-</span><span class="n">https</span>
+</pre></div>
+
+
+<p>Select the channel to use:</p>
+<p>Stable</p>
+<div class="hlcode"><pre><span class="n">echo</span> <span class="s">&quot;deb https://download.sublimetext.com/ apt/stable/&quot;</span> <span class="o">|</span> <span class="n">sudo</span> <span class="n">tee</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">sources</span><span class="p">.</span><span class="n">list</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">sublime</span><span class="o">-</span><span class="n">text</span><span class="p">.</span><span class="n">list</span> 
+</pre></div>
+
+
+<p>Dev</p>
+<div class="hlcode"><pre><span class="n">echo</span> <span class="s">&quot;deb https://download.sublimetext.com/ apt/dev/&quot;</span> <span class="o">|</span> <span class="n">sudo</span> <span class="n">tee</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">sources</span><span class="p">.</span><span class="n">list</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">sublime</span><span class="o">-</span><span class="n">text</span><span class="p">.</span><span class="n">list</span>
+</pre></div>
+
+
+<p>Update apt sources and install Sublime Text</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">y</span> <span class="n">update</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">sublime</span><span class="o">-</span><span class="n">text</span>
+</pre></div>
+
+
+<h3 id="centos">CentOS</h3>
+<p>Install the GPG key:</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">rpm</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">import</span> <span class="n">https</span><span class="o">:</span><span class="c1">//download.sublimetext.com/sublimehq-rpm-pub.gpg</span>
+</pre></div>
+
+
+<p>Select the channel to use:</p>
+<p>Stable</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">yum</span><span class="o">-</span><span class="n">config</span><span class="o">-</span><span class="n">manager</span> <span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">repo</span> <span class="n">https</span><span class="o">:</span><span class="c1">//download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo</span>
+</pre></div>
+
+
+<p>Dev</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">yum</span><span class="o">-</span><span class="n">config</span><span class="o">-</span><span class="n">manager</span> <span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">repo</span> <span class="n">https</span><span class="o">:</span><span class="c1">//download.sublimetext.com/rpm/dev/x86_64/sublime-text.repo</span>
+</pre></div>
+
+
+<p>Update yum and install Sublime Text</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">yum</span> <span class="n">install</span> <span class="n">sublime</span><span class="o">-</span><span class="n">text</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

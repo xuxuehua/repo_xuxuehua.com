@@ -1,0 +1,684 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>curl - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;curl
+    <span class="updated">Page Updated&nbsp;
+      2018-11-07 00:06
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">curl</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#curl">curl</a><ul>
+<li><a href="#_1">语法</a></li>
+<li><a href="#options">选项 options</a><ul>
+<li><a href="#-a-append">-a/--append  附加到文件</a></li>
+<li><a href="#-a-user-agent">-A/--user-agent  代理设定</a></li>
+<li><a href="#-b-cookie-cookie">-b/--cookie 使用cookie</a></li>
+<li><a href="#-b-use-ascii-ascii">-B/--use-ascii  ASCII文本传输</a></li>
+<li><a href="#-c-cookie-jar-cookie">-c/--cookie-jar 保存cookie</a></li>
+<li><a href="#-c-continue-at">-C/--continue-at 断点续转</a></li>
+<li><a href="#-d-dump-header">-D/--dump-header 保存头信息</a></li>
+<li><a href="#-d-data-post">-d/--data POST 数据</a></li>
+<li><a href="#-e-referer">-e/--referer 告知来源地址</a></li>
+<li><a href="#-e-cert">-E/--cert 客户端证书文件</a></li>
+<li><a href="#-f-form">-F/--form 表单提交</a></li>
+<li><a href="#-f-fail">-f/--fail 忽略错误</a></li>
+<li><a href="#-h-help">-h/--help 帮助</a></li>
+<li><a href="#-h-header">-H/--header 自定义头信息</a></li>
+<li><a href="#-i-include">-i/--include  显示头信息 及页面</a></li>
+<li><a href="#-i-head">-I/--head 只显示头信息 (大写)</a><ul>
+<li><a href="#_2">断点续传</a></li>
+</ul>
+</li>
+<li><a href="#-k-https">-k 忽略证书 (https)</a></li>
+<li><a href="#-l">-L 自动跳转</a></li>
+<li><a href="#-o-output">-o/--output  保存页面</a></li>
+<li><a href="#-o-remote-name">-O/--remote-name 保留文件名(大写)</a></li>
+<li><a href="#-r-range">-r/--range 分段处理</a></li>
+<li><a href="#-s-silent">-s/--silent 不显示下载进度</a></li>
+<li><a href="#-t-upload-file">-T/--upload-file  上传</a></li>
+<li><a href="#-u-user">-u/--user 用户密码认证</a></li>
+<li><a href="#-v-verbose-verbose">-v/--verbose  verbose</a></li>
+<li><a href="#-w-write-out">-w/--write-out</a></li>
+<li><a href="#-x-proxy">-x/--proxy  代理</a></li>
+<li><a href="#-x-request">-X/--request  指定请求</a><ul>
+<li><a href="#options_1">OPTIONS</a></li>
+<li><a href="#post">POST</a></li>
+<li><a href="#delete">DELETE</a></li>
+</ul>
+</li>
+<li><a href="#-limit-rate">--limit-rate  限速</a></li>
+<li><a href="#-max-filesize">--max-filesize 最大文件大小</a></li>
+<li><a href="#-socks4">--socks4</a></li>
+<li><a href="#-socks5">--socks5</a></li>
+<li><a href="#-socks5-hostname">--socks5-hostname</a></li>
+<li><a href="#-trace">--trace 详细通信</a></li>
+<li><a href="#-trace-ascii">--trace-ascii 详细信息保存到文件</a></li>
+<li><a href="#-trace-time">--trace-time 详细信息带时间戳</a></li>
+<li><a href="#-progress">-#/--progress 进度条</a></li>
+<li><a href="#_3">其他</a></li>
+</ul>
+</li>
+<li><a href="#curlrc">curlrc</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="curl">curl</h1>
+<p>cURL ，Command line URL viewer</p>
+<p>一种命令行工具，作用是发出网络请求，然后得到和提取数据，显示在"标准输出"（stdout）上面</p>
+<h2 id="_1">语法</h2>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="p">[</span><span class="n">option</span><span class="p">]</span> <span class="p">[</span><span class="n">url</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="options">选项 options</h2>
+<h3 id="-a-append">-a/--append  附加到文件</h3>
+<p>上传文件时，附加到目标文件 </p>
+<h3 id="-a-user-agent">-A/--user-agent  代理设定</h3>
+<p>设置用户代理发送给服务器</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">--</span><span class="n">user</span><span class="o">-</span><span class="n">agent</span> <span class="s">&quot;[User Agent]&quot;</span> <span class="p">[</span><span class="n">URL</span><span class="p">]</span>
+</pre></div>
+
+
+<p>有些网站需要使用特定的浏览器去访问他们，有些还需要使用某些特定的版本。curl内置option:-A可以让我们指定浏览器去访问网站</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">A</span> <span class="s">&quot;Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.0)&quot;</span> <span class="n">http</span><span class="o">:</span><span class="c1">//www.linux.com</span>
+</pre></div>
+
+
+<h3 id="-b-cookie-cookie">-b/--cookie 使用cookie</h3>
+<div class="hlcode"><pre><span class="o">-</span><span class="n">b</span><span class="o">/--</span><span class="n">cookie</span> <span class="o">&lt;</span><span class="n">name</span><span class="o">=</span><span class="n">string</span><span class="o">/</span><span class="n">file</span><span class="o">&gt;</span>    
+</pre></div>
+
+
+<p>cookie字符串或文件读取位置</p>
+<p>很多网站都是通过监视你的cookie信息来判断你是否按规矩访问他们的网站的，因此我们需要使用保存的cookie信息。内置option: -b</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">b</span> <span class="n">cookiec</span><span class="p">.</span><span class="n">txt</span> <span class="n">http</span><span class="o">:</span><span class="c1">//www.linux.com</span>
+</pre></div>
+
+
+<h3 id="-b-use-ascii-ascii">-B/--use-ascii  ASCII文本传输</h3>
+<p>使用ASCII /文本传输</p>
+<h3 id="-c-cookie-jar-cookie">-c/--cookie-jar 保存cookie</h3>
+<p>操作结束后把cookie写入到这个文件中 ， 这里与-D的cookie不一样</p>
+<ul>
+<li>模拟表单信息，模拟登录，保存cookie信息</li>
+</ul>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">c</span> <span class="p">.</span><span class="o">/</span><span class="n">cookie_c</span><span class="p">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">F</span> <span class="n">log</span><span class="o">=</span><span class="n">aaaa</span> <span class="o">-</span><span class="n">F</span> <span class="n">pwd</span><span class="o">=******</span> <span class="n">http</span><span class="o">:</span><span class="c1">//blog.51yip.com/wp-login.php  </span>
+</pre></div>
+
+
+<h3 id="-c-continue-at">-C/--continue-at 断点续转</h3>
+<div class="hlcode"><pre><span class="na">-C</span><span class="o">/--</span><span class="nb">continue</span><span class="na">-at</span> <span class="o">&lt;</span><span class="nx">offset</span><span class="o">&gt;</span>  
+</pre></div>
+
+
+<p>断点续转  </p>
+<p>如果在下载dodo1.JPG的过程中突然掉线了，可以使用以下的方式续传</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">C</span> <span class="o">-</span><span class="n">O</span> <span class="n">http</span><span class="o">:</span><span class="c1">//www.linux.com/dodo1.JPG</span>
+</pre></div>
+
+
+<h3 id="-d-dump-header">-D/--dump-header 保存头信息</h3>
+<p>把header信息写入到该文件中 ， 这里与-c的cookie不一样</p>
+<ul>
+<li>模拟表单信息，模拟登录，保存头信息</li>
+</ul>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">D</span> <span class="p">.</span><span class="o">/</span><span class="n">cookie_D</span><span class="p">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">F</span> <span class="n">log</span><span class="o">=</span><span class="n">aaaa</span> <span class="o">-</span><span class="n">F</span> <span class="n">pwd</span><span class="o">=******</span> <span class="n">http</span><span class="o">:</span><span class="c1">//blog.51yip.com/wp-login.php  </span>
+</pre></div>
+
+
+<h3 id="-d-data-post">-d/--data POST 数据</h3>
+<p>HTTP POST方式传送数据  </p>
+<div class="hlcode"><pre><span class="na">-d</span><span class="o">/--</span><span class="kd">data</span> <span class="o">&lt;</span><span class="kd">data</span><span class="o">&gt;</span>   
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">curl</span> <span class="n">host</span><span class="o">:</span><span class="n">port</span><span class="o">/</span><span class="n">post</span><span class="o">-</span><span class="n">file</span> <span class="o">-</span><span class="n">H</span> <span class="s">&quot;Content-Type: text/xml&quot;</span> <span class="o">--</span><span class="n">data</span> <span class="s">&quot;contents_of_file&quot;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span>  \
+<span class="o">--</span><span class="n">header</span> <span class="err">&#39;</span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="o">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="err">&#39;</span> \
+<span class="o">--</span><span class="n">header</span> <span class="err">&#39;</span><span class="n">Accept</span><span class="o">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="err">&#39;</span>  \
+<span class="o">--</span><span class="n">header</span> <span class="err">&#39;</span><span class="n">appkey</span><span class="o">:</span><span class="n">key</span><span class="err">&#39;</span>  \
+<span class="o">--</span><span class="n">header</span> <span class="err">&#39;</span><span class="n">appsign</span><span class="o">=</span><span class="n">sign</span><span class="err">&#39;</span>  \
+<span class="o">--</span><span class="n">header</span> <span class="err">&#39;</span><span class="n">signmethod</span><span class="o">:</span><span class="n">md5</span><span class="err">&#39;</span>  \
+<span class="o">--</span><span class="n">header</span> <span class="err">&#39;</span><span class="n">deviceType</span><span class="o">:</span><span class="mi">1</span><span class="err">&#39;</span>  \
+<span class="o">--</span><span class="n">header</span> <span class="err">&#39;</span><span class="n">deviceId</span><span class="o">:</span><span class="mi">1</span><span class="err">&#39;</span>  \
+<span class="o">-</span><span class="n">d</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&quot;city&quot;</span><span class="o">:</span><span class="s">&quot;shanghai&quot;</span><span class="p">,</span><span class="s">&quot;country&quot;</span><span class="o">:</span><span class="s">&quot;China&quot;</span><span class="p">,</span><span class="s">&quot;headimg&quot;</span><span class="o">:</span><span class="s">&quot;https://1.com/1.png&quot;</span><span class="p">,</span><span class="s">&quot;nick&quot;</span><span class="o">:</span><span class="s">&quot;123&quot;</span><span class="p">,</span><span class="s">&quot;openid&quot;</span><span class="o">:</span><span class="s">&quot;xxxxx&quot;</span><span class="p">,</span><span class="s">&quot;province&quot;</span><span class="o">:</span><span class="s">&quot;Shanghai&quot;</span><span class="p">,</span><span class="s">&quot;sex&quot;</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;unionid&quot;</span><span class="o">:</span><span class="s">&quot;om-xxxxxx&quot;</span><span class="p">}</span><span class="err">&#39;</span> \
+<span class="err">&#39;</span><span class="n">https</span><span class="o">:</span><span class="c1">//xurick.com/user/transfer&#39;</span>
+</pre></div>
+
+
+<h3 id="-e-referer">-e/--referer 告知来源地址</h3>
+<p>很多服务器会检查http访问的referer从而来控制访问。比如：你是先访问首页，然后再访问首页中的邮箱页面，这里访问邮箱的referer地址就是访问首页成功后的页面地址，如果服务器发现对邮箱页面访问的referer地址不是首页的地址，就断定那是个盗连了<br />
+curl中内置option：-e可以让我们设定referer</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">e</span> <span class="s">&quot;www.linux.com&quot;</span> <span class="n">http</span><span class="o">:</span><span class="c1">//mail.linux.com</span>
+</pre></div>
+
+
+<h3 id="-e-cert">-E/--cert 客户端证书文件</h3>
+<p>客户端证书文件和密码 (SSL) </p>
+<div class="hlcode"><pre><span class="o">-</span><span class="n">E</span><span class="o">/--</span><span class="n">cert</span> <span class="o">&lt;</span><span class="n">cert</span><span class="p">[</span><span class="o">:</span><span class="n">passwd</span><span class="p">]</span><span class="o">&gt;</span> 
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">E</span> <span class="n">mycert</span><span class="p">.</span><span class="n">pem</span> <span class="n">https</span><span class="o">:</span><span class="c1">//url</span>
+</pre></div>
+
+
+<h3 id="-f-form">-F/--form 表单提交</h3>
+<div class="hlcode"><pre><span class="o">-</span><span class="n">F</span><span class="o">/--</span><span class="n">form</span> <span class="o">&lt;</span><span class="n">name</span><span class="o">=</span><span class="n">content</span><span class="o">&gt;</span> 
+</pre></div>
+
+
+<p>模拟http表单提交数据  </p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">--</span><span class="n">form</span> <span class="n">upload</span><span class="o">=</span><span class="err">@</span><span class="n">localfilename</span> <span class="o">--</span><span class="n">form</span> <span class="n">press</span><span class="o">=</span><span class="n">OK</span> <span class="p">[</span><span class="n">URL</span><span class="p">]</span>
+</pre></div>
+
+
+<h3 id="-f-fail">-f/--fail 忽略错误</h3>
+<p>连接失败时不显示http错误 </p>
+<p>​      </p>
+<div class="hlcode"><pre><span class="cp"># curl -f http:</span><span class="c1">//xuxuehua.com/a.thml</span>
+<span class="nl">curl:</span> <span class="p">(</span><span class="mi">22</span><span class="p">)</span> <span class="n">The</span> <span class="n">requested</span> <span class="n">URL</span> <span class="n">returned</span> <span class="n">error</span><span class="o">:</span> <span class="mi">404</span> <span class="n">Not</span> <span class="n">Found</span>
+</pre></div>
+
+
+<h3 id="-h-help">-h/--help 帮助</h3>
+<p>帮助</p>
+<h3 id="-h-header">-H/--header 自定义头信息</h3>
+<p>自定义头信息传递给服务器</p>
+<p>有时需要在http request之中，自行增加一个头信息。<code>--header</code>参数就可以起到这个作用</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">--</span><span class="n">header</span> <span class="s">&quot;Content-Type:application/json&quot;</span> <span class="n">http</span><span class="o">:</span><span class="c1">//example.com</span>
+</pre></div>
+
+
+<p>分段下载</p>
+<div class="hlcode"><pre><span class="n">curl</span>  <span class="o">--</span><span class="n">header</span> <span class="s">&quot;Range: bytes=0-20000&quot;</span> <span class="n">http</span><span class="o">:</span><span class="c1">//s0.cyberciti.org/images/misc/static/2012/11/ifdata-welcome-0.png -o part1</span>
+<span class="n">curl</span>  <span class="o">--</span><span class="n">header</span> <span class="s">&quot;Range: bytes=20001-36907&quot;</span> <span class="n">http</span><span class="o">:</span><span class="c1">//s0.cyberciti.org/images/misc/static/2012/11/ifdata-welcome-0.png -o part2</span>
+<span class="n">cat</span> <span class="n">part1</span> <span class="n">part2</span> <span class="o">&gt;&gt;</span> <span class="n">test1</span><span class="p">.</span><span class="n">png</span>
+<span class="n">gnome</span><span class="o">-</span><span class="n">open</span> <span class="n">test1</span><span class="p">.</span><span class="n">png</span>
+</pre></div>
+
+
+<blockquote>
+<p>获取Range结果使用 <code>curl I + url</code></p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">H</span> <span class="s">&quot;Authorization: token OAUTH-TOKEN&quot;</span> <span class="n">https</span><span class="o">:</span><span class="c1">//api.github.com</span>
+</pre></div>
+
+
+<h3 id="-i-include">-i/--include  显示头信息 及页面</h3>
+<p>可以显示http response的头信息，连同网页代码一起。</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">i</span> <span class="n">www</span><span class="p">.</span><span class="n">sina</span><span class="p">.</span><span class="n">com</span>
+</pre></div>
+
+
+<h3 id="-i-head">-I/--head 只显示头信息 (大写)</h3>
+<p>只显示http response的头信息</p>
+<p>用于查看资源的HTTP 头部</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">I</span> <span class="n">http</span><span class="o">:</span><span class="c1">//s0.cyberciti.org/images/misc/static/2012/11/ifdata-welcome-0.png</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span> <span class="mi">301</span> <span class="n">Moved</span> <span class="n">Permanently</span>
+<span class="nl">Date:</span> <span class="n">Sat</span><span class="p">,</span> <span class="mi">29</span> <span class="n">Dec</span> <span class="mi">2018</span> <span class="mi">10</span><span class="o">:</span><span class="mi">37</span><span class="o">:</span><span class="mi">49</span> <span class="n">GMT</span>
+<span class="nl">Connection:</span> <span class="n">keep</span><span class="o">-</span><span class="n">alive</span>
+<span class="n">Cache</span><span class="o">-</span><span class="n">Control</span><span class="o">:</span> <span class="n">max</span><span class="o">-</span><span class="n">age</span><span class="o">=</span><span class="mi">3600</span>
+<span class="nl">Expires:</span> <span class="n">Sat</span><span class="p">,</span> <span class="mi">29</span> <span class="n">Dec</span> <span class="mi">2018</span> <span class="mi">11</span><span class="o">:</span><span class="mi">37</span><span class="o">:</span><span class="mi">49</span> <span class="n">GMT</span>
+<span class="nl">Location:</span> <span class="n">https</span><span class="o">:</span><span class="c1">//s0.cyberciti.org/images/misc/static/2012/11/ifdata-welcome-0.png</span>
+<span class="n">X</span><span class="o">-</span><span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="o">-</span><span class="n">Options</span><span class="o">:</span> <span class="n">nosniff</span>
+<span class="nl">Server:</span> <span class="n">cloudflare</span>
+<span class="n">CF</span><span class="o">-</span><span class="n">RAY</span><span class="o">:</span> <span class="mi">490</span><span class="n">ba22e118b2e15</span><span class="o">-</span><span class="n">NRT</span>
+</pre></div>
+
+
+<h4 id="_2">断点续传</h4>
+<p>当请求资源时，如果服务器返回如下响应头</p>
+<div class="hlcode"><pre><span class="n">accept</span><span class="o">-</span><span class="n">ranges</span><span class="o">=</span><span class="n">bytes</span> 
+</pre></div>
+
+
+<p>表明服务器支持bytes类型得数据断点续传。<strong>如果为空或者none，可能不支持断点续传</strong>。</p>
+<h3 id="-k-https">-k 忽略证书 (https)</h3>
+<p>允许不使用证书到SSL站点</p>
+<div class="hlcode"><pre><span class="o">-</span><span class="n">k</span><span class="o">/--</span><span class="n">insecure</span> 
+</pre></div>
+
+
+<h3 id="-l">-L 自动跳转</h3>
+<p>有的网址是自动跳转的。使用<code>-L</code>参数，curl就会跳转到新的网址。</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">L</span> <span class="n">www</span><span class="p">.</span><span class="n">sina</span><span class="p">.</span><span class="n">com</span>
+</pre></div>
+
+
+<h3 id="-o-output">-o/--output  保存页面</h3>
+<p>把输出写到该文件中  </p>
+<ul>
+<li>抓取页面内容到一个文件中</li>
+</ul>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">o</span> <span class="n">home</span><span class="p">.</span><span class="n">html</span>  <span class="n">http</span><span class="o">:</span><span class="c1">//blog.51yip.com </span>
+</pre></div>
+
+
+<ul>
+<li>使用linux的重定向功能保存</li>
+</ul>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="n">http</span><span class="o">:</span><span class="c1">//www.linux.com &gt;&gt; linux.html</span>
+</pre></div>
+
+
+<ul>
+<li>测试网页返回值</li>
+</ul>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">o</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">null</span> <span class="o">-</span><span class="n">s</span> <span class="o">-</span><span class="n">w</span> <span class="o">%</span><span class="p">{</span><span class="n">http_code</span><span class="p">}</span> <span class="n">www</span><span class="p">.</span><span class="n">linux</span><span class="p">.</span><span class="n">com</span>
+</pre></div>
+
+
+<h3 id="-o-remote-name">-O/--remote-name 保留文件名(大写)</h3>
+<p>把输出写到该文件中，保留远程文件的文件名 </p>
+<ul>
+<li>还可以用正则来抓取东西</li>
+</ul>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">O</span> <span class="n">http</span><span class="o">:</span><span class="c1">//blog.51yip.com/wp-content/uploads/2010/09/compare_varnish.jpg  </span>
+<span class="n">curl</span> <span class="o">-</span><span class="n">O</span> <span class="n">http</span><span class="o">:</span><span class="c1">//blog.51yip.com/wp-content/uploads/2010/[0-9][0-9]/aaaaa.jpg </span>
+</pre></div>
+
+
+<p>下载重命名</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">O</span> <span class="n">http</span><span class="o">:</span><span class="c1">//www.linux.com/{hello,bb}/dodo[1-5].JPG</span>
+</pre></div>
+
+
+<p>由于下载的hello与bb中的文件名都是dodo1，dodo2，dodo3，dodo4，dodo5。因此第二次下载的会把第一次下载的覆盖，这样就需要对文件进行重命名。</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">o</span> <span class="err">#</span><span class="mi">1</span><span class="n">_</span><span class="err">#</span><span class="mf">2.</span><span class="n">JPG</span> <span class="n">http</span><span class="o">:</span><span class="c1">//www.linux.com/{hello,bb}/dodo[1-5].JPG</span>
+</pre></div>
+
+
+<h3 id="-r-range">-r/--range 分段处理</h3>
+<p>检索来自HTTP/1.1或FTP服务器字节范围 </p>
+<p>有时候下载的东西会比较大，这个时候我们可以分段下载。使用内置option：-r</p>
+<div class="hlcode"><pre><span class="c"># curl -r 0-100 -o dodo1_part1.JPG http://www.linux.com/dodo1.JPG</span>
+<span class="c"># curl -r 100-200 -o dodo1_part2.JPG http://www.linux.com/dodo1.JPG</span>
+<span class="c"># curl -r 200- -o dodo1_part3.JPG http://www.linux.com/dodo1.JPG</span>
+<span class="c"># cat dodo1_part* &gt; dodo1.JPG</span>
+</pre></div>
+
+
+<h3 id="-s-silent">-s/--silent 不显示下载进度</h3>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">s</span> <span class="o">-</span><span class="n">o</span> <span class="n">aaa</span><span class="p">.</span><span class="n">jpg</span>  <span class="n">http</span><span class="o">:</span><span class="c1">//blog.51yip.com/wp-content/uploads/2010/09/compare_varnish.jpg  </span>
+</pre></div>
+
+
+<h3 id="-t-upload-file">-T/--upload-file  上传</h3>
+<p>上传文件  </p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">T</span> <span class="n">test</span><span class="p">.</span><span class="n">sql</span> <span class="n">ftp</span><span class="o">:</span><span class="c1">//用户名:密码@ip:port/demo/curtain/bbstudy_files/</span>
+</pre></div>
+
+
+<p>curl不仅仅可以下载文件，还可以上传文件。通过内置option:-T来实现</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">T</span> <span class="n">dodo1</span><span class="p">.</span><span class="n">JPG</span> <span class="o">-</span><span class="n">u</span> <span class="err">用户名</span><span class="o">:</span><span class="err">密码</span> <span class="n">ftp</span><span class="o">:</span><span class="c1">//www.linux.com/img/</span>
+</pre></div>
+
+
+<h3 id="-u-user">-u/--user 用户密码认证</h3>
+<div class="hlcode"><pre><span class="o">-</span><span class="n">u</span><span class="o">/--</span><span class="n">user</span> <span class="o">&lt;</span><span class="n">user</span><span class="p">[</span><span class="o">:</span><span class="n">password</span><span class="p">]</span><span class="o">&gt;</span><span class="err">设置服务器的用户和密码</span>  
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">u</span> <span class="s">&quot;username&quot;</span> <span class="n">https</span><span class="o">:</span><span class="c1">//api.github.com</span>
+</pre></div>
+
+
+<ul>
+<li>通过ftp下载文件</li>
+</ul>
+<div class="hlcode"><pre><span class="s-Atom">curl</span> <span class="o">-</span><span class="s-Atom">u</span> <span class="s-Atom">用户名:密码</span> <span class="o">-</span><span class="nv">O</span> <span class="nn">http</span><span class="p">:</span><span class="o">//</span><span class="s-Atom">blog</span><span class="p">.</span><span class="m">51</span><span class="s-Atom">yip</span><span class="p">.</span><span class="s-Atom">com</span><span class="o">/</span><span class="s-Atom">demo</span><span class="o">/</span><span class="s-Atom">curtain</span><span class="o">/</span><span class="s-Atom">bbstudy_files</span><span class="o">/</span><span class="s-Atom">style</span><span class="p">.</span><span class="s-Atom">css</span>  
+ <span class="c1">% Total    % Received % Xferd  Average Speed   Time    Time     Time  Current  </span>
+ <span class="nv">Dload</span>  <span class="nv">Upload</span>   <span class="nv">Total</span>   <span class="nv">Spent</span>    <span class="nv">Left</span>  <span class="nv">Speed</span>  
+<span class="m">101</span>  <span class="m">1934</span>  <span class="m">101</span>  <span class="m">1934</span>    <span class="m">0</span>     <span class="m">0</span>   <span class="m">3184</span>      <span class="m">0</span> <span class="s-Atom">--:--:--</span> <span class="s-Atom">--:--:--</span> <span class="s-Atom">--:--:--</span>  <span class="m">7136</span>  
+</pre></div>
+
+
+<h3 id="-v-verbose-verbose">-v/--verbose  verbose</h3>
+<p>可以显示一次http通信的整个过程，包括端口连接和http request头信息</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">v</span> <span class="n">www</span><span class="p">.</span><span class="n">sina</span><span class="p">.</span><span class="n">com</span>
+</pre></div>
+
+
+<h3 id="-w-write-out">-w/--write-out</h3>
+<p>format]什么输出完成后  </p>
+<h3 id="-x-proxy">-x/--proxy  代理</h3>
+<p>在给定的端口上使用代理 </p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">--</span><span class="n">proxy</span> <span class="n">socks5</span><span class="o">:</span><span class="c1">//127.0.0.1:1080 ip-api.com</span>
+<span class="n">curl</span> <span class="o">-</span><span class="n">x</span> <span class="n">socks5</span><span class="o">:</span><span class="c1">//127.0.0.1:1080 ip-api.com</span>
+</pre></div>
+
+
+<h3 id="-x-request">-X/--request  指定请求</h3>
+<p>指定什么命令  </p>
+<h4 id="options_1">OPTIONS</h4>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">X</span> <span class="n">OPTIONS</span> <span class="o">-</span><span class="n">H</span> <span class="s">&quot;Origin: http://127.0.0.1:3000&quot;</span> \
+    <span class="o">-</span><span class="n">H</span> <span class="err">&#39;</span><span class="n">Access</span><span class="o">-</span><span class="n">Control</span><span class="o">-</span><span class="n">Request</span><span class="o">-</span><span class="n">Method</span><span class="o">:</span> <span class="n">POST</span><span class="err">&#39;</span> \
+    <span class="o">-</span><span class="n">H</span> <span class="err">&#39;</span><span class="n">Access</span><span class="o">-</span><span class="n">Control</span><span class="o">-</span><span class="n">Request</span><span class="o">-</span><span class="n">Headers</span><span class="o">:</span> <span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">,</span> <span class="n">Authorization</span><span class="err">&#39;</span> \
+    <span class="s">&quot;https://the.sign_in.url&quot;</span>
+</pre></div>
+
+
+<p>…with <code>https://the.sign_in.url</code> replaced by whatever your actual <code>sign_in</code> URL is.</p>
+<p>The response the browser needs to see from that <code>OPTIONS</code> request must include headers like this:</p>
+<div class="hlcode"><pre><span class="n">Access</span><span class="o">-</span><span class="n">Control</span><span class="o">-</span><span class="n">Allow</span><span class="o">-</span><span class="n">Origin</span><span class="o">:</span>  <span class="n">http</span><span class="o">:</span><span class="c1">//127.0.0.1:3000</span>
+<span class="n">Access</span><span class="o">-</span><span class="n">Control</span><span class="o">-</span><span class="n">Allow</span><span class="o">-</span><span class="n">Methods</span><span class="o">:</span> <span class="n">POST</span>
+<span class="n">Access</span><span class="o">-</span><span class="n">Control</span><span class="o">-</span><span class="n">Allow</span><span class="o">-</span><span class="n">Headers</span><span class="o">:</span> <span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">,</span> <span class="n">Authorization</span>
+</pre></div>
+
+
+<p>If the <code>OPTIONS</code> response doesn’t include those headers, then the browser will stop right there and never even attempt to send the <code>POST</code> request. Also, the HTTP status code for the response must be a 2xx—typically 200 or 204. If it’s any other status code, the browser will stop right there.</p>
+<h4 id="post">POST</h4>
+<ul>
+<li>POST application/x-www-form-urlencoded</li>
+</ul>
+<p><code>application/x-www-form-urlencoded</code> is the default:</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">d</span> <span class="s">&quot;param1=value1&amp;param2=value2&quot;</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="o">:</span><span class="c1">//localhost:3000/data</span>
+</pre></div>
+
+
+<p>explicit:</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">d</span> <span class="s">&quot;param1=value1&amp;param2=value2&quot;</span> <span class="o">-</span><span class="n">H</span> <span class="s">&quot;Content-Type: application/x-www-form-urlencoded&quot;</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="o">:</span><span class="c1">//localhost:3000/data</span>
+</pre></div>
+
+
+<p>with a data file</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">d</span> <span class="s">&quot;@data.txt&quot;</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="o">:</span><span class="c1">//localhost:3000/data</span>
+</pre></div>
+
+
+<ul>
+<li>数据没有经过表单编码，还可以让curl为你编码，参数是<code>--data-urlencode</code>。</li>
+</ul>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="n">urlencode</span> <span class="s">&quot;date=April 1&quot;</span> <span class="n">example</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">form</span><span class="p">.</span><span class="n">cgi</span>
+</pre></div>
+
+
+<ul>
+<li>json format </li>
+</ul>
+<p><code>-d '{"key1":"value1", "key2":"value2"}'</code> or <code>-d @data.json</code></p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">d</span> <span class="err">&#39;</span><span class="p">{</span><span class="s">&quot;key1&quot;</span><span class="o">:</span><span class="s">&quot;value1&quot;</span><span class="p">,</span> <span class="s">&quot;key2&quot;</span><span class="o">:</span><span class="s">&quot;value2&quot;</span><span class="p">}</span><span class="err">&#39;</span> <span class="o">-</span><span class="n">H</span> <span class="s">&quot;Content-Type: application/json&quot;</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="o">:</span><span class="c1">//localhost:3000/data</span>
+</pre></div>
+
+
+<p>with a data file</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">d</span> <span class="s">&quot;@data.json&quot;</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="o">:</span><span class="c1">//localhost:3000/data</span>
+</pre></div>
+
+
+<ul>
+<li>POST方法必须把数据和网址分开，curl就要用到--data参数。</li>
+</ul>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="o">--</span><span class="n">data</span> <span class="s">&quot;data=xxx&quot;</span> <span class="n">example</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">form</span><span class="p">.</span><span class="n">cgi</span>
+</pre></div>
+
+
+<p>post encoded base64 file</p>
+<div class="hlcode"><pre>$ ls -la 
+rxu_test.zip
+
+
+# Same above system path for below commands 
+
+zipFileName=&quot;rxu_test&quot;
+
+roleName=&quot;BDP-PROD-DELIVER&quot;
+
+apiToken=&quot;&quot;
+
+DEPLOY_MESSAGE=&quot;testByRickXuZipPackage&quot;
+
+base64App=`base64 <span class="cp">${</span><span class="n">zipFileName</span><span class="cp">}</span>.zip`
+
+
+echo {\&quot;code_content\&quot;:\&quot;<span class="cp">${</span><span class="n">base64App</span><span class="cp">}</span>\&quot;, \&quot;deploy_message\&quot;:\&quot;<span class="cp">${</span><span class="n">DEPLOY_MESSAGE</span><span class="cp">}</span>\&quot;} &gt; <span class="cp">${</span><span class="n">zipFileName</span><span class="cp">}</span>.txt
+
+curl --request POST \
+     --header &quot;Content-Type:application/json&quot; \
+     --header &quot;API_TOKEN:<span class="cp">${</span><span class="n">apiToken</span><span class="cp">}</span>&quot; \
+     --data @<span class="cp">${</span><span class="n">zipFileName</span><span class="cp">}</span>.txt \
+     https://xurick.com/test/application/<span class="cp">${</span><span class="n">roleName</span><span class="cp">}</span>/<span class="cp">${</span><span class="n">zipFileName</span><span class="cp">}</span>
+</pre></div>
+
+
+<h4 id="delete">DELETE</h4>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="n">X</span> <span class="n">DELETE</span> <span class="n">www</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">com</span>
+</pre></div>
+
+
+<h3 id="-limit-rate">--limit-rate  限速</h3>
+<div class="hlcode"><pre><span class="o">--</span><span class="nx">limit</span><span class="na">-rate</span> <span class="o">&lt;</span><span class="nx">rate</span><span class="o">&gt;</span> 
+</pre></div>
+
+
+<p>设置传输速度</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="n">URL</span> <span class="o">--</span><span class="n">limit</span><span class="o">-</span><span class="n">rate</span> <span class="mi">50</span><span class="n">k</span>
+</pre></div>
+
+
+<h3 id="-max-filesize">--max-filesize 最大文件大小</h3>
+<p>设置最大下载的文件总量 </p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="n">URL</span> <span class="o">--</span><span class="n">max</span><span class="o">-</span><span class="n">filesize</span> <span class="n">bytes</span>
+</pre></div>
+
+
+<h3 id="-socks4">--socks4</h3>
+<div class="hlcode"><pre><span class="o">--</span><span class="n">socks4</span> <span class="o">&lt;</span><span class="n">host</span><span class="p">[</span><span class="o">:</span><span class="n">port</span><span class="p">]</span><span class="o">&gt;</span> 
+</pre></div>
+
+
+<p>用socks4代理给定主机和端口  </p>
+<h3 id="-socks5">--socks5</h3>
+<p>DNS解析是在本地上进行的</p>
+<div class="hlcode"><pre><span class="o">--</span><span class="n">socks5</span> <span class="o">&lt;</span><span class="n">host</span><span class="p">[</span><span class="o">:</span><span class="n">port</span><span class="p">]</span><span class="o">&gt;</span> 
+</pre></div>
+
+
+<p>用socks5代理给定主机和端口 </p>
+<div class="hlcode"><pre> <span class="n">curl</span> <span class="o">--</span><span class="n">socks5</span> <span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">1080</span>  <span class="n">ifconfig</span><span class="p">.</span><span class="n">co</span>
+</pre></div>
+
+
+<h3 id="-socks5-hostname">--socks5-hostname</h3>
+<p>DNS解析是在proxy上进行的</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">--</span><span class="n">socks5</span><span class="o">-</span><span class="n">hostname</span> <span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">1080</span> <span class="n">https</span><span class="o">:</span><span class="c1">//ip.cn</span>
+</pre></div>
+
+
+<h3 id="-trace">--trace 详细通信</h3>
+<div class="hlcode"><pre><span class="o">--</span><span class="nb">trace</span> <span class="o">&lt;</span><span class="nb">file</span><span class="o">&gt;</span>  
+</pre></div>
+
+
+<p>对指定文件进行debug </p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">--</span><span class="n">trace</span> <span class="n">output</span><span class="p">.</span><span class="n">txt</span> <span class="n">www</span><span class="p">.</span><span class="n">sina</span><span class="p">.</span><span class="n">com</span>
+</pre></div>
+
+
+<h3 id="-trace-ascii">--trace-ascii 详细信息保存到文件</h3>
+<div class="hlcode"><pre><span class="o">--</span><span class="nb">trace</span><span class="na">-ascii</span> <span class="o">&lt;</span><span class="nb">file</span><span class="o">&gt;</span> 
+</pre></div>
+
+
+<p>跟踪但没有hex输出  </p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">--</span><span class="n">trace</span><span class="o">-</span><span class="n">ascii</span> <span class="n">output</span><span class="p">.</span><span class="n">txt</span> <span class="n">www</span><span class="p">.</span><span class="n">sina</span><span class="p">.</span><span class="n">com</span>
+</pre></div>
+
+
+<h3 id="-trace-time">--trace-time 详细信息带时间戳</h3>
+<div class="hlcode"><pre><span class="o">--</span><span class="n">trace</span><span class="o">-</span><span class="n">time</span>    
+</pre></div>
+
+
+<p>跟踪/详细输出时，添加时间戳  </p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">--</span><span class="n">trace</span><span class="o">-</span><span class="n">time</span> <span class="n">output</span><span class="p">.</span><span class="n">txt</span> <span class="n">www</span><span class="p">.</span><span class="n">sina</span><span class="p">.</span><span class="n">com</span>
+</pre></div>
+
+
+<h3 id="-progress">-#/--progress 进度条</h3>
+<p>用进度条显示当前的传送状态  </p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="o">-</span><span class="err">#</span> <span class="o">-</span><span class="n">O</span>  <span class="n">http</span><span class="o">:</span><span class="c1">//blog.51yip.com/wp-content/uploads/2010/09/compare_varnish.jpg  </span>
+<span class="cp">######################################################################## 100.0%  </span>
+</pre></div>
+
+
+<h3 id="_3">其他</h3>
+<div class="hlcode"><pre><span class="na">-anyauth</span>   <span class="nx">可以使用</span><span class="err">“</span><span class="nx">任何</span><span class="err">”</span><span class="nx">身份验证方法</span>  
+<span class="na">-basic</span> <span class="nx">使用HTTP基本验证</span>  
+<span class="o">--</span><span class="kd">data</span><span class="na">-ascii</span> <span class="o">&lt;</span><span class="kd">data</span><span class="o">&gt;</span>  <span class="nx">以ascii的方式post数据</span>  
+<span class="o">--</span><span class="kd">data</span><span class="na">-binary</span> <span class="o">&lt;</span><span class="kd">data</span><span class="o">&gt;</span> <span class="nx">以二进制的方式post数据</span>  
+<span class="o">--</span><span class="nx">negotiate</span>     <span class="nx">使用HTTP身份验证</span>  
+<span class="o">--</span><span class="nx">digest</span>        <span class="nx">使用数字身份验证</span>  
+<span class="o">--</span><span class="nx">disable</span><span class="na">-eprt</span>  <span class="nx">禁止使用EPRT或LPRT</span>  
+<span class="o">--</span><span class="nx">disable</span><span class="na">-epsv</span>  <span class="nx">禁止使用EPSV</span>  
+<span class="o">--</span><span class="nx">egd</span><span class="na">-file</span> <span class="o">&lt;</span><span class="nb">file</span><span class="o">&gt;</span> <span class="nx">为随机数据</span><span class="p">(</span><span class="nx">SSL</span><span class="p">)</span><span class="nx">设置EGD</span> <span class="nx">socket路径</span>  
+<span class="o">--</span><span class="nx">tcp</span><span class="na">-nodelay</span>   <span class="nx">使用TCP_NODELAY选项</span>  
+<span class="o">--</span><span class="nx">cert</span><span class="na">-type</span> <span class="o">&lt;</span><span class="k">type</span><span class="o">&gt;</span> <span class="nx">证书文件类型</span> <span class="p">(</span><span class="nx">DER</span><span class="p">/</span><span class="nx">PEM</span><span class="p">/</span><span class="nx">ENG</span><span class="p">)</span> <span class="p">(</span><span class="nx">SSL</span><span class="p">)</span>  
+<span class="o">--</span><span class="nb">key</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span>     <span class="nx">私钥文件名</span> <span class="p">(</span><span class="nx">SSL</span><span class="p">)</span>  
+<span class="o">--</span><span class="nb">key</span><span class="na">-type</span> <span class="o">&lt;</span><span class="k">type</span><span class="o">&gt;</span> <span class="nx">私钥文件类型</span> <span class="p">(</span><span class="nx">DER</span><span class="p">/</span><span class="nx">PEM</span><span class="p">/</span><span class="nx">ENG</span><span class="p">)</span> <span class="p">(</span><span class="nx">SSL</span><span class="p">)</span>  
+<span class="o">--</span><span class="nb">pass</span>  <span class="o">&lt;</span><span class="nb">pass</span><span class="o">&gt;</span>  <span class="nx">私钥密码</span> <span class="p">(</span><span class="nx">SSL</span><span class="p">)</span>  
+<span class="o">--</span><span class="nx">engine</span> <span class="o">&lt;</span><span class="nx">eng</span><span class="o">&gt;</span>  <span class="nx">加密引擎使用</span> <span class="p">(</span><span class="nx">SSL</span><span class="p">)</span><span class="nx">.</span> <span class="s2">&quot;--engine list&quot;</span> <span class="nb">for</span> <span class="nb">list</span>  
+<span class="o">--</span><span class="nx">cacert</span> <span class="o">&lt;</span><span class="nb">file</span><span class="o">&gt;</span> <span class="nx">CA证书</span> <span class="p">(</span><span class="nx">SSL</span><span class="p">)</span>  
+<span class="o">--</span><span class="nx">capath</span> <span class="o">&lt;</span><span class="nx">directory</span><span class="o">&gt;</span> <span class="nx">CA目录</span> <span class="p">(</span><span class="nx">made</span> <span class="nx">using</span> <span class="nx">c_rehash</span><span class="p">)</span> <span class="k">to</span> <span class="nx">verify</span> <span class="nx">peer</span> <span class="nx">against</span> <span class="p">(</span><span class="nx">SSL</span><span class="p">)</span>  
+<span class="o">--</span><span class="nx">ciphers</span> <span class="o">&lt;</span><span class="nb">list</span><span class="o">&gt;</span>  <span class="nx">SSL密码</span>  
+<span class="o">--</span><span class="nx">compressed</span>    <span class="nx">要求返回是压缩的形势</span> <span class="p">(</span><span class="nx">using</span> <span class="nx">deflate</span> <span class="ow">or</span> <span class="nx">gzip</span><span class="p">)</span>  
+<span class="o">--</span><span class="nb">connect</span><span class="na">-timeout</span> <span class="o">&lt;</span><span class="nx">seconds</span><span class="o">&gt;</span> <span class="nx">设置最大请求时间</span>  
+<span class="o">--</span><span class="nb">create</span><span class="na">-dirs</span>   <span class="nx">建立本地目录的目录层次结构</span>  
+<span class="o">--</span><span class="nx">crlf</span>          <span class="nx">上传是把LF转变成CRLF</span>  
+<span class="o">--</span><span class="nx">ftp</span><span class="na">-create-dirs</span> <span class="nx">如果远程目录不存在</span><span class="err">，</span><span class="nx">创建远程目录</span>  
+<span class="o">--</span><span class="nx">ftp</span><span class="na">-method</span> <span class="err">[</span><span class="nx">multicwd</span><span class="p">/</span><span class="nx">nocwd</span><span class="p">/</span><span class="nx">singlecwd</span><span class="cp">]</span> 控制CWD的使用  
+--ftp-pasv      使用 PASV/EPSV 代替端口  
+--ftp-skip-pasv-ip 使用PASV的时候,忽略该IP地址  
+--ftp-ssl       尝试用 SSL/TLS 来进行ftp数据传输  
+--ftp-ssl-reqd  要求用 SSL/TLS 来进行ftp数据传输  
+
+-form-string <span class="nt">&lt;name</span><span class="err">=</span><span class="na">string</span><span class="nt">&gt;</span> 模拟http表单提交数据  
+-g/--globoff 禁用网址序列和范围使用{}和<span class="cp">[]</span>  
+-G/--get 以get的方式来发送数据    
+--ignore-content-length  忽略的HTTP头信息的长度  
+
+
+从文件中读取-j/--junk-session-cookies忽略会话Cookie  
+-界面<span class="nt">&lt;interface&gt;</span>指定网络接口/地址使用  
+-krb4 <span class="err">&lt;</span>级别&gt;启用与指定的安全级别krb4  
+-j/--junk-session-cookies 读取文件进忽略session cookie  
+--interface <span class="nt">&lt;interface&gt;</span> 使用指定网络接口/地址  
+--krb4 <span class="nt">&lt;level&gt;</span>  使用指定安全级别的krb4  
+-K/--config  指定的配置文件读取  
+-l/--list-only 列出ftp目录下的文件名称  
+--local-port<span class="nt">&lt;NUM&gt;</span> 强制使用本地端口号  
+-m/--max-time <span class="nt">&lt;seconds&gt;</span> 设置最大传输时间  
+--max-redirs <span class="nt">&lt;num&gt;</span> 设置最大读取的目录数  
+
+-M/--manual  显示全手动  
+-n/--netrc 从netrc文件中读取用户名和密码  
+--netrc-optional 使用 .netrc 或者 URL来覆盖-n  
+--ntlm          使用 HTTP NTLM 身份验证  
+-N/--no-buffer 禁用缓冲输出  
+-p/--proxytunnel   使用HTTP代理  
+--proxy-anyauth 选择任一代理身份验证方法  
+--proxy-basic   在代理上使用基本身份验证  
+--proxy-digest  在代理上使用数字身份验证  
+--proxy-ntlm    在代理上使用ntlm身份验证  
+-P/--ftp-port <span class="nt">&lt;address&gt;</span> 使用端口地址，而不是使用PASV  
+-Q/--quote <span class="nt">&lt;cmd&gt;</span>文件传输前，发送命令到服务器  
+--range-file 读取（SSL）的随机文件  
+-R/--remote-time   在本地生成文件时，保留远程文件时间  
+--retry <span class="nt">&lt;num&gt;</span>   传输出现问题时，重试的次数  
+--retry-delay <span class="nt">&lt;seconds&gt;</span>  传输出现问题时，设置重试间隔时间  
+--retry-max-time <span class="nt">&lt;seconds&gt;</span> 传输出现问题时，设置最大重试时间  
+
+-S/--show-error   显示错误  
+
+--stderr <span class="nt">&lt;file&gt;</span>  
+-t/--telnet-option <span class="nt">&lt;OPT</span><span class="err">=</span><span class="na">val</span><span class="nt">&gt;</span> Telnet选项设置  
+
+
+--url <span class="nt">&lt;URL&gt;</span>     Spet URL to work with  
+
+-U/--proxy-user <span class="nt">&lt;user</span><span class="cp">[</span><span class="p">:</span><span class="nx">password</span><span class="cp">]</span><span class="nt">&gt;</span>设置代理用户名和密码  
+-V/--version 显示版本信息  
+
+
+
+-y/--speed-time 放弃限速所要的时间。默认为30  
+-Y/--speed-limit 停止传输速度的限制，速度时间&#39;秒  
+-z/--time-cond  传送时间设置  
+-0/--http1.0  使用HTTP 1.0  
+-1/--tlsv1  使用TLSv1（SSL）  
+-2/--sslv2 使用SSLv2的（SSL）  
+-3/--sslv3         使用的SSLv3（SSL）  
+--3p-quote      like -Q for the source URL for 3rd party transfer  
+--3p-url        使用url，进行第三方传送  
+--3p-user       使用用户名和密码，进行第三方传送  
+-4/--ipv4   使用IP4  
+-6/--ipv6   使用IP6  
+</pre></div>
+
+
+<h2 id="curlrc">curlrc</h2>
+<div class="hlcode"><pre><span class="cp">#this is a sample .curlrc file</span>
+
+<span class="cp"># store the trace in curl_trace.txt file. beware that multiple executions of the curl command will overwrite this file</span>
+<span class="o">--</span><span class="n">trace</span> <span class="n">curl_trace</span><span class="p">.</span><span class="n">txt</span>
+
+<span class="cp"># store the header info in curl_headers.txt file. beware that multiple executions of the curl command will overwrite this file</span>
+<span class="o">--</span><span class="n">dump</span><span class="o">-</span><span class="n">header</span> <span class="n">curl_headers</span><span class="p">.</span><span class="n">txt</span>
+
+<span class="cp">#change the below referrer URL or comment it out entirely</span>
+<span class="o">-</span><span class="n">e</span> <span class="s">&quot;https://www.google.com&quot;</span>
+
+<span class="cp">#change the below useragent string. get your/other UA strings from http:</span><span class="c1">//www.useragentstring.com/</span>
+<span class="o">-</span><span class="n">A</span> <span class="s">&quot;Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.2.149.27 Safari/525.13&quot;</span>
+
+<span class="cp">#some headers</span>
+<span class="o">-</span><span class="n">H</span>  <span class="s">&quot;Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8&quot;</span>
+<span class="o">-</span><span class="n">H</span>  <span class="s">&quot;Upgrade-Insecure-Requests: 1&quot;</span>
+<span class="o">-</span><span class="n">H</span>  <span class="s">&quot;Accept-Encoding: gzip, deflate, sdch&quot;</span>
+<span class="o">-</span><span class="n">H</span>  <span class="s">&quot;Accept-Language: en-US,en;q=0.8&quot;</span>
+
+
+
+<span class="cp"># socks5</span>
+<span class="n">socks5</span> <span class="o">=</span> <span class="s">&quot;127.0.0.1:1080&quot;</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

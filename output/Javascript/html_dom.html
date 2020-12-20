@@ -1,0 +1,707 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>html_dom 树 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Javascript">Javascript</a>&nbsp;&#187;&nbsp;html_dom 树
+    <span class="updated">Page Updated&nbsp;
+      2018-06-23 16:38
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">html_dom 树</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#html-dom">HTML DOM</a><ul>
+<li><a href="#dom">操作DOM</a></li>
+<li><a href="#dom_1">获取DOM</a><ul>
+<li><a href="#documentgetelementbyid">document.getElementById()</a></li>
+<li><a href="#documentgetelementsbytagname">document.getElementsByTagName()</a></li>
+<li><a href="#documentgetelementsbyclassname">document.getElementsByClassName()</a></li>
+<li><a href="#getattribute">getAttribute()</a></li>
+<li><a href="#childnodes">childNodes()</a></li>
+<li><a href="#parentnode">parentNode()</a></li>
+<li><a href="#selector">selector</a></li>
+<li><a href="#offsetheight">offsetHeight</a></li>
+<li><a href="#scrollheight">scrollHeight</a></li>
+</ul>
+</li>
+<li><a href="#dom_2">更新DOM</a><ul>
+<li><a href="#html">修改HTML元素属性</a></li>
+<li><a href="#innertexttextcontent">修改innerText或textContent属性</a></li>
+<li><a href="#html_1">更改HTML样式</a></li>
+<li><a href="#setattribute">setAttribute()</a></li>
+<li><a href="#createelement">createElement()</a></li>
+<li><a href="#createtextnode">createTextNode</a></li>
+</ul>
+</li>
+<li><a href="#dom_3">插入DOM</a><ul>
+<li><a href="#dom_4">DOM 节点为空</a></li>
+<li><a href="#dom_5">DOM节点不为空</a><ul>
+<li><a href="#appendchild">appendChild</a><ul>
+<li><a href="#_1">从原位置删除再插入到新的位置</a></li>
+<li><a href="#_2">创建一个新的节点，然后插入到指定位置</a></li>
+</ul>
+</li>
+<li><a href="#insertbefore">insertBefore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#dom_6">删除DOM</a><ul>
+<li><a href="#removechild">removeChild()</a></li>
+</ul>
+</li>
+<li><a href="#_3">操作表单</a><ul>
+<li><a href="#_4">获取值</a></li>
+<li><a href="#_5">设置值</a></li>
+<li><a href="#html5">HTML5控件</a></li>
+<li><a href="#_6">提交表单</a><ul>
+<li><a href="#formsubmit">通过&lt;form&gt;元素的submit()方法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_7">操作文件</a><ul>
+<li><a href="#file-api">File API</a></li>
+<li><a href="#_8">回调</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="html-dom">HTML DOM</h1>
+<p>HTML文档被浏览器解析后就是一棵DOM树，要改变HTML的结构，就需要通过JavaScript来操作DOM</p>
+<h2 id="dom">操作DOM</h2>
+<p>DOM是一个树形结构。操作一个DOM节点实际上就是这么几个操作：</p>
+<ul>
+<li>更新：更新该DOM节点的内容，相当于更新了该DOM节点表示的HTML的内容；</li>
+<li>遍历：遍历该DOM节点下的子节点，以便进行进一步操作；</li>
+<li>添加：在该DOM节点下新增一个子节点，相当于动态增加了一个HTML节点；</li>
+<li>删除：将该节点从HTML中删除，相当于删掉了该DOM节点的内容以及它包含的所有子节点。</li>
+</ul>
+<h2 id="dom_1">获取DOM</h2>
+<p>各种方式先拿到这个DOM节点。</p>
+<h3 id="documentgetelementbyid">document.getElementById()</h3>
+<p>可以直接定位唯一的一个DOM节点</p>
+<h3 id="documentgetelementsbytagname">document.getElementsByTagName()</h3>
+<p>总是返回一组DOM节点。要精确地选择DOM，可以先定位父节点，再从父节点开始选择，以缩小范围。</p>
+<h3 id="documentgetelementsbyclassname">document.getElementsByClassName()</h3>
+<p>总是返回一组DOM节点。要精确地选择DOM，可以先定位父节点，再从父节点开始选择，以缩小范围。</p>
+<div class="hlcode"><pre><span class="c1">// 返回ID为&#39;test&#39;的节点：</span>
+<span class="k">var</span> <span class="n">test</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementById</span><span class="p">(&#39;</span><span class="n">test</span><span class="p">&#39;);</span>
+
+<span class="c1">// 先定位ID为&#39;test-table&#39;的节点，再返回其内部所有tr节点：</span>
+<span class="k">var</span> <span class="n">trs</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementById</span><span class="p">(&#39;</span><span class="n">test</span><span class="o">-</span><span class="k">table</span><span class="p">&#39;).</span><span class="n">getElementsByTagName</span><span class="p">(&#39;</span><span class="n">tr</span><span class="p">&#39;);</span>
+
+<span class="c1">// 先定位ID为&#39;test-div&#39;的节点，再返回其内部所有class包含red的节点：</span>
+<span class="k">var</span> <span class="n">reds</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementById</span><span class="p">(&#39;</span><span class="n">test</span><span class="o">-</span><span class="n">div</span><span class="p">&#39;).</span><span class="n">getElementsByClassName</span><span class="p">(&#39;</span><span class="n">red</span><span class="p">&#39;);</span>
+
+<span class="c1">// 获取节点test下的所有直属子节点:</span>
+<span class="k">var</span> <span class="n">cs</span> <span class="o">=</span> <span class="n">test</span><span class="p">.</span><span class="n">children</span><span class="p">;</span>
+
+<span class="c1">// 获取节点test下第一个、最后一个子节点：</span>
+<span class="k">var</span> <span class="n">first</span> <span class="o">=</span> <span class="n">test</span><span class="p">.</span><span class="n">firstElementChild</span><span class="p">;</span>
+<span class="k">var</span> <span class="n">last</span> <span class="o">=</span> <span class="n">test</span><span class="p">.</span><span class="n">lastElementChild</span><span class="p">;</span>
+</pre></div>
+
+
+<h3 id="getattribute">getAttribute()</h3>
+<p>获取元素属性</p>
+<h3 id="childnodes">childNodes()</h3>
+<p>访问子节点</p>
+<h3 id="parentnode">parentNode()</h3>
+<p>访问父节点</p>
+<h3 id="selector">selector</h3>
+<p>使用<code>querySelector()</code>和<code>querySelectorAll()</code>，需要了解selector语法，然后使用条件来获取节点，更加方便：</p>
+<div class="hlcode"><pre><span class="c1">// 通过querySelector获取ID为q1的节点：</span>
+<span class="k">var</span> <span class="n">q1</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">querySelector</span><span class="p">(&#39;#</span><span class="n">q1</span><span class="p">&#39;);</span>
+
+<span class="c1">// 通过querySelectorAll获取q1节点内的符合条件的所有节点：</span>
+<span class="k">var</span> <span class="n">ps</span> <span class="o">=</span> <span class="n">q1</span><span class="p">.</span><span class="n">querySelectorAll</span><span class="p">(&#39;</span><span class="n">div</span><span class="p">.</span><span class="n">highlighted</span> <span class="o">&gt;</span> <span class="n">p</span><span class="p">&#39;);</span>
+</pre></div>
+
+
+<h3 id="offsetheight">offsetHeight</h3>
+<p>网页尺寸</p>
+<h3 id="scrollheight">scrollHeight</h3>
+<p>网页尺寸</p>
+<h2 id="dom_2">更新DOM</h2>
+<p>### 修改<code>innerHTML</code>属性</p>
+<p>一种是修改<code>innerHTML</code>属性，这个方式非常强大，不但可以修改一个DOM节点的文本内容，还可以直接通过HTML片段修改DOM节点内部的子树：</p>
+<div class="hlcode"><pre><span class="c1">// 获取&lt;p id=&quot;p-id&quot;&gt;...&lt;/p&gt;</span>
+<span class="kd">var</span> <span class="n">p</span> <span class="o">=</span> <span class="nx">document.getElementById</span><span class="p">(</span><span class="s1">&#39;p-id&#39;</span><span class="p">);</span>
+<span class="c1">// 设置文本为abc:</span>
+<span class="n">p.innerHTML</span> <span class="o">=</span> <span class="s1">&#39;ABC&#39;</span><span class="p">;</span> <span class="c1">// &lt;p id=&quot;p-id&quot;&gt;ABC&lt;/p&gt;</span>
+<span class="c1">// 设置HTML:</span>
+<span class="n">p.innerHTML</span> <span class="o">=</span> <span class="s1">&#39;ABC &lt;span style=&quot;color:red&quot;&gt;RED&lt;/span&gt; XYZ&#39;</span><span class="p">;</span>
+<span class="c1">// &lt;p&gt;...&lt;/p&gt;的内部结构已修改</span>
+</pre></div>
+
+
+<blockquote>
+<p>用<code>innerHTML</code>时要注意，是否需要写入HTML。如果写入的字符串是通过网络拿到了，要注意对字符编码来避免XSS攻击</p>
+</blockquote>
+<div class="hlcode"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;p1&quot;</span><span class="nt">&gt;</span>Hello World!<span class="nt">&lt;/p&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+document.getElementById(&quot;p1&quot;).innerHTML=&quot;New text!&quot;;
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;p&gt;</span>上面的段落被一条 JavaScript 脚本修改了。<span class="nt">&lt;/p&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+
+
+<h3 id="html">修改HTML元素属性</h3>
+<p><code>document.getElementById(id).attribute=new value</code></p>
+<div class="hlcode"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+
+<span class="nt">&lt;img</span> <span class="na">id=</span><span class="s">&quot;image&quot;</span> <span class="na">src=</span><span class="s">&quot;/i/eg_tulip.jpg&quot;</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+document.getElementById(&quot;image&quot;).src=&quot;/i/shanghai_lupu_bridge.jpg&quot;;
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;p&gt;</span>原始图片是郁金香（eg_tulip.jpg），但是已被修改为卢浦大桥（shanghai_lupu_bridge.jpg）。<span class="nt">&lt;/p&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+
+
+<h3 id="innertexttextcontent">修改<code>innerText</code>或<code>textContent</code>属性</h3>
+<p>可以自动对字符串进行HTML编码，保证无法设置任何HTML标签：</p>
+<div class="hlcode"><pre><span class="c1">// 获取&lt;p id=&quot;p-id&quot;&gt;...&lt;/p&gt;</span>
+<span class="kd">var</span> <span class="n">p</span> <span class="o">=</span> <span class="nx">document.getElementById</span><span class="p">(</span><span class="s1">&#39;p-id&#39;</span><span class="p">);</span>
+<span class="c1">// 设置文本:</span>
+<span class="n">p.innerText</span> <span class="o">=</span> <span class="s1">&#39;&lt;script&gt;alert(&quot;Hi&quot;)&lt;/script&gt;&#39;</span><span class="p">;</span>
+<span class="c1">// HTML被自动编码，无法设置一个&lt;script&gt;节点:</span>
+<span class="c1">// &lt;p id=&quot;p-id&quot;&gt;&amp;lt;script&amp;gt;alert(&quot;Hi&quot;)&amp;lt;/script&amp;gt;&lt;/p&gt;</span>
+</pre></div>
+
+
+<blockquote>
+<p>两者的区别在于读取属性时，<code>innerText</code>不返回隐藏元素的文本，而<code>textContent</code>返回所有文本。另外注意IE&lt;9不支持<code>textContent</code>。</p>
+</blockquote>
+<p>DOM节点的<code>style</code>属性对应所有的CSS，可以直接获取或设置。因为CSS允许<code>font-size</code>这样的名称，但它并非JavaScript有效的属性名，所以需要在JavaScript中改写为驼峰式命名<code>fontSize</code>：</p>
+<div class="hlcode"><pre><span class="c1">// 获取&lt;p id=&quot;p-id&quot;&gt;...&lt;/p&gt;</span>
+<span class="kd">var</span> <span class="n">p</span> <span class="o">=</span> <span class="nx">document.getElementById</span><span class="p">(</span><span class="s1">&#39;p-id&#39;</span><span class="p">);</span>
+<span class="c1">// 设置CSS:</span>
+<span class="n">p.style.color</span> <span class="o">=</span> <span class="s1">&#39;#ff0000&#39;</span><span class="p">;</span>
+<span class="n">p.style.fontSize</span> <span class="o">=</span> <span class="s1">&#39;20px&#39;</span><span class="p">;</span>
+<span class="n">p.style.paddingTop</span> <span class="o">=</span> <span class="s1">&#39;2em&#39;</span><span class="p">;</span>
+</pre></div>
+
+
+<h3 id="html_1">更改HTML样式</h3>
+<p><code>document.getElementById(id).style.property=new style</code></p>
+<div class="hlcode"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;p1&quot;</span><span class="nt">&gt;</span>Hello World!<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;p2&quot;</span><span class="nt">&gt;</span>Hello World!<span class="nt">&lt;/p&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+document.getElementById(&quot;p2&quot;).style.color=&quot;blue&quot;;
+document.getElementById(&quot;p2&quot;).style.fontFamily=&quot;Arial&quot;;
+document.getElementById(&quot;p2&quot;).style.fontSize=&quot;larger&quot;;
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;p&gt;</span>上面的段落已被一段脚本修改。<span class="nt">&lt;/p&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+
+<span class="nt">&lt;h1</span> <span class="na">id=</span><span class="s">&quot;id1&quot;</span><span class="nt">&gt;</span>My Heading 1<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;button&quot;</span> 
+<span class="na">onclick=</span><span class="s">&quot;document.getElementById(&#39;id1&#39;).style.color=&#39;red&#39;&quot;</span><span class="nt">&gt;</span>
+点击这里！<span class="nt">&lt;/button&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+
+
+<h3 id="setattribute">setAttribute()</h3>
+<p>设置元素属性</p>
+<h3 id="createelement">createElement()</h3>
+<p>创建元素节点</p>
+<h3 id="createtextnode">createTextNode</h3>
+<p>创建文本节点</p>
+<h2 id="dom_3">插入DOM</h2>
+<h3 id="dom_4">DOM 节点为空</h3>
+<p>如果这个DOM节点是空的，例如，<code>&lt;div&gt;&lt;/div&gt;</code>，那么，直接使用<code>innerHTML = '&lt;span&gt;child&lt;/span&gt;'</code>就可以修改DOM节点的内容，相当于“插入”了新的DOM节点。</p>
+<p>如果这个DOM节点不是空的，那就不能这么做，因为<code>innerHTML</code>会直接替换掉原来的所有子节点。</p>
+<h3 id="dom_5">DOM节点不为空</h3>
+<h4 id="appendchild">appendChild</h4>
+<h5 id="_1">从原位置删除再插入到新的位置</h5>
+<p>把一个子节点添加到父节点的最后一个子节点。例如：</p>
+<div class="hlcode"><pre><span class="c">&lt;!-- HTML结构 --&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;js&quot;</span><span class="nt">&gt;</span>JavaScript<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;list&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;java&quot;</span><span class="nt">&gt;</span>Java<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;python&quot;</span><span class="nt">&gt;</span>Python<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;scheme&quot;</span><span class="nt">&gt;</span>Scheme<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>把<code>&lt;p id="js"&gt;JavaScript&lt;/p&gt;</code>添加到<code>&lt;div id="list"&gt;</code>的最后一项：</p>
+<div class="hlcode"><pre><span class="n">var</span>
+    <span class="n">js</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementById</span><span class="p">(</span><span class="err">&#39;</span><span class="n">js</span><span class="err">&#39;</span><span class="p">),</span>
+    <span class="n">list</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementById</span><span class="p">(</span><span class="err">&#39;</span><span class="n">list</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">list</span><span class="p">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">js</span><span class="p">);</span>
+</pre></div>
+
+
+<p>现在，HTML结构变成了这样：</p>
+<div class="hlcode"><pre><span class="c">&lt;!-- HTML结构 --&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;list&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;java&quot;</span><span class="nt">&gt;</span>Java<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;python&quot;</span><span class="nt">&gt;</span>Python<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;scheme&quot;</span><span class="nt">&gt;</span>Scheme<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;js&quot;</span><span class="nt">&gt;</span>JavaScript<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<blockquote>
+<p>因为我们插入的<code>js</code>节点已经存在于当前的文档树，因此这个节点首先会从原先的位置删除，再插入到新的位置</p>
+</blockquote>
+<div class="hlcode"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;div1&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;p1&quot;</span><span class="nt">&gt;</span>这是一个段落。<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;p2&quot;</span><span class="nt">&gt;</span>这是另一个段落。<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+var para=document.createElement(&quot;p&quot;);
+var node=document.createTextNode(&quot;这是新段落。&quot;);
+para.appendChild(node);
+
+var element=document.getElementById(&quot;div1&quot;);
+element.appendChild(para);
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+
+&gt;&gt;&gt;
+这是一个段落。
+
+这是另一个段落。
+
+这是新段落。
+</pre></div>
+
+
+<h5 id="_2">创建一个新的节点，然后插入到指定位置</h5>
+<div class="hlcode"><pre><span class="c">&lt;!-- HTML结构 --&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;js&quot;</span><span class="nt">&gt;</span>JavaScript<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;list&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;java&quot;</span><span class="nt">&gt;</span>Java<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;python&quot;</span><span class="nt">&gt;</span>Python<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;scheme&quot;</span><span class="nt">&gt;</span>Scheme<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">var</span>
+    <span class="n">list</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementById</span><span class="p">(</span><span class="err">&#39;</span><span class="n">list</span><span class="err">&#39;</span><span class="p">),</span>
+    <span class="n">haskell</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">createElement</span><span class="p">(</span><span class="sc">&#39;p&#39;</span><span class="p">);</span>
+<span class="n">haskell</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">haskell</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="n">haskell</span><span class="p">.</span><span class="n">innerText</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">Haskell</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="n">list</span><span class="p">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">haskell</span><span class="p">);</span>
+</pre></div>
+
+
+<p>这样我们就动态添加了一个新的节点：</p>
+<div class="hlcode"><pre><span class="c">&lt;!-- HTML结构 --&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;list&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;java&quot;</span><span class="nt">&gt;</span>Java<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;python&quot;</span><span class="nt">&gt;</span>Python<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;scheme&quot;</span><span class="nt">&gt;</span>Scheme<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;haskell&quot;</span><span class="nt">&gt;</span>Haskell<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>代码动态创建了一个<code>&lt;style&gt;</code>节点，然后把它添加到<code>&lt;head&gt;</code>节点的末尾，这样就动态地给文档添加了新的CSS定义：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">d</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">createElement</span><span class="p">(</span><span class="err">&#39;</span><span class="n">style</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">d</span><span class="p">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="err">&#39;</span><span class="n">type</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">text</span><span class="o">/</span><span class="n">css</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">d</span><span class="p">.</span><span class="n">innerHTML</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">p</span> <span class="p">{</span> <span class="n">color</span><span class="o">:</span> <span class="n">red</span> <span class="p">}</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="n">document</span><span class="p">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="err">&#39;</span><span class="n">head</span><span class="err">&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="n">appendChild</span><span class="p">(</span><span class="n">d</span><span class="p">);</span>
+</pre></div>
+
+
+<p>可以在Chrome的控制台执行上述代码，观察页面样式的变化。</p>
+<h4 id="insertbefore">insertBefore</h4>
+<p>可以使用<code>parentElement.insertBefore(newElement, referenceElement);</code>，子节点会插入到<code>referenceElement</code>之前。</p>
+<p>还是以上面的HTML为例，假定我们要把<code>Haskell</code>插入到<code>Python</code>之前：</p>
+<div class="hlcode"><pre><span class="c">&lt;!-- HTML结构 --&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;list&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;java&quot;</span><span class="nt">&gt;</span>Java<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;python&quot;</span><span class="nt">&gt;</span>Python<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;scheme&quot;</span><span class="nt">&gt;</span>Scheme<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>可以这么写：</p>
+<div class="hlcode"><pre><span class="n">var</span>
+    <span class="n">list</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementById</span><span class="p">(</span><span class="err">&#39;</span><span class="n">list</span><span class="err">&#39;</span><span class="p">),</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementById</span><span class="p">(</span><span class="err">&#39;</span><span class="n">python</span><span class="err">&#39;</span><span class="p">),</span>
+    <span class="n">haskell</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">createElement</span><span class="p">(</span><span class="sc">&#39;p&#39;</span><span class="p">);</span>
+<span class="n">haskell</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">haskell</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="n">haskell</span><span class="p">.</span><span class="n">innerText</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">Haskell</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="n">list</span><span class="p">.</span><span class="n">insertBefore</span><span class="p">(</span><span class="n">haskell</span><span class="p">,</span> <span class="n">ref</span><span class="p">);</span>
+</pre></div>
+
+
+<p>新的HTML结构如下：</p>
+<div class="hlcode"><pre><span class="c">&lt;!-- HTML结构 --&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;list&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;java&quot;</span><span class="nt">&gt;</span>Java<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;haskell&quot;</span><span class="nt">&gt;</span>Haskell<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;python&quot;</span><span class="nt">&gt;</span>Python<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;scheme&quot;</span><span class="nt">&gt;</span>Scheme<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>可见，使用<code>insertBefore</code>重点是要拿到一个“参考子节点”的引用。很多时候，需要循环一个父节点的所有子节点，可以通过迭代<code>children</code>属性实现：</p>
+<div class="hlcode"><pre><span class="n">var</span>
+    <span class="n">i</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span>
+    <span class="n">list</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementById</span><span class="p">(</span><span class="err">&#39;</span><span class="n">list</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">list</span><span class="p">.</span><span class="n">children</span><span class="p">.</span><span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">list</span><span class="p">.</span><span class="n">children</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="c1">// 拿到第i个子节点</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="dom_6">删除DOM</h2>
+<h4 id="removechild">removeChild()</h4>
+<p>要删除一个节点，首先要获得该节点本身以及它的父节点，然后，调用父节点的<code>removeChild</code>把自己删掉：</p>
+<div class="hlcode"><pre><span class="c1">// 拿到待删除节点:</span>
+<span class="k">var</span> <span class="n">self</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementById</span><span class="p">(&#39;</span><span class="n">to</span><span class="o">-</span><span class="n">be</span><span class="o">-</span><span class="n">removed</span><span class="p">&#39;);</span>
+<span class="c1">// 拿到父节点:</span>
+<span class="k">var</span> <span class="n">parent</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">parentElement</span><span class="p">;</span>
+<span class="c1">// 删除:</span>
+<span class="k">var</span> <span class="n">removed</span> <span class="o">=</span> <span class="n">parent</span><span class="p">.</span><span class="n">removeChild</span><span class="p">(</span><span class="n">self</span><span class="p">);</span>
+<span class="n">removed</span> <span class="o">===</span> <span class="n">self</span><span class="p">;</span> <span class="c1">// true</span>
+</pre></div>
+
+
+<blockquote>
+<p>注意到删除后的节点虽然不在文档树中了，但其实它还在内存中，可以随时再次被添加到别的位置。</p>
+</blockquote>
+<p>当你遍历一个父节点的子节点并进行删除操作时，要注意，<code>children</code>属性是一个只读属性，并且它在子节点变化时会实时更新。</p>
+<p>例如，对于如下HTML结构：</p>
+<div class="hlcode"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;parent&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p&gt;</span>First<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p&gt;</span>Second<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>当我们用如下代码删除子节点时：</p>
+<div class="hlcode"><pre>var parent <span class="o">=</span> document.getElementById<span class="p">(</span><span class="s">&#39;parent&#39;</span><span class="p">);</span>
+parent.removeChild<span class="p">(</span>parent.children<span class="p">[</span><span class="m">0</span><span class="p">]);</span>
+parent.removeChild<span class="p">(</span>parent.children<span class="p">[</span><span class="m">1</span><span class="p">]);</span> <span class="o">//</span> <span class="o">&lt;--</span> 浏览器报错
+</pre></div>
+
+
+<p>浏览器报错：<code>parent.children[1]</code>不是一个有效的节点。原因就在于，当<code>&lt;p&gt;First&lt;/p&gt;</code>节点被删除后，<code>parent.children</code>的节点数量已经从2变为了1，索引<code>[1]</code>已经不存在了。</p>
+<p>因此，删除多个节点时，要注意<code>children</code>属性时刻都在变化。</p>
+<div class="hlcode"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;div1&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;p1&quot;</span><span class="nt">&gt;</span>这是一个段落。<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;p2&quot;</span><span class="nt">&gt;</span>这是另一个段落。<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+var parent=document.getElementById(&quot;div1&quot;);
+var child=document.getElementById(&quot;p1&quot;);
+parent.removeChild(child);
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+
+&gt;&gt;&gt;
+这是另一个段落。
+</pre></div>
+
+
+<h2 id="_3">操作表单</h2>
+<p>用JavaScript操作表单和操作DOM是类似的，因为表单本身也是DOM树</p>
+<p>HTML表单的输入控件主要有以下几种：</p>
+<ul>
+<li>文本框，对应的<code>&lt;input type="text"&gt;</code>，用于输入文本；</li>
+<li>口令框，对应的<code>&lt;input type="password"&gt;</code>，用于输入口令；</li>
+<li>单选框，对应的<code>&lt;input type="radio"&gt;</code>，用于选择一项；</li>
+<li>复选框，对应的<code>&lt;input type="checkbox"&gt;</code>，用于选择多项；</li>
+<li>下拉框，对应的<code>&lt;select&gt;</code>，用于选择一项；</li>
+<li>隐藏文本，对应的<code>&lt;input type="hidden"&gt;</code>，用户不可见，但表单提交时会把隐藏文本发送到服务器</li>
+</ul>
+<h3 id="_4">获取值</h3>
+<p>如果我们获得了一个<code>&lt;input&gt;</code>节点的引用，就可以直接调用<code>value</code>获得对应的用户输入值：</p>
+<div class="hlcode"><pre><span class="c1">// &lt;input type=&quot;text&quot; id=&quot;email&quot;&gt;</span>
+<span class="k">var</span> <span class="k">input</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementById</span><span class="p">(&#39;</span><span class="n">email</span><span class="p">&#39;);</span>
+<span class="k">input</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="c1">// &#39;用户输入的值&#39;</span>
+</pre></div>
+
+
+<p>这种方式可以应用于<code>text</code>、<code>password</code>、<code>hidden</code>以及<code>select</code>。但是，对于单选框和复选框，<code>value</code>属性返回的永远是HTML预设的值，而我们需要获得的实际是用户是否“勾上了”选项，所以应该用<code>checked</code>判断：</p>
+<div class="hlcode"><pre><span class="c1">// &lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;weekday&quot; id=&quot;monday&quot; value=&quot;1&quot;&gt; Monday&lt;/label&gt;</span>
+<span class="c1">// &lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;weekday&quot; id=&quot;tuesday&quot; value=&quot;2&quot;&gt; Tuesday&lt;/label&gt;</span>
+<span class="kd">var</span> <span class="n">mon</span> <span class="o">=</span> <span class="nx">document.getElementById</span><span class="p">(</span><span class="s1">&#39;monday&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="n">tue</span> <span class="o">=</span> <span class="nx">document.getElementById</span><span class="p">(</span><span class="s1">&#39;tuesday&#39;</span><span class="p">);</span>
+<span class="nx">mon.value</span><span class="p">;</span> <span class="c1">// &#39;1&#39;</span>
+<span class="nx">tue.value</span><span class="p">;</span> <span class="c1">// &#39;2&#39;</span>
+<span class="nx">mon.checked</span><span class="p">;</span> <span class="c1">// true或者false</span>
+<span class="nx">tue.checked</span><span class="p">;</span> <span class="c1">// true或者false</span>
+</pre></div>
+
+
+<h3 id="_5">设置值</h3>
+<p>设置值和获取值类似，对于<code>text</code>、<code>password</code>、<code>hidden</code>以及<code>select</code>，直接设置<code>value</code>就可以：</p>
+<div class="hlcode"><pre><span class="c1">// &lt;input type=&quot;text&quot; id=&quot;email&quot;&gt;</span>
+<span class="k">var</span> <span class="k">input</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementById</span><span class="p">(&#39;</span><span class="n">email</span><span class="p">&#39;);</span>
+<span class="k">input</span><span class="p">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">&#39;</span><span class="n">test</span><span class="p">@</span><span class="n">example</span><span class="p">.</span><span class="n">com</span><span class="p">&#39;;</span> <span class="c1">// 文本框的内容已更新</span>
+</pre></div>
+
+
+<p>对于单选框和复选框，设置<code>checked</code>为<code>true</code>或<code>false</code>即可。</p>
+<h3 id="html5">HTML5控件</h3>
+<p>HTML5新增了大量标准控件，常用的包括<code>date</code>、<code>datetime</code>、<code>datetime-local</code>、<code>color</code>等，它们都使用<code>&lt;input&gt;</code>标签：</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;date&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;2015-07-01&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p><img alt="alt" src="https://cdn.pbrd.co/images/HrcZety.png" /></p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;datetime-local&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;2015-07-01T02:03:04&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p><img alt="alt" src="https://cdn.pbrd.co/images/HrcZzc8.png" /></p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;color&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;#ff0000&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p><img alt="alt" src="https://cdn.pbrd.co/images/HrcZT0Z.png" /></p>
+<blockquote>
+<p>不支持HTML5的浏览器无法识别新的控件，会把它们当做<code>type="text"</code>来显示。支持HTML5的浏览器将获得格式化的字符串。例如，<code>type="date"</code>类型的<code>input</code>的<code>value</code>将保证是一个有效的<code>YYYY-MM-DD</code>格式的日期，或者空字符串。</p>
+</blockquote>
+<h3 id="_6">提交表单</h3>
+<h4 id="formsubmit">通过<code>&lt;form&gt;</code>元素的<code>submit()</code>方法</h4>
+<p>响应一个<code>&lt;button&gt;</code>的<code>click</code>事件，在JavaScript代码中提交表单：</p>
+<div class="hlcode"><pre><span class="c">&lt;!-- HTML --&gt;</span>
+<span class="nt">&lt;form</span> <span class="na">id=</span><span class="s">&quot;test-form&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">name=</span><span class="s">&quot;test&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;button&quot;</span> <span class="na">onclick=</span><span class="s">&quot;doSubmitForm()&quot;</span><span class="nt">&gt;</span>Submit<span class="nt">&lt;/button&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+function doSubmitForm() {
+    var form = document.getElementById(&#39;test-form&#39;);
+    // 可以在此修改form的input...
+    // 提交form:
+    form.submit();
+}
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+
+
+<p>这种方式的缺点是扰乱了浏览器对form的正常提交。浏览器默认点击<code>&lt;button type="submit"&gt;</code>时提交表单，或者用户在最后一个输入框按回车键。因此，第二种方式是响应<code>&lt;form&gt;</code>本身的<code>onsubmit</code>事件，在提交form时作修改：</p>
+<div class="hlcode"><pre><span class="c">&lt;!-- HTML --&gt;</span>
+<span class="nt">&lt;form</span> <span class="na">id=</span><span class="s">&quot;test-form&quot;</span> <span class="na">onsubmit=</span><span class="s">&quot;return checkForm()&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">name=</span><span class="s">&quot;test&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span><span class="nt">&gt;</span>Submit<span class="nt">&lt;/button&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+function checkForm() {
+    var form = document.getElementById(&#39;test-form&#39;);
+    // 可以在此修改form的input...
+    // 继续下一步:
+    return true;
+}
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+
+
+<p>注意要<code>return true</code>来告诉浏览器继续提交，如果<code>return false</code>，浏览器将不会继续提交form，这种情况通常对应用户输入有误，提示用户错误信息后终止提交form。</p>
+<p>在检查和修改<code>&lt;input&gt;</code>时，要充分利用<code>&lt;input type="hidden"&gt;</code>来传递数据。</p>
+<p>例如，很多登录表单希望用户输入用户名和口令，但是，安全考虑，提交表单时不传输明文口令，而是口令的MD5。普通JavaScript开发人员会直接修改<code>&lt;input&gt;</code>：</p>
+<div class="hlcode"><pre><span class="c">&lt;!-- HTML --&gt;</span>
+<span class="nt">&lt;form</span> <span class="na">id=</span><span class="s">&quot;login-form&quot;</span> <span class="na">method=</span><span class="s">&quot;post&quot;</span> <span class="na">onsubmit=</span><span class="s">&quot;return checkForm()&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">id=</span><span class="s">&quot;username&quot;</span> <span class="na">name=</span><span class="s">&quot;username&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;password&quot;</span> <span class="na">id=</span><span class="s">&quot;password&quot;</span> <span class="na">name=</span><span class="s">&quot;password&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span><span class="nt">&gt;</span>Submit<span class="nt">&lt;/button&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+function checkForm() {
+    var pwd = document.getElementById(&#39;password&#39;);
+    // 把用户输入的明文变为MD5:
+    pwd.value = toMD5(pwd.value);
+    // 继续下一步:
+    return true;
+}
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+
+
+<p>这个做法看上去没啥问题，但用户输入了口令提交时，口令框的显示会突然从几个<code>*</code>变成32个<code>*</code>（因为MD5有32个字符）。</p>
+<p>要想不改变用户的输入，可以利用<code>&lt;input type="hidden"&gt;</code>实现：</p>
+<div class="hlcode"><pre><span class="c">&lt;!-- HTML --&gt;</span>
+<span class="nt">&lt;form</span> <span class="na">id=</span><span class="s">&quot;login-form&quot;</span> <span class="na">method=</span><span class="s">&quot;post&quot;</span> <span class="na">onsubmit=</span><span class="s">&quot;return checkForm()&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">id=</span><span class="s">&quot;username&quot;</span> <span class="na">name=</span><span class="s">&quot;username&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;password&quot;</span> <span class="na">id=</span><span class="s">&quot;input-password&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;hidden&quot;</span> <span class="na">id=</span><span class="s">&quot;md5-password&quot;</span> <span class="na">name=</span><span class="s">&quot;password&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span><span class="nt">&gt;</span>Submit<span class="nt">&lt;/button&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+function checkForm() {
+    var input_pwd = document.getElementById(&#39;input-password&#39;);
+    var md5_pwd = document.getElementById(&#39;md5-password&#39;);
+    // 把用户输入的明文变为MD5:
+    md5_pwd.value = toMD5(input_pwd.value);
+    // 继续下一步:
+    return true;
+}
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+
+
+<p>注意到<code>id</code>为<code>md5-password</code>的<code>&lt;input&gt;</code>标记了<code>name="password"</code>，而用户输入的<code>id</code>为<code>input-password</code>的<code>&lt;input&gt;</code>没有<code>name</code>属性。没有<code>name</code>属性的<code>&lt;input&gt;</code>的数据不会被提交。</p>
+<h2 id="_7">操作文件</h2>
+<p>在HTML表单中，可以上传文件的唯一控件就是<code>&lt;input type="file"&gt;</code>。</p>
+<p><em>注意</em>：当一个表单包含<code>&lt;input type="file"&gt;</code>时，表单的<code>enctype</code>必须指定为<code>multipart/form-data</code>，<code>method</code>必须指定为<code>post</code>，浏览器才能正确编码并以<code>multipart/form-data</code>格式发送表单的数据。</p>
+<p>出于安全考虑，浏览器只允许用户点击<code>&lt;input type="file"&gt;</code>来选择本地文件，用JavaScript对<code>&lt;input type="file"&gt;</code>的<code>value</code>赋值是没有任何效果的。当用户选择了上传某个文件后，JavaScript也无法获得该文件的真实路径：</p>
+<p><img alt="alt" src="https://cdn.pbrd.co/images/Hrd5Q1I.png" /></p>
+<div class="hlcode"><pre>          <span class="err">待上传文件</span><span class="o">:</span>
+</pre></div>
+
+
+<p>通常，上传的文件都由后台服务器处理，JavaScript可以在提交表单时对文件扩展名做检查，以便防止用户上传无效格式的文件：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">f</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementById</span><span class="p">(</span><span class="err">&#39;</span><span class="n">test</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">upload</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="c1">// &#39;C:\fakepath\test.png&#39;</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">filename</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="n">filename</span><span class="p">.</span><span class="n">endsWith</span><span class="p">(</span><span class="err">&#39;</span><span class="p">.</span><span class="n">jpg</span><span class="err">&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="n">filename</span><span class="p">.</span><span class="n">endsWith</span><span class="p">(</span><span class="err">&#39;</span><span class="p">.</span><span class="n">png</span><span class="err">&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="n">filename</span><span class="p">.</span><span class="n">endsWith</span><span class="p">(</span><span class="err">&#39;</span><span class="p">.</span><span class="n">gif</span><span class="err">&#39;</span><span class="p">)))</span> <span class="p">{</span>
+    <span class="n">alert</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Can</span> <span class="n">only</span> <span class="n">upload</span> <span class="n">image</span> <span class="n">file</span><span class="p">.</span><span class="err">&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="file-api">File API</h3>
+<p>由于JavaScript对用户上传的文件操作非常有限，尤其是无法读取文件内容，使得很多需要操作文件的网页不得不用Flash这样的第三方插件来实现。</p>
+<p>随着HTML5的普及，新的File API允许JavaScript读取文件内容，获得更多的文件信息。</p>
+<p>HTML5的File API提供了<code>File</code>和<code>FileReader</code>两个主要对象，可以获得文件信息并读取文件。</p>
+<div class="hlcode"><pre><span class="kd">var</span>
+    <span class="n">fileInput</span> <span class="o">=</span> <span class="nx">document.getElementById</span><span class="p">(</span><span class="s1">&#39;test-image-file&#39;</span><span class="p">),</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="nx">document.getElementById</span><span class="p">(</span><span class="s1">&#39;test-file-info&#39;</span><span class="p">),</span>
+    <span class="n">preview</span> <span class="o">=</span> <span class="nx">document.getElementById</span><span class="p">(</span><span class="s1">&#39;test-image-preview&#39;</span><span class="p">);</span>
+<span class="c1">// 监听change事件:</span>
+<span class="nx">fileInput.addEventListener</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="nx">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 清除背景图片:</span>
+    <span class="n">preview.style.backgroundImage</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="c1">// 检查文件是否选择:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">fileInput.value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">info.innerHTML</span> <span class="o">=</span> <span class="s1">&#39;没有选择文件&#39;</span><span class="p">;</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">// 获取File引用:</span>
+    <span class="kd">var</span> <span class="n">file</span> <span class="o">=</span> <span class="nx">fileInput.files</span><span class="err">[</span><span class="mi">0</span><span class="cp">]</span>;
+    // 获取File信息:
+    info.innerHTML = &#39;文件: &#39; + file.name + &#39;<span class="nt">&lt;br&gt;</span>&#39; +
+                     &#39;大小: &#39; + file.size + &#39;<span class="nt">&lt;br&gt;</span>&#39; +
+                     &#39;修改: &#39; + file.lastModifiedDate;
+    if (file.type !== &#39;image/jpeg&#39; <span class="err">&amp;&amp;</span> file.type !== &#39;image/png&#39; <span class="err">&amp;&amp;</span> file.type !== &#39;image/gif&#39;) {
+        alert(&#39;不是有效的图片文件!&#39;);
+        return;
+    }
+    // 读取文件:
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var
+            data = e.target.result; // &#39;data:image/jpeg;base64,/9j/4AAQSk...(base64编码)...&#39;            
+        preview.style.backgroundImage = &#39;url(&#39; + data + &#39;)&#39;;
+    };
+    // 以DataURL的形式读取文件:
+    reader.readAsDataURL(file);
+});
+</pre></div>
+
+
+<blockquote>
+<p>上面的代码演示了如何通过HTML5的File API读取文件内容。以DataURL的形式读取到的文件是一个字符串，类似于<code>data:image/jpeg;base64,/9j/4AAQSk...(base64编码)...</code>，常用于设置图像。如果需要服务器端处理，把字符串<code>base64,</code>后面的字符发送给服务器并用Base64解码就可以得到原始文件的二进制内容。</p>
+</blockquote>
+<h3 id="_8">回调</h3>
+<p>上面的代码还演示了JavaScript的一个重要的特性就是单线程执行模式。在JavaScript中，浏览器的JavaScript执行引擎在执行JavaScript代码时，总是以单线程模式执行，也就是说，任何时候，JavaScript代码都不可能同时有多于1个线程在执行。</p>
+<p>你可能会问，单线程模式执行的JavaScript，如何处理多任务？</p>
+<p>在JavaScript中，执行多任务实际上都是异步调用，比如上面的代码：</p>
+<div class="hlcode"><pre><span class="n">reader</span><span class="p">.</span><span class="n">readAsDataURL</span><span class="p">(</span><span class="n">file</span><span class="p">);</span>
+</pre></div>
+
+
+<p>就会发起一个异步操作来读取文件内容。因为是异步操作，所以我们在JavaScript代码中就不知道什么时候操作结束，因此需要先设置一个回调函数：</p>
+<div class="hlcode"><pre><span class="nx">reader</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 当文件读取完成后，自动调用此函数:</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>当文件读取完成后，JavaScript引擎将自动调用我们设置的回调函数。执行回调函数时，文件已经读取完毕，所以我们可以在回调函数内部安全地获得文件内容。</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

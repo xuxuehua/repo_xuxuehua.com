@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>salt-run - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Saltstack">Saltstack</a>&nbsp;&#187;&nbsp;salt-run
+    <span class="updated">Page Updated&nbsp;
+      2019-06-19 16:40
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">salt-run</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#salt-run">salt-run</a><ul>
+<li><a href="#manage">manage 模块</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="salt-run">salt-run</h1>
+<p>Runners的功能，使用salt-run来运行，可以非常方便的在Master端执行相关的模块，获取minion端状态。</p>
+<h2 id="manage">manage 模块</h2>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">localhost</span> <span class="n">salt</span><span class="p">]</span><span class="err">#</span> <span class="n">salt</span><span class="o">-</span><span class="n">run</span> <span class="n">manage</span><span class="p">.</span><span class="n">status</span>
+<span class="nl">down:</span>
+<span class="nl">up:</span>
+    <span class="o">-</span> <span class="mf">192.168.1.11</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

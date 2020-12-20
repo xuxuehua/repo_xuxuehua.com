@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>merge - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Git">Git</a>&nbsp;&#187;&nbsp;merge
+    <span class="updated">Page Updated&nbsp;
+      2018-06-27 01:48
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">merge</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#merge">merge</a><ul>
+<li><a href="#git-mergetool">git mergetool</a><ul>
+<li><a href="#another-example">another example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="merge">merge</h1>
+<h2 id="git-mergetool"><code>git mergetool</code></h2>
+<p>命令行图形化展示操作</p>
+<p><code>git mergetool</code> for me resulted in <code>vimdiff</code> being used. You can install one of the following tools to use it instead: <code>meld</code>, <code>opendiff</code>, <code>kdiff3</code>, <code>tkdiff</code>, <code>xxdiff</code>, <code>tortoisemerge</code>, <code>gvimdiff</code>, <code>diffuse</code>, <code>ecmerge</code>, <code>p4merge</code>, <code>araxis</code>, <code>vimdiff</code>, <code>emerge</code>.</p>
+<p>Below is the sample procedure to use <code>vimdiff</code> for resolve merge conflicts. Based on <a href="http://www.rosipov.com/blog/use-vimdiff-as-git-mergetool/#fromHistor">this link</a></p>
+<p><strong>Step 1</strong>: Run following commands in your terminal</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">config</span> <span class="n">merge</span><span class="p">.</span><span class="n">tool</span> <span class="n">vimdiff</span>
+<span class="n">git</span> <span class="n">config</span> <span class="n">merge</span><span class="p">.</span><span class="n">conflictstyle</span> <span class="n">diff3</span>
+<span class="n">git</span> <span class="n">config</span> <span class="n">mergetool</span><span class="p">.</span><span class="n">prompt</span> <span class="nb">false</span>
+</pre></div>
+
+
+<p>This will set vimdiff as the default merge tool.</p>
+<p><strong>Step 2</strong>: Run following command in terminal</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">mergetool</span>
+</pre></div>
+
+
+<p><strong>Step 3</strong>: You will see a vimdiff display in following format</p>
+<div class="hlcode"><pre>  <span class="o">+----------------------+</span>
+  <span class="o">|</span>       <span class="o">|</span>      <span class="o">|</span>       <span class="o">|</span>
+  <span class="o">|</span><span class="n">LOCAL</span>  <span class="o">|</span><span class="n">BASE</span>  <span class="o">|</span><span class="n">REMOTE</span> <span class="o">|</span>
+  <span class="o">|</span>       <span class="o">|</span>      <span class="o">|</span>       <span class="o">|</span>
+  <span class="o">+----------------------+</span>
+  <span class="o">|</span>      <span class="n">MERGED</span>          <span class="o">|</span>
+  <span class="o">|</span>                      <span class="o">|</span>
+  <span class="o">+----------------------+</span>
+</pre></div>
+
+
+<p>These 4 views are</p>
+<blockquote>
+<p>LOCAL – this is file from the current branch</p>
+<p>BASE – common ancestor, how file looked before both changes</p>
+<p>REMOTE – file you are merging into your branch</p>
+<p>MERGED – merge result, this is what gets saved in the repo</p>
+</blockquote>
+<p>You can navigate among these views using <code>ctrl+w</code>. You can directly reach MERGED view using <code>ctrl+w</code> followed by <code>j</code>.</p>
+<p>More info about vimdiff navigation <a href="https://stackoverflow.com/questions/4556184/vim-move-window-left-right">here</a> and <a href="https://stackoverflow.com/questions/27151456/how-do-i-jump-to-the-next-prev-diff-in-git-difftool">here</a></p>
+<p><strong>Step 4</strong>. You could edit the MERGED view the following way</p>
+<p>If you want to get changes from REMOTE</p>
+<div class="hlcode"><pre><span class="o">:</span><span class="n">diffg</span> <span class="n">RE</span>  
+</pre></div>
+
+
+<p>If you want to get changes from BASE</p>
+<div class="hlcode"><pre><span class="o">:</span><span class="n">diffg</span> <span class="n">BA</span>  
+</pre></div>
+
+
+<p>If you want to get changes from LOCAL</p>
+<div class="hlcode"><pre><span class="o">:</span><span class="n">diffg</span> <span class="n">LO</span> 
+</pre></div>
+
+
+<p><strong>Step 5</strong>. Save, Exit, Commit and Clean up</p>
+<p><code>:wqa</code> save and exit from vi</p>
+<p><code>git commit -m "message"</code></p>
+<p><code>git clean</code> Remove extra files (e.g. *.orig) created by diff tool.</p>
+<h3 id="another-example">another example</h3>
+<p>You're going to pull some changes, but oops, you're not up to date:</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">fetch</span> <span class="n">origin</span>
+<span class="n">git</span> <span class="n">pull</span> <span class="n">origin</span> <span class="n">master</span>
+
+<span class="n">From</span> <span class="n">ssh</span><span class="o">:</span><span class="c1">//gitosis@example.com:22/projectname</span>
+ <span class="o">*</span> <span class="n">branch</span>            <span class="n">master</span>     <span class="o">-&gt;</span> <span class="n">FETCH_HEAD</span>
+<span class="n">Updating</span> <span class="n">a030c3a</span><span class="p">..</span><span class="n">ee25213</span>
+<span class="nl">error:</span> <span class="n">Entry</span> <span class="err">&#39;</span><span class="n">filename</span><span class="p">.</span><span class="n">c</span><span class="err">&#39;</span> <span class="n">not</span> <span class="n">uptodate</span><span class="p">.</span> <span class="n">Cannot</span> <span class="n">merge</span><span class="p">.</span>
+</pre></div>
+
+
+<p>So you get up-to-date and try again, but have a conflict:</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">add</span> <span class="n">filename</span><span class="p">.</span><span class="n">c</span>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;made some wild and crazy changes&quot;</span>
+<span class="n">git</span> <span class="n">pull</span> <span class="n">origin</span> <span class="n">master</span>
+
+<span class="n">From</span> <span class="n">ssh</span><span class="o">:</span><span class="c1">//gitosis@example.com:22/projectname</span>
+ <span class="o">*</span> <span class="n">branch</span>            <span class="n">master</span>     <span class="o">-&gt;</span> <span class="n">FETCH_HEAD</span>
+<span class="n">Auto</span><span class="o">-</span><span class="n">merging</span> <span class="n">filename</span><span class="p">.</span><span class="n">c</span>
+<span class="n">CONFLICT</span> <span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="o">:</span> <span class="n">Merge</span> <span class="n">conflict</span> <span class="n">in</span> <span class="n">filename</span><span class="p">.</span><span class="n">c</span>
+<span class="n">Automatic</span> <span class="n">merge</span> <span class="n">failed</span><span class="p">;</span> <span class="n">fix</span> <span class="n">conflicts</span> <span class="n">and</span> <span class="n">then</span> <span class="n">commit</span> <span class="n">the</span> <span class="n">result</span><span class="p">.</span>
+</pre></div>
+
+
+<p>So you decide to take a look at the changes:</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">mergetool</span>
+</pre></div>
+
+
+<p>Oh me, oh my, upstream changed some things, but just to use my changes...no...their changes...</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">checkout</span> <span class="o">--</span><span class="n">ours</span> <span class="n">filename</span><span class="p">.</span><span class="n">c</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="o">--</span><span class="n">theirs</span> <span class="n">filename</span><span class="p">.</span><span class="n">c</span>
+<span class="n">git</span> <span class="n">add</span> <span class="n">filename</span><span class="p">.</span><span class="n">c</span>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;using theirs&quot;</span>
+</pre></div>
+
+
+<p>And then we try a final time</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">pull</span> <span class="n">origin</span> <span class="n">master</span>
+
+<span class="n">From</span> <span class="n">ssh</span><span class="o">:</span><span class="c1">//gitosis@example.com:22/projectname</span>
+ <span class="o">*</span> <span class="n">branch</span>            <span class="n">master</span>     <span class="o">-&gt;</span> <span class="n">FETCH_HEAD</span>
+<span class="n">Already</span> <span class="n">up</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">date</span><span class="p">.</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

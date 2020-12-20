@@ -1,0 +1,611 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>basic_knowledge - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Docker">Docker</a>&nbsp;&#187;&nbsp;basic_knowledge
+    <span class="updated">Page Updated&nbsp;
+      2018-10-22 12:57
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">basic_knowledge</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#basic_knowledge">basic_knowledge</a><ul>
+<li><a href="#cgroups">Cgroups 限制作用</a></li>
+<li><a href="#namespace">Namespace 隔离作用</a></li>
+<li><a href="#rootfs">rootfs 根文件系统 （容器镜像）</a></li>
+<li><a href="#_1">容器本质</a></li>
+<li><a href="#_2">缺点</a><ul>
+<li><a href="#_3">解决方法</a></li>
+</ul>
+</li>
+<li><a href="#_4">虚拟化方式比较</a></li>
+</ul>
+</li>
+<li><a href="#docker">Docker 版本</a><ul>
+<li><a href="#_5">安装</a><ul>
+<li><a href="#centos">CentOS</a></li>
+<li><a href="#dockercom">docker.com</a></li>
+</ul>
+</li>
+<li><a href="#_6">卸载</a></li>
+<li><a href="#_7">守护进程</a></li>
+<li><a href="#_8">图形用户界面</a></li>
+<li><a href="#_9">配置文件</a><ul>
+<li><a href="#docker-cn-repo">docker CN repo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_10">基本概念</a><ul>
+<li><a href="#image">镜像 Image</a><ul>
+<li><a href="#rootfs_1">rootfs</a></li>
+<li><a href="#union-fs">分层存储 Union FS</a><ul>
+<li><a href="#_11">镜像的实现原理</a></li>
+<li><a href="#aufs">Aufs</a></li>
+<li><a href="#overlayfs">overlayfs</a></li>
+</ul>
+</li>
+<li><a href="#_12">镜像体积</a></li>
+<li><a href="#_13">虚悬镜像</a></li>
+<li><a href="#scratch">scratch 镜像</a></li>
+</ul>
+</li>
+<li><a href="#container">容器 Container</a><ul>
+<li><a href="#_14">容器存储层</a></li>
+</ul>
+</li>
+<li><a href="#repository">仓库 Repository</a><ul>
+<li><a href="#docker-registry">Docker Registry</a></li>
+<li><a href="#registry">公开 Registry</a></li>
+<li><a href="#registry_1">私有 Registry</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#coreos">CoreOS</a><ul>
+<li><a href="#_15">特性</a></li>
+<li><a href="#etcd">etcd</a></li>
+<li><a href="#_16">容器管理</a></li>
+<li><a href="#coreos_1">快速搭建 CoreOS 集群</a></li>
+</ul>
+</li>
+<li><a href="#kubernetes">Kubernetes</a><ul>
+<li><a href="#_17">快速上手</a></li>
+<li><a href="#etcd_1">启动 Etcd 服务</a></li>
+<li><a href="#_18">启动主节点</a></li>
+<li><a href="#_19">启动服务代理</a></li>
+<li><a href="#_20">测试状态</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="basic_knowledge">basic_knowledge</h1>
+<p>Docker 最初是 dotCloud 公司创始人 Solomon Hykes 在法国期间发起的一个公司内部项目，它是基于 dotCloud 公司多年云服务技术的一次革新，并于 2013 年 3 月以 Apache 2.0 授权协议开源，主要项目代码在 GitHub 上进行维护。Docker 项目后来还加入了 Linux 基金会，并成立推动 开放容器联盟。</p>
+<p>容器技术的核心功能，就是通过约束和修改进程的动态表现，为进程创造出一个界限的效果</p>
+<p>最核心的原理实际上是为待创建的用户进程</p>
+<ol>
+<li>启动Linux Namespace</li>
+<li>设置指定的Cgroups参数</li>
+<li>切换进程的根目录(Change root)</li>
+</ol>
+<p>大数据所关注的计算密集型离线业务，其实并不像常规的 Web 服务那样适合用容器进行 托管和扩容，也没有对应用打包的强烈需求，所以 Hadoop、Spark 等项目到现在也没在容器 技术上投下更大的赌注</p>
+<h2 id="cgroups">Cgroups 限制作用</h2>
+<p>Linux Control Group</p>
+<p>主要是限制一个进程组能够使用的资源上线，包括CPU，内存，磁盘，网络，带宽等</p>
+<p>即Linux 内核中用来为进程设置资源限制的一个重要功能</p>
+<p>Cgroups 还能够对进程进行优先级设置，审计，以及将进程挂起和恢复等操作</p>
+<p>在 Linux 中，Cgroups 给用户暴露出来的操作接口是文件系统，即它以文件和目录的方式组织 在操作系统的 /sys/fs/cgroup 路径下。在 Ubuntu 16.04 机器里，我可以用 mount 指令把它 们展示出来</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">mount</span> <span class="o">-</span><span class="n">t</span> <span class="n">cgroup</span>
+<span class="n">cpuset</span> <span class="n">on</span> <span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">fs</span><span class="o">/</span><span class="n">cgroup</span><span class="o">/</span><span class="n">cpuset</span> <span class="n">type</span> <span class="n">cgroup</span> <span class="p">(</span><span class="n">rw</span><span class="p">,</span><span class="n">nosuid</span><span class="p">,</span><span class="n">nodev</span><span class="p">,</span><span class="n">noexec</span><span class="p">,</span><span class="n">relatime</span><span class="p">,</span><span class="n">cpuset</span><span class="p">)</span> <span class="n">cpu</span> <span class="n">on</span> <span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">fs</span><span class="o">/</span><span class="n">cgroup</span><span class="o">/</span><span class="n">cpu</span> <span class="n">type</span> <span class="n">cgroup</span> <span class="p">(</span><span class="n">rw</span><span class="p">,</span><span class="n">nosuid</span><span class="p">,</span><span class="n">nodev</span><span class="p">,</span><span class="n">noexec</span><span class="p">,</span><span class="n">relatime</span><span class="p">,</span><span class="n">cpu</span><span class="p">)</span>
+<span class="n">cpuacct</span> <span class="n">on</span> <span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">fs</span><span class="o">/</span><span class="n">cgroup</span><span class="o">/</span><span class="n">cpuacct</span> <span class="n">type</span> <span class="n">cgroup</span> <span class="p">(</span><span class="n">rw</span><span class="p">,</span><span class="n">nosuid</span><span class="p">,</span><span class="n">nodev</span><span class="p">,</span><span class="n">noexec</span><span class="p">,</span><span class="n">relatime</span><span class="p">,</span><span class="n">cpuacct</span><span class="p">)</span> <span class="n">blkio</span> <span class="n">on</span> <span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">fs</span><span class="o">/</span><span class="n">cgroup</span><span class="o">/</span><span class="n">blkio</span> <span class="n">type</span> <span class="n">cgroup</span> <span class="p">(</span><span class="n">rw</span><span class="p">,</span><span class="n">nosuid</span><span class="p">,</span><span class="n">nodev</span><span class="p">,</span><span class="n">noexec</span><span class="p">,</span><span class="n">relatime</span><span class="p">,</span><span class="n">blkio</span><span class="p">)</span> <span class="n">memory</span> <span class="n">on</span> <span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">fs</span><span class="o">/</span><span class="n">cgroup</span><span class="o">/</span><span class="n">memory</span> <span class="n">type</span> <span class="n">cgroup</span> <span class="p">(</span><span class="n">rw</span><span class="p">,</span><span class="n">nosuid</span><span class="p">,</span><span class="n">nodev</span><span class="p">,</span><span class="n">noexec</span><span class="p">,</span><span class="n">relatime</span><span class="p">,</span><span class="n">memory</span><span class="p">)</span> 
+</pre></div>
+
+
+<blockquote>
+<p>在 /sys/fs/cgroup 下面有很多诸如 cpuset、cpu、 memory 这样的子目录，叫子系统</p>
+</blockquote>
+<p>在对应的子系统下面创建一个目录</p>
+<div class="hlcode"><pre><span class="n">root</span><span class="err">@</span><span class="n">ubuntu</span><span class="o">:/</span><span class="n">sys</span><span class="o">/</span><span class="n">fs</span><span class="o">/</span><span class="n">cgroup</span><span class="o">/</span><span class="n">cpu</span><span class="err">$</span> <span class="n">mkdir</span> <span class="n">container</span>
+<span class="n">root</span><span class="err">@</span><span class="n">ubuntu</span><span class="o">:/</span><span class="n">sys</span><span class="o">/</span><span class="n">fs</span><span class="o">/</span><span class="n">cgroup</span><span class="o">/</span><span class="n">cpu</span><span class="err">$</span> <span class="n">ls</span> <span class="n">container</span><span class="o">/</span>
+<span class="n">cgroup</span><span class="p">.</span><span class="n">clone_children</span> <span class="n">cpu</span><span class="p">.</span><span class="n">cfs_period_us</span> <span class="n">cpu</span><span class="p">.</span><span class="n">rt_period_us</span> <span class="n">cpu</span><span class="p">.</span><span class="n">shares</span> <span class="n">notify_on_release</span> <span class="n">cgroup</span><span class="p">.</span><span class="n">procs</span> <span class="n">cpu</span><span class="p">.</span><span class="n">cfs_quota_us</span> <span class="n">cpu</span><span class="p">.</span><span class="n">rt_runtime_us</span> <span class="n">cpu</span><span class="p">.</span><span class="n">stat</span> <span class="n">tasks</span>
+</pre></div>
+
+
+<blockquote>
+<p>会自动生成该子系统对应的资源限制文件</p>
+</blockquote>
+<p>我们在后台执行这样一条脚本，可以把计算机的 CPU 吃到 100%</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="k">while</span> <span class="o">:</span> <span class="p">;</span> <span class="k">do</span> <span class="o">:</span> <span class="p">;</span> <span class="n">done</span> <span class="o">&amp;</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="mi">226</span>
+</pre></div>
+
+
+<p>向 container 组里的 cfs_quota 文件写入 20 ms(20000 us)， 即每 100 ms 的时间里，被该控制组 限制的进程只能使用 20 ms 的 CPU 时间，也就是说这个进程只能使用到 20% 的 CPU 带宽。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">echo</span> <span class="mi">226</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">fs</span><span class="o">/</span><span class="n">cgroup</span><span class="o">/</span><span class="n">cpu</span><span class="o">/</span><span class="n">container</span><span class="o">/</span><span class="n">tasks</span>
+
+<span class="err">$</span> <span class="n">top</span>
+<span class="o">%</span><span class="n">Cpu0</span> <span class="o">:</span> <span class="mf">20.3</span> <span class="n">us</span><span class="p">,</span> <span class="mf">0.0</span> <span class="n">sy</span><span class="p">,</span> <span class="mf">0.0</span> <span class="n">ni</span><span class="p">,</span> <span class="mf">79.7</span> <span class="n">id</span><span class="p">,</span> <span class="mf">0.0</span> <span class="n">wa</span><span class="p">,</span> <span class="mf">0.0</span> <span class="n">hi</span><span class="p">,</span> <span class="mf">0.0</span> <span class="n">si</span><span class="p">,</span> <span class="mf">0.0</span> <span class="n">st</span>
+</pre></div>
+
+
+<p>cpu使用率降下来了</p>
+<p>Linux Cgroups 的设计还是比较易用的，简单粗暴地理解呢，它就是一个子系统目录加上一组 资源限制文件的组合。而对于 Docker 等 Linux 容器项目来说，它们只需要在每个子系统下，为每个容器创建一个控制组(即创建一个新目录)，然后在启动容器进程之后，把这个进程 的 PID 填写到对应控制组的 tasks 文件中就可以了。</p>
+<h2 id="namespace">Namespace 隔离作用</h2>
+<p>用来修改进程视图的主要方法，即对被隔离应用的进程空间做了手脚，使其自认为是pid=1的进程，而在宿主机上，是原来的其他进程</p>
+<p>即创建容器进程时，指定来这个进程所需要启动的一组Namespace 参数</p>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">it</span> <span class="n">busybox</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">sh</span>
+
+<span class="nl">Status:</span> <span class="n">Downloaded</span> <span class="n">newer</span> <span class="n">image</span> <span class="k">for</span> <span class="n">busybox</span><span class="o">:</span><span class="n">latest</span>
+<span class="o">/</span> <span class="err">#</span> <span class="n">ps</span>
+<span class="n">PID</span>   <span class="n">USER</span>     <span class="n">TIME</span>  <span class="n">COMMAND</span>
+    <span class="mi">1</span> <span class="n">root</span>      <span class="mi">0</span><span class="o">:</span><span class="mo">00</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">sh</span>
+    <span class="mi">6</span> <span class="n">root</span>      <span class="mi">0</span><span class="o">:</span><span class="mo">00</span> <span class="n">ps</span>
+<span class="o">/</span> <span class="err">#</span>
+</pre></div>
+
+
+<blockquote>
+<p>这里/bin/sh PID为1， 但在宿主机，就不是1</p>
+</blockquote>
+<p>主要包含这个几个Namespaces</p>
+<table>
+<thead>
+<tr>
+<th>namespace</th>
+<th>系统调用参数</th>
+<th>隔离内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UTS</td>
+<td>CLONE_NEWUTS</td>
+<td>主机名和域名</td>
+</tr>
+<tr>
+<td>IPC</td>
+<td>CLONE_NEWIPC</td>
+<td>信号量，消息队列和共享内存</td>
+</tr>
+<tr>
+<td>PID</td>
+<td>CLONE_NEWPID</td>
+<td>进程编号</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>CLONE_NEWNET</td>
+<td>网络设备，网络栈，端口等</td>
+</tr>
+<tr>
+<td>Mount</td>
+<td>CLONE_NEWNS</td>
+<td>挂载点 （文件系统）</td>
+</tr>
+<tr>
+<td>User</td>
+<td>CLONE_NEWUSER</td>
+<td>用户和用户组</td>
+</tr>
+</tbody>
+</table>
+<h2 id="rootfs">rootfs 根文件系统 （容器镜像）</h2>
+<p>Mount Namespace 正是基于对 chroot 的不断改良才被发明出来的，它也是 Linux 操作系统里的第一个 Namespace。</p>
+<p>当然，为了能够让容器的这个根目录看起来更“真实”，我们一般会在这个容器的根目录下挂载 一个完整操作系统的文件系统，比如 Ubuntu16.04 的 ISO。这样，在容器启动之后，我们在容 器里通过执行 "ls /" 查看根目录下的内容，就是 Ubuntu 16.04 的所有目录和文件。</p>
+<p>而这个挂载在容器根目录上、用来为容器进程提供隔离后执行环境的文件系统，就是所谓的“容器镜像”</p>
+<p>rootfs 只是一个操作系统所包含的文件、配置和目录，并不包括操作系 统内核。在 Linux 操作系统中，这两部分是分开存放的，操作系统只有在开机启动时才会加载 指定版本的内核镜像。</p>
+<p>由于 rootfs 里打包的不只是应用，而是整个操作系统的文件和目录，也就意味着，应用以及它 运行所需要的所有依赖，都被封装在了一起。有了容器镜像“打包操作系统”的能力，这个最基础的依赖环境也终于变成了应用沙盒的一部 分。这就赋予了容器所谓的一致性:无论在本地、云端，还是在一台任何地方的机器上，用户只 需要解压打包好的容器镜像，那么这个应用运行所需要的完整的执行环境就被重现出来了</p>
+<p>Docker 镜像使用的 rootfs，往往由多个“层”组成</p>
+<p>通过“分层镜像”的设计，以 Docker 镜像为核心，来自不同公司、不同团队的技术人员被紧密 地联系在了一起。而且，由于容器镜像的操作是增量式的，这样每次镜像拉取、推送的内容，比 原本多个完整的操作系统的大小要小得多;而共享层的存在，可以使得所有这些容器镜像需要的 总空间，也比每个镜像的总和要小。这样就使得基于容器镜像的团队协作，要比基于动则几个 GB 的虚拟机磁盘镜像的协作要敏捷得多。</p>
+<p>更重要的是，一旦这个镜像被发布，那么你在全世界的任何一个地方下载这个镜像，得到的内容 都完全一致，可以完全复现这个镜像制作者当初的完整环境。这，就是容器技术“强一致性”的 重要体现。</p>
+<h2 id="_1">容器本质</h2>
+<p>容器的本质就是一个进程，用户的应用进程实际上就是容器里 PID=1 的进程，也是其他后续创建的所有进程的父进程。这就意味着，在一个容器中，你没办法同时运行两个不同的应用，除非你能事先找到一个公共的 PID=1 的程序来充当两个不同应用的父进程，这也是为什么很多人都会用 systemd 或者 supervisord 这样的软件来代替应用本身作为容器的启动进程。</p>
+<h2 id="_2">缺点</h2>
+<p>在Linux内核中，很多资源时不可以被Namespace化的，比如时间</p>
+<p>如果容器中的程序使用settimeofday(2) 系统调用修改了时间，整个宿主机的时间就会被更改</p>
+<p>对比KVM这种，由Hypervisor来负责对宿主机的调用处理，Linux Namespace隔离机制并不彻底</p>
+<h3 id="_3">解决方法</h3>
+<p>Linux下的/proc 目录存储的是记录当前内核运行状态的一组特殊文件</p>
+<p>用户可以访问文件获取系统当前进程的信息</p>
+<p>但运行top指令发现显示信息为宿主机的相关信息</p>
+<p>因为/proc 文件系统并不知道用户通过Cgroups 给容器做了哪些资源限制，</p>
+<p>所以可以通过lxcfs来实现此功能</p>
+<p>如把宿主机的/var/lib/lxcfs/proc/memoinfo 的文件挂载到Docker 容器的/proc/meminfo 位置后，容器中进程读取相应文件内容时，lxcfs的fuse实现会从容器对应的Cgroup中读取正确的内存限制，获得正确的资源约束</p>
+<h2 id="_4">虚拟化方式比较</h2>
+<p><img alt="image-20200408130513298" src="basic_knowledge.assets/image-20200408130513298.png" /></p>
+<blockquote>
+<p>容器除了运行其中应用外，基本不消耗额外的系统资源，使得应用的性能很高，同时系统的开销尽量小。传统虚拟机方式运行 10 个不同的应用就要起 10 个虚拟机，而Docker 只需要启动 10 个隔离的应用即可。</p>
+</blockquote>
+<h1 id="docker">Docker 版本</h1>
+<p>CE 版本即社区版（免费，支持周期三个月）</p>
+<blockquote>
+<p>Docker CE 每月发布一个 edge 版本 (17.03, 17.04, 17.05...)，每三个月发布一个 stable 版本 (17.03, 17.06, 17.09...)</p>
+</blockquote>
+<p>EE 即企业版，强调安全，付费使用。</p>
+<blockquote>
+<p>Docker EE 和 stable版本号保持一致，但每个版本提供一年维护。</p>
+</blockquote>
+<h2 id="_5">安装</h2>
+<p>Kitematic 这个图形化工具（官方给出的定义是 Visual Docker Container Management on Mac &amp; Windows），对于熟悉和了解 Docker 是很好的帮助</p>
+<h3 id="centos">CentOS</h3>
+<p>卸载旧版本</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">yum</span> <span class="n">remove</span> <span class="n">docker</span> \
+                  <span class="n">docker</span><span class="o">-</span><span class="n">common</span> \
+                  <span class="n">docker</span><span class="o">-</span><span class="n">selinux</span> \
+                  <span class="n">docker</span><span class="o">-</span><span class="n">engine</span>
+</pre></div>
+
+
+<p>使用 yum 源 安装</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">yum</span><span class="o">-</span><span class="n">utils</span> <span class="n">device</span><span class="o">-</span><span class="n">mapper</span><span class="o">-</span><span class="n">persistent</span><span class="o">-</span><span class="n">data</span> <span class="n">lvm2</span>
+</pre></div>
+
+
+<p>国内源添加（可选）</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">yum</span><span class="o">-</span><span class="n">config</span><span class="o">-</span><span class="n">manager</span> \
+    <span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">repo</span> \
+    <span class="nl">https:</span><span class="c1">//mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span>
+</pre></div>
+
+
+<p>官方源添加（可选）   </p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">yum</span><span class="o">-</span><span class="n">config</span><span class="o">-</span><span class="n">manager</span> \
+    <span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">repo</span> \
+    <span class="nl">https:</span><span class="c1">//download.docker.com/linux/centos/docker-ce.repo</span>
+</pre></div>
+
+
+<p>安装 Docker CE</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">yum</span> <span class="n">makecache</span> <span class="n">fast</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">yum</span> <span class="n">install</span> <span class="n">docker</span><span class="o">-</span><span class="n">ce</span>
+</pre></div>
+
+
+<p>使用脚本自动安装</p>
+<p>在测试或开发环境中 Docker 官方为了简化安装流程，提供了一套便捷的安装脚本，CentOS 系统上可以使用这套脚本安装：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">curl</span> <span class="o">-</span><span class="n">fsSL</span> <span class="n">get</span><span class="p">.</span><span class="n">docker</span><span class="p">.</span><span class="n">com</span> <span class="o">-</span><span class="n">o</span> <span class="n">get</span><span class="o">-</span><span class="n">docker</span><span class="p">.</span><span class="n">sh</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">sh</span> <span class="n">get</span><span class="o">-</span><span class="n">docker</span><span class="p">.</span><span class="n">sh</span> <span class="o">--</span><span class="n">mirror</span> <span class="n">Aliyun</span>
+</pre></div>
+
+
+<p>启动 Docker CE</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">enable</span> <span class="n">docker</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">start</span> <span class="n">docker</span>
+</pre></div>
+
+
+<p>建立 docker 用户组</p>
+<p>默认情况下，docker 命令会使用 Unix socket 与 Docker 引擎通讯。而只有 root 用户和 docker 组的用户才可以访问 Docker 引擎的 Unix socket。出于安全考虑，一般 Linux 系统上不会直接使用 root 用户。因此，更好地做法是将需要使用 docker 的用户加入 docker 用户组。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">groupadd</span> <span class="n">docker</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">useradd</span> <span class="o">-</span><span class="n">g</span> <span class="n">docker</span> <span class="n">docker</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">nologin</span>
+</pre></div>
+
+
+<h3 id="dockercom">docker.com</h3>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="o">-</span><span class="n">qO</span><span class="o">-</span> <span class="n">get</span><span class="p">.</span><span class="n">docker</span><span class="p">.</span><span class="n">com</span> <span class="o">|</span> <span class="n">bash</span> 
+</pre></div>
+
+
+<h2 id="_6">卸载</h2>
+<div class="hlcode"><pre><span class="n">dpkg</span> <span class="o">-</span><span class="n">l</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">-</span><span class="n">i</span> <span class="n">docker</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">purge</span> <span class="o">-</span><span class="n">y</span> <span class="n">docker</span><span class="o">-</span><span class="n">engine</span> <span class="n">docker</span> <span class="n">docker</span><span class="p">.</span><span class="n">io</span> <span class="n">docker</span><span class="o">-</span><span class="n">ce</span>  
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">autoremove</span> <span class="o">-</span><span class="n">y</span> <span class="o">--</span><span class="n">purge</span> <span class="n">docker</span><span class="o">-</span><span class="n">engine</span> <span class="n">docker</span> <span class="n">docker</span><span class="p">.</span><span class="n">io</span> <span class="n">docker</span><span class="o">-</span><span class="n">ce</span>  
+<span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span>
+<span class="n">sudo</span> <span class="n">rm</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apparmor</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">docker</span>
+<span class="n">sudo</span> <span class="n">groupdel</span> <span class="n">docker</span>
+<span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">docker</span><span class="p">.</span><span class="n">sock</span>
+</pre></div>
+
+
+<h2 id="_7">守护进程</h2>
+<p>运行  Docker 守护进程时，可以用 -H 来改变绑定接口的方式，比如 sudo /usr/bin/docker -d -H  tcp://0.0.0.0:2375，如果不想每次都输入这么长的命令，需要加入以下环境变量 </p>
+<div class="hlcode"><pre><span class="n">export</span>  <span class="n">DOCKER_HOST</span><span class="o">=</span><span class="s">&quot;tcp://0.0.0.0:2375&quot;</span>
+</pre></div>
+
+
+<h2 id="_8">图形用户界面</h2>
+<p>虽然我们可以用命令来控制 docker，但是如果能有一个 web 管理界面，操作什么的会方便很多，比较常见的有</p>
+<ul>
+<li>Shipyard</li>
+<li>Potainer</li>
+</ul>
+<h2 id="_9">配置文件</h2>
+<p>环境配置文件</p>
+<div class="hlcode"><pre><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">docker</span><span class="o">-</span><span class="n">network</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">docker</span><span class="o">-</span><span class="n">storage</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">docker</span>
+</pre></div>
+
+
+<p>Unit File</p>
+<p>/usr/lib/systemd/system/docker.service</p>
+<p>Docker Registry</p>
+<p>/etc/containers/registries.conf</p>
+<p>docker-ce</p>
+<p>/etc/docker/daemon.json</p>
+<h3 id="docker-cn-repo">docker CN repo</h3>
+<div class="hlcode"><pre>sudo mkdir <span class="o">-</span>p <span class="o">/</span>etc<span class="o">/</span>docker
+sudo tee <span class="o">/</span>etc<span class="o">/</span>docker<span class="o">/</span>daemon.json <span class="o">&lt;&lt;-</span><span class="s">&#39;EOF&#39;</span>
+<span class="p">{</span>
+    <span class="s">&quot;registry-mirrors&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="s">&quot;https://1nj0zren.mirror.aliyuncs.com&quot;</span><span class="p">,</span>
+        <span class="s">&quot;https://docker.mirrors.ustc.edu.cn&quot;</span><span class="p">,</span>
+        <span class="s">&quot;http://f1361db2.m.daocloud.io&quot;</span><span class="p">,</span>
+        <span class="s">&quot;https://registry.docker-cn.com&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+EOF
+sudo systemctl daemon<span class="o">-</span>reload
+sudo systemctl restart docker
+</pre></div>
+
+
+<p>命令行执行 <code>docker info</code>，如果从结果中看到了如下内容，说明配置成功。</p>
+<div class="hlcode"><pre><span class="n">Registry</span> <span class="n">Mirrors</span><span class="o">:</span>
+ <span class="p">[...]</span>
+ <span class="nl">https:</span><span class="c1">//registry.docker-cn.com/</span>
+</pre></div>
+
+
+<h1 id="_10">基本概念</h1>
+<h2 id="image">镜像 Image</h2>
+<p>一个只读的模板，镜像可以用来创建 Docker 容器</p>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> <span class="n">ubuntu</span><span class="o">:</span><span class="n">latest</span> <span class="n">sleep</span> <span class="mi">3600</span>
+</pre></div>
+
+
+<p>这里的Ubuntu 镜像，实际上就是一个Ubuntu操作系统的rootfs，内容是Ubuntu操作系统的所有文件和目录</p>
+<p>任何镜像里面的内容都属于只读层，commit之后的东西也属于只读层</p>
+<h3 id="rootfs_1">rootfs</h3>
+<p>用于为容器进程提供隔离后执行环境的文件系统，即所谓的容器镜像rootfs</p>
+<p>就相当于一个root文件系统。官方镜像Ubuntu:14.04 就包含了完整的一套 Ubuntu 14.04 最小系统的 root 文件系统</p>
+<p>镜像不包含任何动态数据，其内容在构建之后也不会被改变。</p>
+<p>rootfs只是一个操作系统包含的文件，配置和目录，并不包括系统内核，在Linux系统中，两部分是分开存放的，操作系统只有在开机启动的时候才会夹在指定版本的内核镜像</p>
+<h3 id="union-fs">分层存储 Union FS</h3>
+<p>Docker 设计时，就充分利用 Union FS 的技术，将其设计为分层存储的架构，即将多个不同位置的目录联合挂载到同一个目录下</p>
+<p>镜像构建时，会一层层构建，前一层是后一层的基础。每一层构建完就不会再发生改变，后一层上的任何改变只发生在自己这一层。</p>
+<blockquote>
+<p>比如，删除前一层文件的操作，实际不是真的删除前一层的文件，而是仅在当前层标记为该文件已删除。在最终容器运行的时候，虽然不会看到这个文件，但是实际上该文件会一直跟随镜像。因此，在构建镜像的时候，需要额外小心，每一层尽量只包含该层需要添加的东西，任何额外的东西应该在该层构建结束前清理掉。</p>
+</blockquote>
+<p>所有的层都保存在diff目录下</p>
+<p>Docker 镜像使用的rootfs，往往由多个层组成</p>
+<div class="hlcode"><pre><span class="err">#</span> <span class="nt">docker</span> <span class="nt">image</span> <span class="nt">inspect</span> <span class="nt">ubuntu</span><span class="nd">:latest</span> <span class="o">|</span> <span class="nt">grep</span> <span class="nt">-i</span> <span class="nt">rootfs</span> <span class="nt">-C</span> <span class="nt">12</span>
+
+<span class="s2">&quot;RootFS&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Type&quot;</span><span class="o">:</span> <span class="s2">&quot;layers&quot;</span><span class="o">,</span>
+            <span class="s2">&quot;Layers&quot;</span><span class="o">:</span> <span class="cp">[</span>
+                <span class="s2">&quot;sha256:bebe7ce6215aee349bee5d67222abeb5c5a834bbeaa2f2f5d05363d9fd68db41&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sha256:283fb404ea9415ab48456fd8a82b153b1a719491cdf7b806d1853b047d00f27f&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sha256:663e8522d78b5b767f15b2e43885da5975068e3195bbbfa8fc3a082297a361c1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sha256:4b7d93055d8781d27259ba5780938e6a78d8ef691c94ee9abc3616c1b009ec4a&quot;</span>
+            <span class="cp">]</span>
+</pre></div>
+
+
+<blockquote>
+<p>这里的每一层即是一个增量的rootfs</p>
+</blockquote>
+<p>然后将所有增量联合一起挂在在一个统一的挂在点上</p>
+<div class="hlcode"><pre><span class="n">root</span><span class="err">@</span><span class="n">localhost</span><span class="o">:~</span><span class="err">#</span> <span class="n">find</span> <span class="o">/</span> <span class="o">-</span><span class="n">name</span> <span class="err">&#39;</span><span class="mf">663e8522</span><span class="n">d78b5b767f15b2e43885da5975068e3195bbbfa8fc3a082297a361c1</span><span class="err">&#39;</span>
+<span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">docker</span><span class="o">/</span><span class="n">image</span><span class="o">/</span><span class="n">overlay2</span><span class="o">/</span><span class="n">distribution</span><span class="o">/</span><span class="n">v2metadata</span><span class="o">-</span><span class="n">by</span><span class="o">-</span><span class="n">diffid</span><span class="o">/</span><span class="n">sha256</span><span class="o">/</span><span class="mf">663e8522</span><span class="n">d78b5b767f15b2e43885da5975068e3195bbbfa8fc3a082297a361c1</span>
+</pre></div>
+
+
+<h4 id="_11">镜像的实现原理</h4>
+<p>Docker 镜像是怎么实现增量的修改和维护的？ 每个镜像都由很多层次构成，Docker 使用 Union FS 将这些不同的层结合到一个镜像中去。<br />
+通常 Union FS 有两个用途, 一方面可以实现不借助 LVM、RAID 将多个 disk 挂到同一个目录下,另一个更常用的就是将一个只读的分支和一个可写的分支联合在一起，Live CD 正是基于此方法可以允许在镜像不变的基础上允许用户在其上进行一些写操作。 Docker 在 AUFS 上构建的容器也是利用了类似的原理。</p>
+<p><img alt="image-20200409003015301" src="basic_knowledge.assets/image-20200409003015301.png" /></p>
+<p>init 层，用来存放临时修改过的/etc/hosts等文件</p>
+<p>Copy on Write 存放任何对只读层的修改，容器声明的Volume挂载点，也出现在这一层</p>
+<h4 id="aufs">Aufs</h4>
+<p>aufs 是之前的UnionFS的重新实现，竞争产品是overlayfs</p>
+<h4 id="overlayfs">overlayfs</h4>
+<p>从3.18版本开始合并到Linux内核， 新版使用overlay2</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">info</span>
+<span class="nl">Containers:</span> <span class="mi">5</span>
+ <span class="nl">Running:</span> <span class="mi">0</span>
+ <span class="nl">Paused:</span> <span class="mi">0</span>
+ <span class="nl">Stopped:</span> <span class="mi">5</span>
+<span class="nl">Images:</span> <span class="mi">3</span>
+<span class="n">Server</span> <span class="n">Version</span><span class="o">:</span> <span class="mf">18.09.2</span>
+<span class="n">Storage</span> <span class="n">Driver</span><span class="o">:</span> <span class="n">overlay2</span>
+</pre></div>
+
+
+<h3 id="_12">镜像体积</h3>
+<p>Docker Hub 中显示的体积是压缩后的体积。在镜像下载和上传过程中镜像是保持着压缩状态的，因此 Docker Hub 所显示的大小是网络传输中更关心的流量大小。</p>
+<h3 id="_13">虚悬镜像</h3>
+<p>镜像既没有仓库名，也没有标签，均为 <code>&lt;none&gt;</code></p>
+<blockquote>
+<p>这个镜像原本是有镜像名和标签的，原来为 mongo:3.2，随着官方镜像维护，发布了新版本后，重新 docker pull mongo:3.2 时，mongo:3.2 这个镜像名被转移到了新下载的镜像身上，而旧的镜像上的这个名称则被取消，从而成为了 <code>&lt;none&gt;</code>。<br />
+docker build 也同样可以导致这种现象。由于新旧镜像同名，旧镜像名称被取消，从而出现仓库名、标签均为 <code>&lt;none&gt;</code> 的镜像</p>
+</blockquote>
+<div class="hlcode"><pre><span class="err">$</span> <span class="nx">docker</span> <span class="nx">images</span>
+<span class="nx">REPOSITORY</span>           <span class="kt">TAG</span>                 <span class="nb">IMAGE</span> <span class="nb">ID</span>            <span class="nx">CREATED</span>             <span class="nb">SIZE</span>
+<span class="nx">redis</span>                <span class="nx">latest</span>              <span class="mi">5</span><span class="nx">f515359c7f8</span>        <span class="mi">5</span> <span class="nb">days</span> <span class="nx">ago</span>          <span class="mi">183</span> <span class="nx">MB</span>
+<span class="nx">nginx</span>                <span class="nx">latest</span>              <span class="mi">05</span><span class="nx">a60462f8ba</span>        <span class="mi">5</span> <span class="nb">days</span> <span class="nx">ago</span>          <span class="mi">181</span> <span class="nx">MB</span>
+<span class="nx">mongo</span>                <span class="mf">3.2</span>                 <span class="nx">fe9198c04d62</span>        <span class="mi">5</span> <span class="nb">days</span> <span class="nx">ago</span>          <span class="mi">342</span> <span class="nx">MB</span>
+<span class="o">&lt;</span><span class="kc">none</span><span class="o">&gt;</span>               <span class="o">&lt;</span><span class="kc">none</span><span class="o">&gt;</span>              <span class="mi">00285</span><span class="nx">df0df87</span>        <span class="mi">5</span> <span class="nb">days</span> <span class="nx">ago</span>          <span class="mi">342</span> <span class="nx">MB</span>
+<span class="nx">ubuntu</span>               <span class="mf">16.04</span>               <span class="nx">f753707788c5</span>        <span class="mi">4</span> <span class="nx">weeks</span> <span class="nx">ago</span>         <span class="mi">127</span> <span class="nx">MB</span>
+<span class="nx">ubuntu</span>               <span class="nx">latest</span>              <span class="nx">f753707788c5</span>        <span class="mi">4</span> <span class="nx">weeks</span> <span class="nx">ago</span>         <span class="mi">127</span> <span class="nx">MB</span>
+<span class="nx">ubuntu</span>               <span class="mf">14.04</span>               <span class="mi">1</span><span class="nx">e0c3dd64ccd</span>        <span class="mi">4</span> <span class="nx">weeks</span> <span class="nx">ago</span>         <span class="mi">188</span> <span class="nx">MB</span>
+</pre></div>
+
+
+<h3 id="scratch">scratch 镜像</h3>
+<p>本身即是空镜像，万能的base镜像</p>
+<p>如centos等镜像的FROM处</p>
+<h2 id="container">容器 Container</h2>
+<p>镜像（Image）和容器（Container）的关系，就像是面向对象程序设计中的类和实例一样</p>
+<p>可以被启动、开始、停止、删除。每个容器都是相互隔离的、保证安全的平台</p>
+<p>容器的实质是进程，但与直接在宿主执行的进程不同，容器进程运行于属于自己的独立的 命名空间。</p>
+<p>容器可以拥有自己的 root 文件系统、自己的网络配置、自己的进程空间，甚至自己的用户 ID 空间。</p>
+<h3 id="_14">容器存储层</h3>
+<p>每一个容器运行时，是以镜像为基础层，在其上创建一个当前容器的存储层</p>
+<p>容器存储层的生存周期和容器一样，容器消亡时，容器存储层也随之消亡。因此，任何保存于容器存储层的信息都会随容器删除而丢失。</p>
+<blockquote>
+<p>按照 Docker 最佳实践的要求，容器不应该向其存储层内写入任何数据，容器存储层要保持无状态化。所有的文件写入操作，都应该使用 数据卷（Volume）、或者绑定宿主目录，在这些位置的读写会跳过容器存储层，直接对宿主(或网络存储)发生读写，其性能和稳定性更高。</p>
+</blockquote>
+<h2 id="repository">仓库 Repository</h2>
+<p>即Docker Store，存储和分享docker images</p>
+<p>集中存放镜像文件的场所，可以是公有的，也可以是私有的</p>
+<p>最大的公开仓库是 Docker Hub</p>
+<p>国内的公开仓库包括 Docker Pool 等</p>
+<p>当用户创建了自己的镜像之后就可以使用 push 命令将它上传到公有或者私有仓库，这样下次在另外一台机器上使用这个镜像时候，只需要从仓库上 pull 下来就可以了</p>
+<p>Docker 仓库的概念跟 Git 类似，注册服务器可以理解为 GitHub 这样的托管服务</p>
+<h3 id="docker-registry">Docker Registry</h3>
+<p>集中的存储、分发镜像的服务</p>
+<p>一个 Docker Registry 中可以包含多个仓库（Repository）；每个仓库可以包含多个标签（Tag）；每个标签对应一个镜像</p>
+<blockquote>
+<p>以 Ubuntu 镜像 为例，ubuntu 是仓库的名字，其内包含有不同的版本标签，如，14.04, 16.04。我们可以通过 ubuntu:14.04，或者 ubuntu:16.04 来具体指定所需哪个版本的镜像。如果忽略了标签，比如 ubuntu，那将视为 ubuntu:latest。</p>
+</blockquote>
+<p>仓库名经常以 两段式路径 形式出现，比如 jwilder/nginx-proxy，前者往往意味着 Docker Registry 多用户环境下的用户名，后者则往往是对应的软件名。但这并非绝对，取决于所使用的具体 Docker Registry 的软件或服务。</p>
+<h3 id="registry">公开 Registry</h3>
+<p>最常使用的 Registry 公开服务是官方的 Docker Hub</p>
+<blockquote>
+<p>这也是默认的 Registry，并拥有大量的高质量的官方镜像。除此以外，还有 CoreOS 的 Quay.io</p>
+</blockquote>
+<p>国内的一些云服务商提供了针对 Docker Hub 的镜像服务（Registry Mirror），这些镜像服务被称为加速器。</p>
+<blockquote>
+<p>常见的有 阿里云加速器、DaoCloud 加速器、灵雀云加速器等。使用加速器会直接从国内的地址下载 Docker Hub 的镜像，比直接从官方网站下载速度会提高很多。</p>
+</blockquote>
+<p>国内也有一些云服务商提供类似于 Docker Hub 的公开服务</p>
+<blockquote>
+<p>比如 时速云镜像仓库、网易云镜像服务、DaoCloud 镜像市场、阿里云镜像库等。</p>
+</blockquote>
+<h3 id="registry_1">私有 Registry</h3>
+<p>Docker 官方提供了 Docker Registry 镜像，可以直接使用做为私有 Registry 服务。</p>
+<blockquote>
+<p>开源的 Docker Registry 镜像只提供了 Docker Registry API 的服务端实现，足以支持 docker 命令，不影响使用。但不包含图形界面，以及镜像维护、用户管理、访问控制等高级功能。在官方的商业化版本 Docker Trusted Registry 中，提供了这些高级功能。</p>
+</blockquote>
+<p>第三方软件实现了 Docker Registry API</p>
+<blockquote>
+<p>甚至提供了用户界面以及一些高级功能。比如，VMWare Harbor 和 Sonatype Nexus。</p>
+</blockquote>
+<h1 id="coreos">CoreOS</h1>
+<p>CoreOS 的设计是为你提供能够像谷歌一样的大型互联网公司一样的基础设施管理能力来动态扩展和管理的计算能力。<br />
+CoreOS 的安装文件和运行依赖非常小,它提供了精简的 Linux 系统。它使用 Linux 容器在更高的抽象层来管理你的服务，而不是通过常规的 YUM 和 APT 来安装包。</p>
+<h2 id="_15">特性</h2>
+<div class="hlcode"><pre><span class="err">一个最小化操作系统</span>
+
+<span class="n">CoreOS</span> <span class="err">被设计成一个基于容器的最小化的现代操作系统。它比现有的</span> <span class="n">Linux</span> <span class="err">安装平均节省</span> <span class="mi">40</span><span class="o">%</span> <span class="err">的</span> <span class="n">RAM</span><span class="err">（大约</span> <span class="mi">114</span><span class="n">M</span> <span class="err">）并允许从</span> <span class="n">PXE</span> <span class="err">或</span> <span class="n">iPXE</span> <span class="err">非常快速的启动。</span>
+
+<span class="err">无痛更新</span>
+
+<span class="err">利用主动和被动双分区方案来更新</span> <span class="n">OS</span><span class="err">，使用分区作为一个单元而不是一个包一个包的更新。这使得每次更新变得快速，可靠，而且很容易回滚。</span>
+
+<span class="n">Docker</span><span class="err">容器</span>
+
+<span class="err">应用作为</span> <span class="n">Docker</span> <span class="err">容器运行在</span> <span class="n">CoreOS</span> <span class="err">上。容器以包的形式提供最大得灵活性并且可以在几毫秒启动。</span>
+
+<span class="err">支持集群</span>
+
+<span class="n">CoreOS</span> <span class="err">可以在一个机器上很好地运行，但是它被设计用来搭建集群。</span>
+
+<span class="err">可以通过</span> <span class="n">k8s</span> <span class="err">很容易得使应用容器部署在多台机器上并且通过服务发现把他们连接在一起。</span>
+
+<span class="err">分布式系统工具</span>
+
+<span class="err">内置诸如分布式锁和主选举等原生工具用来构建大规模分布式系统得构建模块。</span>
+
+<span class="err">服务发现</span>
+
+<span class="err">很容易定位服务在集群的那里运行并当发生变化时进行通知。它是复杂高动态集群必不可少的。在</span> <span class="n">CoreOS</span> <span class="err">中构建高可用和自动故障负载。</span>
+</pre></div>
+
+
+<h2 id="etcd">etcd</h2>
+<p>CoreOS 的第一个重要组件就是使用 etcd 来实现的服务发现。</p>
+<ul>
+<li>配置文件里有一个 token，你可以通过访问 https://discovery.etcd.io/new 来获取一个包含你 teoken 的 URL。</li>
+</ul>
+<div class="hlcode"><pre><span class="vi">#cloud</span><span class="na">-config</span>
+
+<span class="nb">hostname</span><span class="p">:</span> <span class="nx">coreos0</span>
+<span class="nx">ssh_authorized_keys</span><span class="p">:</span>
+  <span class="o">-</span> <span class="nx">ssh</span><span class="na">-rsa</span> <span class="nx">AAAA...</span>
+<span class="nx">coreos</span><span class="p">:</span>
+  <span class="nx">units</span><span class="p">:</span>
+    <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="nx">etcd.service</span>
+      <span class="nb">command</span><span class="p">:</span> <span class="nb">start</span>
+    <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="nx">fleet.service</span>
+      <span class="nb">command</span><span class="p">:</span> <span class="nb">start</span>
+  <span class="nx">etcd</span><span class="p">:</span>
+    <span class="nb">name</span><span class="p">:</span> <span class="nx">coreos0</span>
+    <span class="nx">discovery</span><span class="p">:</span> <span class="nx">https</span><span class="p">:</span><span class="c1">//discovery.etcd.io/&lt;token&gt;</span>
+</pre></div>
+
+
+<h2 id="_16">容器管理</h2>
+<p>第二个组件就是 Docker，它用来运行你的代码和应用。CoreOS 内置 Docker</p>
+<h2 id="coreos_1">快速搭建 CoreOS 集群</h2>
+<h1 id="kubernetes">Kubernetes</h1>
+<p>建于 Docker 之上的 Kubernetes 可以构建一个容器的调度服务，其目的是让用户透过 Kubernetes 集群来进行云端容器集群的管理，而无需用户进行复杂的设置工作。系统会自动选取合适的工作节点来执行具体的容器集群调度处理工作。其核心概念是 Container Pod。一个 Pod 由一组工作于同一物理工作节点的容器构成。这些组容器拥有相同的网络命名空间、IP以及存储配额，也可以根据实际情况对每一个 Pod 进行端口映射。此外，Kubernetes 工作节点会由主系统进行管理，节点包含了能够运行 Docker 容器所用到的服务。</p>
+<p>Kubernetes 是 Google 团队发起的开源项目，它的目标是管理跨多个主机的容器，提供基本的部署，维护以及运用伸缩，主要实现语言为 Go 语言。</p>
+<h2 id="_17">快速上手</h2>
+<p>Kubernetes 依赖 Etcd 服务来维护所有主节点的状态。 </p>
+<h2 id="etcd_1">启动 Etcd 服务</h2>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">net</span><span class="o">=</span><span class="n">host</span> <span class="o">-</span><span class="n">d</span> <span class="n">gcr</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">google_containers</span><span class="o">/</span><span class="n">etcd</span><span class="o">:</span><span class="mf">3.1.10</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">etcd</span> <span class="o">--</span><span class="n">addr</span><span class="o">=</span><span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">4001</span> <span class="o">--</span><span class="n">bind</span><span class="o">-</span><span class="n">addr</span><span class="o">=</span><span class="mf">0.0.0.0</span><span class="o">:</span><span class="mi">4001</span> <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="n">dir</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">etcd</span><span class="o">/</span><span class="n">data</span>
+</pre></div>
+
+
+<h2 id="_18">启动主节点</h2>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">net</span><span class="o">=</span><span class="n">host</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">v</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">docker</span><span class="p">.</span><span class="n">sock</span><span class="o">:/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">docker</span><span class="p">.</span><span class="n">sock</span>  <span class="n">gcr</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">google_containers</span><span class="o">/</span><span class="n">hyperkube</span><span class="o">:</span><span class="n">v1</span><span class="mf">.17.11</span> <span class="o">/</span><span class="n">hyperkube</span> <span class="n">kubelet</span> <span class="o">--</span><span class="n">api_servers</span><span class="o">=</span><span class="n">http</span><span class="o">:</span><span class="c1">//localhost:8080 --v=2 --address=0.0.0.0 --enable_server --hostname_override=127.0.0.1 --config=/etc/kubernetes/manifests</span>
+</pre></div>
+
+
+<h2 id="_19">启动服务代理</h2>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> <span class="o">--</span><span class="n">net</span><span class="o">=</span><span class="n">host</span> <span class="o">--</span><span class="n">privileged</span> <span class="n">gcr</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">google_containers</span><span class="o">/</span><span class="n">hyperkube</span><span class="o">:</span><span class="n">v1</span><span class="mf">.17.11</span> <span class="o">/</span><span class="n">hyperkube</span> <span class="n">proxy</span> <span class="o">--</span><span class="n">master</span><span class="o">=</span><span class="n">http</span><span class="o">:</span><span class="c1">//127.0.0.1:8080 --v=2</span>
+</pre></div>
+
+
+<h2 id="_20">测试状态</h2>
+<div class="hlcode"><pre><span class="err">$</span> <span class="nt">curl</span> <span class="nt">127</span><span class="nc">.0.0.1</span><span class="nd">:8080</span>
+<span class="p">{</span>
+  <span class="s2">&quot;paths&quot;</span><span class="o">:</span> <span class="cp">[</span>
+    <span class="s2">&quot;/api&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;/api/v1beta1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;/api/v1beta2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;/api/v1beta3&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;/healthz&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;/healthz/ping&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;/logs/&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;/metrics&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;/static/&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;/swagger-ui/&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;/swaggerapi/&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;/validate&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;/version&quot;</span>
+  <span class="cp">]</span>
+<span class="p">}</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

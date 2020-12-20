@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>transaction - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Postgresql">Postgresql</a>&nbsp;&#187;&nbsp;transaction
+    <span class="updated">Page Updated&nbsp;
+      2020-06-22 23:42
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">transaction</div>
+
+  <p>[toc]</p>
+<h1 id="_1">事务</h1>
+<h2 id="_2">事务隔离级别</h2>
+<p>对于两个并发执行的事务，如果涉及到操作同一条记录的时候，可能会发生问题。因为并发操作会带来数据的不一致性，包括脏读、不可重复读、幻读等。数据库系统提供了隔离级别来让我们有针对性地选择事务的隔离级别，避免数据不一致的问题。</p>
+<p><img alt="image-20200623004012271" src="transaction.assets/image-20200623004012271.png" /></p>
+<h3 id="read-uncommitted">Read Uncommitted</h3>
+<p>读未提交，也就是允许读到未提交的数据，这种情况下查询是不会使用锁的，可能会产生脏读、不可重复读、幻读等情况。</p>
+<h3 id="read-committed">Read Committed</h3>
+<p>Postgresql 默认隔离级别</p>
+<p>读已提交就是只能读到已经提交的内容，可以避免脏读的产生，属于 RDBMS 中常见的默认隔离级别（比如说 Oracle 和 SQL Server），但如果想要避免不可重复读或者幻读，就需要我们在 SQL 查询的时候编写带加锁的 SQL 语句</p>
+<h3 id="repeatable-read">Repeatable Read</h3>
+<p>MySQL 默认的隔离级别</p>
+<p>可重复读，保证一个事务在相同查询条件下两次查询得到的数据结果是一致的，可以避免不可重复读和脏读，但无法避免幻读。</p>
+<h3 id="serializable">Serializable</h3>
+<p>可串行化，将事务进行串行化，也就是在一个队列中按照顺序执行，可串行化是最高级别的隔离等级，可以解决事务读取中所有可能出现的异常情况，但是它牺牲了系统的并发性。</p>
+<p>如果没有特别重要的情景，一般都不会使用Serializable隔离级别。</p>
+<h2 id="_3">事务错误现象</h2>
+<h3 id="dirty-read">Dirty Read 脏读</h3>
+<p>事务A会读到事务B未提交的数据，在事务B回滚后，事务A读到的数据无意义。(包括insert，update，delete)</p>
+<h3 id="non-repeatable-reads">Non-repeatable reads 不可重复读</h3>
+<p>在一个事务内，多次读同一数据，在这个事务还没有结束时，如果另一个事务恰好修改了这个数据，那么，在第一个事务中，两次读取的数据就可能不一致。</p>
+<p>不可重复读是同一条记录的内容被修改了，重点在于UPDATE或DELETE</p>
+<h3 id="phantoms">Phantoms 幻读</h3>
+<p>针对于查询结果集的前后不一致，查询的数据表在事务的执行期间有执行插入删除的操作，导致查询结果的增加或减少。</p>
+<p>一个事务内，在前后两次查询同一个范围的时候，后一次查询看到了前一次查询没有看到的行。</p>
+<h1 id="_4">操作</h1>
+<h2 id="_5">查看</h2>
+<p>查询postgreSQL默认的隔离级别</p>
+<div class="hlcode"><pre><span class="n">test</span><span class="o">=&gt;</span> <span class="n">show</span> <span class="n">default_transaction_isolation</span><span class="p">;</span>
+
+ <span class="n">default_transaction_isolation</span> 
+
+<span class="o">-------------------------------</span>
+
+ <span class="n">read</span> <span class="n">committed</span>
+
+<span class="p">(</span><span class="mi">1</span> <span class="n">row</span><span class="p">)</span>
+</pre></div>
+
+
+<p>检查当前隔离级别</p>
+<div class="hlcode"><pre><span class="n">test</span><span class="o">=</span><span class="err">#</span> <span class="n">show</span> <span class="n">transaction_isolation</span><span class="p">;</span>
+
+ <span class="n">transaction_isolation</span> 
+
+<span class="o">-----------------------</span>
+
+ <span class="n">read</span> <span class="n">committed</span>
+
+<span class="p">(</span><span class="mi">1</span> <span class="n">row</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="_6">修改</h2>
+<p>修改当前事务的隔离级别，须在事物中执行：</p>
+<div class="hlcode"><pre><span class="n">test</span><span class="o">=</span><span class="err">#</span> <span class="n">begin</span><span class="p">;</span>
+
+<span class="n">test</span><span class="o">=</span><span class="err">#</span> <span class="n">set</span> <span class="n">transaction</span> <span class="n">isolation</span> <span class="n">level</span> <span class="n">serializable</span><span class="p">;</span>
+
+<span class="n">SET</span>
+
+<span class="n">test</span><span class="o">=</span><span class="err">#</span> <span class="n">show</span> <span class="n">transaction_isolation</span><span class="p">;</span> 
+
+<span class="n">transaction_isolation</span> 
+
+<span class="o">-----------------------</span> 
+
+<span class="n">serializable</span>
+
+<span class="p">(</span><span class="mi">1</span> <span class="n">row</span><span class="p">)</span>
+</pre></div>
+
+
+<p>修改当前会话默认的隔离级别</p>
+<div class="hlcode"><pre><span class="n">test</span><span class="o">=</span><span class="err">#</span> <span class="n">begin</span><span class="p">;</span>
+<span class="n">test</span><span class="o">=</span><span class="err">#</span> <span class="n">set</span> <span class="n">default_transaction_isolation</span><span class="o">=</span><span class="err">&#39;</span><span class="n">repeatable</span> <span class="n">read</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="n">SET</span>
+<span class="n">test</span><span class="o">=</span><span class="err">#</span> <span class="n">show</span> <span class="n">transaction_isolation</span><span class="p">;</span>
+ <span class="n">transaction_isolation</span> 
+<span class="o">-----------------------</span>
+ <span class="n">serializable</span>
+<span class="p">(</span><span class="mi">1</span> <span class="n">row</span><span class="p">)</span>
+
+
+<span class="n">test</span><span class="o">=</span><span class="err">#</span>  <span class="n">show</span> <span class="n">default_transaction_isolation</span><span class="p">;</span>
+ <span class="n">default_transaction_isolation</span> 
+<span class="o">-------------------------------</span>
+ <span class="n">repeatable</span> <span class="n">read</span>
+<span class="p">(</span><span class="mi">1</span> <span class="n">row</span><span class="p">)</span>
+
+<span class="n">test</span><span class="o">=</span><span class="err">#</span> <span class="n">commit</span><span class="p">;</span>
+<span class="n">COMMIT</span>
+<span class="n">test</span><span class="o">=</span><span class="err">#</span> <span class="n">show</span> <span class="n">transaction_isolation</span><span class="p">;</span>
+ <span class="n">transaction_isolation</span> 
+<span class="o">-----------------------</span>
+ <span class="n">repeatable</span> <span class="n">read</span>
+<span class="p">(</span><span class="mi">1</span> <span class="n">row</span><span class="p">)</span>
+
+<span class="o">--</span>
+
+<span class="n">test</span><span class="o">=</span><span class="err">#</span>  <span class="n">show</span> <span class="n">default_transaction_isolation</span><span class="p">;</span>
+ <span class="n">default_transaction_isolation</span> 
+<span class="o">-------------------------------</span>
+ <span class="n">read</span> <span class="n">committed</span>
+<span class="p">(</span><span class="mi">1</span> <span class="n">row</span><span class="p">)</span>
+
+<span class="n">test</span><span class="o">=</span><span class="err">#</span>  <span class="n">set</span> <span class="n">default_transaction_isolation</span><span class="o">=</span><span class="err">&#39;</span><span class="n">repeatable</span> <span class="n">read</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="n">SET</span>
+<span class="n">test</span><span class="o">=</span><span class="err">#</span>  <span class="n">show</span> <span class="n">default_transaction_isolation</span><span class="p">;</span>
+ <span class="n">default_transaction_isolation</span> 
+<span class="o">-------------------------------</span>
+ <span class="n">repeatable</span> <span class="n">read</span>
+<span class="p">(</span><span class="mi">1</span> <span class="n">row</span><span class="p">)</span>
+
+
+<span class="n">test</span><span class="o">=</span><span class="err">#</span>  <span class="n">show</span> <span class="n">transaction_isolation</span><span class="p">;</span>
+ <span class="n">transaction_isolation</span> 
+<span class="o">-----------------------</span>
+ <span class="n">repeatable</span> <span class="n">read</span>
+<span class="p">(</span><span class="mi">1</span> <span class="n">row</span><span class="p">)</span>
+</pre></div>
+
+
+<p>如果在事物中修改默认的隔离级别是不影响当前事物的。否则即时生效。</p>
+<p>也可以在数据库级别设置默认的隔离级别：</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">test</span><span class="err">@</span><span class="n">db1</span> <span class="n">data</span><span class="p">]</span><span class="err">$</span> <span class="n">cat</span> <span class="n">postgresql</span><span class="p">.</span><span class="n">conf</span> <span class="o">|</span><span class="n">grep</span> <span class="n">default_transaction_isolation</span>
+
+<span class="cp">#default_transaction_isolation = &#39;read committed&#39;</span>
+</pre></div>
+
+
+<h1 id="auto-commit">Auto commit</h1>
+<h2 id="_7">配置</h2>
+<p>Although autocommit is enabled by default in PostgreSQL database's <code>psql</code> command-line tool, it can be easily disabled using <code>\set AUTOCOMMIT off</code> explicitly in a session or via configuration in the personal <code>~/.psqlrc</code>file or in the global system configuration <code>psqlrc</code> file</p>
+<div class="hlcode"><pre><span class="err">\</span><span class="n">echo</span> <span class="o">:</span><span class="n">AUTOCOMMIT</span>
+
+<span class="err">\</span><span class="n">set</span> <span class="n">AUTOCOMMIT</span> <span class="n">off</span>
+<span class="err">\</span><span class="n">set</span> <span class="n">AUTOCOMMIT</span> <span class="n">on</span>
+</pre></div>
+
+
+<h2 id="_8">使用</h2>
+<p>事务可以使用 BEGIN TRANSACTION 命令或简单的 BEGIN 命令来启动。此类事务通常会持续执行下去，直到遇到下一个 COMMIT 或 ROLLBACK 命令。不过在数据库关闭或发生错误时，事务处理也会回滚</p>
+<p>启动一个事务的简单语法：</p>
+<div class="hlcode"><pre><span class="n">BEGIN</span><span class="p">;</span>
+
+<span class="err">或者</span>
+
+<span class="n">BEGIN</span> <span class="n">TRANSACTION</span><span class="p">;</span>
+</pre></div>
+
+
+<p>COMMIT 命令是用于把事务调用的更改保存到数据库中的事务命令，即确认事务</p>
+<div class="hlcode"><pre><span class="n">COMMIT</span><span class="p">;</span>
+
+<span class="err">或者</span>
+
+<span class="n">END</span> <span class="n">TRANSACTION</span><span class="p">;</span>
+</pre></div>
+
+
+<p>ROLLBACK 命令是用于撤消尚未保存到数据库的事务命令，即回滚事务</p>
+<div class="hlcode"><pre><span class="n">ROLLBACK</span><span class="p">;</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

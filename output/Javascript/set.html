@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>set 类集合 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Javascript">Javascript</a>&nbsp;&#187;&nbsp;set 类集合
+    <span class="updated">Page Updated&nbsp;
+      2018-06-09 22:31
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">set 类集合</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#set">Set</a><ul>
+<li><a href="#_1">定义</a></li>
+<li><a href="#_2">创建</a></li>
+<li><a href="#_3">添加</a><ul>
+<li><a href="#addelement">add(element)</a></li>
+</ul>
+</li>
+<li><a href="#_4">删除</a><ul>
+<li><a href="#deletekey">delete(key)</a></li>
+</ul>
+</li>
+<li><a href="#_5">过滤重复元素</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="set">Set</h1>
+<h2 id="_1">定义</h2>
+<p><code>Set</code>和<code>Map</code>类似，也是一组key的集合，但不存储value。由于key不能重复，所以，在<code>Set</code>中，没有重复的key</p>
+<p><code>Set</code>与<code>Array</code>类似，但<code>Set</code>没有索引，可以迭代</p>
+<h2 id="_2">创建</h2>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">s1</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Set</span><span class="p">();</span> <span class="c1">// 空Set</span>
+<span class="n">var</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Set</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]);</span> <span class="c1">// 含1, 2, 3</span>
+</pre></div>
+
+
+<h2 id="_3">添加</h2>
+<h3 id="addelement">add(element)</h3>
+<p>通过<code>add(key)</code>方法可以添加</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">s</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Set</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">s</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+<span class="n">s</span><span class="p">;</span> <span class="c1">// Set {1, 2, 3, 4}</span>
+<span class="n">s</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+<span class="n">s</span><span class="p">;</span> <span class="c1">// 仍然是 Set {1, 2, 3, 4}</span>
+</pre></div>
+
+
+<h2 id="_4">删除</h2>
+<h3 id="deletekey">delete(key)</h3>
+<p>通过<code>delete(key)</code>方法可以删除</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">s</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Set</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]);</span>
+<span class="n">s</span><span class="p">;</span> <span class="c1">// Set {1, 2, 3}</span>
+<span class="n">s</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">s</span><span class="p">;</span> <span class="c1">// Set {1, 2}</span>
+</pre></div>
+
+
+<h2 id="_5">过滤重复元素</h2>
+<p>重复元素在<code>Set</code>中自动被过滤</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">s</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Set</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="sc">&#39;3&#39;</span><span class="p">]);</span>
+<span class="n">s</span><span class="p">;</span> <span class="c1">// Set {1, 2, 3, &quot;3&quot;}</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

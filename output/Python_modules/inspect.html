@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>inspect 检测模块 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;inspect 检测模块
+    <span class="updated">Page Updated&nbsp;
+      2019-01-30 23:17
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">inspect 检测模块</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#inspect">inspect</a><ul>
+<li><a href="#isfunction">.isfunction()</a></li>
+<li><a href="#ismethod">.ismethod()</a></li>
+<li><a href="#isgenerator">.isgenerator()</a></li>
+<li><a href="#isgeneratorfunction">.isgeneratorfunction()</a></li>
+<li><a href="#isclass">.isclass()</a></li>
+<li><a href="#ismodule">.ismodule()</a></li>
+<li><a href="#isbuiltin">.isbuiltin()</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="inspect">inspect</h1>
+<p>对函数进行检测</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">:</span> <span class="n">import</span> <span class="n">inspect</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="n">def</span> <span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="kt">int</span><span class="p">,</span> <span class="n">y</span><span class="o">:</span><span class="kt">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">int</span><span class="o">:</span>
+    <span class="p">...</span><span class="o">:</span>     <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+    <span class="p">...</span><span class="o">:</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">:</span> <span class="n">sign</span> <span class="o">=</span> <span class="n">inspect</span><span class="p">.</span><span class="n">signature</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">:</span> <span class="n">type</span><span class="p">(</span><span class="n">sign</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">:</span> <span class="n">inspect</span><span class="p">.</span><span class="n">Signature</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">18</span><span class="p">]</span><span class="o">:</span> <span class="n">sign</span><span class="p">.</span><span class="n">parameters</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span><span class="o">:</span>
+<span class="n">mappingproxy</span><span class="p">({</span><span class="err">&#39;</span><span class="n">args</span><span class="err">&#39;</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">Parameter</span> <span class="s">&quot;*args&quot;</span><span class="o">&gt;</span><span class="p">,</span>
+              <span class="err">&#39;</span><span class="n">kwargs</span><span class="err">&#39;</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">Parameter</span> <span class="s">&quot;**kwargs&quot;</span><span class="o">&gt;</span><span class="p">,</span>
+              <span class="sc">&#39;x&#39;</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">Parameter</span> <span class="s">&quot;x:int&quot;</span><span class="o">&gt;</span><span class="p">,</span>
+              <span class="sc">&#39;y&#39;</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">Parameter</span> <span class="s">&quot;y:int&quot;</span><span class="o">&gt;</span><span class="p">})</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="n">sign</span><span class="p">.</span><span class="n">return_annotation</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="kt">int</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="o">:</span> <span class="n">sign</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sc">&#39;x&#39;</span><span class="p">],</span> <span class="n">type</span><span class="p">(</span><span class="n">sign</span><span class="p">.</span><span class="n">parameters</span><span class="p">[</span><span class="sc">&#39;x&#39;</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="o">:</span> <span class="p">(</span><span class="o">&lt;</span><span class="n">Parameter</span> <span class="s">&quot;x:int&quot;</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">inspect</span><span class="p">.</span><span class="n">Parameter</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="isfunction">.isfunction()</h2>
+<p>检测是否为函数</p>
+<h2 id="ismethod">.ismethod()</h2>
+<p>是否是类方法</p>
+<h2 id="isgenerator">.isgenerator()</h2>
+<p>是否是生成器对象</p>
+<h2 id="isgeneratorfunction">.isgeneratorfunction()</h2>
+<p>是否是生成器函数</p>
+<h2 id="isclass">.isclass()</h2>
+<p>是否是类</p>
+<h2 id="ismodule">.ismodule()</h2>
+<p>是否是模块</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="n">def</span> <span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="kt">int</span><span class="p">,</span> <span class="n">y</span><span class="o">:</span><span class="kt">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">int</span><span class="o">:</span>
+    <span class="p">...</span><span class="o">:</span>     <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+    <span class="p">...</span><span class="o">:</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">21</span><span class="p">]</span><span class="o">:</span> <span class="n">inspect</span><span class="p">.</span><span class="n">ismodule</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+</pre></div>
+
+
+<h2 id="isbuiltin">.isbuiltin()</h2>
+<p>是否是内建对象</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

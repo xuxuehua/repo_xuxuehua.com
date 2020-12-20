@@ -1,0 +1,127 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>configs - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Git">Git</a>&nbsp;&#187;&nbsp;configs
+    <span class="updated">Page Updated&nbsp;
+      2018-12-31 22:05
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">configs</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#configs">Configs</a><ul>
+<li><a href="#project">project</a><ul>
+<li><a href="#local">local</a></li>
+<li><a href="#global">global</a></li>
+<li><a href="#system">system</a></li>
+</ul>
+</li>
+<li><a href="#proxy">proxy</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="configs">Configs</h1>
+<h2 id="project">project</h2>
+<p>Project configs are only available for the current project and stored in .git/config in the project's directory.</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">config</span> <span class="n">user</span><span class="p">.</span><span class="n">name</span> <span class="s">&quot;John Doe&quot;</span> 
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">cat</span> <span class="p">.</span><span class="n">git</span><span class="o">/</span><span class="n">config</span>
+<span class="p">[</span><span class="n">core</span><span class="p">]</span>
+    <span class="n">repositoryformatversion</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">filemode</span> <span class="o">=</span> <span class="nb">true</span>
+    <span class="n">bare</span> <span class="o">=</span> <span class="nb">false</span>
+    <span class="n">logallrefupdates</span> <span class="o">=</span> <span class="nb">true</span>
+    <span class="n">ignorecase</span> <span class="o">=</span> <span class="nb">true</span>
+    <span class="n">precomposeunicode</span> <span class="o">=</span> <span class="nb">true</span>
+<span class="p">[</span><span class="n">remote</span> <span class="s">&quot;origin&quot;</span><span class="p">]</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">git</span><span class="err">@</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">:</span><span class="n">xxx</span><span class="o">/</span><span class="n">xx</span><span class="p">.</span><span class="n">git</span>
+    <span class="n">fetch</span> <span class="o">=</span> <span class="o">+</span><span class="n">refs</span><span class="o">/</span><span class="n">heads</span><span class="o">/*:</span><span class="n">refs</span><span class="o">/</span><span class="n">remotes</span><span class="o">/</span><span class="n">origin</span><span class="o">/*</span>
+<span class="p">[</span><span class="n">user</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">username</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">email</span><span class="err">@</span><span class="n">example</span><span class="p">.</span><span class="n">com</span>
+<span class="p">[</span><span class="n">branch</span> <span class="s">&quot;master&quot;</span><span class="p">]</span>
+    <span class="n">remote</span> <span class="o">=</span> <span class="n">origin</span>
+    <span class="n">merge</span> <span class="o">=</span> <span class="n">refs</span><span class="o">/</span><span class="n">heads</span><span class="o">/</span><span class="n">master</span>
+</pre></div>
+
+
+<h3 id="local">local</h3>
+<p>默认，优先级别最高，只影响本地仓库</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">local</span> <span class="n">user</span><span class="p">.</span><span class="n">name</span> <span class="s">&quot;Rick Xu&quot;</span>
+</pre></div>
+
+
+<p>存储在<code>.git/config</code></p>
+<h3 id="global">global</h3>
+<p>中优先级，影响所有当前用户的git仓库</p>
+<p>Global configs are available for all projects for the current user and stored in <code>~/.gitconfig</code>.</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">global</span> <span class="n">user</span><span class="p">.</span><span class="n">name</span> <span class="s">&quot;John Doe&quot;</span>
+</pre></div>
+
+
+<p>In your <code>.gitconfig</code> you can put something like this.</p>
+<div class="hlcode"><pre><span class="k">[includeIf &quot;gitdir:~/company_a/&quot;]</span>
+  <span class="na">path</span> <span class="o">=</span> <span class="s">.gitconfig-company_a</span>
+<span class="k">[includeIf &quot;gitdir:~/company_b/&quot;]</span>
+  <span class="na">path</span> <span class="o">=</span> <span class="s">.gitconfig-company_b</span>
+</pre></div>
+
+
+<p>Example contents of .gitconfig-company_a</p>
+<div class="hlcode"><pre><span class="k">[user]</span>
+<span class="na">name</span> <span class="o">=</span> <span class="s">John Smith</span>
+<span class="na">email</span> <span class="o">=</span> <span class="s">john.smith@companya.net</span>
+</pre></div>
+
+
+<p>Example contents of .gitconfig-company_b</p>
+<div class="hlcode"><pre><span class="k">[user]</span>
+<span class="na">name</span> <span class="o">=</span> <span class="s">John Smith</span>
+<span class="na">email</span> <span class="o">=</span> <span class="s">js@companyb.com</span>
+</pre></div>
+
+
+<h3 id="system">system</h3>
+<p>低优先级，影响全系统的git 仓库</p>
+<p>System configs are available for all the users/projects and stored in <code>/etc/gitconfig</code>.</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">system</span> <span class="n">user</span><span class="p">.</span><span class="n">name</span> <span class="s">&quot;John Doe&quot;</span> 
+</pre></div>
+
+
+<h2 id="proxy">proxy</h2>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">local</span> <span class="n">http</span><span class="p">.</span><span class="n">proxy</span> <span class="err">&#39;</span><span class="n">socks5</span><span class="o">:</span><span class="c1">//127.0.0.1:1080&#39;</span>
+<span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">local</span> <span class="n">https</span><span class="p">.</span><span class="n">proxy</span> <span class="err">&#39;</span><span class="n">socks5</span><span class="o">:</span><span class="c1">//127.0.0.1:1080&#39;</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

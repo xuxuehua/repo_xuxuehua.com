@@ -1,0 +1,310 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>retrying - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;retrying
+    <span class="updated">Page Updated&nbsp;
+      2019-07-12 14:44
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">retrying</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#retrying-discontinued">retrying (Discontinued)</a><ul>
+<li><a href="#stop_max_attempt_number">stop_max_attempt_number 最大尝试次数</a></li>
+<li><a href="#stop_max_delay">stop_max_delay  函数执行超时</a></li>
+<li><a href="#wait_fixed">wait_fixed 停留时间</a></li>
+<li><a href="#wait_random_minwait_random_max">wait_random_min/wait_random_max 随机时间</a></li>
+<li><a href="#wait_incrementing_increment">wait_incrementing_increment</a></li>
+<li><a href="#wait_exponential_multiplierwait_exponential_max">wait_exponential_multiplier/wait_exponential_max</a></li>
+<li><a href="#retry_on_exception">retry_on_exception</a></li>
+<li><a href="#retry_on_result">retry_on_result</a></li>
+<li><a href="#wrap_exception">wrap_exception</a></li>
+<li><a href="#stop_func">stop_func</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="retrying-discontinued">retrying (Discontinued)</h1>
+<p>Please try https://github.com/jd/tenacity</p>
+<div class="hlcode"><pre><span class="n">pip</span> <span class="n">install</span> <span class="n">retrying</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">Retrying</span><span class="p">(</span><span class="n">object</span><span class="p">)</span><span class="o">:</span>
+
+    <span class="n">def</span> <span class="n">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span>
+                 <span class="n">stop</span><span class="o">=</span><span class="n">None</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="n">None</span><span class="p">,</span>
+                 <span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="n">None</span><span class="p">,</span>
+                 <span class="n">stop_max_delay</span><span class="o">=</span><span class="n">None</span><span class="p">,</span>
+                 <span class="n">wait_fixed</span><span class="o">=</span><span class="n">None</span><span class="p">,</span>
+                 <span class="n">wait_random_min</span><span class="o">=</span><span class="n">None</span><span class="p">,</span> <span class="n">wait_random_max</span><span class="o">=</span><span class="n">None</span><span class="p">,</span>
+                 <span class="n">wait_incrementing_start</span><span class="o">=</span><span class="n">None</span><span class="p">,</span> <span class="n">wait_incrementing_increment</span><span class="o">=</span><span class="n">None</span><span class="p">,</span>
+                 <span class="n">wait_exponential_multiplier</span><span class="o">=</span><span class="n">None</span><span class="p">,</span> <span class="n">wait_exponential_max</span><span class="o">=</span><span class="n">None</span><span class="p">,</span>
+                 <span class="n">retry_on_exception</span><span class="o">=</span><span class="n">None</span><span class="p">,</span>
+                 <span class="n">retry_on_result</span><span class="o">=</span><span class="n">None</span><span class="p">,</span>
+                 <span class="n">wrap_exception</span><span class="o">=</span><span class="n">False</span><span class="p">,</span>
+                 <span class="n">stop_func</span><span class="o">=</span><span class="n">None</span><span class="p">,</span>
+                 <span class="n">wait_func</span><span class="o">=</span><span class="n">None</span><span class="p">,</span>
+                 <span class="n">wait_jitter_max</span><span class="o">=</span><span class="n">None</span><span class="p">)</span><span class="o">:</span>
+</pre></div>
+
+
+<h2 id="stop_max_attempt_number">stop_max_attempt_number 最大尝试次数</h2>
+<p>用来设定最大的尝试次数，超过该次数就停止重试</p>
+<p>最后一次如果还是有异常则会抛出异常，停止运行，默认为5次</p>
+<div class="hlcode"><pre><span class="err">@</span><span class="n">retry</span><span class="p">(</span><span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">def</span> <span class="n">stop_after_7_attempts</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">print</span> <span class="s">&quot;Stopping after 7 attempts&quot;</span>
+</pre></div>
+
+
+<h2 id="stop_max_delay">stop_max_delay  函数执行超时</h2>
+<p>比如设置成10000，那么从被装饰的函数开始执行的时间点开始，到函数成功运行结束或者失败报错中止的时间点，只要这段时间超过10秒，函数就不会再执行了</p>
+<div class="hlcode"><pre><span class="nb">from</span> <span class="nx">retrying</span> <span class="k">import</span> <span class="nx">retry</span>
+<span class="nb">from</span> <span class="nb">time</span> <span class="k">import</span> <span class="nb">sleep</span>
+
+<span class="p">@</span><span class="nx">retry</span><span class="p">(</span><span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stop_max_delay</span><span class="o">=</span><span class="mi">3000</span><span class="p">)</span>
+<span class="nx">def</span> <span class="nb">run</span><span class="p">():</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="mi">1</span>    
+    <span class="nb">for</span> <span class="n">i</span> <span class="k">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="nx">print</span><span class="p">(</span><span class="s1">&#39;start run&#39;</span><span class="p">)</span>
+        <span class="nb">n</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="nb">t</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="nx">print</span><span class="p">(</span><span class="s1">&#39;n%s, t%s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">n</span><span class="p">,</span> <span class="nb">t</span><span class="p">))</span>
+        <span class="nb">sleep</span><span class="p">(</span><span class="nb">t</span><span class="p">)</span>
+        <span class="nx">raise</span> <span class="nx">NameError</span>
+
+
+<span class="k">if</span> <span class="nx">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="nb">run</span><span class="p">()</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nb">start</span> <span class="nb">run</span>
+<span class="nx">n1</span><span class="p">,</span> <span class="nx">t2</span>
+<span class="nb">start</span> <span class="nb">run</span>
+<span class="nx">n1</span><span class="p">,</span> <span class="nx">t2</span>
+<span class="nx">Traceback</span> <span class="p">(</span><span class="nx">most</span> <span class="nx">recent</span> <span class="nb">call</span> <span class="nb">last</span><span class="p">):</span>
+  <span class="nb">File</span> <span class="s2">&quot;c2.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">18</span><span class="p">,</span> <span class="k">in</span> <span class="o">&lt;</span><span class="nx">module</span><span class="o">&gt;</span>
+    <span class="nb">run</span><span class="p">()</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/.pyenv/versions/env3.7.0/lib/python3.7/site-packages/retrying.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">49</span><span class="p">,</span> <span class="k">in</span> <span class="nx">wrapped_f</span>
+    <span class="k">return</span> <span class="nx">Retrying</span><span class="p">(</span><span class="o">*</span><span class="nx">dargs</span><span class="p">,</span> <span class="o">**</span><span class="nx">dkw</span><span class="p">)</span><span class="bp">.</span><span class="nb">call</span><span class="p">(</span><span class="nb">f</span><span class="p">,</span> <span class="o">*</span><span class="nx">args</span><span class="p">,</span> <span class="o">**</span><span class="nx">kw</span><span class="p">)</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/.pyenv/versions/env3.7.0/lib/python3.7/site-packages/retrying.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">212</span><span class="p">,</span> <span class="k">in</span> <span class="nb">call</span>
+    <span class="nx">raise</span> <span class="nx">attempt.get</span><span class="p">()</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/.pyenv/versions/env3.7.0/lib/python3.7/site-packages/retrying.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">247</span><span class="p">,</span> <span class="k">in</span> <span class="nb">get</span>
+    <span class="nx">six.reraise</span><span class="p">(</span><span class="bp">self.</span><span class="nb">value</span><span class="err">[</span><span class="mi">0</span><span class="cp">]</span>, self.value<span class="cp">[</span><span class="mi">1</span><span class="cp">]</span>, self.value<span class="cp">[</span><span class="mi">2</span><span class="cp">]</span>)
+  File &quot;/Users/rxu/.pyenv/versions/env3.7.0/lib/python3.7/site-packages/six.py&quot;, line 693, in reraise
+    raise value
+  File &quot;/Users/rxu/.pyenv/versions/env3.7.0/lib/python3.7/site-packages/retrying.py&quot;, line 200, in call
+    attempt = Attempt(fn(*args, **kwargs), attempt_number, False)
+  File &quot;c2.py&quot;, line 14, in run
+    raise NameError
+NameError
+</pre></div>
+
+
+<h2 id="wait_fixed">wait_fixed 停留时间</h2>
+<p>设置在两次retrying之间的停留时间, 如果出现异常则会一直重复调用，默认 1000毫秒</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">retrying</span> <span class="n">import</span> <span class="n">retry</span>
+<span class="n">from</span> <span class="n">time</span> <span class="n">import</span> <span class="n">sleep</span>
+
+<span class="err">@</span><span class="n">retry</span><span class="p">(</span><span class="n">wait_fixed</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+<span class="n">def</span> <span class="n">run</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">start</span> <span class="n">run</span><span class="err">&#39;</span><span class="p">)</span>
+    <span class="n">raise</span> <span class="n">NameError</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="o">:</span>
+    <span class="n">run</span><span class="p">()</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="p">....</span>
+</pre></div>
+
+
+<h2 id="wait_random_minwait_random_max">wait_random_min/wait_random_max 随机时间</h2>
+<p>用随机的方式产生两次retrying之间的停留时间</p>
+<p>在两次调用方法停留时长，停留最短时间，默认为0</p>
+<div class="hlcode"><pre><span class="err">@</span><span class="n">retry</span><span class="p">(</span><span class="n">wait_random_min</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">wait_random_max</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+<span class="n">def</span> <span class="n">wait_random_1_to_2_s</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">print</span> <span class="s">&quot;Randomly wait 1 to 2 seconds between retries&quot;</span>
+</pre></div>
+
+
+<h2 id="wait_incrementing_increment">wait_incrementing_increment</h2>
+<p>每調用一次則會增加的時長，默認 100毫秒</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">retrying</span> <span class="n">import</span> <span class="n">retry</span>
+<span class="n">import</span> <span class="n">time</span>
+
+
+<span class="err">@</span><span class="n">retry</span><span class="p">(</span><span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">wait_fixed</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">wait_incrementing_increment</span><span class="o">=</span><span class="mi">7000</span><span class="p">)</span>
+<span class="n">def</span> <span class="n">run</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">start_time</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">start_time</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">start</span> <span class="n">run</span><span class="err">&#39;</span><span class="p">)</span>
+    <span class="n">raise</span> <span class="n">NameError</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="o">:</span>
+    <span class="n">run</span><span class="p">()</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">start_time</span> <span class="mf">0.051161544</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="n">start_time</span> <span class="mf">1.055089371</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="n">start_time</span> <span class="mf">8.058492401</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="n">start_time</span> <span class="mf">22.063655449</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="n">start_time</span> <span class="mf">43.067897729</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="n">start_time</span> <span class="mf">71.068411969</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="n">start_time</span> <span class="mf">106.071816208</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="n">start_time</span> <span class="mf">148.075782706</span>
+<span class="n">start</span> <span class="n">run</span>
+</pre></div>
+
+
+<h2 id="wait_exponential_multiplierwait_exponential_max">wait_exponential_multiplier/wait_exponential_max</h2>
+<p>以指数的形式产生两次retrying之间的停留时间，产生的值为2^previous_attempt_number * wait_exponential_multiplier，previous_attempt_number是前面已经retry的次数，如果产生的这个值超过了wait_exponential_max的大小，那么之后两个retrying之间的停留值都为wait_exponential_max</p>
+<div class="hlcode"><pre><span class="err">@</span><span class="n">retry</span><span class="p">(</span><span class="n">wait_exponential_multiplier</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">wait_exponential_max</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">def</span> <span class="n">wait_exponential_1000</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">print</span> <span class="s">&quot;Wait 2^x * 1000 milliseconds between each retry, up to 10 seconds, then 10 seconds afterwards&quot;</span>
+</pre></div>
+
+
+<h2 id="retry_on_exception">retry_on_exception</h2>
+<p>指定一个函数，如果此函数返回指定异常，则会重试，如果不是指定的异常则会退出</p>
+<p>不依赖主函数中的异常重试</p>
+<div class="hlcode"><pre><span class="nb">from</span> <span class="nx">retrying</span> <span class="k">import</span> <span class="nx">retry</span>
+<span class="nb">from</span> <span class="nb">time</span> <span class="k">import</span> <span class="nb">sleep</span>
+
+<span class="nx">def</span> <span class="nx">run2</span><span class="p">(</span><span class="nx">exception</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nx">isinstance</span><span class="p">(</span><span class="nx">exception</span><span class="p">,</span> <span class="nx">ZeroDivisionError</span><span class="p">)</span>
+
+<span class="p">@</span><span class="nx">retry</span><span class="p">(</span><span class="n">stop_max_attempt_number</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">retry_on_exception</span><span class="o">=</span><span class="nx">run2</span><span class="p">)</span>
+<span class="nx">def</span> <span class="nb">run</span><span class="p">():</span>
+    <span class="nx">print</span><span class="p">(</span><span class="s1">&#39;start run&#39;</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span>
+    <span class="nb">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="nx">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="nb">run</span><span class="p">()</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nb">start</span> <span class="nb">run</span>
+<span class="nb">start</span> <span class="nb">run</span>
+<span class="nb">start</span> <span class="nb">run</span>
+<span class="nx">Traceback</span> <span class="p">(</span><span class="nx">most</span> <span class="nx">recent</span> <span class="nb">call</span> <span class="nb">last</span><span class="p">):</span>
+  <span class="nb">File</span> <span class="s2">&quot;c2.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">14</span><span class="p">,</span> <span class="k">in</span> <span class="o">&lt;</span><span class="nx">module</span><span class="o">&gt;</span>
+    <span class="nb">run</span><span class="p">()</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/.pyenv/versions/env3.7.0/lib/python3.7/site-packages/retrying.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">49</span><span class="p">,</span> <span class="k">in</span> <span class="nx">wrapped_f</span>
+    <span class="k">return</span> <span class="nx">Retrying</span><span class="p">(</span><span class="o">*</span><span class="nx">dargs</span><span class="p">,</span> <span class="o">**</span><span class="nx">dkw</span><span class="p">)</span><span class="bp">.</span><span class="nb">call</span><span class="p">(</span><span class="nb">f</span><span class="p">,</span> <span class="o">*</span><span class="nx">args</span><span class="p">,</span> <span class="o">**</span><span class="nx">kw</span><span class="p">)</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/.pyenv/versions/env3.7.0/lib/python3.7/site-packages/retrying.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">212</span><span class="p">,</span> <span class="k">in</span> <span class="nb">call</span>
+    <span class="nx">raise</span> <span class="nx">attempt.get</span><span class="p">()</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/.pyenv/versions/env3.7.0/lib/python3.7/site-packages/retrying.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">247</span><span class="p">,</span> <span class="k">in</span> <span class="nb">get</span>
+    <span class="nx">six.reraise</span><span class="p">(</span><span class="bp">self.</span><span class="nb">value</span><span class="err">[</span><span class="mi">0</span><span class="cp">]</span>, self.value<span class="cp">[</span><span class="mi">1</span><span class="cp">]</span>, self.value<span class="cp">[</span><span class="mi">2</span><span class="cp">]</span>)
+  File &quot;/Users/rxu/.pyenv/versions/env3.7.0/lib/python3.7/site-packages/six.py&quot;, line 693, in reraise
+    raise value
+  File &quot;/Users/rxu/.pyenv/versions/env3.7.0/lib/python3.7/site-packages/retrying.py&quot;, line 200, in call
+    attempt = Attempt(fn(*args, **kwargs), attempt_number, False)
+  File &quot;c2.py&quot;, line 10, in run
+    a = 1 / 0
+ZeroDivisionError: division by zero
+</pre></div>
+
+
+<h2 id="retry_on_result">retry_on_result</h2>
+<p>指定一个函数，如果指定的函数返回True，则重试，否则抛出异常退出</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">retrying</span> <span class="n">import</span> <span class="n">retry</span>
+<span class="n">from</span> <span class="n">time</span> <span class="n">import</span> <span class="n">sleep</span>
+
+<span class="n">def</span> <span class="n">run2</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">exec</span> <span class="n">run2</span><span class="err">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">True</span>
+
+<span class="err">@</span><span class="n">retry</span><span class="p">(</span><span class="n">retry_on_result</span><span class="o">=</span><span class="n">run2</span><span class="p">)</span>
+<span class="n">def</span> <span class="n">run</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">start</span> <span class="n">run</span><span class="err">&#39;</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span> 
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">a</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="o">:</span>
+    <span class="n">run</span><span class="p">()</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="n">exec</span> <span class="n">run2</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="n">exec</span> <span class="n">run2</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="n">exec</span> <span class="n">run2</span>
+<span class="n">start</span> <span class="n">run</span>
+<span class="n">start</span> <span class="n">run</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">retry_if_result_none</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">:</span>
+    <span class="s">&quot;&quot;&quot;Return True if we should retry (in this case when result is None), False otherwise&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">result</span> <span class="n">is</span> <span class="n">None</span>
+
+<span class="err">@</span><span class="n">retry</span><span class="p">(</span><span class="n">retry_on_result</span><span class="o">=</span><span class="n">retry_if_result_none</span><span class="p">)</span>
+<span class="n">def</span> <span class="n">might_return_none</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">print</span> <span class="s">&quot;Retry forever ignoring Exceptions with no wait if return value is None&quot;</span>
+</pre></div>
+
+
+<h2 id="wrap_exception">wrap_exception</h2>
+<p>参数设置为True/False，如果指定的异常类型，包裹在RetryError中，会看到RetryError和程序抛的Exception error</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">retry_if_io_error</span><span class="p">(</span><span class="n">exception</span><span class="p">)</span><span class="o">:</span>
+    <span class="s">&quot;&quot;&quot;Return True if we should retry (in this case when it&#39;s an IOError), False otherwise&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">isinstance</span><span class="p">(</span><span class="n">exception</span><span class="p">,</span> <span class="n">IOError</span><span class="p">)</span>
+
+<span class="err">@</span><span class="n">retry</span><span class="p">(</span><span class="n">retry_on_exception</span><span class="o">=</span><span class="n">retry_if_io_error</span><span class="p">)</span>
+<span class="n">def</span> <span class="n">might_io_error</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">print</span> <span class="s">&quot;Retry forever with no wait if an IOError occurs, raise any other errors&quot;</span>
+
+<span class="err">@</span><span class="n">retry</span><span class="p">(</span><span class="n">retry_on_exception</span><span class="o">=</span><span class="n">retry_if_io_error</span><span class="p">,</span> <span class="n">wrap_exception</span><span class="o">=</span><span class="n">True</span><span class="p">)</span>
+<span class="n">def</span> <span class="n">only_raise_retry_error_when_not_io_error</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">print</span> <span class="s">&quot;Retry forever with no wait if an IOError occurs, raise any other errors wrapped in RetryError&quot;</span>
+</pre></div>
+
+
+<h2 id="stop_func">stop_func</h2>
+<p>每次抛出异常时都会执行的函数，如果和<strong>stop_max_delay</strong>、<strong>stop_max_attempt_number</strong>配合使用，则后两者会失效</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

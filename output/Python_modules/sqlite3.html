@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>sqlite3 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;sqlite3
+    <span class="updated">Page Updated&nbsp;
+      2018-10-09 00:07
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">sqlite3</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#sqlite3">sqlite3</a><ul>
+<li><a href="#_1">创建数据库</a></li>
+<li><a href="#_2">插入数据</a></li>
+<li><a href="#_3">查询</a></li>
+<li><a href="#_4">更新与删除</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="sqlite3">sqlite3</h1>
+<h2 id="_1">创建数据库</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">sqlite3</span>
+
+<span class="cp"># test.db is a file in the working directory.</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;test.db&quot;</span><span class="p">)</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+
+<span class="cp"># create tables</span>
+<span class="n">c</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="err">&#39;&#39;&#39;</span><span class="n">CREATE</span> <span class="n">TABLE</span> <span class="n">category</span>
+      <span class="p">(</span><span class="n">id</span> <span class="kt">int</span> <span class="n">primary</span> <span class="n">key</span><span class="p">,</span> <span class="n">sort</span> <span class="kt">int</span><span class="p">,</span> <span class="n">name</span> <span class="n">text</span><span class="p">)</span><span class="err">&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="n">c</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="err">&#39;&#39;&#39;</span><span class="n">CREATE</span> <span class="n">TABLE</span> <span class="n">book</span>
+      <span class="p">(</span><span class="n">id</span> <span class="kt">int</span> <span class="n">primary</span> <span class="n">key</span><span class="p">,</span> 
+       <span class="n">sort</span> <span class="kt">int</span><span class="p">,</span> 
+       <span class="n">name</span> <span class="n">text</span><span class="p">,</span> 
+       <span class="n">price</span> <span class="n">real</span><span class="p">,</span> 
+       <span class="n">category</span> <span class="kt">int</span><span class="p">,</span>
+       <span class="n">FOREIGN</span> <span class="n">KEY</span> <span class="p">(</span><span class="n">category</span><span class="p">)</span> <span class="n">REFERENCES</span> <span class="n">category</span><span class="p">(</span><span class="n">id</span><span class="p">))</span><span class="err">&#39;&#39;&#39;</span><span class="p">)</span>
+
+<span class="cp"># save the changes</span>
+<span class="n">conn</span><span class="p">.</span><span class="n">commit</span><span class="p">()</span>
+
+<span class="cp"># close the connection with the database</span>
+<span class="n">conn</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<h2 id="_2">插入数据</h2>
+<p>SQL 语句中使用？作为替代符号，并在后面的参数中给出具体的数值，而这里不能使用Python的格式化字符串%s等，很容易遭受到SQL注入攻击</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">sqlite3</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;test.db&quot;</span><span class="p">)</span>
+<span class="n">c</span>    <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+
+<span class="n">books</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Cook</span> <span class="n">Recipe</span><span class="err">&#39;</span><span class="p">,</span> <span class="mf">3.12</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Python</span> <span class="n">Intro</span><span class="err">&#39;</span><span class="p">,</span> <span class="mf">17.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">OS</span> <span class="n">Intro</span><span class="err">&#39;</span><span class="p">,</span> <span class="mf">13.6</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+           <span class="p">]</span>
+
+<span class="cp"># execute &quot;INSERT&quot; </span>
+<span class="n">c</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;INSERT INTO category VALUES (1, 1, &#39;kitchen&#39;)&quot;</span><span class="p">)</span>
+
+<span class="cp"># using the placeholder</span>
+<span class="n">c</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;INSERT INTO category VALUES (?, ?, ?)&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">computer</span><span class="err">&#39;</span><span class="p">)])</span>
+
+<span class="cp"># execute multiple commands</span>
+<span class="n">c</span><span class="p">.</span><span class="n">executemany</span><span class="p">(</span><span class="err">&#39;</span><span class="n">INSERT</span> <span class="n">INTO</span> <span class="n">book</span> <span class="n">VALUES</span> <span class="p">(</span><span class="o">?</span><span class="p">,</span> <span class="o">?</span><span class="p">,</span> <span class="o">?</span><span class="p">,</span> <span class="o">?</span><span class="p">,</span> <span class="o">?</span><span class="p">)</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">books</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="p">.</span><span class="n">commit</span><span class="p">()</span>
+<span class="n">conn</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<h2 id="_3">查询</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">sqlite3</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="err">&#39;</span><span class="n">test</span><span class="p">.</span><span class="n">db</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+
+<span class="cp"># retrieve one record</span>
+<span class="n">c</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="err">&#39;</span><span class="n">SELECT</span> <span class="n">name</span> <span class="n">FROM</span> <span class="n">category</span> <span class="n">ORDER</span> <span class="n">BY</span> <span class="n">sort</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">fetchone</span><span class="p">())</span>
+<span class="n">print</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">fetchone</span><span class="p">())</span>
+
+<span class="cp"># retrieve all records as a list</span>
+<span class="n">c</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="err">&#39;</span><span class="n">SELECT</span> <span class="o">*</span> <span class="n">FROM</span> <span class="n">book</span> <span class="n">WHERE</span> <span class="n">book</span><span class="p">.</span><span class="n">category</span><span class="o">=</span><span class="mi">1</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">fetchall</span><span class="p">())</span>
+
+<span class="cp"># iterate through the records</span>
+<span class="k">for</span> <span class="n">row</span> <span class="n">in</span> <span class="n">c</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="err">&#39;</span><span class="n">SELECT</span> <span class="n">name</span><span class="p">,</span> <span class="n">price</span> <span class="n">FROM</span> <span class="n">book</span> <span class="n">ORDER</span> <span class="n">BY</span> <span class="n">sort</span><span class="err">&#39;</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="_4">更新与删除</h2>
+<div class="hlcode"><pre><span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;test.db&quot;</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+
+<span class="n">c</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="err">&#39;</span><span class="n">UPDATE</span> <span class="n">book</span> <span class="n">SET</span> <span class="n">price</span><span class="o">=?</span> <span class="n">WHERE</span> <span class="n">id</span><span class="o">=?</span><span class="err">&#39;</span><span class="p">,(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">c</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="err">&#39;</span><span class="n">DELETE</span> <span class="n">FROM</span> <span class="n">book</span> <span class="n">WHERE</span> <span class="n">id</span><span class="o">=</span><span class="mi">2</span><span class="err">&#39;</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="p">.</span><span class="n">commit</span><span class="p">()</span>
+<span class="n">conn</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>playbook - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Ansible">Ansible</a>&nbsp;&#187;&nbsp;playbook
+    <span class="updated">Page Updated&nbsp;
+      2019-02-20 18:14
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">playbook</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#ansible-playbook">Ansible playbook</a><ul>
+<li><a href="#_1">组成结构</a></li>
+<li><a href="#playbook">playbook基础组件</a><ul>
+<li><a href="#hostsusers">Hosts和Users</a></li>
+<li><a href="#action">任务列表和action</a></li>
+<li><a href="#handlers">handlers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#example">example</a><ul>
+<li><a href="#handlers_1">handlers</a></li>
+<li><a href="#variable">variable</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="ansible-playbook">Ansible playbook</h1>
+<p>playbook是由一个或多个"play"组成的列表。play的主要功能在于将事先归并为一组的主机装扮成事先通过ansible中的task定义好的角色。从根本上来讲，所有task无非是调用ansible的一个module。将多个play组织在一个playbook中，即可以让他们连同起来按事先编排的机制同唱一台大戏。下面是一个简单示例。</p>
+<div class="hlcode"><pre><span class="o">-</span> <span class="n">hosts</span><span class="o">:</span> <span class="n">webserver</span>
+ <span class="nl">vars:</span>
+   <span class="nl">http_port:</span> <span class="mi">80</span>
+   <span class="nl">max_clients:</span> <span class="mi">256</span>
+ <span class="nl">remote_user:</span> <span class="n">root</span>
+ <span class="nl">tasks:</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">ensure</span> <span class="n">apache</span> <span class="n">is</span> <span class="n">at</span> <span class="n">the</span> <span class="n">latest</span> <span class="n">version</span>
+   <span class="nl">yum:</span> <span class="n">name</span><span class="o">=</span><span class="n">httpd</span> <span class="n">state</span><span class="o">=</span><span class="n">latest</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">ensure</span> <span class="n">apache</span> <span class="n">is</span> <span class="n">running</span>
+   <span class="nl">service:</span> <span class="n">name</span><span class="o">=</span><span class="n">httpd</span> <span class="n">state</span><span class="o">=</span><span class="n">started</span>
+ <span class="nl">handlers:</span>
+   <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">restart</span> <span class="n">apache</span>
+     <span class="nl">service:</span> <span class="n">name</span><span class="o">=</span><span class="n">httpd</span> <span class="n">state</span><span class="o">=</span><span class="n">restarted</span>
+</pre></div>
+
+
+<h2 id="_1">组成结构</h2>
+<div class="hlcode"><pre><span class="n">inventory</span>       <span class="err">#以下操作应用的主机</span>
+<span class="n">modules</span>         <span class="err">#调用哪些模块做什么样的操作</span>
+<span class="n">ad</span> <span class="n">hoc</span> <span class="n">commands</span> <span class="err">#在这些主机上运行哪些命令</span>
+<span class="n">playbooks</span>   
+   <span class="n">tasks</span>       <span class="err">#任务</span><span class="p">,</span><span class="err">即调用模块完成的某操作</span>
+   <span class="n">variable</span>    <span class="err">#变量</span>
+   <span class="n">templates</span>   <span class="err">#模板</span>
+   <span class="n">handlers</span>    <span class="err">#处理器，由某事件触发执行的操作</span>
+   <span class="n">roles</span>       <span class="err">#角色</span>
+</pre></div>
+
+
+<h2 id="playbook">playbook基础组件</h2>
+<h3 id="hostsusers">Hosts和Users</h3>
+<p>playbook中的每一个play的目的都是为了让某个或某些主机以某个指定的用户身份执行任务。hosts用于指定要执行指定任务的主机，其可以使一个或多个由冒号分隔主机组；remote_user则用于指定远程主机的执行任务的用户，如上面的实例中的</p>
+<div class="hlcode"><pre><span class="o">-</span> <span class="n">hosts</span><span class="o">:</span> <span class="n">webserver</span>
+ <span class="nl">remote_user:</span> <span class="n">root</span>
+</pre></div>
+
+
+<p>不过，remote_user也可用于各task中，也可以通过指定其通过sudo的方式在远程主机上执行任务，其可用于play全局或其任务；此外，甚至可以在sudo时使用sudo_user指定sudo时切换的用户。</p>
+<div class="hlcode"><pre><span class="o">-</span> <span class="n">hosts</span><span class="o">:</span> <span class="n">webserver</span>
+ <span class="nl">remote_user:</span> <span class="n">xurick</span>
+ <span class="nl">tasks:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">test</span> <span class="n">connection</span>
+    <span class="nl">ping:</span>
+    <span class="nl">remote_user:</span> <span class="n">xurick</span>
+    <span class="nl">sudo:</span> <span class="n">yes</span>
+</pre></div>
+
+
+<h3 id="action">任务列表和action</h3>
+<p>play的主题部分是task list。task list中的各任务按次序逐个在hosts中指定的所有主机上执行，即在所有主机上完成第一个任务后再开始第二个。在运行自上而下某playbook时，如果中途发生错误，所有已执行任务都可能回滚，在更正playbook后重新执行一次即可。</p>
+<p>Task的目的是使用指定的参数执行模块，而在模块参数中可以使用变量。模块执行是幂等的。这意味着多次执行是安全的，因为其结果均一致。</p>
+<p>每个task都应该有其name，用于playbook的执行结果输出，建议其内容尽可能清晰地描述任务执行步骤，如果为提供name，则action的结果将用于输出。</p>
+<p>定义task可以使用"action: module options"或”module：options“的格式推荐使用后者以实现向后兼容。如果action一行的内容过多，也中使用在行首使用几个空白字符进行换行。</p>
+<div class="hlcode"><pre><span class="nl">tasks:</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span><span class="n">make</span> <span class="n">sure</span> <span class="n">apache</span> <span class="n">is</span> <span class="n">running</span>
+   <span class="nl">service:</span> <span class="n">name</span><span class="o">=</span><span class="n">httpd</span> <span class="n">state</span><span class="o">=</span><span class="n">started</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="nl">tasks:</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">run</span> <span class="n">this</span> <span class="n">command</span> <span class="n">and</span> <span class="n">ignore</span> <span class="n">the</span> <span class="n">result</span>
+   <span class="nl">shell:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">somecommand</span> <span class="o">||</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="nb">true</span>
+</pre></div>
+
+
+<p>在众多的模块中，只有command和shell模块仅需要给定一个列表而无需使用"key=value"格式，例如：</p>
+<div class="hlcode"><pre><span class="nl">tasks:</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">disable</span> <span class="n">selinux</span>
+   <span class="nl">command:</span> <span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">setenforce</span> <span class="mi">0</span>
+</pre></div>
+
+
+<p>如果命令或脚本的退出码不为零，可以使用ignore_errors来忽略错误信息：</p>
+<div class="hlcode"><pre><span class="nl">tasks:</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">run</span> <span class="n">this</span> <span class="n">command</span> <span class="n">and</span> <span class="n">ignore</span> <span class="n">the</span> <span class="n">result</span>
+   <span class="nl">shell:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">somecommand</span>
+   <span class="nl">ignore_errors:</span> <span class="n">True</span>
+</pre></div>
+
+
+<h3 id="handlers">handlers</h3>
+<p>用于当关注的资源发生变化时采取一定的操作。</p>
+<p>"notify"这个action可用于在每个play的最后被触发，这样可以避免多次有改变发生时每次都执行执行的操作，取而代之，仅在所有的变化发生完成后一次性地执行指定操作，在notify中列出的操作称为handlers，也即notify中调用handlers中定义的操作。</p>
+<div class="hlcode"><pre><span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">template</span> <span class="n">configuration</span> <span class="n">file</span>
+ <span class="nl">template:</span> <span class="n">src</span><span class="o">=</span><span class="n">template</span><span class="p">.</span><span class="n">j2</span> <span class="n">dest</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">foo</span><span class="p">.</span><span class="n">conf</span>
+ <span class="nl">notify:</span>
+   <span class="o">-</span> <span class="n">restart</span> <span class="n">memcached</span>
+   <span class="o">-</span> <span class="n">restart</span> <span class="n">apache</span>
+</pre></div>
+
+
+<p>handlers是task列表，这些task与前述的task并没有本质上的不同。</p>
+<div class="hlcode"><pre><span class="n">handlers</span><span class="err">：</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">restart</span> <span class="n">memcached</span>
+   <span class="nl">service:</span> <span class="n">name</span><span class="o">=</span><span class="n">memcached</span> <span class="n">state</span><span class="o">=</span><span class="n">restarted</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">restart</span> <span class="n">apache</span>
+   <span class="nl">service:</span> <span class="n">name</span><span class="o">=</span><span class="n">apache</span> <span class="n">state</span><span class="o">=</span><span class="n">restarted</span>
+</pre></div>
+
+
+<h1 id="example">example</h1>
+<div class="hlcode"><pre><span class="cp"># cat nginx.yml </span>
+<span class="o">-</span> <span class="n">hosts</span><span class="o">:</span> <span class="n">webserver</span>
+ <span class="nl">remote_user:</span> <span class="n">root</span>
+ <span class="nl">tasks:</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">create</span> <span class="n">nginx</span> <span class="n">group</span>
+   <span class="nl">group:</span> <span class="n">name</span><span class="o">=</span><span class="n">nginx</span> <span class="n">system</span><span class="o">=</span><span class="n">yes</span> <span class="n">gid</span><span class="o">=</span><span class="mi">208</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">create</span> <span class="n">nginx</span> <span class="n">user</span>
+   <span class="nl">user:</span> <span class="n">name</span><span class="o">=</span><span class="n">nginx</span> <span class="n">uid</span><span class="o">=</span><span class="mi">208</span> <span class="n">group</span><span class="o">=</span><span class="n">nginx</span> <span class="n">system</span><span class="o">=</span><span class="n">yes</span>
+
+<span class="o">-</span> <span class="n">hosts</span><span class="o">:</span> <span class="n">dbserver</span>
+ <span class="nl">remote_user:</span> <span class="n">root</span>
+ <span class="nl">tasks:</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">copy</span> <span class="n">file</span> <span class="n">to</span> <span class="n">dbserver</span>
+   <span class="nl">copy:</span> <span class="n">src</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">inittab</span> <span class="n">dest</span><span class="o">=/</span><span class="n">tmp</span><span class="o">/</span><span class="n">inittab</span><span class="p">.</span><span class="n">ans</span>
+
+<span class="cp"># ansible-playbook nginx.yml</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="cp"># cat apache.yml </span>
+<span class="o">-</span> <span class="n">hosts</span><span class="o">:</span> <span class="n">webserver</span>
+ <span class="nl">remote_user:</span> <span class="n">root</span>
+ <span class="nl">tasks:</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">install</span> <span class="n">httpd</span> <span class="n">package</span>
+   <span class="nl">yum:</span> <span class="n">name</span><span class="o">=</span><span class="n">httpd</span> <span class="n">state</span><span class="o">=</span><span class="n">latest</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">install</span> <span class="n">configuration</span> <span class="n">file</span> <span class="k">for</span> <span class="n">httpd</span>
+   <span class="nl">copy:</span> <span class="n">src</span><span class="o">=/</span><span class="n">root</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span><span class="n">httpd</span><span class="p">.</span><span class="n">conf</span> <span class="n">dest</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">httpd</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span><span class="n">httpd</span><span class="p">.</span><span class="n">conf</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">start</span> <span class="n">httpd</span> <span class="n">service</span>
+   <span class="nl">service:</span> <span class="n">enabled</span><span class="o">=</span><span class="nb">true</span> <span class="n">name</span><span class="o">=</span><span class="n">httpd</span> <span class="n">state</span><span class="o">=</span><span class="n">started</span>
+
+<span class="cp"># ansible-playbook apache.yml</span>
+</pre></div>
+
+
+<h2 id="handlers_1">handlers</h2>
+<div class="hlcode"><pre><span class="cp"># cat apache.yml </span>
+<span class="o">-</span> <span class="n">hosts</span><span class="o">:</span> <span class="n">webserver</span>
+ <span class="nl">remote_user:</span> <span class="n">root</span>
+ <span class="nl">tasks:</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">install</span> <span class="n">httpd</span> <span class="n">package</span>
+   <span class="nl">yum:</span> <span class="n">name</span><span class="o">=</span><span class="n">httpd</span> <span class="n">state</span><span class="o">=</span><span class="n">latest</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">install</span> <span class="n">configuration</span> <span class="n">file</span> <span class="k">for</span> <span class="n">httpd</span>
+   <span class="nl">copy:</span> <span class="n">src</span><span class="o">=/</span><span class="n">root</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span><span class="n">httpd</span><span class="p">.</span><span class="n">conf</span> <span class="n">dest</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">httpd</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span><span class="n">httpd</span><span class="p">.</span><span class="n">conf</span>
+   <span class="nl">notify:</span> 
+   <span class="o">-</span> <span class="n">restart</span> <span class="n">httpd</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">start</span> <span class="n">httpd</span> <span class="n">service</span>
+   <span class="nl">service:</span> <span class="n">enabled</span><span class="o">=</span><span class="nb">true</span> <span class="n">name</span><span class="o">=</span><span class="n">httpd</span> <span class="n">state</span><span class="o">=</span><span class="n">started</span>
+
+ <span class="nl">handlers:</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">restart</span> <span class="n">httpd</span>
+   <span class="nl">service:</span> <span class="n">name</span><span class="o">=</span><span class="n">httpd</span> <span class="n">state</span><span class="o">=</span><span class="n">restarted</span>
+
+<span class="cp">#  ansible-playbook apache.yml</span>
+</pre></div>
+
+
+<h2 id="variable">variable</h2>
+<div class="hlcode"><pre><span class="cp"># cat apache.yml </span>
+<span class="o">-</span> <span class="n">hosts</span><span class="o">:</span> <span class="n">webserver</span>
+ <span class="nl">remote_user:</span> <span class="n">root</span>
+ <span class="nl">vars:</span>
+ <span class="o">-</span> <span class="n">package</span><span class="o">:</span> <span class="n">httpd</span>
+ <span class="o">-</span> <span class="n">service</span><span class="o">:</span> <span class="n">httpd</span>
+ <span class="nl">tasks:</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">install</span> <span class="n">httpd</span> <span class="n">package</span>
+   <span class="nl">yum:</span> <span class="n">name</span><span class="o">=</span><span class="p">{{</span> <span class="n">package</span> <span class="p">}}</span> <span class="n">state</span><span class="o">=</span><span class="n">latest</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">install</span> <span class="n">configuration</span> <span class="n">file</span> <span class="k">for</span> <span class="n">httpd</span>
+   <span class="nl">copy:</span> <span class="n">src</span><span class="o">=/</span><span class="n">root</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span><span class="n">httpd</span><span class="p">.</span><span class="n">conf</span> <span class="n">dest</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">httpd</span><span class="o">/</span><span class="n">conf</span><span class="o">/</span><span class="n">httpd</span><span class="p">.</span><span class="n">conf</span>
+   <span class="nl">notify:</span> 
+   <span class="o">-</span> <span class="n">restart</span> <span class="n">httpd</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">start</span> <span class="n">httpd</span> <span class="n">service</span>
+   <span class="nl">service:</span> <span class="n">enabled</span><span class="o">=</span><span class="nb">true</span> <span class="n">name</span><span class="o">=</span><span class="p">{{</span> <span class="n">service</span> <span class="p">}}</span> <span class="n">state</span><span class="o">=</span><span class="n">started</span>
+
+ <span class="nl">handlers:</span>
+ <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">restart</span> <span class="n">httpd</span>
+   <span class="nl">service:</span> <span class="n">name</span><span class="o">=</span><span class="n">httpd</span> <span class="n">state</span><span class="o">=</span><span class="n">restarted</span>
+</pre></div>
+
+
+<p>在playbook中可以使用所有的变量</p>
+<div class="hlcode"><pre># cat facts.yml 
+- hosts: webserver
+ remote_user: root
+ tasks:
+ - name: copy file
+   copy: content=&quot;{{ ansible_all_ipv4_addresses }} &quot; dest=/tmp/vars.ans
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

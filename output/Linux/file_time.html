@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>file_time 文件时间 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux">Linux</a>&nbsp;&#187;&nbsp;file_time 文件时间
+    <span class="updated">Page Updated&nbsp;
+      2018-10-10 11:31
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">file_time 文件时间</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#file_time">file_time</a><ul>
+<li><a href="#access-atimeaccess-time">Access访问时间 atime=access time</a></li>
+<li><a href="#modify-mtimemodifiy-time">Modify修改时间 mtime=modifiy time</a></li>
+<li><a href="#change-ctimechange-time">Change状态改动时间 ctime=change time</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="file_time">file_time</h1>
+<p>Linux下，一个文件也有三种时间，分别是：<strong>访问时间、修改时间、状态改动时间</strong>。</p>
+<p>在Linux下没有创建时间的概念，也就是不能知道文件的建立时间</p>
+<p>如果文件建立后就没有修改过，修改时间=建立时间</p>
+<p>如果文件建立后，状态就没有改动过，那么状态改动时间=建立时间</p>
+<p>如果文件建立后，没有被读取过，那么访问时间=建立时间</p>
+<p>因为不好判断文件是否被改过、读过、其状态是否变过，所以判断文件的建立时间基本上能为不可能。</p>
+<p>使用命令stat 查看</p>
+<h2 id="access-atimeaccess-time">Access访问时间 atime=access time</h2>
+<p>访问时间，读一次这个文件的内容，这个时间就会更新。比如对这个文件运用 more、cat等命令。ls、stat命令都不会修改文件的访问时间。</p>
+<h2 id="modify-mtimemodifiy-time">Modify修改时间 mtime=modifiy time</h2>
+<p>修改时间，修改时间是文件内容最后一次被修改时间。比如：vi后保存文件。ls -l列出的时间就是这个时间。</p>
+<h2 id="change-ctimechange-time">Change状态改动时间 ctime=change time</h2>
+<p>状态改动时间。是该文件的i节点最后一次被修改的时间，通过chmod、chown命令修改一次文件属性，这个时间就会更新。</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

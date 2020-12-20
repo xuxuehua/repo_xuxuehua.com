@@ -134,3 +134,7 @@ not_(a)
 
 
 
+## first()
+
+`Query.first()` returns the first of a potentially larger result set (adding `LIMIT 1` to the query), or `None` if there were no results. No exception will be raised.
+

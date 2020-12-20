@@ -1,0 +1,230 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>basic_knowledge - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Mongodb">Mongodb</a>&nbsp;&#187;&nbsp;basic_knowledge
+    <span class="updated">Page Updated&nbsp;
+      2018-09-26 14:35
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">basic_knowledge</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#basic_knowledge">basic_knowledge</a><ul>
+<li><a href="#mongodb">MongoDB</a><ul>
+<li><a href="#_1">保留的数据库</a></li>
+<li><a href="#_2">文档</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_3">概念对比</a><ul>
+<li><a href="#nosql">NoSQL</a><ul>
+<li><a href="#nosql_1">NoSQL 数据库分类</a></li>
+</ul>
+</li>
+<li><a href="#acid">关系型数据库遵循ACID规则</a></li>
+<li><a href="#rdbms-vs-nosql">RDBMS vs NoSQL</a></li>
+<li><a href="#capcap-theorem">CAP定理（CAP theorem）</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="basic_knowledge">basic_knowledge</h1>
+<h2 id="mongodb">MongoDB</h2>
+<p>MongoDB 是一个基于分布式文件存储的数据库。由 C++ 语言编写。旨在为 WEB 应用提供可扩展的高性能数据存储解决方案。</p>
+<p>MongoDB 是一个介于关系数据库和非关系数据库之间的产品，是非关系数据库当中功能最丰富，最像关系数据库的</p>
+<p>数据都在内存中，如果内存不足，把不常用的数据保存到硬盘里面</p>
+<h3 id="_1">保留的数据库</h3>
+<p>一个mongodb中可以建立多个数据库。</p>
+<p>MongoDB的默认数据库为"db"，该数据库存储在data目录中。</p>
+<p>MongoDB的单个实例可以容纳多个独立的数据库，每一个都有自己的集合和权限，不同的数据库也放置在不同的文件中。</p>
+<p>有一些数据库名是保留的，可以直接访问这些有特殊作用的数据库。</p>
+<ul>
+<li><strong>admin</strong>： 从权限的角度来看，这是"root"数据库。要是将一个用户添加到这个数据库，这个用户自动继承所有数据库的权限。一些特定的服务器端命令也只能从这个数据库运行，比如列出所有的数据库或者关闭服务器。</li>
+<li><strong>local:</strong> 这个数据永远不会被复制，可以用来存储限于本地单台服务器的任意集合</li>
+<li><strong>config</strong>: 当Mongo用于分片设置时，config数据库在内部使用，用于保存分片的相关信息。</li>
+</ul>
+<h3 id="_2">文档</h3>
+<p>文档是一组键值(key-value)对(即BSON)。MongoDB 的文档不需要设置相同的字段，并且相同的字段不需要相同的数据类型，这与关系型数据库有很大的区别，也是 MongoDB 非常突出的特点。</p>
+<p>MongoDB 中的文档</p>
+<ol>
+<li>文档中的键/值对是有序的。</li>
+<li>文档中的值不仅可以是在双引号里面的字符串，还可以是其他几种数据类型（甚至可以是整个嵌入的文档)。</li>
+<li>MongoDB区分类型和大小写。</li>
+<li>MongoDB的文档不能有重复的键。</li>
+<li>文档的键是字符串。除了少数例外情况，键可以使用任意UTF-8字符。</li>
+</ol>
+<p>文档键命名规范：</p>
+<ul>
+<li>键不能含有\0 (空字符)。这个字符用来表示键的结尾。</li>
+<li>.和$有特别的意义，只有在特定环境下才能使用。</li>
+<li>以下划线"_"开头的键是保留的(不是严格要求的)。</li>
+</ul>
+<h1 id="_3">概念对比</h1>
+<table>
+<thead>
+<tr>
+<th>SQL术语/概念</th>
+<th>MongoDB术语/概念</th>
+<th>解释/说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>database</td>
+<td>database</td>
+<td>数据库</td>
+</tr>
+<tr>
+<td>table</td>
+<td>collection</td>
+<td>数据库表/集合</td>
+</tr>
+<tr>
+<td>row</td>
+<td>document</td>
+<td>数据记录行/文档</td>
+</tr>
+<tr>
+<td>column</td>
+<td>field</td>
+<td>数据字段/域</td>
+</tr>
+<tr>
+<td>index</td>
+<td>index</td>
+<td>索引</td>
+</tr>
+<tr>
+<td>table joins</td>
+<td></td>
+<td>表连接,MongoDB不支持</td>
+</tr>
+<tr>
+<td>primary key</td>
+<td>primary key</td>
+<td>主键,MongoDB自动将_id字段设置为主键</td>
+</tr>
+</tbody>
+</table>
+<h2 id="nosql">NoSQL</h2>
+<p>NoSQL(NoSQL = Not Only SQL )，意即"不仅仅是SQL"。是对不同于传统的关系型数据库的数据库管理系统的统称。</p>
+<p>NoSQL用于超大规模数据的存储。（例如谷歌或Facebook每天为他们的用户收集万亿比特的数据）。这些类型的数据存储不需要固定的模式，无需多余操作就可以横向扩展。</p>
+<p>不遵循SQL标准，不支持ACID，性能强于SQL</p>
+<h3 id="nosql_1">NoSQL 数据库分类</h3>
+<table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th>部分代表</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">列存储</td>
+<td>Hbase Cassandra Hypertable</td>
+<td>顾名思义，是按列存储数据的。最大的特点是方便存储结构化和半结构化数据，方便做数据压缩，对针对某一列或者某几列的查询有非常大的IO优势，查询速度快，可扩展性强。但是功能相对局限</td>
+</tr>
+<tr>
+<td align="left">文档存储</td>
+<td>MongoDBCouchDB</td>
+<td>文档存储一般用类似json的格式存储，存储的内容是文档型的。这样也就有机会对某些字段建立索引，实现关系数据库的某些功能。查询性能不高，缺乏统一的查询语句</td>
+</tr>
+<tr>
+<td align="left">key-value存储</td>
+<td>Tokyo Cabinet / TyrantBerkeley DBMemcacheDBRedis</td>
+<td>可以通过key快速查询到其value。一般来说，存储不管value的格式，照单全收。（Redis包含了其他功能）， 数据无结构化，只能被当作字符串或者二进制数据</td>
+</tr>
+<tr>
+<td align="left">图存储</td>
+<td>Neo4JFlockDB</td>
+<td>图形关系的最佳存储。使用传统关系数据库来解决的话性能低下，而且设计使用不方便。</td>
+</tr>
+<tr>
+<td align="left">对象存储</td>
+<td>db4oVersant</td>
+<td>通过类似面向对象语言的语法操作数据库，通过对象的方式存取数据。</td>
+</tr>
+<tr>
+<td align="left">xml数据库</td>
+<td>Berkeley DB XMLBaseX</td>
+<td>高效的存储XML数据，并支持XML的内部查询语法，比如XQuery,Xpath。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="acid">关系型数据库遵循ACID规则</h2>
+<p>事务在英文中是transaction，和现实世界中的交易很类似，它有如下四个特性：</p>
+<p><strong>1、A (Atomicity) 原子性</strong></p>
+<p>原子性很容易理解，也就是说事务里的所有操作要么全部做完，要么都不做，事务成功的条件是事务里的所有操作都成功，只要有一个操作失败，整个事务就失败，需要回滚。</p>
+<p>比如银行转账，从A账户转100元至B账户，分为两个步骤：1）从A账户取100元；2）存入100元至B账户。这两步要么一起完成，要么一起不完成，如果只完成第一步，第二步失败，钱会莫名其妙少了100元。</p>
+<p><strong>2、C (Consistency) 一致性</strong></p>
+<p>一致性也比较容易理解，也就是说数据库要一直处于一致的状态，事务的运行不会改变数据库原本的一致性约束。</p>
+<p>例如现有完整性约束a+b=10，如果一个事务改变了a，那么必须得改变b，使得事务结束后依然满足a+b=10，否则事务失败。</p>
+<p><strong>3、I (Isolation) 独立性</strong></p>
+<p>所谓的独立性是指并发的事务之间不会互相影响，如果一个事务要访问的数据正在被另外一个事务修改，只要另外一个事务未提交，它所访问的数据就不受未提交事务的影响。</p>
+<p>比如现在有个交易是从A账户转100元至B账户，在这个交易还未完成的情况下，如果此时B查询自己的账户，是看不到新增加的100元的。</p>
+<p><strong>4、D (Durability) 持久性</strong></p>
+<p>持久性是指一旦事务提交后，它所做的修改将会永久的保存在数据库上，即使出现宕机也不会丢失。</p>
+<h2 id="rdbms-vs-nosql">RDBMS vs NoSQL</h2>
+<p>RDBMS <br />
+- 高度组织化结构化数据 <br />
+- 结构化查询语言（SQL） (SQL) <br />
+- 数据和关系都存储在单独的表中。 <br />
+- 数据操纵语言，数据定义语言 <br />
+- 严格的一致性<br />
+- 基础事务</p>
+<p>NoSQL <br />
+- 代表着不仅仅是SQL<br />
+- 没有声明性查询语言<br />
+- 没有预定义的模式<br />
+-键 - 值对存储，列存储，文档存储，图形数据库<br />
+- 最终一致性，而非ACID属性<br />
+- 非结构化和不可预知的数据<br />
+- CAP定理 <br />
+- 高性能，高可用性和可伸缩性</p>
+<h2 id="capcap-theorem">CAP定理（CAP theorem）</h2>
+<p>在计算机科学中, CAP定理（CAP theorem）, 又被称作 布鲁尔定理（Brewer's theorem）, 它指出对于一个分布式计算系统来说，不可能同时满足以下三点:</p>
+<ul>
+<li><strong>一致性(Consistency)</strong> (所有节点在同一时间具有相同的数据)</li>
+<li><strong>可用性(Availability)</strong> (保证每个请求不管成功或者失败都有响应)</li>
+<li><strong>分隔容忍(Partition tolerance)</strong> (系统中任意信息的丢失或失败不会影响系统的继续运作)</li>
+</ul>
+<p>CAP理论的核心是：一个分布式系统不可能同时很好的满足一致性，可用性和分区容错性这三个需求，最多只能同时较好的满足两个。</p>
+<p><img alt="img" src="http://www.runoob.com/wp-content/uploads/2013/10/cap-theoram-image.png" /></p>
+<p>因此，根据 CAP 原理将 NoSQL 数据库分成了满足 CA 原则、满足 CP 原则和满足 AP 原则三 大类：</p>
+<ul>
+<li>CA - 单点集群，满足一致性，可用性的系统，通常在可扩展性上不太强大。</li>
+<li>CP - 满足一致性，分区容忍性的系统，通常性能不是特别高。</li>
+<li>AP - 满足可用性，分区容忍性的系统，通常可能对一致性要求低一些。</li>
+</ul>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>event_scheduler 事件调度器 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Mysql">Mysql</a>&nbsp;&#187;&nbsp;event_scheduler 事件调度器
+    <span class="updated">Page Updated&nbsp;
+      2018-12-23 19:38
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">event_scheduler 事件调度器</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#event-scheduler">Event Scheduler</a><ul>
+<li><a href="#_1">调度器的配置</a><ul>
+<li><a href="#_2">调度器状态</a></li>
+<li><a href="#_3">开启/关闭事件调度器</a></li>
+</ul>
+</li>
+<li><a href="#_4">创建事件</a></li>
+<li><a href="#_5">修改事件</a></li>
+<li><a href="#example">example</a><ul>
+<li><a href="#_6">定时增加</a></li>
+<li><a href="#_7">定时插入</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="event-scheduler">Event Scheduler</h1>
+<p>事件调度器(Event Scheduler)是在MySQL<code>v5.1.6</code>中新增的一个功能，它相当于一个定时器，可以在指定的时间点执行一条SQL语句或一个语句块，也可以用于在固定间隔重复执行。事件调度器相当于操作系统中的定时任务(如：Linux中的cron、Window中的计划任务)，但MySql的事件调度器可以精确到秒，对于一些实时性要求较高的数据处理非常有用。</p>
+<h2 id="_1">调度器的配置</h2>
+<h3 id="_2">调度器状态</h3>
+<p>要保证创建的事件能正常执行，首先应该开启事件调度器，可以通过以下3种方式查看调度器状态：</p>
+<div class="hlcode"><pre><span class="n">SHOW</span> <span class="n">VARIABLES</span> <span class="n">LIKE</span> <span class="err">&#39;</span><span class="n">event_scheduler</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="n">SELECT</span> <span class="err">@@</span><span class="n">event_scheduler</span><span class="p">;</span>
+<span class="n">SHOW</span> <span class="n">PROCESSLIST</span><span class="p">;</span>
+</pre></div>
+
+
+<p>查看某个事件的执行情况：</p>
+<div class="hlcode"><pre><span class="n">SELECT</span> <span class="o">*</span> <span class="n">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">EVENTS</span><span class="p">;</span>
+</pre></div>
+
+
+<p>以上会输出当关Schema中所有的事件信息，可以先通过<code>DESC information_schema.EVENTS;</code>查看输出字段，再查看所需要的信息。如，我只想看事件名及最后执行时间：</p>
+<div class="hlcode"><pre><span class="n">SELECT</span> <span class="n">EVENT_NAME</span><span class="p">,</span> <span class="n">LAST_EXECUTED</span> <span class="n">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">EVENTS</span><span class="p">;</span>
+</pre></div>
+
+
+<h3 id="_3">开启/关闭事件调度器</h3>
+<p>如果事件调度器未开启，可以通过以下4种方式启用：</p>
+<div class="hlcode"><pre><span class="n">SET</span> <span class="n">GLOBAL</span> <span class="n">event_scheduler</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">SET</span> <span class="err">@@</span><span class="n">global</span><span class="p">.</span><span class="n">event_scheduler</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">SET</span> <span class="n">GLOBAL</span> <span class="n">event_scheduler</span> <span class="o">=</span> <span class="n">ON</span><span class="p">;</span>
+<span class="n">SET</span> <span class="err">@@</span><span class="n">global</span><span class="p">.</span><span class="n">event_scheduler</span> <span class="o">=</span> <span class="n">ON</span><span class="p">;</span>
+</pre></div>
+
+
+<p><code>1</code>或<code>ON</code>表示设置为开启状态。同样的，如果需要关闭只要将值<code>0</code>或<code>OFF</code>即可。</p>
+<h2 id="_4">创建事件</h2>
+<p>在MySql中，创建一个新的调度器使用<code>CREATE EVENT</code>，其语法规则如下：</p>
+<div class="hlcode"><pre><span class="n">CREATE</span>
+    <span class="p">[</span><span class="n">DEFINER</span> <span class="o">=</span> <span class="p">{</span> <span class="n">user</span> <span class="o">|</span> <span class="n">CURRENT_USER</span> <span class="p">}]</span>
+    <span class="n">EVENT</span>
+    <span class="p">[</span><span class="n">IF</span> <span class="n">NOT</span> <span class="n">EXISTS</span><span class="p">]</span>
+    <span class="n">event_name</span>
+    <span class="n">ON</span> <span class="n">SCHEDULE</span> <span class="n">schedule</span>
+    <span class="p">[</span><span class="n">ON</span> <span class="n">COMPLETION</span> <span class="p">[</span><span class="n">NOT</span><span class="p">]</span> <span class="n">PRESERVE</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">ENABLE</span> <span class="o">|</span> <span class="n">DISABLE</span> <span class="o">|</span> <span class="n">DISABLE</span> <span class="n">ON</span> <span class="n">SLAVE</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">COMMENT</span> <span class="err">&#39;</span><span class="n">comment</span><span class="err">&#39;</span><span class="p">]</span>
+    <span class="n">DO</span> <span class="n">event_body</span><span class="p">;</span>
+</pre></div>
+
+
+<blockquote>
+<p>event_name: 事件名 可以是任何合的MySql标识符，不能超64个字符。</p>
+<p>创建事件时，可以同时指定Schema，语法结构为：<code>schema_name.event_name</code></p>
+<p>schedule: 调度规则，规定事件的执行时间与执行规则。是一个可包含以下值的子语句：</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">schedule</span><span class="o">:</span>
+    <span class="n">AT</span> <span class="n">timestamp</span> <span class="o">[+</span> <span class="n">INTERVAL</span> <span class="n">interval</span><span class="o">]</span> <span class="o">...</span>
+  <span class="o">|</span> <span class="n">EVERY</span> <span class="n">interval</span>
+    <span class="o">[</span><span class="n">STARTS</span> <span class="n">timestamp</span> <span class="o">[+</span> <span class="n">INTERVAL</span> <span class="n">interval</span><span class="o">]</span> <span class="o">...]</span>
+    <span class="o">[</span><span class="n">ENDS</span> <span class="n">timestamp</span> <span class="o">[+</span> <span class="n">INTERVAL</span> <span class="n">interval</span><span class="o">]</span> <span class="o">...]</span>
+
+<span class="n">interval</span><span class="o">:</span>
+    <span class="n">quantity</span> <span class="o">{</span><span class="n">YEAR</span> <span class="o">|</span> <span class="n">QUARTER</span> <span class="o">|</span> <span class="n">MONTH</span> <span class="o">|</span> <span class="n">DAY</span> <span class="o">|</span> <span class="n">HOUR</span> <span class="o">|</span> <span class="n">MINUTE</span> <span class="o">|</span>
+              <span class="n">WEEK</span> <span class="o">|</span> <span class="n">SECOND</span> <span class="o">|</span> <span class="n">YEAR_MONTH</span> <span class="o">|</span> <span class="n">DAY_HOUR</span> <span class="o">|</span> <span class="n">DAY_MINUTE</span> <span class="o">|</span>
+              <span class="n">DAY_SECOND</span> <span class="o">|</span> <span class="n">HOUR_MINUTE</span> <span class="o">|</span> <span class="n">HOUR_SECOND</span> <span class="o">|</span> <span class="n">MINUTE_SECOND</span><span class="o">}</span>
+</pre></div>
+
+
+<blockquote>
+<p><code>event_body</code> - 事件体，可以是单行SQL语法，或是<code>BEGIN……END</code>语句块</p>
+</blockquote>
+<h2 id="_5">修改事件</h2>
+<p>对于已存在事件调度器，可以使用<code>ALTER</code>语句进行修改，语法结构如下：</p>
+<div class="hlcode"><pre><span class="n">ALTER</span>
+    <span class="p">[</span><span class="n">DEFINER</span> <span class="o">=</span> <span class="p">{</span> <span class="n">user</span> <span class="o">|</span> <span class="n">CURRENT_USER</span> <span class="p">}]</span>
+    <span class="n">EVENT</span> <span class="n">event_name</span>
+    <span class="p">[</span><span class="n">ON</span> <span class="n">SCHEDULE</span> <span class="n">schedule</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">ON</span> <span class="n">COMPLETION</span> <span class="p">[</span><span class="n">NOT</span><span class="p">]</span> <span class="n">PRESERVE</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">RENAME</span> <span class="n">TO</span> <span class="n">new_event_name</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">ENABLE</span> <span class="o">|</span> <span class="n">DISABLE</span> <span class="o">|</span> <span class="n">DISABLE</span> <span class="n">ON</span> <span class="n">SLAVE</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">COMMENT</span> <span class="err">&#39;</span><span class="n">comment</span><span class="err">&#39;</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">DO</span> <span class="n">event_body</span><span class="p">]</span>
+</pre></div>
+
+
+<p>事件的开启与关闭本质是使用<code>ALTER</code>语句修改已创建的事件。如，关闭一个事件：</p>
+<div class="hlcode"><pre><span class="n">ALTER</span> <span class="n">EVENT</span> <span class="n">e_test</span> <span class="n">ON</span> <span class="n">COMPLETION</span> <span class="n">PRESERVE</span> <span class="n">ENABLE</span><span class="p">;</span>
+</pre></div>
+
+
+<p>开启一个事件：</p>
+<div class="hlcode"><pre><span class="n">ALTER</span> <span class="n">EVENT</span> <span class="n">e_test</span> <span class="n">ON</span> <span class="n">COMPLETION</span> <span class="n">PRESERVE</span> <span class="n">DISABLE</span><span class="p">;</span>
+</pre></div>
+
+
+<h2 id="example">example</h2>
+<h3 id="_6">定时增加</h3>
+<p>一个最简单的示例，将<code>myschema.mytable</code>表的<code>mycol</code>列，每小时自增<code>1</code>：</p>
+<div class="hlcode"><pre><span class="n">CREATE</span> <span class="n">EVENT</span> <span class="n">myevent</span>
+    <span class="n">ON</span> <span class="n">SCHEDULE</span> 
+    <span class="n">AT</span> <span class="n">CURRENT_TIMESTAMP</span> <span class="o">+</span> <span class="n">INTERVAL</span> <span class="mi">1</span> <span class="n">HOUR</span>
+    <span class="n">DO</span>
+      <span class="n">UPDATE</span> <span class="n">myschema</span><span class="p">.</span><span class="n">mytable</span> <span class="n">SET</span> <span class="n">mycol</span> <span class="o">=</span> <span class="n">mycol</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</pre></div>
+
+
+<p>这样，我们就创建一个名为<code>myevent</code>的事件，它会在事件创建后每小时执行一次。设置的执行规则等价于：</p>
+<div class="hlcode"><pre><span class="n">CREATE</span> <span class="n">EVENT</span> <span class="n">myevent</span>
+    <span class="n">ON</span> <span class="n">SCHEDULE</span> 
+    <span class="n">EVERY</span> <span class="mi">1</span> <span class="n">HOUR</span>
+    <span class="n">STARTS</span> <span class="n">CURRENT_TIMESTAMP</span>
+    <span class="n">DO</span>
+      <span class="n">UPDATE</span> <span class="n">myschema</span><span class="p">.</span><span class="n">mytable</span> <span class="n">SET</span> <span class="n">mycol</span> <span class="o">=</span> <span class="n">mycol</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</pre></div>
+
+
+<p>如果需要间隔一定时间再开启事务，如，1天后开启：</p>
+<div class="hlcode"><pre><span class="n">CREATE</span> <span class="n">EVENT</span> <span class="n">myevent</span>
+    <span class="n">ON</span> <span class="n">SCHEDULE</span> 
+    <span class="n">EVERY</span> <span class="mi">1</span> <span class="n">HOUR</span>
+    <span class="n">STARTS</span> <span class="n">CURRENT_TIMESTAMP</span> <span class="o">+</span> <span class="n">INTERVAL</span> <span class="mi">1</span> <span class="n">DAY</span>
+    <span class="n">DO</span>
+      <span class="n">UPDATE</span> <span class="n">myschema</span><span class="p">.</span><span class="n">mytable</span> <span class="n">SET</span> <span class="n">mycol</span> <span class="o">=</span> <span class="n">mycol</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</pre></div>
+
+
+<p><code>DO</code>执行的SQL可以是一个语句块，如：</p>
+<div class="hlcode"><pre><span class="n">DELIMITER</span> <span class="c1">//  </span>
+<span class="n">CREATE</span> <span class="n">EVENT</span> <span class="n">e</span>  
+<span class="n">ON</span> <span class="n">SCHEDULE</span>  
+    <span class="n">EVERY</span> <span class="mi">5</span> <span class="n">SECOND</span>  
+<span class="n">DO</span>  
+<span class="n">BEGIN</span>  
+    <span class="n">DECLARE</span> <span class="n">v</span> <span class="n">INTEGER</span><span class="p">;</span>  
+    <span class="n">DECLARE</span> <span class="n">CONTINUE</span> <span class="n">HANDLER</span> <span class="n">FOR</span> <span class="n">SQLEXCEPTION</span> <span class="n">BEGIN</span> <span class="n">END</span><span class="p">;</span>  
+    <span class="n">SET</span> <span class="n">v</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  
+    <span class="n">WHILE</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">5</span> <span class="n">DO</span>  
+        <span class="n">INSERT</span> <span class="n">INTO</span> <span class="n">t1</span> <span class="n">VALUES</span> <span class="p">(</span><span class="mi">0</span><span class="p">);</span>      
+        <span class="n">UPDATE</span> <span class="n">t2</span> <span class="n">SET</span> <span class="n">s1</span> <span class="o">=</span> <span class="n">s1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>  
+        <span class="n">SET</span> <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>  
+    <span class="n">END</span> <span class="n">WHILE</span><span class="p">;</span>  
+<span class="n">END</span> <span class="c1">//  </span>
+<span class="n">DELIMITER</span> <span class="p">;</span>  
+</pre></div>
+
+
+<h3 id="_7">定时插入</h3>
+<p>使用event来执行存储过程，定时统计数据，插入到一张统计数据表中</p>
+<div class="hlcode"><pre><span class="n">CREATE</span> <span class="n">DEFINER</span><span class="o">=</span><span class="err">`</span><span class="n">root</span><span class="err">`@`</span><span class="n">localhost</span><span class="err">`</span> <span class="n">EVENT</span> <span class="err">`</span><span class="n">event_timer_toaddreport</span><span class="err">`</span> <span class="n">ON</span> <span class="n">SCHEDULE</span> <span class="n">EVERY</span> <span class="mi">1</span> <span class="n">DAY</span> <span class="n">STARTS</span> <span class="err">&#39;</span><span class="mi">2017</span><span class="o">-</span><span class="mo">07</span><span class="o">-</span><span class="mi">21</span> <span class="mo">02</span><span class="o">:</span><span class="mo">00</span><span class="o">:</span><span class="mo">00</span><span class="err">&#39;</span> <span class="n">ON</span> <span class="n">COMPLETION</span> <span class="n">PRESERVE</span> <span class="n">ENABLE</span> <span class="n">DO</span> <span class="n">CALL</span> <span class="n">sp_addreport</span><span class="p">()</span>
+</pre></div>
+
+
+<p>//注释：以上时间触发器，从2017年7月21日凌晨2点开始，每天的凌晨2点都会执行 Call sp_addreport()这个存储过程，可在这个存储过程中编写添加，编辑，删除等SQL语句。</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -202,6 +202,28 @@ git checkout HEAD -- my-file.txt
 
 
 
+### `--track` 追溯分支
+
+```
+git checkout --track origin/daves_branch
+```
+
+> `--track` is shorthand for `git checkout -b [branch] [remotename]/[branch]` where [remotename] is **origin** in this case and [branch] is twice the same, **daves_branch** in this case.
+
+
+
+For Git 1.7.2.3 and higher, this is enough (it might have started earlier, but this is the earliest confirmation I could find quickly):
+
+```
+git checkout daves_branch
+```
+
+> Note that with recent Git versions, this command will not create a local branch and will put you in a 'detached HEAD' state. If you want a local branch, use the `--track` option
+
+
+
+
+
 ## cherry-pick 
 
 有选择地合并提交

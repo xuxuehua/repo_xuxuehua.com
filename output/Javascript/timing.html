@@ -1,0 +1,210 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>timing - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Javascript">Javascript</a>&nbsp;&#187;&nbsp;timing
+    <span class="updated">Page Updated&nbsp;
+      2018-07-27 23:20
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">timing</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">计时器</a><ul>
+<li><a href="#settimeout">setTimeout()</a><ul>
+<li><a href="#_2">语法</a></li>
+<li><a href="#_3">倒计时</a></li>
+<li><a href="#_4">无限循环</a></li>
+</ul>
+</li>
+<li><a href="#cleartimeout">clearTimeout()</a><ul>
+<li><a href="#_5">语法</a></li>
+</ul>
+</li>
+<li><a href="#setimmediate">setImmediate()</a></li>
+<li><a href="#setinterval">setInterval()</a><ul>
+<li><a href="#_6">语法</a></li>
+</ul>
+</li>
+<li><a href="#clearinterval">clearInterval()</a></li>
+<li><a href="#_7">区别</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">计时器</h1>
+<h2 id="settimeout">setTimeout()</h2>
+<p>暂停指定的毫秒数后执行指定代码</p>
+<h3 id="_2">语法</h3>
+<div class="hlcode"><pre><span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">,</span> <span class="nx">milliseconds</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>function （必需）：要调用的函数后要执行的 JavaScript 代码串。</p>
+<p>millisec（必需）：在执行代码前需等待的毫秒数。 　</p>
+</blockquote>
+<p>setTimeout() 只执行 code 一次。如果要多次调用，请使用 setInterval() 或者让 code 自身再次调用 setTimeout()。</p>
+<div class="hlcode"><pre><span class="k">const</span> <span class="n">timeoutObj</span> <span class="o">=</span> <span class="n">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="err">&#39;</span><span class="n">timeout</span> <span class="n">beyond</span> <span class="n">time</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="p">},</span> <span class="mi">1500</span><span class="p">);</span>
+</pre></div>
+
+
+<h3 id="_3">倒计时</h3>
+<div class="hlcode"><pre>    <span class="kd">let</span> <span class="nx">value</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;launched_in_seconds&quot;</span><span class="p">).</span><span class="nx">value</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;i: &#39;</span><span class="o">+</span> <span class="nx">i</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span><span class="o">+</span> <span class="s1">&#39;value: &#39;</span> <span class="o">+</span> <span class="nx">value</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">counting</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">value</span> <span class="o">&gt;=</span> <span class="mi">500</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">counting</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nx">value</span> <span class="o">/</span> <span class="mi">500</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="o">*</span><span class="mi">40</span><span class="p">);</span>
+        <span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+        <span class="nx">pctIndicator</span><span class="p">.</span><span class="nx">style</span><span class="o">=</span><span class="err">`</span><span class="nx">stroke</span><span class="o">-</span><span class="nx">dashoffset</span><span class="o">:</span><span class="nx">$</span><span class="p">{</span><span class="nx">p</span><span class="p">};</span><span class="err">`</span>
+        <span class="nx">pct</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">value</span><span class="o">/</span><span class="mi">5</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;%&#39;</span><span class="p">;</span>
+    <span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+</pre></div>
+
+
+<h3 id="_4">无限循环</h3>
+<div class="hlcode"><pre><span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+<span class="nt">&lt;script</span> <span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+var c=0
+var t
+function timedCount()
+{
+document.getElementById(&#39;txt&#39;).value=c
+c=c+1
+t=setTimeout(&quot;timedCount()&quot;,1000)
+}
+<span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+
+<span class="nt">&lt;body&gt;</span>
+
+<span class="nt">&lt;form&gt;</span>
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;button&quot;</span> <span class="na">value=</span><span class="s">&quot;开始计时！&quot;</span> <span class="na">onClick=</span><span class="s">&quot;timedCount()&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">id=</span><span class="s">&quot;txt&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+
+<span class="nt">&lt;p&gt;</span>请点击上面的按钮。输入框会从 0 开始一直进行计时。<span class="nt">&lt;/p&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+
+
+<h2 id="cleartimeout">clearTimeout()</h2>
+<p>用于停止执行setTimeout()方法的函数代码</p>
+<h3 id="_5">语法</h3>
+<p>clearTimeout(timeoutID)</p>
+<p>要使用 clearTimeout( ), 我们设定 setTimeout( ) 时 , 要给予这 setTimout( ) 一个名称 , 这名称就是 timeoutID , 我们叫停时 , 就是用这 timeoutID 来叫停 , 这是一个自定义名称 , 但很多人就以 timeoutID 为名。</p>
+<div class="hlcode"><pre><span class="k">const</span> <span class="n">timeoutObj</span> <span class="o">=</span> <span class="n">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="err">&#39;</span><span class="n">timeout</span> <span class="n">log</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="n">clearTimeout</span><span class="p">(</span><span class="n">timeoutObj</span><span class="p">);</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="nt">&lt;html&gt;</span>
+
+<span class="nt">&lt;head&gt;</span>
+<span class="nt">&lt;script</span> <span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+var c=0
+var t
+
+function timedCount()
+ {
+ document.getElementById(&#39;txt&#39;).value=c
+ c=c+1
+ t=setTimeout(&quot;timedCount()&quot;,1000)
+ }
+
+function stopCount()
+ {
+ clearTimeout(t)
+ }
+<span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+
+<span class="nt">&lt;body&gt;</span>
+<span class="nt">&lt;form&gt;</span>
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;button&quot;</span> <span class="na">value=</span><span class="s">&quot;Start count!&quot;</span> <span class="na">onClick=</span><span class="s">&quot;timedCount()&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">id=</span><span class="s">&quot;txt&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;button&quot;</span> <span class="na">value=</span><span class="s">&quot;Stop count!&quot;</span> <span class="na">onClick=</span><span class="s">&quot;stopCount()&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+
+
+<h2 id="setimmediate">setImmediate()</h2>
+<div class="hlcode"><pre><span class="k">const</span> <span class="n">immediateObj</span> <span class="o">=</span> <span class="n">setImmediate</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Immediate</span> <span class="n">executing</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<h2 id="setinterval">setInterval()</h2>
+<p>setInterval() 方法会不停地调用函数，直到 clearInterval() 被调用或窗口被关闭。由 setInterval() 返回的 ID 值可用作 clearInterval() 方法的参数。</p>
+<h3 id="_6">语法</h3>
+<p><strong>语法:</strong> setInterval(code,millisec[,"lang"])</p>
+<p><strong>参数:</strong> code 必需。要调用的函数或要执行的代码串。millisec 必须。周期性执行或调用 code 之间的时间间隔，以毫秒计。</p>
+<p><strong>返回值:</strong> 一个可以传递给 Window.clearInterval() 从而取消对 code 的周期性执行的值。</p>
+<div class="hlcode"><pre><span class="k">const</span> <span class="n">intervalObj</span> <span class="o">=</span> <span class="n">setInterval</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="err">&#39;</span><span class="n">interval</span> <span class="n">timeout</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<h2 id="clearinterval">clearInterval()</h2>
+<p>停止setInterval() 方法执行的函数代码</p>
+<div class="hlcode"><pre><span class="k">const</span> <span class="n">intervalObj</span> <span class="o">=</span> <span class="n">setInterval</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Interval</span> <span class="n">timeout</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="n">clearInterval</span><span class="p">(</span><span class="n">intervalObj</span><span class="p">);</span>
+</pre></div>
+
+
+<h2 id="_7">区别</h2>
+<p>通过上面可以看出，setTimeout和setinterval的最主要区别是：</p>
+<p>setTimeout只运行一次，也就是说设定的时间到后就触发运行指定代码，运行完后即结束。如果运行的代码中再次运行同样的setTimeout命令，则可循环运行。（即 要循环运行，需函数自身再次调用 setTimeout()）</p>
+<p>而 setinterval是循环运行的，即每到设定时间间隔就触发指定代码。这是真正的定时器。</p>
+<p>setinterval使用简单，而setTimeout则比较灵活，可以随时退出循环，而且可以设置为按不固定的时间间隔来运行，比如第一次1秒，第二次2秒，第三次3秒。</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

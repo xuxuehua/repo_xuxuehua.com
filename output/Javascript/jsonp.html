@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>jsonp - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Javascript">Javascript</a>&nbsp;&#187;&nbsp;jsonp
+    <span class="updated">Page Updated&nbsp;
+      2020-05-24 20:34
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">jsonp</div>
+
+  <p>[toc]</p>
+<h1 id="jsonp">jsonp</h1>
+<p>本质是利用了标签(link,img,script,这里使用script)具有可跨域的特性，由服务端返回预先定义好的javascript函数的调用，并且将服务端数据以该函数参数的形式传递过来</p>
+<h2 id="jsonp_1">jsonp 优点</h2>
+<p>完美解决在测试或者开发中获取不同域下的数据</p>
+<p>用户传递一个callback参数给服务端，然后服务端返回数据时会将这个callback参数作为函数名来包裹住JSON数据，这样客户端就可以随意定制自己的函数来自动处理返回数据了</p>
+<h2 id="jsonp_2">jsonp 缺点</h2>
+<p>jsonp只支持get请求而不支持post请求</p>
+<p>用session来判断当前用户的登录状态，跨域时会出现问题</p>
+<p>jsonp存在安全性问题</p>
+<h1 id="_1">同源策略</h1>
+<p>浏览器的一种安全策略，所谓同源，指的是域名、协议、端口号完全相同</p>
+<p>限制：cookie、localStorage和IndexDB无法读取；无法操作跨域的iframe里的dom元素；Ajax请求不能发送</p>
+<p>目的：保护用户信息安全</p>
+<h2 id="_2">跨域</h2>
+<p>即不同源</p>
+<div class="hlcode"><pre><span class="nl">http:</span><span class="c1">//api.example.com/detail.html                  不同源 域名不同  </span>
+<span class="n">https</span><span class="c1">//www.example.com/detail.html                  不同源 协议不同  </span>
+<span class="nl">http:</span><span class="c1">//www.example.com:8080/detail.html     不同源    端口不同  </span>
+<span class="nl">http:</span><span class="c1">//api.example.com:8080/detail.html     不同源    域名、端口不同  </span>
+<span class="nl">https:</span><span class="c1">//api.example.com/detail.html             不同源    协议、域名不同  </span>
+<span class="nl">https:</span><span class="c1">//www.example.com:8080/detail.html    不同源    端口、协议不同  </span>
+<span class="nl">http:</span><span class="c1">//www.example.com/detail/index.html    同源    只是目录不同 </span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

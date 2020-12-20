@@ -1,0 +1,926 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>logging - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;logging
+    <span class="updated">Page Updated&nbsp;
+      2019-10-11 09:47
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">logging</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#logging">logging</a><ul>
+<li><a href="#_1">流程</a></li>
+<li><a href="#example">example</a></li>
+<li><a href="#_2">配置方式</a><ul>
+<li><a href="#basicconfig">basicConfig关键字参数</a></li>
+</ul>
+</li>
+<li><a href="#_3">日志格式</a></li>
+<li><a href="#_4">输出成文件</a></li>
+<li><a href="#_5">异常处理</a></li>
+<li><a href="#logger">自定义logger</a><ul>
+<li><a href="#logger_1">logger 级别</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#logging_1">logging 组件</a><ul>
+<li><a href="#logger_2">Logger</a><ul>
+<li><a href="#logger_3">logger 配置</a></li>
+<li><a href="#_6">配置文件中获取配置</a></li>
+</ul>
+</li>
+<li><a href="#handler">Handler</a><ul>
+<li><a href="#streamhandler">StreamHandler</a></li>
+<li><a href="#filehandler">FileHandler</a></li>
+<li><a href="#nullhandler">NullHandler</a></li>
+</ul>
+</li>
+<li><a href="#filter">Filter</a></li>
+<li><a href="#formatter">Formatter</a><ul>
+<li><a href="#format">format格式</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_7">实际处理</a><ul>
+<li><a href="#_8">中文乱码</a></li>
+<li><a href="#_9">临时禁用日志输出</a></li>
+<li><a href="#_10">日志划分</a></li>
+<li><a href="#json">Json 输出</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="logging">logging</h1>
+<p>Logger是一个树形层级结构</p>
+<p>Logger可以包含一个或多个Handler和Filter，即Logger与Handler或Filter是一对多的关系;<br />
+一个Logger实例可以新增多个Handler，一个Handler可以新增多个格式化器或多个过滤器，而且日志级别将会继承</p>
+<div class="hlcode"><pre><span class="n">graph</span> <span class="n">TD</span>
+<span class="n">Logger</span> <span class="o">--&gt;</span> <span class="n">Filter</span>
+<span class="n">Logger</span> <span class="o">--&gt;</span> <span class="n">Handler</span>
+<span class="n">Handler</span> <span class="o">--&gt;</span> <span class="n">Filter</span>
+<span class="n">Handler</span> <span class="o">--&gt;</span> <span class="n">Formatter</span>
+</pre></div>
+
+
+<h2 id="_1">流程</h2>
+<ol>
+<li>
+<p>判断 Logger 对象对于设置的级别是否可用，如果可用，则往下执行，否则，流程结束。</p>
+</li>
+<li>
+<p>创建 LogRecord 对象，如果注册到 Logger 对象中的 Filter 对象过滤后返回 False，则不记录日志，流程结束，否则，则向下执行。</p>
+</li>
+<li>
+<p>LogRecord 对象将 Handler 对象传入当前的 Logger 对象，（图中的子流程）如果 Handler 对象的日志级别大于设置的日志级别，再判断注册到 Handler 对象中的 Filter 对象过滤后是否返回 True 而放行输出日志信息，否则不放行，流程结束。</p>
+</li>
+<li>
+<p>如果传入的 Handler 大于 Logger 中设置的级别，也即 Handler 有效，则往下执行，否则，流程结束。</p>
+</li>
+<li>
+<p>判断这个 Logger 对象是否还有父 Logger 对象，如果没有（代表当前 Logger 对象是最顶层的 Logger 对象 root Logger），流程结束。否则将 Logger 对象设置为它的父 Logger 对象，重复上面的 3、4 两步，输出父类 Logger 对象中的日志输出，直到是 root Logger 为止。</p>
+</li>
+</ol>
+<h2 id="example">example</h2>
+<p>默认情况下，logging模块将日志打印到屏幕上(stdout)，日志级别为WARNING(即只有日志级别高于WARNING的日志信息才会输出</p>
+<table class="hlcodetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="hlcode"><pre><span class="c">#!/usr/local/bin/python</span>
+<span class="c"># -*- coding:utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;debug message&#39;</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;info message&#39;</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;warn message&#39;</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;error message&#39;</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">&#39;critical message&#39;</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">WARNING</span><span class="p">:</span><span class="n">root</span><span class="p">:</span><span class="n">warn</span> <span class="n">message</span>
+<span class="n">ERROR</span><span class="p">:</span><span class="n">root</span><span class="p">:</span><span class="n">error</span> <span class="n">message</span>
+<span class="n">CRITICAL</span><span class="p">:</span><span class="n">root</span><span class="p">:</span><span class="n">critical</span> <span class="n">message</span>
+</pre></div>
+</td></tr></table>
+
+<h2 id="_2">配置方式</h2>
+<ul>
+<li>显式创建记录器Logger、处理器Handler和格式化器Formatter，并进行相关设置；</li>
+<li>通过简单方式进行配置，使用<a href="https://links.jianshu.com/go?to=http%3A%2F%2Fpython.usyiyi.cn%2Fpython_278%2Flibrary%2Flogging.html%23logging.basicConfig">basicConfig()</a>函数直接进行配置；</li>
+<li>通过配置文件进行配置，使用<a href="https://links.jianshu.com/go?to=http%3A%2F%2Fpython.usyiyi.cn%2Fpython_278%2Flibrary%2Flogging.config.html%23logging.config.fileConfig">fileConfig()</a>函数读取配置文件；</li>
+<li>通过配置字典进行配置，使用<a href="https://links.jianshu.com/go?to=http%3A%2F%2Fpython.usyiyi.cn%2Fpython_278%2Flibrary%2Flogging.config.html%23logging.config.dictConfig">dictConfig()</a>函数读取配置信息；</li>
+<li>通过网络进行配置，使用<a href="https://links.jianshu.com/go?to=http%3A%2F%2Fpython.usyiyi.cn%2Fpython_278%2Flibrary%2Flogging.config.html%23logging.config.listen">listen()</a>函数进行网络配置。</li>
+</ul>
+<h3 id="basicconfig">basicConfig关键字参数</h3>
+<table>
+<thead>
+<tr>
+<th>关键字</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filename</td>
+<td align="left">创建一个FileHandler，使用指定的文件名，而不是使用StreamHandler。</td>
+</tr>
+<tr>
+<td>filemode</td>
+<td align="left">如果指明了文件名，指明打开文件的模式（如果没有指明filemode，默认为'a'） r[+], w[+], a[+]</td>
+</tr>
+<tr>
+<td>format</td>
+<td align="left">handler使用指明的格式化字符串。</td>
+</tr>
+<tr>
+<td>datefmt</td>
+<td align="left">使用指明的日期／时间格式。</td>
+</tr>
+<tr>
+<td>style</td>
+<td align="left">格式占位符，默认为 "%" 和 “</td>
+</tr>
+<tr>
+<td>level</td>
+<td align="left">指明根logger的级别。</td>
+</tr>
+<tr>
+<td>stream</td>
+<td align="left">使用指明的流来初始化StreamHandler。该参数与'filename'不兼容，如果两个都有，'stream'被忽略。</td>
+</tr>
+<tr>
+<td>handles</td>
+<td align="left">定义处理器，用来创建 Handler 对象，不能和 filename 、stream 参数一起使用，否则也会抛出 ValueError 异常</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">日志格式</h2>
+<div class="hlcode"><pre><span class="n">WARNING</span> <span class="o">:</span>  <span class="n">root</span>        <span class="o">:</span> <span class="n">warn</span> <span class="n">message</span>
+<span class="err">日志级别</span> <span class="o">:</span> <span class="n">Logger</span><span class="err">实例名称</span> <span class="o">:</span> <span class="err">日志消息内容</span>
+</pre></div>
+
+
+<h2 id="_4">输出成文件</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">logging</span>
+
+<span class="n">logging</span><span class="p">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;test.log&quot;</span><span class="p">,</span> <span class="n">filemode</span><span class="o">=</span><span class="s">&quot;w&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;%(asctime)s %(name)s:%(levelname)s:%(message)s&quot;</span><span class="p">,</span> <span class="n">datefmt</span><span class="o">=</span><span class="s">&quot;%d-%M-%Y %H:%M:%S&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="p">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="n">logging</span><span class="p">.</span><span class="n">debug</span><span class="p">(</span><span class="err">&#39;</span><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">debug</span> <span class="n">message</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">logging</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="err">&#39;</span><span class="n">This</span> <span class="n">is</span> <span class="n">an</span> <span class="n">info</span> <span class="n">message</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">logging</span><span class="p">.</span><span class="n">warning</span><span class="p">(</span><span class="err">&#39;</span><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">warning</span> <span class="n">message</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">logging</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="err">&#39;</span><span class="n">This</span> <span class="n">is</span> <span class="n">an</span> <span class="n">error</span> <span class="n">message</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">logging</span><span class="p">.</span><span class="n">critical</span><span class="p">(</span><span class="err">&#39;</span><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">critical</span> <span class="n">message</span><span class="err">&#39;</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">13</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">18</span> <span class="mi">21</span><span class="o">:</span><span class="mi">10</span><span class="o">:</span><span class="mi">32</span> <span class="n">root</span><span class="o">:</span><span class="n">DEBUG</span><span class="o">:</span><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">debug</span> <span class="n">message</span>
+<span class="mi">13</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">18</span> <span class="mi">21</span><span class="o">:</span><span class="mi">10</span><span class="o">:</span><span class="mi">32</span> <span class="n">root</span><span class="o">:</span><span class="n">INFO</span><span class="o">:</span><span class="n">This</span> <span class="n">is</span> <span class="n">an</span> <span class="n">info</span> <span class="n">message</span>
+<span class="mi">13</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">18</span> <span class="mi">21</span><span class="o">:</span><span class="mi">10</span><span class="o">:</span><span class="mi">32</span> <span class="n">root</span><span class="o">:</span><span class="n">WARNING</span><span class="o">:</span><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">warning</span> <span class="n">message</span>
+<span class="mi">13</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">18</span> <span class="mi">21</span><span class="o">:</span><span class="mi">10</span><span class="o">:</span><span class="mi">32</span> <span class="n">root</span><span class="o">:</span><span class="n">ERROR</span><span class="o">:</span><span class="n">This</span> <span class="n">is</span> <span class="n">an</span> <span class="n">error</span> <span class="n">message</span>
+<span class="mi">13</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">18</span> <span class="mi">21</span><span class="o">:</span><span class="mi">10</span><span class="o">:</span><span class="mi">32</span> <span class="n">root</span><span class="o">:</span><span class="n">CRITICAL</span><span class="o">:</span><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">critical</span> <span class="n">message</span>
+</pre></div>
+
+
+<h2 id="_5">异常处理</h2>
+<p>当发生异常时，直接使用无参数的 debug()、info()、warning()、error()、critical() 方法并不能记录异常信息，需要设置 exc_info 参数为 True 才可以，或者使用 exception() 方法，还可以使用 log() 方法，但还要设置日志级别和 exc_info 参数。</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">logging</span>
+
+<span class="n">logging</span><span class="p">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;test.log&quot;</span><span class="p">,</span> <span class="n">filemode</span><span class="o">=</span><span class="s">&quot;w&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;%(asctime)s %(name)s:%(levelname)s:%(message)s&quot;</span><span class="p">,</span> <span class="n">datefmt</span><span class="o">=</span><span class="s">&quot;%d-%M-%Y %H:%M:%S&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="p">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nl">try:</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span>
+<span class="n">except</span> <span class="n">Exception</span> <span class="n">as</span> <span class="n">e</span><span class="o">:</span>
+    <span class="err">#</span> <span class="err">下面三种方式三选一，推荐使用第一种</span>
+    <span class="n">logging</span><span class="p">.</span><span class="n">exception</span><span class="p">(</span><span class="s">&quot;Exception occurred&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Exception occurred&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">True</span><span class="p">)</span>
+    <span class="n">logging</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="p">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s">&quot;Exception occurred&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">True</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="logger">自定义logger</h2>
+<p>上面的基本使用可以让我们快速上手 logging 模块，但一般并不能满足实际使用，我们还需要自定义 Logger。</p>
+<p>一个系统只有一个 Logger 对象，并且该对象不能被直接实例化，没错，这里用到了单例模式，获取 Logger 对象的方法为 <strong>getLogger</strong>。</p>
+<p>这里的单例模式并不是说只有一个 Logger 对象，而是指整个系统只有一个根 Logger 对象，Logger 对象在执行 info()、error() 等方法时实际上调用都是根 Logger 对象对应的 info()、error() 等方法。</p>
+<p>我们可以创造多个 Logger 对象，但是真正输出日志的是根 Logger 对象。每个 Logger 对象都可以设置一个名字，如果设置<code>logger = logging.getLogger(__name__)</code>，<strong>name</strong> 是 Python 中的一个特殊内置变量，他代表当前模块的名称（默认为 <strong>main</strong>）。则 Logger 对象的 name 为建议使用使用以点号作为分隔符的命名空间等级制度。</p>
+<p>Logger 对象可以设置多个 Handler 对象和 Filter 对象，Handler 对象又可以设置 Formatter 对象。Formatter 对象用来设置具体的输出格式，常用变量格式如下表</p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>格式</th>
+<th align="left">变量描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>asctime</td>
+<td>%(asctime)s</td>
+<td align="left">将日志的时间构造成可读的形式，默认情况下是精确到毫秒，如 2018-10-13 23:24:57,832，可以额外指定 datefmt 参数来指定该变量的格式</td>
+</tr>
+<tr>
+<td>name</td>
+<td>%(name)</td>
+<td align="left">日志对象的名称</td>
+</tr>
+<tr>
+<td>filename</td>
+<td>%(filename)s</td>
+<td align="left">不包含路径的文件名</td>
+</tr>
+<tr>
+<td>pathname</td>
+<td>%(pathname)s</td>
+<td align="left">包含路径的文件名</td>
+</tr>
+<tr>
+<td>funcName</td>
+<td>%(funcName)s</td>
+<td align="left">日志记录所在的函数名</td>
+</tr>
+<tr>
+<td>levelname</td>
+<td>%(levelname)s</td>
+<td align="left">日志的级别名称</td>
+</tr>
+<tr>
+<td>message</td>
+<td>%(message)s</td>
+<td align="left">具体的日志信息</td>
+</tr>
+<tr>
+<td>lineno</td>
+<td>%(lineno)d</td>
+<td align="left">日志记录所在的行号</td>
+</tr>
+<tr>
+<td>pathname</td>
+<td>%(pathname)s</td>
+<td align="left">完整路径</td>
+</tr>
+<tr>
+<td>process</td>
+<td>%(process)d</td>
+<td align="left">当前进程ID</td>
+</tr>
+<tr>
+<td>processName</td>
+<td>%(processName)s</td>
+<td align="left">当前进程名称</td>
+</tr>
+<tr>
+<td>thread</td>
+<td>%(thread)d</td>
+<td align="left">当前线程ID</td>
+</tr>
+<tr>
+<td>threadName</td>
+<td>%threadName)s</td>
+<td align="left">当前线程名称</td>
+</tr>
+</tbody>
+</table>
+<h3 id="logger_1">logger 级别</h3>
+<p>Logger 对象和 Handler 对象都可以设置级别，而默认 Logger 对象级别为 30 ，也即 WARNING，默认 Handler 对象级别为 0，也即 NOTSET。logging 模块这样设计是为了更好的灵活性，比如有时候我们既想在控制台中输出DEBUG 级别的日志，又想在文件中输出WARNING级别的日志。可以只设置一个最低级别的 Logger 对象，两个不同级别的 Handler 对象</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">logging</span>
+<span class="n">import</span> <span class="n">logging</span><span class="p">.</span><span class="n">handlers</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;logger&quot;</span><span class="p">)</span>
+
+<span class="n">handler1</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+<span class="n">handler2</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;test.log&quot;</span><span class="p">)</span>
+
+<span class="n">logger</span><span class="p">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="p">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="n">handler1</span><span class="p">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="p">.</span><span class="n">WARNING</span><span class="p">)</span>
+<span class="n">handler2</span><span class="p">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="p">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+<span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s">&quot;%(asctime)s %(name)s %(levelname)s %(message)s&quot;</span><span class="p">)</span>
+<span class="n">handler1</span><span class="p">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+<span class="n">handler2</span><span class="p">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+
+<span class="n">logger</span><span class="p">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler1</span><span class="p">)</span>
+<span class="n">logger</span><span class="p">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler2</span><span class="p">)</span>
+
+<span class="cp"># 分别为 10、30、30</span>
+<span class="cp"># print(handler1.level)</span>
+<span class="cp"># print(handler2.level)</span>
+<span class="cp"># print(logger.level)</span>
+
+<span class="n">logger</span><span class="p">.</span><span class="n">debug</span><span class="p">(</span><span class="err">&#39;</span><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">customer</span> <span class="n">debug</span> <span class="n">message</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="err">&#39;</span><span class="n">This</span> <span class="n">is</span> <span class="n">an</span> <span class="n">customer</span> <span class="n">info</span> <span class="n">message</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">logger</span><span class="p">.</span><span class="n">warning</span><span class="p">(</span><span class="err">&#39;</span><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">customer</span> <span class="n">warning</span> <span class="n">message</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="err">&#39;</span><span class="n">This</span> <span class="n">is</span> <span class="n">an</span> <span class="n">customer</span> <span class="n">error</span> <span class="n">message</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">logger</span><span class="p">.</span><span class="n">critical</span><span class="p">(</span><span class="err">&#39;</span><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">customer</span> <span class="n">critical</span> <span class="n">message</span><span class="err">&#39;</span><span class="p">)</span>
+
+
+<span class="o">&gt;&gt;&gt;</span> <span class="err">控制台输出</span>
+<span class="mi">2018</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">13</span> <span class="mi">23</span><span class="o">:</span><span class="mi">24</span><span class="o">:</span><span class="mi">57</span><span class="p">,</span><span class="mi">832</span> <span class="n">logger</span> <span class="n">WARNING</span> <span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">customer</span> <span class="n">warning</span> <span class="n">message</span>
+<span class="mi">2018</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">13</span> <span class="mi">23</span><span class="o">:</span><span class="mi">24</span><span class="o">:</span><span class="mi">57</span><span class="p">,</span><span class="mi">832</span> <span class="n">logger</span> <span class="n">ERROR</span> <span class="n">This</span> <span class="n">is</span> <span class="n">an</span> <span class="n">customer</span> <span class="n">error</span> <span class="n">message</span>
+<span class="mi">2018</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">13</span> <span class="mi">23</span><span class="o">:</span><span class="mi">24</span><span class="o">:</span><span class="mi">57</span><span class="p">,</span><span class="mi">832</span> <span class="n">logger</span> <span class="n">CRITICAL</span> <span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">customer</span> <span class="n">critical</span> <span class="n">message</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="err">文件中输出</span>
+<span class="mi">2018</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">13</span> <span class="mi">23</span><span class="o">:</span><span class="mi">44</span><span class="o">:</span><span class="mi">59</span><span class="p">,</span><span class="mi">817</span> <span class="n">logger</span> <span class="n">DEBUG</span> <span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">customer</span> <span class="n">debug</span> <span class="n">message</span>
+<span class="mi">2018</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">13</span> <span class="mi">23</span><span class="o">:</span><span class="mi">44</span><span class="o">:</span><span class="mi">59</span><span class="p">,</span><span class="mi">817</span> <span class="n">logger</span> <span class="n">INFO</span> <span class="n">This</span> <span class="n">is</span> <span class="n">an</span> <span class="n">customer</span> <span class="n">info</span> <span class="n">message</span>
+<span class="mi">2018</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">13</span> <span class="mi">23</span><span class="o">:</span><span class="mi">44</span><span class="o">:</span><span class="mi">59</span><span class="p">,</span><span class="mi">817</span> <span class="n">logger</span> <span class="n">WARNING</span> <span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">customer</span> <span class="n">warning</span> <span class="n">message</span>
+<span class="mi">2018</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">13</span> <span class="mi">23</span><span class="o">:</span><span class="mi">44</span><span class="o">:</span><span class="mi">59</span><span class="p">,</span><span class="mi">817</span> <span class="n">logger</span> <span class="n">ERROR</span> <span class="n">This</span> <span class="n">is</span> <span class="n">an</span> <span class="n">customer</span> <span class="n">error</span> <span class="n">message</span>
+<span class="mi">2018</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">13</span> <span class="mi">23</span><span class="o">:</span><span class="mi">44</span><span class="o">:</span><span class="mi">59</span><span class="p">,</span><span class="mi">817</span> <span class="n">logger</span> <span class="n">CRITICAL</span> <span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">customer</span> <span class="n">critical</span> <span class="n">message</span>
+</pre></div>
+
+
+<blockquote>
+<p>创建了自定义的 Logger 对象，就不要在用 logging 中的日志输出方法了，这些方法使用的是默认配置的 Logger 对象，否则会输出的日志信息会重复</p>
+</blockquote>
+<h1 id="logging_1">logging 组件</h1>
+<h2 id="logger_2">Logger</h2>
+<p>记录器，暴露了应用程序代码能直接使用的接口。</p>
+<p>即创建一个记录器，如果没有显式的进行创建，则默认创建一个root logger，并应用默认的日志级别(WARN)，处理器Handler(StreamHandler，即将日志信息打印输出在标准输出上)，和格式化器Formatter(默认的格式即为第一个简单使用程序中输出的格式)。</p>
+<div class="hlcode"><pre><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+<span class="n">logger</span><span class="p">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="p">.</span><span class="n">ERROR</span><span class="p">)</span> <span class="err">#</span> <span class="err">设置日志级别为</span><span class="n">ERROR</span><span class="err">，即只有日志级别大于等于</span><span class="n">ERROR</span><span class="err">的日志才会输出</span>
+<span class="n">logger</span><span class="p">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler_name</span><span class="p">)</span> <span class="err">#</span> <span class="err">为</span><span class="n">Logger</span><span class="err">实例增加一个处理器</span>
+<span class="n">logger</span><span class="p">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="n">handler_name</span><span class="p">)</span> <span class="err">#</span> <span class="err">为</span><span class="n">Logger</span><span class="err">实例删除一个处理器</span>
+</pre></div>
+
+
+<h3 id="logger_3">logger 配置</h3>
+<p>打开 logging.config Python 文件，可以看到其中的配置解析转换函数。</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">logging</span><span class="p">.</span><span class="n">config</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="err">&#39;</span><span class="n">version</span><span class="err">&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="err">&#39;</span><span class="n">formatters</span><span class="err">&#39;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="err">&#39;</span><span class="n">simple</span><span class="err">&#39;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="err">&#39;</span><span class="n">format</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">asctime</span><span class="p">)</span><span class="n">s</span> <span class="o">-</span> <span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="n">s</span> <span class="o">-</span> <span class="o">%</span><span class="p">(</span><span class="n">levelname</span><span class="p">)</span><span class="n">s</span> <span class="o">-</span> <span class="o">%</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="n">s</span><span class="err">&#39;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="err">#</span> <span class="err">其他的</span> <span class="n">formatter</span>
+    <span class="p">},</span>
+    <span class="err">&#39;</span><span class="n">handlers</span><span class="err">&#39;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="err">&#39;</span><span class="n">console</span><span class="err">&#39;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="err">&#39;</span><span class="n">class</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">logging</span><span class="p">.</span><span class="n">StreamHandler</span><span class="err">&#39;</span><span class="p">,</span>
+            <span class="err">&#39;</span><span class="n">level</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">DEBUG</span><span class="err">&#39;</span><span class="p">,</span>
+            <span class="err">&#39;</span><span class="n">formatter</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">simple</span><span class="err">&#39;</span>
+        <span class="p">},</span>
+        <span class="err">&#39;</span><span class="n">file</span><span class="err">&#39;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="err">&#39;</span><span class="n">class</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">logging</span><span class="p">.</span><span class="n">FileHandler</span><span class="err">&#39;</span><span class="p">,</span>
+            <span class="err">&#39;</span><span class="n">filename</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">logging</span><span class="p">.</span><span class="n">log</span><span class="err">&#39;</span><span class="p">,</span>
+            <span class="err">&#39;</span><span class="n">level</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">DEBUG</span><span class="err">&#39;</span><span class="p">,</span>
+            <span class="err">&#39;</span><span class="n">formatter</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">simple</span><span class="err">&#39;</span>
+        <span class="p">},</span>
+        <span class="err">#</span> <span class="err">其他的</span> <span class="n">handler</span>
+    <span class="p">},</span>
+    <span class="err">&#39;</span><span class="n">loggers</span><span class="err">&#39;</span><span class="o">:</span><span class="p">{</span>
+        <span class="err">&#39;</span><span class="n">StreamLogger</span><span class="err">&#39;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="err">&#39;</span><span class="n">handlers</span><span class="err">&#39;</span><span class="o">:</span> <span class="p">[</span><span class="err">&#39;</span><span class="n">console</span><span class="err">&#39;</span><span class="p">],</span>
+            <span class="err">&#39;</span><span class="n">level</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">DEBUG</span><span class="err">&#39;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="err">&#39;</span><span class="n">FileLogger</span><span class="err">&#39;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="err">#</span> <span class="err">既有</span> <span class="n">console</span> <span class="n">Handler</span><span class="err">，还有</span> <span class="n">file</span> <span class="n">Handler</span>
+            <span class="err">&#39;</span><span class="n">handlers</span><span class="err">&#39;</span><span class="o">:</span> <span class="p">[</span><span class="err">&#39;</span><span class="n">console</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">file</span><span class="err">&#39;</span><span class="p">],</span>
+            <span class="err">&#39;</span><span class="n">level</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">DEBUG</span><span class="err">&#39;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="err">#</span> <span class="err">其他的</span> <span class="n">Logger</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">logging</span><span class="p">.</span><span class="n">config</span><span class="p">.</span><span class="n">dictConfig</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">StreamLogger</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;StreamLogger&quot;</span><span class="p">)</span>
+<span class="n">FileLogger</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;FileLogger&quot;</span><span class="p">)</span>
+<span class="cp"># 省略日志输出</span>
+</pre></div>
+
+
+<h3 id="_6">配置文件中获取配置</h3>
+<p>常见的配置文件有 ini 格式、yaml 格式、JSON 格式，或者从网络中获取都是可以的，只要有相应的文件解析器解析配置即可</p>
+<p>test.ini</p>
+<div class="hlcode"><pre><span class="k">[loggers]</span>
+<span class="na">keys</span><span class="o">=</span><span class="s">root,sampleLogger</span>
+
+<span class="k">[handlers]</span>
+<span class="na">keys</span><span class="o">=</span><span class="s">consoleHandler</span>
+
+<span class="k">[formatters]</span>
+<span class="na">keys</span><span class="o">=</span><span class="s">sampleFormatter</span>
+
+<span class="k">[logger_root]</span>
+<span class="na">level</span><span class="o">=</span><span class="s">DEBUG</span>
+<span class="na">handlers</span><span class="o">=</span><span class="s">consoleHandler</span>
+
+<span class="k">[logger_sampleLogger]</span>
+<span class="na">level</span><span class="o">=</span><span class="s">DEBUG</span>
+<span class="na">handlers</span><span class="o">=</span><span class="s">consoleHandler</span>
+<span class="na">qualname</span><span class="o">=</span><span class="s">sampleLogger</span>
+<span class="na">propagate</span><span class="o">=</span><span class="s">0</span>
+
+<span class="k">[handler_consoleHandler]</span>
+<span class="na">class</span><span class="o">=</span><span class="s">StreamHandler</span>
+<span class="na">level</span><span class="o">=</span><span class="s">DEBUG</span>
+<span class="na">formatter</span><span class="o">=</span><span class="s">sampleFormatter</span>
+<span class="na">args</span><span class="o">=</span><span class="s">(sys.stdout,)</span>
+
+<span class="k">[formatter_sampleFormatter]</span>
+<span class="na">format</span><span class="o">=</span><span class="s">%(asctime)s - %(name)s - %(levelname)s - %(message)s</span>
+</pre></div>
+
+
+<p>testinit.py</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">logging</span><span class="p">.</span><span class="n">config</span>
+
+<span class="n">logging</span><span class="p">.</span><span class="n">config</span><span class="p">.</span><span class="n">fileConfig</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="err">&#39;</span><span class="n">test</span><span class="p">.</span><span class="n">ini</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">disable_existing_loggers</span><span class="o">=</span><span class="n">False</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;sampleLogger&quot;</span><span class="p">)</span>
+<span class="cp"># 省略日志输出</span>
+</pre></div>
+
+
+<p>test.yaml</p>
+<div class="hlcode"><pre><span class="n">version</span><span class="o">:</span> <span class="mi">1</span>
+<span class="n">formatters</span><span class="o">:</span>
+  <span class="n">simple</span><span class="o">:</span>
+    <span class="n">format</span><span class="o">:</span> <span class="s1">&#39;%(asctime)s - %(name)s - %(levelname)s - %(message)s&#39;</span>
+<span class="n">handlers</span><span class="o">:</span>
+  <span class="n">console</span><span class="o">:</span>
+    <span class="kd">class</span><span class="o">:</span> <span class="n">logging</span><span class="o">.</span><span class="na">StreamHandler</span>
+    <span class="n">level</span><span class="o">:</span> <span class="n">DEBUG</span>
+    <span class="n">formatter</span><span class="o">:</span> <span class="n">simple</span>
+
+<span class="n">loggers</span><span class="o">:</span>
+  <span class="n">simpleExample</span><span class="o">:</span>
+    <span class="n">level</span><span class="o">:</span> <span class="n">DEBUG</span>
+    <span class="n">handlers</span><span class="o">:</span> <span class="o">[</span><span class="n">console</span><span class="o">]</span>
+    <span class="n">propagate</span><span class="o">:</span> <span class="n">no</span>
+<span class="n">root</span><span class="o">:</span>
+  <span class="n">level</span><span class="o">:</span> <span class="n">DEBUG</span>
+  <span class="n">handlers</span><span class="o">:</span> <span class="o">[</span><span class="n">console</span><span class="o">]</span>
+</pre></div>
+
+
+<p>testyaml.py</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">logging</span><span class="p">.</span><span class="n">config</span>
+<span class="cp"># 需要安装 pyymal 库</span>
+<span class="n">import</span> <span class="n">yaml</span>
+
+<span class="n">with</span> <span class="n">open</span><span class="p">(</span><span class="err">&#39;</span><span class="n">test</span><span class="p">.</span><span class="n">yaml</span><span class="err">&#39;</span><span class="p">,</span> <span class="sc">&#39;r&#39;</span><span class="p">)</span> <span class="n">as</span> <span class="n">f</span><span class="o">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="p">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="n">logging</span><span class="p">.</span><span class="n">config</span><span class="p">.</span><span class="n">dictConfig</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;sampleLogger&quot;</span><span class="p">)</span>
+<span class="cp"># 省略日志输出</span>
+</pre></div>
+
+
+<h2 id="handler">Handler</h2>
+<p>处理器，将（记录器产生的）日志记录发送至合适的目的地。</p>
+<p>Handler处理器类型有很多种，比较常用的有三个，<strong>StreamHandler</strong>，<strong>FileHandler</strong>，<strong>NullHandler</strong></p>
+<p>使用以下方法设置日志级别，设置格式化器Formatter，增加或删除过滤器Filter</p>
+<div class="hlcode"><pre><span class="n">ch</span><span class="p">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="p">.</span><span class="n">WARN</span><span class="p">)</span> <span class="err">#</span> <span class="err">指定日志级别，低于</span><span class="n">WARN</span><span class="err">级别的日志将被忽略</span>
+<span class="n">ch</span><span class="p">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter_name</span><span class="p">)</span> <span class="err">#</span> <span class="err">设置一个格式化器</span><span class="n">formatter</span>
+<span class="n">ch</span><span class="p">.</span><span class="n">addFilter</span><span class="p">(</span><span class="n">filter_name</span><span class="p">)</span> <span class="err">#</span> <span class="err">增加一个过滤器，可以增加多个</span>
+<span class="n">ch</span><span class="p">.</span><span class="n">removeFilter</span><span class="p">(</span><span class="n">filter_name</span><span class="p">)</span> <span class="err">#</span> <span class="err">删除一个过滤器</span>
+</pre></div>
+
+
+<h3 id="streamhandler">StreamHandler</h3>
+<div class="hlcode"><pre><span class="n">sh</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">None</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="filehandler">FileHandler</h3>
+<div class="hlcode"><pre><span class="n">fh</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">None</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">False</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="nullhandler">NullHandler</h3>
+<p>NullHandler类位于核心logging包，不做任何的格式化或者输出。<br />
+本质上它是个“什么都不做”的handler，由库开发者使用。</p>
+<h2 id="filter">Filter</h2>
+<p>过滤器，提供了更好的粒度控制，它可以决定输出哪些日志记录。</p>
+<p>Handlers和Loggers可以使用Filters来完成比级别更复杂的过滤。Filter基类只允许特定Logger层次以下的事件。例如用‘A.B’初始化的Filter允许Logger ‘A.B’, ‘A.B.C’, ‘A.B.C.D’, ‘A.B.D’等记录的事件，logger‘A.BB’, ‘B.A.B’ 等就不行。 如果用空字符串来初始化，所有的事件都接受。</p>
+<div class="hlcode"><pre><span class="n">filter</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">Filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="err">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="formatter">Formatter</h2>
+<p>格式化器，指明了最终输出中日志记录的布局。</p>
+<p>使用Formatter对象设置日志信息最后的规则、结构和内容，默认的时间格式为%Y-%m-%d %H:%M:%S。</p>
+<div class="hlcode"><pre><span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="n">None</span><span class="p">,</span> <span class="n">datefmt</span><span class="o">=</span><span class="n">None</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>fmt是消息的格式化字符串，datefmt是日期字符串。如果不指明fmt，将使用'%(message)s'。如果不指明datefmt，将使用ISO8601日期格式</p>
+</blockquote>
+<h3 id="format">format格式</h3>
+<table>
+<thead>
+<tr>
+<th>格式</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%(levelno)s</td>
+<td align="center">打印日志级别的数值</td>
+</tr>
+<tr>
+<td>%(levelname)s</td>
+<td align="center">打印日志级别名称</td>
+</tr>
+<tr>
+<td>%(pathname)s</td>
+<td align="center">打印当前执行程序的路径</td>
+</tr>
+<tr>
+<td>%(filename)s</td>
+<td align="center">打印当前执行程序名称</td>
+</tr>
+<tr>
+<td>%(funcName)s</td>
+<td align="center">打印日志的当前函数</td>
+</tr>
+<tr>
+<td>%(lineno)d</td>
+<td align="center">打印日志的当前行号</td>
+</tr>
+<tr>
+<td>%(asctime)s</td>
+<td align="center">打印日志的时间</td>
+</tr>
+<tr>
+<td>%(thread)d</td>
+<td align="center">打印线程id</td>
+</tr>
+<tr>
+<td>%(threadName)s</td>
+<td align="center">打印线程名称</td>
+</tr>
+<tr>
+<td>%(process)d</td>
+<td align="center">打印进程ID</td>
+</tr>
+<tr>
+<td>%(message)s</td>
+<td align="center">打印日志信息</td>
+</tr>
+</tbody>
+</table>
+<h1 id="_7">实际处理</h1>
+<h2 id="_8">中文乱码</h2>
+<p>上面的例子中日志输出都是英文内容，发现不了将日志输出到文件中会有中文乱码的问题，如何解决到这个问题呢？FileHandler 创建对象时可以设置文件编码，如果将文件编码设置为 “utf-8”（utf-8 和 utf8 等价），就可以解决中文乱码问题啦。一种方法是自定义 Logger 对象，需要写很多配置，另一种方法是使用默认配置方法 basicConfig()，传入 handlers 处理器列表对象，在其中的 handler 设置文件的编码。网上很多都是无效的方法，关键参考代码如下：</p>
+<div class="hlcode"><pre><span class="cp"># 自定义 Logger 配置</span>
+<span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;test.log&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span>
+
+
+<span class="cp"># 使用默认的 Logger 配置</span>
+<span class="n">logging</span><span class="p">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">logging</span><span class="p">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="s">&quot;test.log&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">)],</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="p">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="err">复制代码</span>
+</pre></div>
+
+
+<h2 id="_9">临时禁用日志输出</h2>
+<p>有时候我们又不想让日志输出，但在这后又想输出日志。如果我们打印信息用的是 print() 方法，那么就需要把所有的 print() 方法都注释掉，而使用了 logging 后，我们就有了一键开关闭日志的 "魔法"。一种方法是在使用默认配置时，给 logging.disabled() 方法传入禁用的日志级别，就可以禁止设置级别以下的日志输出了，另一种方法时在自定义 Logger 时，Logger 对象的 disable 属性设为 True，默认值是 False，也即不禁用。</p>
+<div class="hlcode"><pre><span class="n">logging</span><span class="p">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logging</span><span class="p">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<span class="n">logger</span><span class="p">.</span><span class="n">disabled</span> <span class="o">=</span> <span class="n">True</span>
+</pre></div>
+
+
+<h2 id="_10">日志划分</h2>
+<p><strong>日志文件按照时间划分或者按照大小划分</strong></p>
+<p>如果将日志保存在一个文件中，那么时间一长，或者日志一多，单个日志文件就会很大，既不利于备份，也不利于查看。我们会想到能不能按照时间或者大小对日志文件进行划分呢？答案肯定是可以的，并且还很简单，logging 考虑到了我们这个需求。logging.handlers 文件中提供了 <strong>TimedRotatingFileHandler</strong> 和 <strong>RotatingFileHandler</strong> 类分别可以实现按时间和大小划分。打开这个 handles 文件，可以看到还有其他功能的 Handler 类，它们都继承自基类 <strong>BaseRotatingHandler</strong>。</p>
+<div class="hlcode"><pre><span class="cp"># TimedRotatingFileHandler 类构造函数</span>
+<span class="n">def</span> <span class="n">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">when</span><span class="o">=</span><span class="sc">&#39;h&#39;</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">backupCount</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">None</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">False</span><span class="p">,</span> <span class="n">utc</span><span class="o">=</span><span class="n">False</span><span class="p">,</span> <span class="n">atTime</span><span class="o">=</span><span class="n">None</span><span class="p">)</span><span class="o">:</span>
+
+
+<span class="cp"># RotatingFileHandler 类的构造函数</span>
+<span class="n">def</span> <span class="n">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="n">maxBytes</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">backupCount</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">None</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">False</span><span class="p">)</span>
+<span class="err">复制代码</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="cp"># 每隔 1000 Byte 划分一个日志文件，备份文件为 3 个</span>
+<span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">handlers</span><span class="p">.</span><span class="n">RotatingFileHandler</span><span class="p">(</span><span class="s">&quot;test.log&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;w&quot;</span><span class="p">,</span> <span class="n">maxBytes</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">backupCount</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span>
+
+
+<span class="cp"># 每隔 1小时 划分一个日志文件，interval 是时间间隔，备份文件为 10 个</span>
+<span class="n">handler2</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">handlers</span><span class="p">.</span><span class="n">TimedRotatingFileHandler</span><span class="p">(</span><span class="s">&quot;test.log&quot;</span><span class="p">,</span> <span class="n">when</span><span class="o">=</span><span class="s">&quot;H&quot;</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">backupCount</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="err">复制代码</span>
+</pre></div>
+
+
+<p>Python 官网虽然说 logging 库是线程安全的，但在多进程、多线程、多进程多线程环境中仍然还有值得考虑的问题，比如，如何将日志按照进程（或线程）划分为不同的日志文件，也即一个进程（或线程）对应一个文件</p>
+<h2 id="json">Json 输出</h2>
+<p>json_logger.py</p>
+<div class="hlcode"><pre><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">This library is provided to allow standard python logging</span>
+<span class="s1">to output log data as JSON formatted strings</span>
+<span class="s1">&#39;&#39;&#39;</span>
+<span class="kr">import</span> <span class="nx">logging</span>
+<span class="kr">import</span> <span class="nx">json</span>
+<span class="kr">import</span> <span class="nx">re</span>
+<span class="nx">from</span> <span class="nx">datetime</span> <span class="kr">import</span> <span class="nx">date</span><span class="p">,</span> <span class="nx">datetime</span><span class="p">,</span> <span class="nx">time</span>
+<span class="kr">import</span> <span class="nx">traceback</span>
+<span class="kr">import</span> <span class="nx">importlib</span>
+
+<span class="nx">from</span> <span class="nx">inspect</span> <span class="kr">import</span> <span class="nx">istraceback</span>
+
+<span class="nx">from</span> <span class="nx">collections</span> <span class="kr">import</span> <span class="nx">OrderedDict</span>
+
+<span class="err">#</span> <span class="nx">skip</span> <span class="nx">natural</span> <span class="nx">LogRecord</span> <span class="nx">attributes</span>
+<span class="err">#</span> <span class="nx">http</span><span class="o">:</span><span class="c1">//docs.python.org/library/logging.html#logrecord-attributes</span>
+<span class="nx">RESERVED_ATTRS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="s1">&#39;asctime&#39;</span><span class="p">,</span> <span class="s1">&#39;created&#39;</span><span class="p">,</span> <span class="s1">&#39;exc_info&#39;</span><span class="p">,</span> <span class="s1">&#39;exc_text&#39;</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;funcName&#39;</span><span class="p">,</span> <span class="s1">&#39;levelname&#39;</span><span class="p">,</span> <span class="s1">&#39;levelno&#39;</span><span class="p">,</span> <span class="s1">&#39;lineno&#39;</span><span class="p">,</span> <span class="s1">&#39;module&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;msecs&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;pathname&#39;</span><span class="p">,</span> <span class="s1">&#39;process&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;processName&#39;</span><span class="p">,</span> <span class="s1">&#39;relativeCreated&#39;</span><span class="p">,</span> <span class="s1">&#39;stack_info&#39;</span><span class="p">,</span> <span class="s1">&#39;thread&#39;</span><span class="p">,</span> <span class="s1">&#39;threadName&#39;</span><span class="p">)</span>
+
+
+<span class="nx">def</span> <span class="nx">merge_record_extra</span><span class="p">(</span><span class="nx">record</span><span class="p">,</span> <span class="nx">target</span><span class="p">,</span> <span class="nx">reserved</span><span class="p">)</span><span class="o">:</span>
+    <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    Merges extra attributes from LogRecord object into target dictionary</span>
+
+<span class="s2">    :param record: logging.LogRecord</span>
+<span class="s2">    :param target: dict to update</span>
+<span class="s2">    :param reserved: dict or list with reserved keys to skip</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="k">in</span> <span class="nx">record</span><span class="p">.</span><span class="nx">__dict__</span><span class="p">.</span><span class="nx">items</span><span class="p">()</span><span class="o">:</span>
+        <span class="err">#</span> <span class="k">this</span> <span class="nx">allows</span> <span class="nx">to</span> <span class="nx">have</span> <span class="nx">numeric</span> <span class="nx">keys</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">key</span> <span class="nx">not</span> <span class="k">in</span> <span class="nx">reserved</span>
+            <span class="nx">and</span> <span class="nx">not</span> <span class="p">(</span><span class="nx">hasattr</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="s2">&quot;startswith&quot;</span><span class="p">)</span>
+                     <span class="nx">and</span> <span class="nx">key</span><span class="p">.</span><span class="nx">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)))</span><span class="o">:</span>
+            <span class="nx">target</span><span class="cp">[</span><span class="nb">key</span><span class="cp">]</span> <span class="o">=</span> <span class="nx">value</span>
+    <span class="k">return</span> <span class="nx">target</span>
+
+
+<span class="kr">class</span> <span class="nx">JsonEncoder</span><span class="p">(</span><span class="nx">json</span><span class="p">.</span><span class="nx">JSONEncoder</span><span class="p">)</span><span class="o">:</span>
+    <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    A custom encoder extending the default JSONEncoder</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+    <span class="nx">def</span> <span class="k">default</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">if</span> <span class="nx">isinstance</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="p">(</span><span class="nx">date</span><span class="p">,</span> <span class="nx">datetime</span><span class="p">,</span> <span class="nx">time</span><span class="p">))</span><span class="o">:</span>
+            <span class="k">return</span> <span class="nx">self</span><span class="p">.</span><span class="nx">format_datetime_obj</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span>
+
+        <span class="nx">elif</span> <span class="nx">istraceback</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span><span class="o">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">traceback</span><span class="p">.</span><span class="nx">format_tb</span><span class="p">(</span><span class="nx">obj</span><span class="p">)).</span><span class="nx">strip</span><span class="p">()</span>
+
+        <span class="nx">elif</span> <span class="nx">type</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">==</span> <span class="nx">Exception</span> <span class="o">\</span>
+                <span class="nx">or</span> <span class="nx">isinstance</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">Exception</span><span class="p">)</span> <span class="o">\</span>
+                <span class="nx">or</span> <span class="nx">type</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">==</span> <span class="nx">type</span><span class="o">:</span>
+            <span class="k">return</span> <span class="nx">str</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="o">:</span>
+            <span class="k">return</span> <span class="kr">super</span><span class="p">(</span><span class="nx">JsonEncoder</span><span class="p">,</span> <span class="nx">self</span><span class="p">).</span><span class="k">default</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span>
+
+        <span class="nx">except</span> <span class="nx">TypeError</span><span class="o">:</span>
+            <span class="k">try</span><span class="o">:</span>
+                <span class="k">return</span> <span class="nx">str</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span>
+
+            <span class="nx">except</span> <span class="nx">Exception</span><span class="o">:</span>
+                <span class="k">return</span> <span class="nx">None</span>
+
+    <span class="nx">def</span> <span class="nx">format_datetime_obj</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">return</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">isoformat</span><span class="p">()</span>
+
+
+<span class="kr">class</span> <span class="nx">JsonFormatter</span><span class="p">(</span><span class="nx">logging</span><span class="p">.</span><span class="nx">Formatter</span><span class="p">)</span><span class="o">:</span>
+    <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    A custom formatter to format logging records as json strings.</span>
+<span class="s2">    Extra values will be formatted as str() if not supported by</span>
+<span class="s2">    json default encoder</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+    <span class="nx">def</span> <span class="nx">__init__</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="o">*</span><span class="nx">args</span><span class="p">,</span> <span class="o">**</span><span class="nx">kwargs</span><span class="p">)</span><span class="o">:</span>
+        <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        :param json_default: a function for encoding non-standard objects</span>
+<span class="s2">            as outlined in http://docs.python.org/2/library/json.html</span>
+<span class="s2">        :param json_encoder: optional custom encoder</span>
+<span class="s2">        :param json_serializer: a :meth:`json.dumps`-compatible callable</span>
+<span class="s2">            that will be used to serialize the log record.</span>
+<span class="s2">        :param json_indent: an optional :meth:`json.dumps`-compatible numeric value</span>
+<span class="s2">            that will be used to customize the indent of the output json.</span>
+<span class="s2">        :param prefix: an optional string prefix added at the beginning of</span>
+<span class="s2">            the formatted string</span>
+<span class="s2">        :param json_indent: indent parameter for json.dumps</span>
+<span class="s2">        :param json_ensure_ascii: ensure_ascii parameter for json.dumps</span>
+<span class="s2">        :param reserved_attrs: an optional list of fields that will be skipped when</span>
+<span class="s2">            outputting json log record. Defaults to all log record attributes:</span>
+<span class="s2">            http://docs.python.org/library/logging.html#logrecord-attributes</span>
+<span class="s2">        :param timestamp: an optional string/boolean field to add a timestamp when</span>
+<span class="s2">            outputting the json log record. If string is passed, timestamp will be added</span>
+<span class="s2">            to log record using string as key. If True boolean is passed, timestamp key</span>
+<span class="s2">            will be &quot;</span><span class="nx">timestamp</span><span class="s2">&quot;. Defaults to False/off.</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">json_default</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_str_to_fn</span><span class="p">(</span><span class="nx">kwargs</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="s2">&quot;json_default&quot;</span><span class="p">,</span> <span class="nx">None</span><span class="p">))</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">json_encoder</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_str_to_fn</span><span class="p">(</span><span class="nx">kwargs</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="s2">&quot;json_encoder&quot;</span><span class="p">,</span> <span class="nx">None</span><span class="p">))</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">json_serializer</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_str_to_fn</span><span class="p">(</span><span class="nx">kwargs</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="s2">&quot;json_serializer&quot;</span><span class="p">,</span> <span class="nx">json</span><span class="p">.</span><span class="nx">dumps</span><span class="p">))</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">json_indent</span> <span class="o">=</span> <span class="nx">kwargs</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="s2">&quot;json_indent&quot;</span><span class="p">,</span> <span class="nx">None</span><span class="p">)</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">json_ensure_ascii</span> <span class="o">=</span> <span class="nx">kwargs</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="s2">&quot;json_ensure_ascii&quot;</span><span class="p">,</span> <span class="nx">True</span><span class="p">)</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">prefix</span> <span class="o">=</span> <span class="nx">kwargs</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="nx">reserved_attrs</span> <span class="o">=</span> <span class="nx">kwargs</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="s2">&quot;reserved_attrs&quot;</span><span class="p">,</span> <span class="nx">RESERVED_ATTRS</span><span class="p">)</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">reserved_attrs</span> <span class="o">=</span> <span class="nx">dict</span><span class="p">(</span><span class="nx">zip</span><span class="p">(</span><span class="nx">reserved_attrs</span><span class="p">,</span> <span class="nx">reserved_attrs</span><span class="p">))</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">timestamp</span> <span class="o">=</span> <span class="nx">kwargs</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="nx">False</span><span class="p">)</span>
+
+        <span class="err">#</span> <span class="kr">super</span><span class="p">(</span><span class="nx">JsonFormatter</span><span class="p">,</span> <span class="nx">self</span><span class="p">).</span><span class="nx">__init__</span><span class="p">(</span><span class="o">*</span><span class="nx">args</span><span class="p">,</span> <span class="o">**</span><span class="nx">kwargs</span><span class="p">)</span>
+        <span class="nx">logging</span><span class="p">.</span><span class="nx">Formatter</span><span class="p">.</span><span class="nx">__init__</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="o">*</span><span class="nx">args</span><span class="p">,</span> <span class="o">**</span><span class="nx">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">not</span> <span class="nx">self</span><span class="p">.</span><span class="nx">json_encoder</span> <span class="nx">and</span> <span class="nx">not</span> <span class="nx">self</span><span class="p">.</span><span class="nx">json_default</span><span class="o">:</span>
+            <span class="nx">self</span><span class="p">.</span><span class="nx">json_encoder</span> <span class="o">=</span> <span class="nx">JsonEncoder</span>
+
+        <span class="nx">self</span><span class="p">.</span><span class="nx">_required_fields</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">parse</span><span class="p">()</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">_skip_fields</span> <span class="o">=</span> <span class="nx">dict</span><span class="p">(</span><span class="nx">zip</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">_required_fields</span><span class="p">,</span>
+                                     <span class="nx">self</span><span class="p">.</span><span class="nx">_required_fields</span><span class="p">))</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">_skip_fields</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">reserved_attrs</span><span class="p">)</span>
+
+    <span class="nx">def</span> <span class="nx">_str_to_fn</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">fn_as_str</span><span class="p">)</span><span class="o">:</span>
+        <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        If the argument is not a string, return whatever was passed in.</span>
+<span class="s2">        Parses a string such as package.module.function, imports the module</span>
+<span class="s2">        and returns the function.</span>
+
+<span class="s2">        :param fn_as_str: The string to parse. If not a string, return it.</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nx">not</span> <span class="nx">isinstance</span><span class="p">(</span><span class="nx">fn_as_str</span><span class="p">,</span> <span class="nx">str</span><span class="p">)</span><span class="o">:</span>
+            <span class="k">return</span> <span class="nx">fn_as_str</span>
+
+        <span class="nx">path</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="kd">function</span> <span class="o">=</span> <span class="nx">fn_as_str</span><span class="p">.</span><span class="nx">rpartition</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="nx">module</span> <span class="o">=</span> <span class="nx">importlib</span><span class="p">.</span><span class="nx">import_module</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nx">getattr</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="kd">function</span><span class="p">)</span>
+
+    <span class="nx">def</span> <span class="nx">parse</span><span class="p">(</span><span class="nx">self</span><span class="p">)</span><span class="o">:</span>
+        <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Parses format string looking for substitutions</span>
+
+<span class="s2">        This method is responsible for returning a list of fields (as strings)</span>
+<span class="s2">        to include in all log messages.</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="nx">standard_formatters</span> <span class="o">=</span> <span class="nx">re</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="nx">r</span><span class="s1">&#39;\((.+?)\)&#39;</span><span class="p">,</span> <span class="nx">re</span><span class="p">.</span><span class="nx">IGNORECASE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nx">standard_formatters</span><span class="p">.</span><span class="nx">findall</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">_fmt</span><span class="p">)</span>
+
+    <span class="nx">def</span> <span class="nx">add_fields</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">log_record</span><span class="p">,</span> <span class="nx">record</span><span class="p">,</span> <span class="nx">message_dict</span><span class="p">)</span><span class="o">:</span>
+        <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Override this method to implement custom logic for adding fields.</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="nx">field</span> <span class="k">in</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_required_fields</span><span class="o">:</span>
+            <span class="nx">log_record</span><span class="cp">[</span><span class="nb">field</span><span class="cp">]</span> <span class="o">=</span> <span class="nx">record</span><span class="p">.</span><span class="nx">__dict__</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">field</span><span class="p">)</span>
+        <span class="nx">log_record</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">message_dict</span><span class="p">)</span>
+        <span class="nx">merge_record_extra</span><span class="p">(</span><span class="nx">record</span><span class="p">,</span> <span class="nx">log_record</span><span class="p">,</span> <span class="nx">reserved</span><span class="o">=</span><span class="nx">self</span><span class="p">.</span><span class="nx">_skip_fields</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nx">self</span><span class="p">.</span><span class="nx">timestamp</span><span class="o">:</span>
+            <span class="nx">key</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">timestamp</span> <span class="k">if</span> <span class="nx">type</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">timestamp</span><span class="p">)</span> <span class="o">==</span> <span class="nx">str</span> <span class="k">else</span> <span class="s1">&#39;timestamp&#39;</span>
+            <span class="nx">log_record</span><span class="cp">[</span><span class="nb">key</span><span class="cp">]</span> <span class="o">=</span> <span class="nx">datetime</span><span class="p">.</span><span class="nx">utcnow</span><span class="p">()</span>
+
+    <span class="nx">def</span> <span class="nx">process_log_record</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">log_record</span><span class="p">)</span><span class="o">:</span>
+        <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Override this method to implement custom logic</span>
+<span class="s2">        on the possibly ordered dictionary.</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nx">log_record</span>
+
+    <span class="nx">def</span> <span class="nx">jsonify_log_record</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">log_record</span><span class="p">)</span><span class="o">:</span>
+        <span class="s2">&quot;&quot;&quot;Returns a json string of the log record.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nx">self</span><span class="p">.</span><span class="nx">json_serializer</span><span class="p">(</span><span class="nx">log_record</span><span class="p">,</span>
+                                    <span class="k">default</span><span class="o">=</span><span class="nx">self</span><span class="p">.</span><span class="nx">json_default</span><span class="p">,</span>
+                                    <span class="nx">cls</span><span class="o">=</span><span class="nx">self</span><span class="p">.</span><span class="nx">json_encoder</span><span class="p">,</span>
+                                    <span class="nx">indent</span><span class="o">=</span><span class="nx">self</span><span class="p">.</span><span class="nx">json_indent</span><span class="p">,</span>
+                                    <span class="nx">ensure_ascii</span><span class="o">=</span><span class="nx">self</span><span class="p">.</span><span class="nx">json_ensure_ascii</span><span class="p">)</span>
+
+    <span class="nx">def</span> <span class="nx">format</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">record</span><span class="p">)</span><span class="o">:</span>
+        <span class="s2">&quot;&quot;&quot;Formats a log record and serializes to json&quot;&quot;&quot;</span>
+        <span class="nx">message_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="nx">isinstance</span><span class="p">(</span><span class="nx">record</span><span class="p">.</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">dict</span><span class="p">)</span><span class="o">:</span>
+            <span class="nx">message_dict</span> <span class="o">=</span> <span class="nx">record</span><span class="p">.</span><span class="nx">msg</span>
+            <span class="nx">record</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="nx">None</span>
+        <span class="k">else</span><span class="o">:</span>
+            <span class="nx">record</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="nx">record</span><span class="p">.</span><span class="nx">getMessage</span><span class="p">()</span>
+        <span class="err">#</span> <span class="nx">only</span> <span class="nx">format</span> <span class="nx">time</span> <span class="k">if</span> <span class="nx">needed</span>
+        <span class="k">if</span> <span class="s2">&quot;asctime&quot;</span> <span class="k">in</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_required_fields</span><span class="o">:</span>
+            <span class="nx">record</span><span class="p">.</span><span class="nx">asctime</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">formatTime</span><span class="p">(</span><span class="nx">record</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">datefmt</span><span class="p">)</span>
+
+        <span class="err">#</span> <span class="nx">Display</span> <span class="nx">formatted</span> <span class="nx">exception</span><span class="p">,</span> <span class="nx">but</span> <span class="nx">allow</span> <span class="nx">overriding</span> <span class="nx">it</span> <span class="k">in</span> <span class="nx">the</span>
+        <span class="err">#</span> <span class="nx">user</span><span class="o">-</span><span class="nx">supplied</span> <span class="nx">dict</span><span class="p">.</span>
+        <span class="k">if</span> <span class="nx">record</span><span class="p">.</span><span class="nx">exc_info</span> <span class="nx">and</span> <span class="nx">not</span> <span class="nx">message_dict</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;exc_info&#39;</span><span class="p">)</span><span class="o">:</span>
+            <span class="nx">message_dict</span><span class="cp">[</span><span class="s1">&#39;exc_info&#39;</span><span class="cp">]</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">formatException</span><span class="p">(</span><span class="nx">record</span><span class="p">.</span><span class="nx">exc_info</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">not</span> <span class="nx">message_dict</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;exc_info&#39;</span><span class="p">)</span> <span class="nx">and</span> <span class="nx">record</span><span class="p">.</span><span class="nx">exc_text</span><span class="o">:</span>
+            <span class="nx">message_dict</span><span class="cp">[</span><span class="s1">&#39;exc_info&#39;</span><span class="cp">]</span> <span class="o">=</span> <span class="nx">record</span><span class="p">.</span><span class="nx">exc_text</span>
+        <span class="err">#</span> <span class="nx">Display</span> <span class="nx">formatted</span> <span class="nx">record</span> <span class="nx">of</span> <span class="nx">stack</span> <span class="nx">frames</span>
+        <span class="err">#</span> <span class="k">default</span> <span class="nx">format</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">string</span> <span class="nx">returned</span> <span class="nx">from</span> <span class="o">:</span><span class="nx">func</span><span class="o">:</span><span class="err">`</span><span class="nx">traceback</span><span class="p">.</span><span class="nx">print_stack</span><span class="err">`</span>
+        <span class="k">try</span><span class="o">:</span>
+            <span class="k">if</span> <span class="nx">record</span><span class="p">.</span><span class="nx">stack_info</span> <span class="nx">and</span> <span class="nx">not</span> <span class="nx">message_dict</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;stack_info&#39;</span><span class="p">)</span><span class="o">:</span>
+                <span class="nx">message_dict</span><span class="cp">[</span><span class="s1">&#39;stack_info&#39;</span><span class="cp">]</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">formatStack</span><span class="p">(</span><span class="nx">record</span><span class="p">.</span><span class="nx">stack_info</span><span class="p">)</span>
+        <span class="nx">except</span> <span class="nx">AttributeError</span><span class="o">:</span>
+            <span class="err">#</span> <span class="nx">Python2</span><span class="p">.</span><span class="mi">7</span> <span class="nx">doesn</span><span class="err">&#39;</span><span class="nx">t</span> <span class="nx">have</span> <span class="nx">stack_info</span><span class="p">.</span>
+            <span class="nx">pass</span>
+
+        <span class="k">try</span><span class="o">:</span>
+            <span class="nx">log_record</span> <span class="o">=</span> <span class="nx">OrderedDict</span><span class="p">()</span>
+        <span class="nx">except</span> <span class="nx">NameError</span><span class="o">:</span>
+            <span class="nx">log_record</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="nx">self</span><span class="p">.</span><span class="nx">add_fields</span><span class="p">(</span><span class="nx">log_record</span><span class="p">,</span> <span class="nx">record</span><span class="p">,</span> <span class="nx">message_dict</span><span class="p">)</span>
+        <span class="nx">log_record</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">process_log_record</span><span class="p">(</span><span class="nx">log_record</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s2">&quot;%s%s&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">prefix</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">jsonify_log_record</span><span class="p">(</span><span class="nx">log_record</span><span class="p">))</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">DEFAULT_DATETIME_FORMAT</span> <span class="o">=</span> <span class="s">&quot;%Y-%m-%d %H:%M:%S&quot;</span>
+<span class="n">DEFAULT_LOG_FORMAT</span> <span class="o">=</span> <span class="s">&quot;%(asctime)s [%(module)s.%(funcName)s.%(lineno)d] - %(levelname)s - %(message)s&quot;</span>
+
+
+<span class="n">def</span> <span class="n">get_logger</span><span class="p">(</span>
+    <span class="n">logger_name</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="p">.</span><span class="n">INFO</span><span class="p">,</span>
+    <span class="n">log_format</span><span class="o">=</span><span class="n">DEFAULT_LOG_FORMAT</span>
+<span class="p">)</span><span class="o">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+    <span class="n">logger</span><span class="p">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+    <span class="n">ch</span> <span class="o">=</span> <span class="n">logging</span><span class="p">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+    <span class="n">formatter</span> <span class="o">=</span> <span class="n">JsonFormatter</span><span class="p">(</span><span class="n">log_format</span><span class="p">,</span> <span class="n">DEFAULT_DATETIME_FORMAT</span><span class="p">)</span>
+    <span class="n">ch</span><span class="p">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">not</span> <span class="n">logger</span><span class="p">.</span><span class="n">handlers</span><span class="o">:</span>
+        <span class="n">logger</span><span class="p">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">logger</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+</pre></div>
+
+
+<p>gunicorn_logging.conf</p>
+<div class="hlcode"><pre><span class="k">[loggers]</span>
+<span class="na">keys</span><span class="o">=</span><span class="s">root, gunicorn.error, gunicorn.access</span>
+
+<span class="k">[handlers]</span>
+<span class="na">keys</span><span class="o">=</span><span class="s">console</span>
+
+<span class="k">[formatters]</span>
+<span class="na">keys</span><span class="o">=</span><span class="s">json</span>
+
+<span class="k">[logger_root]</span>
+<span class="na">level</span><span class="o">=</span><span class="s">INFO</span>
+<span class="na">handlers</span><span class="o">=</span><span class="s">console</span>
+
+<span class="k">[logger_gunicorn.error]</span>
+<span class="na">level</span><span class="o">=</span><span class="s">ERROR</span>
+<span class="na">handlers</span><span class="o">=</span><span class="s">console</span>
+<span class="na">propagate</span><span class="o">=</span><span class="s">0</span>
+<span class="na">qualname</span><span class="o">=</span><span class="s">gunicorn.error</span>
+
+<span class="k">[handler_console]</span>
+<span class="na">class</span><span class="o">=</span><span class="s">StreamHandler</span>
+<span class="na">level</span><span class="o">=</span><span class="s">INFO</span>
+<span class="na">formatter</span><span class="o">=</span><span class="s">json</span>
+<span class="na">args</span><span class="o">=</span><span class="s">(sys.stdout, )</span>
+
+<span class="k">[formatter_json]</span>
+<span class="na">class</span><span class="o">=</span><span class="s">bdp_service.common.json_logger.JsonFormatter</span>
+
+<span class="k">[logger_gunicorn.access]</span>
+<span class="na">level</span><span class="o">=</span><span class="s">INFO</span>
+<span class="na">handlers</span><span class="o">=</span><span class="s">console</span>
+<span class="na">propagate</span><span class="o">=</span><span class="s">0</span>
+<span class="na">qualname</span><span class="o">=</span><span class="s">gunicorn.access</span>
+</pre></div>
+
+
+<p>ecs command</p>
+<div class="hlcode"><pre><span class="n">gunicorn</span><span class="p">,</span><span class="o">-</span><span class="n">w</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="o">-</span><span class="n">b</span><span class="o">:</span><span class="mi">6000</span><span class="p">,</span><span class="o">-</span><span class="n">k</span><span class="p">,</span><span class="n">gevent</span><span class="p">,</span><span class="o">-</span><span class="n">t</span><span class="p">,</span><span class="mi">3600</span><span class="p">,</span><span class="o">--</span><span class="n">access</span><span class="o">-</span><span class="n">logfile</span><span class="p">,</span><span class="o">-</span><span class="p">,</span><span class="o">--</span><span class="n">access</span><span class="o">-</span><span class="n">logformat</span><span class="p">,</span><span class="o">%</span><span class="p">({</span><span class="n">X</span><span class="o">-</span><span class="n">Forwarded</span><span class="o">-</span><span class="n">For</span><span class="p">}</span><span class="n">i</span><span class="p">)</span><span class="n">s</span> <span class="o">%</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="n">s</span> <span class="o">%</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="n">s</span> <span class="o">%</span><span class="p">(</span><span class="n">U</span><span class="p">)</span><span class="n">s</span> <span class="o">%</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="n">s</span> <span class="o">%</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="n">s</span> <span class="o">%</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="n">s</span> <span class="o">%</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="n">s</span> <span class="o">%</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="n">s</span> <span class="o">%</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="n">s</span><span class="p">,</span><span class="o">--</span><span class="n">graceful</span><span class="o">-</span><span class="n">timeout</span><span class="p">,</span><span class="mi">3600</span><span class="p">,</span><span class="o">--</span><span class="n">log</span><span class="o">-</span><span class="n">config</span><span class="p">,</span><span class="n">gunicorn_logging</span><span class="p">.</span><span class="n">conf</span><span class="p">,</span><span class="n">service_repo</span><span class="p">.</span><span class="n">api</span><span class="p">.</span><span class="n">app</span><span class="o">:</span><span class="n">app</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

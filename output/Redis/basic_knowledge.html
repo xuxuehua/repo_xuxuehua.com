@@ -1,0 +1,367 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>basic_knowledge - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Redis">Redis</a>&nbsp;&#187;&nbsp;basic_knowledge
+    <span class="updated">Page Updated&nbsp;
+      2020-02-29 21:24
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">basic_knowledge</div>
+
+  <p>[toc]</p>
+<h1 id="redis">Redis</h1>
+<p>开源的kv 存储系统 </p>
+<p>原子性操作如push/pop add/remove </p>
+<p>数据存于内存中，但是不同于memcache，会周期性的把更新的数据写入磁盘或者把修改操作写入追加的记录文件，在此基础上实现主从同步</p>
+<p>配合关系型数据库做高速缓存</p>
+<p>redis采取单线程+多路IO复用的机制</p>
+<p>多路复用指一个线程来检查多个socket的就绪状态，得到就绪状态后可以再同一个线程里面执行</p>
+<h2 id="_1">安装</h2>
+<div class="hlcode"><pre><span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">epel</span><span class="o">-</span><span class="n">release</span> <span class="o">&amp;&amp;</span> <span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">redis</span>
+</pre></div>
+
+
+<h2 id="_2">组件</h2>
+<div class="hlcode"><pre><span class="n">redis</span><span class="o">-</span><span class="n">benchmark</span> <span class="err">性能测试工具</span>
+<span class="n">redis</span><span class="o">-</span><span class="n">server</span>    <span class="err">服务器启动命令</span>
+<span class="n">redis</span><span class="o">-</span><span class="n">cli</span>   <span class="err">客户端，操作入口</span>
+</pre></div>
+
+
+<h2 id="_3">配置</h2>
+<div class="hlcode"><pre><span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">redis</span><span class="p">.</span><span class="n">conf</span>
+
+<span class="n">daemonize</span> <span class="n">no</span> <span class="err">改成</span><span class="n">yes</span><span class="err">，会让服务从后台启动</span>
+</pre></div>
+
+
+<h3 id="_4">关闭</h3>
+<div class="hlcode"><pre><span class="cp"># redis-cli shutdown</span>
+
+<span class="n">OR</span>
+
+<span class="cp"># redis-cli -p 6379 shutdown</span>
+</pre></div>
+
+
+<h2 id="_5">测试</h2>
+<div class="hlcode"><pre><span class="cp"># redis-cli</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">ping</span>
+<span class="n">PONG</span>
+</pre></div>
+
+
+<h1 id="_6">数据类型</h1>
+<h2 id="string">string</h2>
+<p>最基本类型，一个key 对应一个value</p>
+<p>string是二进制安全的，即string可以包含任何数据，如序列化的对象</p>
+<p>value最多可以是512M</p>
+<h2 id="set">set</h2>
+<p>与list类似的列表功能，但可以去重 </p>
+<p>set是string 类型的无序集合，底层是一个value为null的hash表，所以增删查的复杂度为O(1)</p>
+<div class="hlcode"><pre><span class="nx">sadd</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v2</span><span class="o">&gt;</span> <span class="nx">将一个或者多个member元素加入到集合key中</span><span class="err">，</span><span class="nx">已存在于集合的member元素将被忽略</span>
+
+<span class="nx">smembers</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="nx">取出该集合的所有值</span>
+
+<span class="nx">sismember</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">value</span><span class="o">&gt;</span> <span class="nx">判断集合</span><span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="nx">是否含有该</span><span class="o">&lt;</span><span class="nb">value</span><span class="o">&gt;</span><span class="nx">值</span><span class="err">，</span><span class="nx">有返回1</span><span class="err">，</span><span class="nx">没有返回0</span>
+
+<span class="nx">scard</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="nx">返回该集合的元素个数</span>
+
+<span class="nx">srem</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v2</span><span class="o">&gt;</span> <span class="nx">删除集合中的某个元素</span>
+
+<span class="nx">spop</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="nx">随机从该集合中吐出一个值</span>
+
+<span class="nx">srandmember</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">n</span><span class="o">&gt;</span> <span class="nx">随机从该集合中取出n个值</span><span class="err">，</span><span class="nx">但不会从集合中删除</span>
+
+<span class="nx">sinter</span> <span class="o">&lt;</span><span class="nx">k1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">k2</span><span class="o">&gt;</span> <span class="nx">返回两个集合交集元素</span>
+
+<span class="nx">sunion</span> <span class="o">&lt;</span><span class="nx">k1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">k2</span><span class="o">&gt;</span> <span class="nx">返回两个集合并集元素</span>
+
+<span class="nx">sdiff</span> <span class="o">&lt;</span><span class="nx">k1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">k2</span><span class="o">&gt;</span>  <span class="nx">返回两个集合差集元素</span>
+</pre></div>
+
+
+<h2 id="list">list</h2>
+<p>Redis 列表是简单的字符串列表，按照插入顺序排序</p>
+<p>底层实现是双向链表，对两端的操作性能很高</p>
+<div class="hlcode"><pre><span class="nx">lpush</span><span class="p">/</span><span class="nx">rpush</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v2</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v3</span><span class="o">&gt;</span> <span class="nx">...</span> <span class="nx">从左边</span><span class="p">/</span><span class="nx">右边插入一个或者多个值</span>
+
+<span class="nx">lpop</span><span class="p">/</span><span class="nx">rpop</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="nx">从左边</span><span class="p">/</span><span class="nx">右边弹出值</span><span class="err">，</span><span class="nx">若值不在</span><span class="err">，</span><span class="nx">键也不在了</span>
+
+<span class="nx">rpop</span><span class="o">|</span><span class="nb">push</span> <span class="o">&lt;</span><span class="nx">k1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">k2</span><span class="o">&gt;</span> <span class="nx">从k1列表右边弹出一个值</span><span class="err">，</span><span class="nx">插入到k2列表的左边</span>
+
+<span class="nx">lrange</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">start</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">stop</span><span class="o">&gt;</span> <span class="nx">按照索引下标获得元素</span><span class="err">，</span><span class="nx">从左到右</span>
+
+<span class="nx">lindex</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">index</span><span class="o">&gt;</span> <span class="nx">按照索引下标获得元素</span><span class="err">，</span><span class="nx">从左到右</span>
+
+<span class="nx">llen</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="nx">获得列表长度</span>
+
+<span class="nx">linsert</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="nx">before</span> <span class="o">&lt;</span><span class="nb">value</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">new_value</span><span class="o">&gt;</span> <span class="nx">在value前面插入</span> <span class="nx">new_value</span>
+
+<span class="nx">lrem</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">n</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">value</span><span class="o">&gt;</span>  <span class="nx">从左边删除n个value</span><span class="err">，</span><span class="nx">从左到右</span>
+</pre></div>
+
+
+<h2 id="hash">hash</h2>
+<p>hash 是一个string类型的field和value的映射表，适合存储对象，类似Java中的 Map<String, Object> </p>
+<div class="hlcode"><pre><span class="nx">hset</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">field</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">value</span><span class="o">&gt;</span> <span class="nx">给key集合中的field键赋值value</span>
+
+<span class="nx">hget</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">field</span><span class="o">&gt;</span> <span class="nx">从key集合field取出value</span>
+
+<span class="nx">hmset</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">field1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">field2</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v2</span><span class="o">&gt;</span> <span class="nx">...</span> <span class="nx">批量设置hash</span> <span class="nx">值</span>
+
+<span class="nx">hexists</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">field</span><span class="o">&gt;</span> <span class="nx">查看hash表中</span><span class="err">，</span><span class="nx">给定域field</span> <span class="nx">是否存在</span>
+
+<span class="nx">hkeys</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="nx">列出该hash集合的所有field</span>
+
+<span class="nx">hvals</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="nx">列出该hash集合的所有value</span>
+
+<span class="nx">hincrby</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">field</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">increment</span><span class="o">&gt;</span> <span class="nx">为hash</span> <span class="nx">表中key中域field的值加上增量increment</span>
+
+<span class="nx">hsetnx</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">field</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">value</span><span class="o">&gt;</span> <span class="nx">将hash表key中域field的值设置为value</span><span class="err">，</span><span class="nx">只有在域field不存在的时候</span>
+</pre></div>
+
+
+<h2 id="zset">zset</h2>
+<p>sorted set</p>
+<p>这个有序集合关联一个评分 score，或者次序position来获取一个范围的元素</p>
+<div class="hlcode"><pre><span class="nx">zadd</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">score1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">value1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">score2</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">value2</span><span class="o">&gt;</span> <span class="nx">将一个或者多个元素以及其score值加入到有序集key中</span>
+
+<span class="nx">zrange</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">start</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">stop</span><span class="o">&gt;</span> <span class="err">[</span><span class="nx">withscores</span><span class="cp">]</span> 返回有序集<span class="nt">&lt;key&gt;</span> 汇总，下标在<span class="nt">&lt;start&gt;</span> <span class="nt">&lt;stop&gt;</span> 之间的元素，加上withscores可以让分数一起和值返回到结果集
+
+zrangebyscore key min max <span class="cp">[</span><span class="nx">withscores</span><span class="cp">]</span> <span class="cp">[</span><span class="nx">limit</span> <span class="nx">offset</span> <span class="nb">count</span><span class="cp">]</span> 返回有序集key中，所有的score值介于min和max之间的成员（包括等于min和max），有序集成员按照score值递增从小到大排序
+
+zrevrangebyscore key max min <span class="cp">[</span><span class="nx">withscores</span><span class="cp">]</span> <span class="cp">[</span><span class="nx">limit</span> <span class="nx">offset</span> <span class="nb">count</span><span class="cp">]</span>  返回有序集key中，所有的score值介于min和max之间的成员（包括等于min和max），有序集成员按照score值递增从大到小排序
+
+zincrby <span class="nt">&lt;key&gt;</span> <span class="nt">&lt;increment&gt;</span> <span class="nt">&lt;value&gt;</span> 为元素score加上增量
+
+zrem <span class="nt">&lt;key&gt;</span> <span class="nt">&lt;value&gt;</span> 删除该集合下指定的元素
+
+zcount <span class="nt">&lt;key&gt;</span> <span class="nt">&lt;min&gt;</span> <span class="nt">&lt;max&gt;</span> 统计该集合分数区间内的元素个数
+
+zrank <span class="nt">&lt;key&gt;</span> <span class="nt">&lt;value&gt;</span> 返回该值在集合中的排名，从0开始
+</pre></div>
+
+
+<h1 id="_7">操作</h1>
+<div class="hlcode"><pre><span class="nb">keys</span> <span class="o">*</span> <span class="nx">查看当前库中所有的键</span>
+
+<span class="nb">exists</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span>    <span class="nx">判断某个键是否存在</span>
+
+<span class="k">type</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span>  <span class="nx">查看键类型</span>
+
+<span class="nx">del</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span>  <span class="nx">删除键</span>
+
+<span class="nb">expire</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">seconds</span><span class="o">&gt;</span> <span class="nx">设置键过期时间</span><span class="err">，</span><span class="nx">单位为秒</span>
+
+<span class="nx">ttl</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span>   <span class="nx">查看还有多少秒过期</span>  <span class="o">-</span><span class="mi">1</span><span class="nx">永不过期</span><span class="err">，</span> <span class="o">-</span><span class="mi">2</span><span class="nx">已经过期</span>
+
+<span class="nx">dbsize</span> <span class="nx">查看当前数据库中key的数量</span>
+
+<span class="nx">flushdb</span>     <span class="nx">清空当前库</span>
+
+<span class="nx">flushall</span>    <span class="nx">清空所有库</span>
+
+<span class="nb">get</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="nx">查询对应的键值</span>
+
+<span class="nb">set</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">value</span><span class="o">&gt;</span> <span class="nx">添加键值对</span>
+
+<span class="nb">append</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">value</span><span class="o">&gt;</span> <span class="nx">将value追加到原值的末尾</span>
+
+<span class="nx">strlen</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="nx">获得键长度</span>
+
+<span class="nx">setnx</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">value</span><span class="o">&gt;</span> <span class="nx">只有在key不存在时设置key的值</span>
+
+<span class="nx">incr</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="nx">将key中存储的数据值增1</span><span class="err">，</span> <span class="nx">只能对数字操作</span>
+
+<span class="nx">decr</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="nx">将key中存储的数据值减1</span><span class="err">，</span> <span class="nx">只能对数字操作</span>
+
+<span class="nx">incrby</span><span class="p">/</span><span class="nx">decrby</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">range</span><span class="o">&gt;</span> <span class="nx">将key中存储的数字增减</span><span class="err">，</span><span class="nx">自定义步长</span>
+
+<span class="nx">mset</span> <span class="o">&lt;</span><span class="nx">k1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">k2</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v2</span><span class="o">&gt;</span> <span class="nx">设置多个kv</span>
+
+<span class="nx">mget</span> <span class="o">&lt;</span><span class="nx">k1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">k2</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v2</span><span class="o">&gt;</span> <span class="nx">获取多个kv</span>
+
+<span class="nx">msetnx</span> <span class="o">&lt;</span><span class="nx">k1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">k2</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">v2</span><span class="o">&gt;</span> <span class="nx">若不存在</span><span class="err">，</span><span class="nx">设置多个kv</span>
+
+<span class="nb">getrange</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">start_at</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">end_at</span><span class="o">&gt;</span> <span class="nx">获得值的范围</span>
+
+<span class="nb">setrange</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">start_at</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">value</span><span class="o">&gt;</span> <span class="nx">用value覆写</span><span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span><span class="nx">所存储的字符串</span><span class="err">，</span><span class="nx">从start_at开始</span>
+
+<span class="nx">setex</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nx">expire_time</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">value</span><span class="o">&gt;</span> <span class="nx">设置键值的同时</span><span class="err">，</span><span class="nx">设置过期时间</span><span class="err">，</span><span class="nx">单位为s</span>
+
+<span class="nb">getset</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">value</span><span class="o">&gt;</span>  <span class="nx">设置新的值</span><span class="err">，</span><span class="nx">同时获得旧的值</span>
+</pre></div>
+
+
+<h2 id="select">select</h2>
+<p>默认16个数据库，从下标0开始，默认使用0</p>
+<p>使用统一的密码管理，即所有库都是相同密码</p>
+<div class="hlcode"><pre><span class="k">select</span> <span class="o">&lt;</span><span class="nx">db_id</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h1 id="redis_1">redis 事务</h1>
+<p>单独的隔离操作，事务中所有命令都会被徐离婚，按照顺序执行。</p>
+<p>事务中所有的命令都会被序列化，按顺序执行，不会被其他客户端发来的命令请求打断</p>
+<p>用于串联多个命令，防止别的命令插队</p>
+<p>队列中命令没有提交之前都不会实际的被执行</p>
+<p>事务中如果有一条命令执行失败，其后的命令仍然会被执行，没有回滚</p>
+<h2 id="_8">过程</h2>
+<p>从输入Multi 命令开始，输入的命令都会依次进入命令队列中，但不会被执行，知道输入Exec后</p>
+<p>组队过程中可以使用discard来放弃组队</p>
+<p>队列中某个命令出错，整个队列都会被取消</p>
+<p>如果某阶段的某个命令出错，只有报错的命令不会被执行，其他命令都会执行，不会回滚</p>
+<div class="hlcode"><pre><span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">multi</span> 
+<span class="n">OK</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">set</span> <span class="n">k1</span> <span class="n">v1</span>
+<span class="n">QUEUED</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">set</span> <span class="n">k4</span>
+<span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="n">ERR</span> <span class="n">wrong</span> <span class="n">number</span> <span class="n">of</span> <span class="n">arguments</span> <span class="k">for</span> <span class="err">&#39;</span><span class="n">set</span><span class="err">&#39;</span> <span class="n">command</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">exec</span>
+<span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="n">EXECABORT</span> <span class="n">Transaction</span> <span class="n">discarded</span> <span class="n">because</span> <span class="n">of</span> <span class="n">previous</span> <span class="n">errors</span><span class="p">.</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">multi</span>
+<span class="n">OK</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">set</span> <span class="n">k3</span> <span class="n">v3</span>
+<span class="n">QUEUED</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">set</span> <span class="n">k4</span> <span class="n">v4</span>
+<span class="n">QUEUED</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">incr</span> <span class="n">k4</span>
+<span class="n">QUEUED</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">exec</span>
+<span class="mi">1</span><span class="p">)</span> <span class="n">OK</span>
+<span class="mi">2</span><span class="p">)</span> <span class="n">OK</span>
+<span class="mi">3</span><span class="p">)</span> <span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="n">ERR</span> <span class="n">value</span> <span class="n">is</span> <span class="n">not</span> <span class="n">an</span> <span class="n">integer</span> <span class="n">or</span> <span class="n">out</span> <span class="n">of</span> <span class="n">range</span>
+</pre></div>
+
+
+<h2 id="_9">锁</h2>
+<p>Redis的事务会出现锁冲突</p>
+<h3 id="_10">悲观锁</h3>
+<p>Pessimistic Lock </p>
+<p>每次去拿数据的时候都认为别人会修改，所以每次都上锁</p>
+<p>类似于创痛关系型数据库里面的行锁，表锁，读锁，写锁等</p>
+<h3 id="redis_2">乐观锁 (redis)</h3>
+<p>Optimistic Lock</p>
+<p>每次拿数据的时候，都认为别人不会修改，所以不会上锁</p>
+<p>可以使用版本号机制，判断此期间是否有别人更新这个数据</p>
+<p>适用于多读的应用类型，提高了吞吐量</p>
+<p>Redis利用这种check and set机制实现事务</p>
+<h3 id="watch">watch</h3>
+<p>在multi之前，先执行<code>watch key1 [key2]</code>可以监听一个或者多个key，如果在事务执行之前，这个key被其他命令锁改动，那么事务将会被打断</p>
+<div class="hlcode"><pre><span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">set</span> <span class="n">balance</span> <span class="mi">0</span>
+<span class="n">OK</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">watch</span> <span class="n">balance</span>
+<span class="n">OK</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">multi</span>
+<span class="n">OK</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">decrby</span> <span class="n">balance</span> <span class="mi">10</span>
+<span class="n">QUEUED</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">incrby</span> <span class="n">debt</span> <span class="mi">10</span>
+<span class="n">QUEUED</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">6379</span><span class="o">&gt;</span> <span class="n">exec</span>
+<span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="n">integer</span><span class="p">)</span> <span class="o">-</span><span class="mi">10</span>
+<span class="mi">2</span><span class="p">)</span> <span class="p">(</span><span class="n">integer</span><span class="p">)</span> <span class="mi">10</span>
+</pre></div>
+
+
+<h3 id="unwatch">unwatch</h3>
+<p>取消watch对所有key的监视 </p>
+<p>若watch之后，先执行了exec或者discard，就无需unwatch了</p>
+<h1 id="redis_3">Redis 持久化</h1>
+<h2 id="rdb">RDB</h2>
+<p>Redis Database</p>
+<p>在指定时间间隔内，将内存中的数据集快照写入磁盘形成快照，恢复的时候将快照文件写入内存中</p>
+<p>退出redis-cli，会在当前目录下生成rdb文件，可以修改redis.conf文件进行修改</p>
+<div class="hlcode"><pre><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span><span class="p">.</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span>   <span class="mi">77</span> <span class="n">Mar</span>  <span class="mi">1</span> <span class="mi">14</span><span class="o">:</span><span class="mo">02</span> <span class="n">dump</span><span class="p">.</span><span class="n">rdb</span>
+</pre></div>
+
+
+<h3 id="_11">保存</h3>
+<p>可以使用save命令手动保存</p>
+<div class="hlcode"><pre><span class="n">save</span> <span class="mi">900</span> <span class="mi">1</span>      <span class="err">#</span> <span class="mi">900</span><span class="n">s</span><span class="err">内至少一个</span><span class="n">key</span><span class="err">发生变化，会持久化一次</span>
+<span class="n">save</span> <span class="mi">300</span> <span class="mi">10</span>     <span class="err">#</span> <span class="mi">300</span><span class="n">s</span><span class="err">内至少</span><span class="mi">10</span><span class="err">个</span><span class="n">key</span><span class="err">发生变化，会持久化一次</span>
+<span class="n">save</span> <span class="mi">60</span> <span class="mi">10000</span>   <span class="err">#</span> <span class="mi">60</span><span class="n">s</span><span class="err">内至少</span><span class="mi">10000</span><span class="err">个</span><span class="n">key</span><span class="err">发生变化，会持久化一次</span>
+</pre></div>
+
+
+<p>save命令只负责保存，其他不管会全部阻塞，所以需要使用bgsave命令操作</p>
+<h3 id="_12">备份</h3>
+<p>Redis会单独fork一个子进程来进行持久化，会将数据写入到一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件</p>
+<p>整个过程主进程不进行任何IO操作</p>
+<p>RDB方式比AOF方式更加高效</p>
+<p>缺点是最后一次持久化后的数据可能丢失</p>
+<p>先查看config中dir的路径，将rdb文件复制到别的地方即可完成备份操作</p>
+<h3 id="_13">恢复</h3>
+<p>关闭redis</p>
+<p>把备份文件复制到工作目录下</p>
+<p>启动redis即可完成恢复</p>
+<h2 id="aof">AOF</h2>
+<p>Append Of File</p>
+<p>以日志的形式来记录每个写操作，将Redis执行过的所有写指令记录下来，在Redis启动初会去根据该文件执行一次完成数据恢复</p>
+<p>默认不开启，需要手动在配置文件中设置</p>
+<p>保存路径与RDB一致</p>
+<div class="hlcode"><pre><span class="n">appendonly</span> <span class="n">yes</span> <span class="err">#默认为</span><span class="n">no</span>
+<span class="n">appendfilename</span> <span class="s">&quot;appendonly.aof&quot;</span>
+</pre></div>
+
+
+<p>遇到AOF文件损坏，使用下面命令恢复</p>
+<div class="hlcode"><pre><span class="n">redis</span><span class="o">-</span><span class="n">check</span><span class="o">-</span><span class="n">aof</span> <span class="o">--</span><span class="n">fix</span> <span class="n">appendonly</span><span class="p">.</span><span class="n">aof</span>
+</pre></div>
+
+
+<h3 id="_14">同步</h3>
+<p>配置同步参数</p>
+<div class="hlcode"><pre><span class="n">appendfsync</span> <span class="n">always</span>      <span class="err">#始终同步，每次</span><span class="n">redis</span><span class="err">都会立刻写入日志</span>
+<span class="n">appendfsync</span> <span class="n">everysec</span>    <span class="err">#每秒同步，每秒记录日志</span>
+<span class="n">appendfsync</span> <span class="n">no</span>              <span class="err">#不主动进行同步，把同步时机交给操作系统</span>
+</pre></div>
+
+
+<h1 id="redis_4">Redis 主从复制</h1>
+<div class="hlcode"><pre><span class="n">vim</span> <span class="n">redis</span><span class="p">.</span><span class="n">conf</span>
+
+<span class="n">include</span> <span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">myredis</span><span class="o">/</span><span class="n">redis</span><span class="p">.</span><span class="n">conf</span>
+<span class="n">pidfile</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">redis_6379</span><span class="p">.</span><span class="n">pid</span>
+<span class="n">port</span> <span class="mi">6379</span>
+<span class="n">dbfilename</span> <span class="n">dump6379</span><span class="p">.</span><span class="n">rdb</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">info</span> <span class="n">replication</span> 
+<span class="n">f</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

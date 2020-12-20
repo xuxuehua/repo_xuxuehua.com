@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>log4j - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java_core_classes">Java_core_classes</a>&nbsp;&#187;&nbsp;log4j
+    <span class="updated">Page Updated&nbsp;
+      2019-10-25 07:11
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">log4j</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#log4j">Log4j</a><ul>
+<li><a href="#_1">架构</a></li>
+<li><a href="#_2">安装</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="log4j">Log4j</h1>
+<p>Commons Logging，可以作为“日志接口”来使用。而真正的“日志实现”可以使用Log4j</p>
+<h2 id="_1">架构</h2>
+<p>Log4j是一个组件化设计的日志系统，它的架构大致如下：</p>
+<div class="hlcode"><pre><span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;User signed in.&quot;</span><span class="p">);</span>
+ <span class="err">│</span>
+ <span class="err">│</span>   <span class="err">┌──────────┐</span>    <span class="err">┌──────────┐</span>    <span class="err">┌──────────┐</span>    <span class="err">┌──────────┐</span>
+ <span class="err">├──</span><span class="o">&gt;</span><span class="err">│</span> <span class="n">Appender</span> <span class="err">│───</span><span class="o">&gt;</span><span class="err">│</span>  <span class="n">Filter</span>  <span class="err">│───</span><span class="o">&gt;</span><span class="err">│</span>  <span class="n">Layout</span>  <span class="err">│───</span><span class="o">&gt;</span><span class="err">│</span> <span class="n">Console</span>  <span class="err">│</span>
+ <span class="err">│</span>   <span class="err">└──────────┘</span>    <span class="err">└──────────┘</span>    <span class="err">└──────────┘</span>    <span class="err">└──────────┘</span>
+ <span class="err">│</span>
+ <span class="err">│</span>   <span class="err">┌──────────┐</span>    <span class="err">┌──────────┐</span>    <span class="err">┌──────────┐</span>    <span class="err">┌──────────┐</span>
+ <span class="err">├──</span><span class="o">&gt;</span><span class="err">│</span> <span class="n">Appender</span> <span class="err">│───</span><span class="o">&gt;</span><span class="err">│</span>  <span class="n">Filter</span>  <span class="err">│───</span><span class="o">&gt;</span><span class="err">│</span>  <span class="n">Layout</span>  <span class="err">│───</span><span class="o">&gt;</span><span class="err">│</span>   <span class="n">File</span>   <span class="err">│</span>
+ <span class="err">│</span>   <span class="err">└──────────┘</span>    <span class="err">└──────────┘</span>    <span class="err">└──────────┘</span>    <span class="err">└──────────┘</span>
+ <span class="err">│</span>
+ <span class="err">│</span>   <span class="err">┌──────────┐</span>    <span class="err">┌──────────┐</span>    <span class="err">┌──────────┐</span>    <span class="err">┌──────────┐</span>
+ <span class="err">└──</span><span class="o">&gt;</span><span class="err">│</span> <span class="n">Appender</span> <span class="err">│───</span><span class="o">&gt;</span><span class="err">│</span>  <span class="n">Filter</span>  <span class="err">│───</span><span class="o">&gt;</span><span class="err">│</span>  <span class="n">Layout</span>  <span class="err">│───</span><span class="o">&gt;</span><span class="err">│</span>  <span class="n">Socket</span>  <span class="err">│</span>
+     <span class="err">└──────────┘</span>    <span class="err">└──────────┘</span>    <span class="err">└──────────┘</span>    <span class="err">└──────────┘</span>
+</pre></div>
+
+
+<p>使用Log4j输出一条日志时，Log4j自动通过不同的Appender把同一条日志输出到不同的目的地。例如：</p>
+<ul>
+<li>console：输出到屏幕；</li>
+<li>file：输出到文件；</li>
+<li>socket：通过网络输出到远程计算机；</li>
+<li>jdbc：输出到数据库</li>
+</ul>
+<p>在输出日志的过程中，通过Filter来过滤哪些log需要被输出，哪些log不需要被输出。例如，仅输出<code>ERROR</code>级别的日志。</p>
+<p>最后，通过Layout来格式化日志信息，例如，自动添加日期、时间、方法名称等信息。</p>
+<h2 id="_2">安装</h2>
+<p>把一个<code>log4j2.xml</code>的文件放到<code>classpath</code>下就可以让Log4j读取配置文件并按照我们的配置来输出日志</p>
+<div class="hlcode"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="nt">&lt;Configuration&gt;</span>
+    <span class="nt">&lt;Properties&gt;</span>
+        <span class="c">&lt;!-- 定义日志格式 --&gt;</span>
+        <span class="nt">&lt;Property</span> <span class="na">name=</span><span class="s">&quot;log.pattern&quot;</span><span class="nt">&gt;</span>%d{MM-dd HH:mm:ss.SSS} <span class="cp">[</span><span class="o">%</span><span class="nb">t</span><span class="cp">]</span> %-5level %logger{36}%n%msg%n%n<span class="nt">&lt;/Property&gt;</span>
+        <span class="c">&lt;!-- 定义文件名变量 --&gt;</span>
+        <span class="nt">&lt;Property</span> <span class="na">name=</span><span class="s">&quot;file.err.filename&quot;</span><span class="nt">&gt;</span>log/err.log<span class="nt">&lt;/Property&gt;</span>
+        <span class="nt">&lt;Property</span> <span class="na">name=</span><span class="s">&quot;file.err.pattern&quot;</span><span class="nt">&gt;</span>log/err.%i.log.gz<span class="nt">&lt;/Property&gt;</span>
+    <span class="nt">&lt;/Properties&gt;</span>
+    <span class="c">&lt;!-- 定义Appender，即目的地 --&gt;</span>
+    <span class="nt">&lt;Appenders&gt;</span>
+        <span class="c">&lt;!-- 定义输出到屏幕 --&gt;</span>
+        <span class="nt">&lt;Console</span> <span class="na">name=</span><span class="s">&quot;console&quot;</span> <span class="na">target=</span><span class="s">&quot;SYSTEM_OUT&quot;</span><span class="nt">&gt;</span>
+            <span class="c">&lt;!-- 日志格式引用上面定义的log.pattern --&gt;</span>
+            <span class="nt">&lt;PatternLayout</span> <span class="na">pattern=</span><span class="s">&quot;${log.pattern}&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/Console&gt;</span>
+        <span class="c">&lt;!-- 定义输出到文件,文件名引用上面定义的file.err.filename --&gt;</span>
+        <span class="nt">&lt;RollingFile</span> <span class="na">name=</span><span class="s">&quot;err&quot;</span> <span class="na">bufferedIO=</span><span class="s">&quot;true&quot;</span> <span class="na">fileName=</span><span class="s">&quot;${file.err.filename}&quot;</span> <span class="na">filePattern=</span><span class="s">&quot;${file.err.pattern}&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;PatternLayout</span> <span class="na">pattern=</span><span class="s">&quot;${log.pattern}&quot;</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;Policies&gt;</span>
+                <span class="c">&lt;!-- 根据文件大小自动切割日志 --&gt;</span>
+                <span class="nt">&lt;SizeBasedTriggeringPolicy</span> <span class="na">size=</span><span class="s">&quot;1 MB&quot;</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;/Policies&gt;</span>
+            <span class="c">&lt;!-- 保留最近10份 --&gt;</span>
+            <span class="nt">&lt;DefaultRolloverStrategy</span> <span class="na">max=</span><span class="s">&quot;10&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/RollingFile&gt;</span>
+    <span class="nt">&lt;/Appenders&gt;</span>
+    <span class="nt">&lt;Loggers&gt;</span>
+        <span class="nt">&lt;Root</span> <span class="na">level=</span><span class="s">&quot;info&quot;</span><span class="nt">&gt;</span>
+            <span class="c">&lt;!-- 对info级别的日志，输出到console --&gt;</span>
+            <span class="nt">&lt;AppenderRef</span> <span class="na">ref=</span><span class="s">&quot;console&quot;</span> <span class="na">level=</span><span class="s">&quot;info&quot;</span> <span class="nt">/&gt;</span>
+            <span class="c">&lt;!-- 对error级别的日志，输出到err，即上面定义的RollingFile --&gt;</span>
+            <span class="nt">&lt;AppenderRef</span> <span class="na">ref=</span><span class="s">&quot;err&quot;</span> <span class="na">level=</span><span class="s">&quot;error&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/Root&gt;</span>
+    <span class="nt">&lt;/Loggers&gt;</span>
+<span class="nt">&lt;/Configuration&gt;</span>
+</pre></div>
+
+
+<p>因为Log4j也是一个第三方库， 下载</p>
+<div class="hlcode"><pre><span class="nl">https:</span><span class="c1">//logging.apache.org/log4j/2.x/download.html</span>
+</pre></div>
+
+
+<p>解压后，把以下3个jar包放到<code>classpath</code>中：</p>
+<ul>
+<li>log4j-api-2.x.jar</li>
+<li>log4j-core-2.x.jar</li>
+<li>log4j-jcl-2.x.jar</li>
+</ul>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

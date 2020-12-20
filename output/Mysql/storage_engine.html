@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>storage_engine - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Mysql">Mysql</a>&nbsp;&#187;&nbsp;storage_engine
+    <span class="updated">Page Updated&nbsp;
+      2018-12-30 11:31
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">storage_engine</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">查看引擎</a></li>
+<li><a href="#innodb">INNODB</a><ul>
+<li><a href="#_2">使用方式</a></li>
+<li><a href="#_3">特点</a></li>
+</ul>
+</li>
+<li><a href="#myisam">MyISAM</a><ul>
+<li><a href="#_4">文件</a></li>
+<li><a href="#_5">特性</a></li>
+<li><a href="#_6">行格式</a></li>
+</ul>
+</li>
+<li><a href="#_7">其他存储引擎</a><ul>
+<li><a href="#csv">CSV</a></li>
+<li><a href="#mrg_myisam">MRG_MyISAM</a></li>
+<li><a href="#blackhole">BLACKHOLE</a></li>
+<li><a href="#memory">MEMORY</a></li>
+<li><a href="#preformance_schema">PREFORMANCE_SCHEMA</a></li>
+<li><a href="#archive">ARCHIVE</a></li>
+<li><a href="#federated">FEDERATED</a></li>
+<li><a href="#mariadb">MariaDB还支持的</a><ul>
+<li><a href="#oqgraph">OQGraph</a></li>
+<li><a href="#sphinxse">SphinxSE</a></li>
+<li><a href="#tokudb">TokuDB</a></li>
+<li><a href="#cassandra">Cassandra</a></li>
+<li><a href="#connect">CONNECT</a></li>
+<li><a href="#squence">SQUENCE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">查看引擎</h1>
+<p>查看支持的引擎</p>
+<div class="hlcode"><pre><span class="n">show</span> <span class="n">engines</span><span class="p">;</span>
+</pre></div>
+
+
+<p>查看当前的引擎</p>
+<div class="hlcode"><pre><span class="n">show</span> <span class="n">variables</span> <span class="n">like</span> <span class="err">&#39;</span><span class="o">%</span><span class="n">storage_engine</span><span class="o">%</span><span class="err">&#39;</span><span class="p">;</span>
+</pre></div>
+
+
+<h1 id="innodb">INNODB</h1>
+<p>用于处理大量的短期事务，数据存储于表空间table space中</p>
+<p>MyISAM 不能保证系统奔溃后可以恢复</p>
+<h2 id="_2">使用方式</h2>
+<p>所有InnoDB表的数据和索引放置于同一个表空间中，不方便操作及其备份</p>
+<div class="hlcode"><pre><span class="n">datadir</span><span class="err">定义的目录下</span>
+<span class="n">ibddata1</span><span class="p">,</span><span class="n">ibddata2</span><span class="p">,</span> <span class="p">...</span>
+</pre></div>
+
+
+<p>数据文件（存储数据和索引）命名</p>
+<div class="hlcode"><pre><span class="n">tbl_name</span><span class="p">.</span><span class="n">ibd</span> 
+</pre></div>
+
+
+<p>每个表单单独使用一个表空间存储表的数据和引擎</p>
+<div class="hlcode"><pre><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">GLOBAL</span> <span class="n">VARIABLES</span> <span class="n">LIKE</span> <span class="s">&quot;innodb_file%&quot;</span><span class="p">;</span>
+<span class="o">+--------------------------+-----------+</span>
+<span class="o">|</span> <span class="n">Variable_name</span>            <span class="o">|</span> <span class="n">Value</span>     <span class="o">|</span>
+<span class="o">+--------------------------+-----------+</span>
+<span class="o">|</span> <span class="n">innodb_file_format</span>       <span class="o">|</span> <span class="n">Barracuda</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">innodb_file_format_check</span> <span class="o">|</span> <span class="n">ON</span>        <span class="o">|</span>
+<span class="o">|</span> <span class="n">innodb_file_format_max</span>   <span class="o">|</span> <span class="n">Barracuda</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">innodb_file_per_table</span>    <span class="o">|</span> <span class="n">ON</span>        <span class="o">|</span>
+<span class="o">+--------------------------+-----------+</span>
+<span class="mi">4</span> <span class="n">rows</span> <span class="n">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.01</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">innodb_file_per_table</span><span class="o">=</span><span class="n">ON</span>
+</pre></div>
+
+
+<p>表格式定义</p>
+<div class="hlcode"><pre><span class="n">tbl_name</span><span class="p">.</span><span class="n">frm</span>
+</pre></div>
+
+
+<h2 id="_3">特点</h2>
+<p>基于MVCC来支持高并发，支持所有4个隔离级别，默认级别为REPEATABLE READ；间隙锁防止幻读</p>
+<p>使用聚集索引方式</p>
+<p>性能通过，支持自适应hash索引，预计操作哦，插入缓存区等方法</p>
+<p>锁力度：行级别锁</p>
+<h1 id="myisam">MyISAM</h1>
+<p>支持全文索引（FULLTEXT index），压缩，空间函数（GIS），但不支持事务，且为表级别锁</p>
+<p>崩溃后无法安全恢复（MariaDB 使用Aria 存储引擎， crash-safe）</p>
+<h2 id="_4">文件</h2>
+<div class="hlcode"><pre><span class="n">tbl_name</span><span class="p">.</span><span class="n">frm</span>    <span class="err">表格式定义</span>
+<span class="n">tbl_name</span><span class="p">.</span><span class="n">MYD</span>    <span class="err">数据文件</span>
+<span class="n">tbl_name</span><span class="p">.</span><span class="n">MYI</span>    <span class="err">索引文件</span>
+</pre></div>
+
+
+<h2 id="_5">特性</h2>
+<p>加锁和并发，表级锁</p>
+<p>修复：手工或自动修复，但可能丢失数据</p>
+<p>索引：非聚集索引</p>
+<p>延迟更新索引键</p>
+<p>压缩表</p>
+<h2 id="_6">行格式</h2>
+<div class="hlcode"><pre><span class="n">dynamic</span><span class="p">,</span> <span class="n">fixed</span><span class="p">,</span> <span class="n">compressed</span><span class="p">,</span> <span class="n">compact</span><span class="p">,</span> <span class="n">redundent</span>
+</pre></div>
+
+
+<h1 id="_7">其他存储引擎</h1>
+<h2 id="csv">CSV</h2>
+<p>将普通的CSV(字段通过逗号分隔)作为MySQL表使用</p>
+<h2 id="mrg_myisam">MRG_MyISAM</h2>
+<p>将多个MyISAM表合并成为一个虚拟表</p>
+<h2 id="blackhole">BLACKHOLE</h2>
+<p>类似于/dev/null， 不真正存储任何数据</p>
+<h2 id="memory">MEMORY</h2>
+<p>所有数据都保存于内存中，</p>
+<p>内存表：支持hash索引，表级锁</p>
+<p>可以作为临时表</p>
+<h2 id="preformance_schema">PREFORMANCE_SCHEMA</h2>
+<p>伪存储引擎</p>
+<h2 id="archive">ARCHIVE</h2>
+<p>只支持SELECT和INSERT操作</p>
+<p>支持行级锁和专用缓存区</p>
+<h2 id="federated">FEDERATED</h2>
+<p>用于访问其他远程MySQL服务器的一个代理，通过创建一个到远程MySQL服务器的客户端连接，并将查询传输到远程服务器执行，而后完成数据存储</p>
+<p>在MariaDB上实现的是FederatedX</p>
+<h2 id="mariadb">MariaDB还支持的</h2>
+<h3 id="oqgraph">OQGraph</h3>
+<h3 id="sphinxse">SphinxSE</h3>
+<p>可以全文搜索，常用于企业内部的搜索引擎</p>
+<h3 id="tokudb">TokuDB</h3>
+<p>可以存储大量数据</p>
+<h3 id="cassandra">Cassandra</h3>
+<p>NoSQL的一种</p>
+<h3 id="connect">CONNECT</h3>
+<h3 id="squence">SQUENCE</h3>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

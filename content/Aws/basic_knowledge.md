@@ -80,7 +80,9 @@ Independent Geographic Area
 
 
 
+# Database
 
+![image-20201203104952720](basic_knowledge.assets/image-20201203104952720.png)
 
 # Terminology
 
@@ -141,6 +143,14 @@ Which can store any blob of data or files, videos, images, PDFs, text, documents
 
 
 
+
+
+
+
+
+# Knowldege Center
+
+https://aws.amazon.com/premiumsupport/knowledge-center
 
 
 

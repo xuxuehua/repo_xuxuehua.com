@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>platform - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;platform
+    <span class="updated">Page Updated&nbsp;
+      2018-10-09 00:22
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">platform</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#platform">platform</a><ul>
+<li><a href="#platform_1">platform()</a></li>
+<li><a href="#system">system()</a></li>
+<li><a href="#version">version()</a></li>
+<li><a href="#machine">machine()</a></li>
+<li><a href="#node">node()</a></li>
+<li><a href="#processor">processor()</a></li>
+<li><a href="#uname">uname()</a></li>
+<li><a href="#python_build">python_build()</a></li>
+<li><a href="#python_version">python_version()</a></li>
+<li><a href="#python_compiler">python_compiler()</a></li>
+<li><a href="#python_branch">python_branch()</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="platform">platform</h1>
+<h2 id="platform_1">platform()</h2>
+<p>获取操作系统类型</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">25</span><span class="p">]</span><span class="o">:</span> <span class="n">platform</span><span class="p">.</span><span class="n">platform</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">25</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">Darwin</span><span class="o">-</span><span class="mf">17.7.0</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">i386</span><span class="o">-</span><span class="mi">64</span><span class="n">bit</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="system">system()</h2>
+<p>获取平台系统信息</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">26</span><span class="p">]</span><span class="o">:</span> <span class="n">platform</span><span class="p">.</span><span class="n">system</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">26</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">Darwin</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="version">version()</h2>
+<p>操作系统版本</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">27</span><span class="p">]</span><span class="o">:</span> <span class="n">platform</span><span class="p">.</span><span class="n">version</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">Darwin</span> <span class="n">Kernel</span> <span class="n">Version</span> <span class="mf">17.7.0</span><span class="o">:</span> <span class="n">Thu</span> <span class="n">Jun</span> <span class="mi">21</span> <span class="mi">22</span><span class="o">:</span><span class="mi">53</span><span class="o">:</span><span class="mi">14</span> <span class="n">PDT</span> <span class="mi">2018</span><span class="p">;</span> <span class="n">root</span><span class="o">:</span><span class="n">xnu</span><span class="o">-</span><span class="mf">4570.71.2</span><span class="o">~</span><span class="mi">1</span><span class="o">/</span><span class="n">RELEASE_X86_64</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="machine">machine()</h2>
+<p>计算机类型</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">28</span><span class="p">]</span><span class="o">:</span> <span class="n">platform</span><span class="p">.</span><span class="n">machine</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">28</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">x86_64</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="node">node()</h2>
+<p>计算机网络名称</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">29</span><span class="p">]</span><span class="o">:</span> <span class="n">platform</span><span class="p">.</span><span class="n">node</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">29</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">xhxu</span><span class="o">-</span><span class="n">mac</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="processor">processor()</h2>
+<p>处理器信息</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">30</span><span class="p">]</span><span class="o">:</span> <span class="n">platform</span><span class="p">.</span><span class="n">processor</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">30</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">i386</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="uname">uname()</h2>
+<p>综合信息</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">31</span><span class="p">]</span><span class="o">:</span> <span class="n">platform</span><span class="p">.</span><span class="n">uname</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">31</span><span class="p">]</span><span class="o">:</span> <span class="n">uname_result</span><span class="p">(</span><span class="n">system</span><span class="o">=</span><span class="err">&#39;</span><span class="n">Darwin</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="err">&#39;</span><span class="n">xhxu</span><span class="o">-</span><span class="n">mac</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">release</span><span class="o">=</span><span class="err">&#39;</span><span class="mf">17.7.0</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="err">&#39;</span><span class="n">Darwin</span> <span class="n">Kernel</span> <span class="n">Version</span> <span class="mf">17.7.0</span><span class="o">:</span> <span class="n">Thu</span> <span class="n">Jun</span> <span class="mi">21</span> <span class="mi">22</span><span class="o">:</span><span class="mi">53</span><span class="o">:</span><span class="mi">14</span> <span class="n">PDT</span> <span class="mi">2018</span><span class="p">;</span> <span class="n">root</span><span class="o">:</span><span class="n">xnu</span><span class="o">-</span><span class="mf">4570.71.2</span><span class="o">~</span><span class="mi">1</span><span class="o">/</span><span class="n">RELEASE_X86_64</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">machine</span><span class="o">=</span><span class="err">&#39;</span><span class="n">x86_64</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">processor</span><span class="o">=</span><span class="err">&#39;</span><span class="n">i386</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="python_build">python_build()</h2>
+<p>python 版本信息</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="o">:</span> <span class="n">platform</span><span class="p">.</span><span class="n">python_build</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="o">:</span> <span class="p">(</span><span class="err">&#39;</span><span class="k">default</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Apr</span> <span class="mi">20</span> <span class="mi">2017</span> <span class="mi">15</span><span class="o">:</span><span class="mi">39</span><span class="o">:</span><span class="mi">30</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="python_version">python_version()</h2>
+<p>Python主版本信息</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">33</span><span class="p">]</span><span class="o">:</span> <span class="n">platform</span><span class="p">.</span><span class="n">python_version</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">33</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mf">3.5.3</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="python_compiler">python_compiler()</h2>
+<p>Python编译器信息</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">34</span><span class="p">]</span><span class="o">:</span> <span class="n">platform</span><span class="p">.</span><span class="n">python_compiler</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">34</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">GCC</span> <span class="mf">4.2.1</span> <span class="n">Compatible</span> <span class="n">Apple</span> <span class="n">LLVM</span> <span class="mf">8.1.0</span> <span class="p">(</span><span class="n">clang</span><span class="o">-</span><span class="mf">802.0.38</span><span class="p">)</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="python_branch">python_branch()</h2>
+<p>获取Python的分支情况</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">35</span><span class="p">]</span><span class="o">:</span> <span class="n">platform</span><span class="p">.</span><span class="n">python_branch</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">35</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;&#39;</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

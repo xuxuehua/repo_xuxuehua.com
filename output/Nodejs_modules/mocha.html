@@ -1,0 +1,424 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>mocha - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Nodejs_modules">Nodejs_modules</a>&nbsp;&#187;&nbsp;mocha
+    <span class="updated">Page Updated&nbsp;
+      2018-08-08 01:25
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">mocha</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#mocha">Mocha</a><ul>
+<li><a href="#_1">单元测试</a></li>
+<li><a href="#mocha_1">Mocha 特点</a><ul>
+<li><a href="#assert">assert模块</a></li>
+</ul>
+</li>
+<li><a href="#mocha-test">mocha test</a><ul>
+<li><a href="#_2">运行测试</a><ul>
+<li><a href="#_3">方法一</a></li>
+<li><a href="#_4">方法二</a></li>
+</ul>
+</li>
+<li><a href="#beforeafter">before和after</a></li>
+</ul>
+</li>
+<li><a href="#_5">异步测试</a><ul>
+<li><a href="#_6">第一种方法</a></li>
+<li><a href="#_7">第二种方法</a></li>
+</ul>
+</li>
+<li><a href="#http">Http测试</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="mocha">Mocha</h1>
+<h2 id="_1">单元测试</h2>
+<p>单元测试是用来对一个模块、一个函数或者一个类来进行正确性检验的测试工作。</p>
+<p>以测试为驱动的开发模式最大的好处就是确保一个程序模块的行为符合我们设计的测试用例。在将来修改的时候，可以极大程度地保证该模块行为仍然是正确的。</p>
+<h2 id="mocha_1">Mocha 特点</h2>
+<p>mocha是JavaScript的一种单元测试框架，既可以在浏览器环境下运行，也可以在Node.js环境下运行。</p>
+<p>使用mocha，我们就只需要专注于编写单元测试本身，然后，让mocha去自动运行所有的测试，并给出测试结果。</p>
+<p>mocha的特点主要有：</p>
+<ol>
+<li>既可以测试简单的JavaScript函数，又可以测试异步代码，因为异步是JavaScript的特性之一；</li>
+<li>可以自动运行所有测试，也可以只运行特定的测试；</li>
+<li>可以支持before、after、beforeEach和afterEach来编写初始化代码。</li>
+</ol>
+<h3 id="assert">assert模块</h3>
+<p>package.json</p>
+<div class="hlcode"><pre><span class="p">{</span>
+  <span class="s">&quot;name&quot;</span><span class="o">:</span> <span class="s">&quot;hello-mocha&quot;</span><span class="p">,</span>
+  <span class="s">&quot;version&quot;</span><span class="o">:</span> <span class="s">&quot;0.0.1&quot;</span><span class="p">,</span>
+  <span class="s">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s">&quot;assert&quot;</span><span class="o">:</span> <span class="s">&quot;^1.4.1&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Hello.js</p>
+<div class="hlcode"><pre><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(...</span><span class="nx">rest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">n</span> <span class="nx">of</span> <span class="nx">rest</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">n</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">sum</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>test.js</p>
+<div class="hlcode"><pre><span class="k">const</span> <span class="n">assert</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="err">&#39;</span><span class="n">assert</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="k">const</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="err">&#39;</span><span class="p">.</span><span class="o">/</span><span class="n">hello</span><span class="err">&#39;</span><span class="p">);</span>
+
+<span class="n">assert</span><span class="p">.</span><span class="n">strictEqual</span><span class="p">(</span><span class="n">sum</span><span class="p">(),</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">.</span><span class="n">strictEqual</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">.</span><span class="n">strictEqual</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">.</span><span class="n">strictEqual</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">6</span><span class="p">);</span>
+</pre></div>
+
+
+<p><code>assert</code>模块非常简单，它断言一个表达式为true。如果断言失败，就抛出Error。可以在Node.js文档中查看<code>assert</code>模块的<a href="https://nodejs.org/dist/latest/docs/api/assert.html">所有API</a>。</p>
+<p>单独写一个<code>test.js</code>的缺点是没法自动运行测试，而且，如果第一个assert报错，后面的测试也执行不了了。</p>
+<p>如果有很多测试需要运行，就必须把这些测试全部组织起来，然后统一执行，并且得到执行结果。这就是我们为什么要用mocha来编写并运行测试。</p>
+<h2 id="mocha-test">mocha test</h2>
+<div class="hlcode"><pre>hello<span class="o">-</span>test<span class="o">/</span>
+<span class="o">|</span>
+<span class="o">+-</span> .vscode<span class="o">/</span>
+<span class="o">|</span>  <span class="o">|</span>
+<span class="o">|</span>  <span class="o">+-</span> launch.json <span class="o">&lt;--</span> VSCode 配置文件
+<span class="o">|</span>
+<span class="o">+-</span> hello.js <span class="o">&lt;--</span> 待测试js文件
+<span class="o">|</span>
+<span class="o">+-</span> test<span class="o">/</span> <span class="o">&lt;--</span> 存放所有test
+｜ ｜
+<span class="o">|</span>  <span class="o">+-</span> hello<span class="o">-</span>test.js <span class="o">&lt;--</span> 测试文件
+<span class="o">|</span>
+<span class="o">+-</span> package.json <span class="o">&lt;--</span> 项目描述文件
+<span class="o">|</span>
+<span class="o">+-</span> node_modules<span class="o">/</span> <span class="o">&lt;--</span> npm安装的所有依赖包
+</pre></div>
+
+
+<p>如果一个模块在运行的时候并不需要，仅仅在开发时才需要，就可以放到<code>devDependencies</code>中。这样，正式打包发布时，<code>devDependencies</code>的包不会被包含进来。</p>
+<p>package.json</p>
+<div class="hlcode"><pre><span class="p">{</span>
+  <span class="s">&quot;name&quot;</span><span class="o">:</span> <span class="s">&quot;hello-mocha&quot;</span><span class="p">,</span>
+  <span class="s">&quot;version&quot;</span><span class="o">:</span> <span class="s">&quot;0.0.1&quot;</span><span class="p">,</span>
+  <span class="s">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s">&quot;assert&quot;</span><span class="o">:</span> <span class="s">&quot;^1.4.1&quot;</span>
+  <span class="p">},</span>
+  <span class="s">&quot;devDependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s">&quot;mocha&quot;</span><span class="o">:</span> <span class="s">&quot;^5.2.0&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>使用<code>npm install</code>安装, 不要用命令<code>npm install -g mocha</code>把mocha安装到全局module中。这是不需要的。尽量不要安装全局模块，因为全局模块会影响到所有Node.js的工程。</p>
+<p>mocha默认会执行<code>test</code>目录下的所有测试，不要去改变默认目录。</p>
+<p>test/hello-test.js</p>
+<div class="hlcode"><pre><span class="k">const</span> <span class="n">assert</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="err">&#39;</span><span class="n">assert</span><span class="err">&#39;</span><span class="p">);</span>
+
+<span class="k">const</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="err">&#39;</span><span class="p">..</span><span class="o">/</span><span class="n">hello</span><span class="err">&#39;</span><span class="p">);</span>
+
+<span class="n">describe</span><span class="p">(</span><span class="err">&#39;#</span><span class="n">hello</span><span class="p">.</span><span class="n">js</span><span class="err">&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="n">describe</span><span class="p">(</span><span class="err">&#39;#</span><span class="n">sum</span><span class="p">()</span><span class="err">&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="n">it</span><span class="p">(</span><span class="err">&#39;</span><span class="n">sum</span><span class="p">()</span> <span class="n">should</span> <span class="n">reture</span> <span class="mi">0</span><span class="err">&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="n">assert</span><span class="p">.</span><span class="n">strictEqual</span><span class="p">(</span><span class="n">sum</span><span class="p">(),</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="p">});</span>
+        <span class="n">it</span><span class="p">(</span><span class="err">&#39;</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="n">should</span> <span class="n">reture</span> <span class="mi">1</span><span class="err">&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="n">assert</span><span class="p">.</span><span class="n">strictEqual</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="p">});</span>
+        <span class="n">it</span><span class="p">(</span><span class="err">&#39;</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="n">should</span> <span class="n">reture</span> <span class="mi">3</span><span class="err">&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="n">assert</span><span class="p">.</span><span class="n">strictEqual</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">);</span>
+        <span class="p">});</span>
+        <span class="n">it</span><span class="p">(</span><span class="err">&#39;</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="n">should</span> <span class="n">reture</span> <span class="mi">6</span><span class="err">&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="n">assert</span><span class="p">.</span><span class="n">strictEqual</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">6</span><span class="p">);</span>
+        <span class="p">});</span>
+<span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<blockquote>
+<p>这里我们使用mocha默认的BDD-style的测试。<code>describe</code>可以任意嵌套，以便把相关测试看成一组测试。</p>
+<p>每个<code>it("name", function() {...})</code>就代表一个测试。</p>
+</blockquote>
+<h3 id="_2">运行测试</h3>
+<h4 id="_3">方法一</h4>
+<p>切换到<code>hello-test</code>目录，然后执行命令：</p>
+<div class="hlcode"><pre><span class="n">xhxu</span><span class="o">-</span><span class="n">mac</span><span class="o">:</span><span class="n">hello</span><span class="o">-</span><span class="n">mocha</span> <span class="n">xhxu</span><span class="err">$</span> <span class="p">.</span><span class="o">/</span><span class="n">node_modules</span><span class="o">/</span><span class="n">mocha</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">mocha</span>
+
+
+  <span class="err">#</span><span class="n">hello</span><span class="p">.</span><span class="n">js</span>
+    <span class="err">#</span><span class="n">sum</span><span class="p">()</span>
+      <span class="err">✓</span> <span class="n">sum</span><span class="p">()</span> <span class="n">should</span> <span class="n">reture</span> <span class="mi">0</span>
+      <span class="err">✓</span> <span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="n">should</span> <span class="n">reture</span> <span class="mi">1</span>
+      <span class="err">✓</span> <span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="n">should</span> <span class="n">reture</span> <span class="mi">3</span>
+      <span class="err">✓</span> <span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="n">should</span> <span class="n">reture</span> <span class="mi">6</span>
+
+
+  <span class="mi">4</span> <span class="n">passing</span> <span class="p">(</span><span class="mi">11</span><span class="n">ms</span><span class="p">)</span>
+</pre></div>
+
+
+<p>mocha就会自动执行所有测试</p>
+<h4 id="_4">方法二</h4>
+<p>我们在<code>package.json</code>中添加npm命令：</p>
+<div class="hlcode"><pre><span class="p">{</span>
+  <span class="p">...</span>
+
+  <span class="s">&quot;scripts&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s">&quot;test&quot;</span><span class="o">:</span> <span class="s">&quot;mocha&quot;</span>
+  <span class="p">},</span>
+
+  <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>然后在<code>hello-test</code>目录下执行命令：</p>
+<div class="hlcode"><pre><span class="n">xhxu</span><span class="o">-</span><span class="n">mac</span><span class="o">:</span><span class="n">hello</span><span class="o">-</span><span class="n">mocha</span> <span class="n">xhxu</span><span class="err">$</span> <span class="n">npm</span> <span class="n">test</span>
+
+<span class="o">&gt;</span> <span class="n">hello</span><span class="o">-</span><span class="n">mocha</span><span class="err">@</span><span class="mf">0.0.1</span> <span class="n">test</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">xhxu</span><span class="o">/</span><span class="n">nodejs</span><span class="o">/</span><span class="n">hello</span><span class="o">-</span><span class="n">mocha</span>
+<span class="o">&gt;</span> <span class="n">mocha</span>
+
+
+
+  <span class="err">#</span><span class="n">hello</span><span class="p">.</span><span class="n">js</span>
+    <span class="err">#</span><span class="n">sum</span><span class="p">()</span>
+      <span class="err">✓</span> <span class="n">sum</span><span class="p">()</span> <span class="n">should</span> <span class="n">reture</span> <span class="mi">0</span>
+      <span class="err">✓</span> <span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="n">should</span> <span class="n">reture</span> <span class="mi">1</span>
+      <span class="err">✓</span> <span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="n">should</span> <span class="n">reture</span> <span class="mi">3</span>
+      <span class="err">✓</span> <span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="n">should</span> <span class="n">reture</span> <span class="mi">6</span>
+
+
+  <span class="mi">4</span> <span class="n">passing</span> <span class="p">(</span><span class="mi">10</span><span class="n">ms</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="beforeafter">before和after</h3>
+<p>在测试前初始化资源，测试后释放资源是非常常见的。</p>
+<p>把<code>hello-test.js</code>改为：</p>
+<div class="hlcode"><pre><span class="kr">const</span> <span class="nx">assert</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;assert&#39;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">sum</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../hello&#39;</span><span class="p">);</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;#hello.js&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;#sum()&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">before</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;before:&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">after</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;after.&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;  beforeEach:&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">afterEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;  afterEach.&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;sum() should return 0&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nx">assert</span><span class="p">.</span><span class="nx">strictEqual</span><span class="p">(</span><span class="nx">sum</span><span class="p">(),</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;sum(1) should return 1&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nx">assert</span><span class="p">.</span><span class="nx">strictEqual</span><span class="p">(</span><span class="nx">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;sum(1, 2) should return 3&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nx">assert</span><span class="p">.</span><span class="nx">strictEqual</span><span class="p">(</span><span class="nx">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;sum(1, 2, 3) should return 6&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nx">assert</span><span class="p">.</span><span class="nx">strictEqual</span><span class="p">(</span><span class="nx">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">6</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>再次运行，可以看到每个test执行前后会分别执行<code>beforeEach()</code>和<code>afterEach()</code>，以及一组test执行前后会分别执行<code>before()</code>和<code>after()</code>：</p>
+<div class="hlcode"><pre>  <span class="err">#</span><span class="n">hello</span><span class="p">.</span><span class="n">js</span>
+    <span class="err">#</span><span class="n">sum</span><span class="p">()</span>
+<span class="nl">before:</span>
+  <span class="nl">beforeEach:</span>
+      <span class="err">✓</span> <span class="n">sum</span><span class="p">()</span> <span class="n">should</span> <span class="k">return</span> <span class="mi">0</span>
+  <span class="n">afterEach</span><span class="p">.</span>
+  <span class="nl">beforeEach:</span>
+      <span class="err">✓</span> <span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="n">should</span> <span class="k">return</span> <span class="mi">1</span>
+  <span class="n">afterEach</span><span class="p">.</span>
+  <span class="nl">beforeEach:</span>
+      <span class="err">✓</span> <span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="n">should</span> <span class="k">return</span> <span class="mi">3</span>
+  <span class="n">afterEach</span><span class="p">.</span>
+  <span class="nl">beforeEach:</span>
+      <span class="err">✓</span> <span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="n">should</span> <span class="k">return</span> <span class="mi">6</span>
+  <span class="n">afterEach</span><span class="p">.</span>
+<span class="n">after</span><span class="p">.</span>
+  <span class="mi">4</span> <span class="n">passing</span> <span class="p">(</span><span class="mi">8</span><span class="n">ms</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="_5">异步测试</h2>
+<h3 id="_6">第一种方法</h3>
+<p>目录结构</p>
+<div class="hlcode"><pre>async<span class="o">-</span>test<span class="o">/</span>
+<span class="o">|</span>
+<span class="o">+-</span> .vscode<span class="o">/</span>
+<span class="o">|</span>  <span class="o">|</span>
+<span class="o">|</span>  <span class="o">+-</span> launch.json <span class="o">&lt;--</span> VSCode 配置文件
+<span class="o">|</span>
+<span class="o">+-</span> hello.js <span class="o">&lt;--</span> 待测试js文件
+<span class="o">|</span>
+<span class="o">+-</span> data.txt <span class="o">&lt;--</span> 数据文件
+<span class="o">|</span>
+<span class="o">+-</span> test<span class="o">/</span> <span class="o">&lt;--</span> 存放所有test
+｜ ｜
+<span class="o">|</span>  <span class="o">+-</span> await<span class="o">-</span>test.js <span class="o">&lt;--</span> 异步测试
+<span class="o">|</span>
+<span class="o">+-</span> package.json <span class="o">&lt;--</span> 项目描述文件
+<span class="o">|</span>
+<span class="o">+-</span> node_modules<span class="o">/</span> <span class="o">&lt;--</span> npm安装的所有依赖包
+</pre></div>
+
+
+<p>在<code>package.json</code>中添加依赖包：</p>
+<div class="hlcode"><pre><span class="s">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s">&quot;mz&quot;</span><span class="o">:</span> <span class="s">&quot;2.4.0&quot;</span>
+<span class="p">},</span>
+</pre></div>
+
+
+<p>hello.js</p>
+<div class="hlcode"><pre>const fs = require(&#39;mz/fs&#39;);
+
+module.exports = async () =&gt; {
+    let expression = await fs.readFile(&#39;/data.txt&#39;, &#39;utf-8&#39;);
+    let fn = new Function(&#39;return &#39; + expression);
+    let r = fn();
+    console.log(`Calculate: <span class="cp">${</span><span class="n">expression</span><span class="cp">}</span> = <span class="cp">${</span><span class="n">r</span><span class="cp">}</span>`);
+    return r;
+};
+</pre></div>
+
+
+<p>await-test.js</p>
+<div class="hlcode"><pre><span class="kr">const</span> <span class="nx">assert</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;assert&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">hello</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../hello&#39;</span><span class="p">);</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;#async hello&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;#asyncCalculate()&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// function(done) {}</span>
+    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;#async with done&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="p">(</span><span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">hello</span><span class="p">();</span>
+            <span class="nx">assert</span><span class="p">.</span><span class="nx">strictEqual</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="mi">15</span><span class="p">);</span>
+            <span class="nx">done</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">})();</span>
+<span class="p">});</span>
+
+    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;#async function&#39;</span><span class="p">,</span> <span class="nx">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">hello</span><span class="p">();</span>
+    <span class="nx">assert</span><span class="p">.</span><span class="nx">strictEqual</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="mi">15</span><span class="p">);</span>
+<span class="p">});</span>
+
+    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;#sync function&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">assert</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>Result</p>
+<div class="hlcode"><pre><span class="nx">xhxu</span><span class="o">-</span><span class="nx">mac</span><span class="o">:</span><span class="nx">hello</span><span class="o">-</span><span class="nx">mocha</span><span class="o">-</span><span class="nx">async</span> <span class="nx">xhxu$</span> <span class="p">.</span><span class="o">/</span><span class="nx">node_modules</span><span class="o">/</span><span class="nx">mocha</span><span class="o">/</span><span class="nx">bin</span><span class="o">/</span><span class="nx">mocha</span>
+
+
+  <span class="err">#</span><span class="nx">async</span> <span class="nx">hello</span>
+    <span class="err">#</span><span class="nx">asyncCalculate</span><span class="p">()</span>
+<span class="nx">Calculate</span><span class="o">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">9</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">=</span> <span class="mi">15</span>
+      <span class="err">✓</span> <span class="err">#</span><span class="nx">async</span> <span class="kd">with</span> <span class="nx">done</span>
+<span class="nx">Calculate</span><span class="o">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">9</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">=</span> <span class="mi">15</span>
+      <span class="err">✓</span> <span class="err">#</span><span class="nx">async</span> <span class="kd">function</span>
+      <span class="err">✓</span> <span class="err">#</span><span class="nx">sync</span> <span class="kd">function</span>
+
+
+  <span class="mi">3</span> <span class="nx">passing</span> <span class="p">(</span><span class="mi">17</span><span class="nx">ms</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="_7">第二种方法</h3>
+<p>在<code>package.json</code>中把<code>script</code>改为：</p>
+<div class="hlcode"><pre><span class="s">&quot;scripts&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s">&quot;test&quot;</span><span class="o">:</span> <span class="s">&quot;mocha&quot;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>这样就可以在命令行窗口通过<code>npm test</code>执行测试。</p>
+<h2 id="http">Http测试</h2>
+<p>思路是在测试前启动koa的app，然后运行async测试，在测试代码中发送http请求，收到响应后检查结果，这样，一个基于http接口的测试就可以自动运行。</p>
+<p>结构如下：</p>
+<div class="hlcode"><pre>koa<span class="o">-</span>test<span class="o">/</span>
+<span class="o">|</span>
+<span class="o">+-</span> .vscode<span class="o">/</span>
+<span class="o">|</span>  <span class="o">|</span>
+<span class="o">|</span>  <span class="o">+-</span> launch.json <span class="o">&lt;--</span> VSCode 配置文件
+<span class="o">|</span>
+<span class="o">+-</span> app.js <span class="o">&lt;--</span> koa app文件
+<span class="o">|</span>
+<span class="o">+-</span> start.js <span class="o">&lt;--</span> app启动入口
+<span class="o">|</span>
+<span class="o">+-</span> test<span class="o">/</span> <span class="o">&lt;--</span> 存放所有test
+｜ ｜
+<span class="o">|</span>  <span class="o">+-</span> app<span class="o">-</span>test.js <span class="o">&lt;--</span> 异步测试
+<span class="o">|</span>
+<span class="o">+-</span> package.json <span class="o">&lt;--</span> 项目描述文件
+<span class="o">|</span>
+<span class="o">+-</span> node_modules<span class="o">/</span> <span class="o">&lt;--</span> npm安装的所有依赖包
+</pre></div>
+
+
+<p>app.js</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

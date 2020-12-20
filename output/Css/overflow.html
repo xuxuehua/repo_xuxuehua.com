@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>overflow - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Css">Css</a>&nbsp;&#187;&nbsp;overflow
+    <span class="updated">Page Updated&nbsp;
+      2019-07-17 14:06
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">overflow</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#overflow">overflow</a><ul>
+<li><a href="#visible">visible</a></li>
+<li><a href="#hidden">hidden</a></li>
+<li><a href="#auto">auto</a></li>
+<li><a href="#scroll">scroll</a></li>
+<li><a href="#overflow-wrap-word-wrap">overflow-wrap (word-wrap)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="overflow">overflow</h1>
+<p><img alt="img" src="https://snipboard.io/b6aUNv.jpg" /></p>
+<p>父容器高度塌陷</p>
+<p>如果一个标准流中的盒子中所有的子元素都进行了浮动，而且盒子没有设置高度，那么父容器整个高度会塌陷， 即图片超出了container的大小</p>
+<p>给浮动元素的容器添加<code>overflow:hidden;</code>或<code>overflow:auto;</code>可以清除浮动，另外在 IE6 中还需要触发 hasLayout ，例如为父元素设置容器宽高或设置 zoom:1。在添加overflow属性后，浮动元素又回到了容器层，把容器高度撑起，达到了清理浮动的效果。</p>
+<div class="hlcode"><pre><span class="p">.</span><span class="n">parent</span> <span class="p">{</span>
+    <span class="nl">overflow:</span> <span class="n">hidden</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="visible">visible</h2>
+<p>内容不会被修剪，会呈现在元素框之外（默认操作）</p>
+<h2 id="hidden">hidden</h2>
+<p>溢出内容会被修剪，并且被修剪的内容是不可见的</p>
+<h2 id="auto">auto</h2>
+<p>在需要时产生滚动条，即自适应所要显示的内容</p>
+<h2 id="scroll">scroll</h2>
+<p>溢出内容会被修剪，并且浏览器会始终显示滚动条</p>
+<h2 id="overflow-wrap-word-wrap">overflow-wrap (word-wrap)</h2>
+<p>通用换行控制</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

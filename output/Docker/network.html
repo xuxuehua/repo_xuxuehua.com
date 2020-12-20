@@ -1,0 +1,855 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>network - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Docker">Docker</a>&nbsp;&#187;&nbsp;network
+    <span class="updated">Page Updated&nbsp;
+      2018-10-24 16:43
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">network</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#network">network</a><ul>
+<li><a href="#_1">外部访问容器</a><ul>
+<li><a href="#-p">-p 则可以指定要映射的端口</a></li>
+<li><a href="#docker-logs">docker logs 命令来查看应用的信息</a></li>
+<li><a href="#_2">映射所有接口地址</a><ul>
+<li><a href="#_3">映射到指定地址的指定端口</a></li>
+<li><a href="#_4">映射到指定地址的任意端口</a></li>
+<li><a href="#_5">查看映射端口配置</a></li>
+</ul>
+</li>
+<li><a href="#_6">容器互联</a><ul>
+<li><a href="#_7">新建网络</a></li>
+<li><a href="#_8">连接容器</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_9">高级网络配置</a></li>
+<li><a href="#_10">快速配置指南</a><ul>
+<li><a href="#dns">配置 DNS</a><ul>
+<li><a href="#_11">容器访问外部网络</a></li>
+<li><a href="#_12">容器之间访问</a><ul>
+<li><a href="#_13">访问所有端口</a></li>
+<li><a href="#_14">访问指定端口</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_15">映射容器端口到宿主主机的实现</a><ul>
+<li><a href="#_16">容器访问外部实现</a></li>
+<li><a href="#_17">外部访问容器实现</a></li>
+</ul>
+</li>
+<li><a href="#docker0">配置 docker0 网桥</a></li>
+<li><a href="#_18">自定义网桥</a></li>
+<li><a href="#pipework">pipework</a></li>
+<li><a href="#playground">playground</a></li>
+<li><a href="#_19">创建一个点到点连接</a></li>
+<li><a href="#docker">Docker 网络实现</a><ul>
+<li><a href="#_20">基本原理</a></li>
+<li><a href="#_21">创建网络参数</a></li>
+<li><a href="#_22">网络配置细节</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#overlay-network">Overlay Network</a><ul>
+<li><a href="#docker-compose">Docker Compose 项目</a><ul>
+<li><a href="#compose">Compose 简介</a></li>
+<li><a href="#_23">安装</a><ul>
+<li><a href="#_24">二进制包</a></li>
+<li><a href="#pip">PIP 安装</a></li>
+<li><a href="#bash">bash 补全命令</a></li>
+<li><a href="#_25">容器中执行</a></li>
+</ul>
+</li>
+<li><a href="#_26">卸载</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="network">network</h1>
+<p><img alt="img" src="https://snag.gy/nuSP42.jpg" /></p>
+<p>Docker 允许通过外部访问容器或容器互联的方式来提供网络服务</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">network</span> <span class="n">ls</span>
+<span class="n">NETWORK</span> <span class="n">ID</span>          <span class="n">NAME</span>                <span class="n">DRIVER</span>              <span class="n">SCOPE</span>
+<span class="mi">109</span><span class="n">df3c7dc8b</span>        <span class="n">bridge</span>              <span class="n">bridge</span>              <span class="n">local</span>
+<span class="mi">5</span><span class="n">ddf10f7dd1e</span>        <span class="n">host</span>                <span class="n">host</span>                <span class="n">local</span>
+<span class="mi">301</span><span class="n">b64cf3798</span>        <span class="n">none</span>                <span class="n">null</span>                <span class="n">local</span>
+</pre></div>
+
+
+<blockquote>
+<p>bridge 即使docker0 网卡， 同时会生成4个虚拟网卡</p>
+<p>host 表示使用宿主机的网络名称空间</p>
+<p>none 不给使用网络，即loopback网络</p>
+</blockquote>
+<div class="hlcode"><pre><span class="cp"># apt install bridge-utils</span>
+
+
+<span class="n">root</span><span class="err">@</span><span class="n">w</span><span class="o">:~</span><span class="err">#</span> <span class="n">brctl</span> <span class="n">show</span>
+<span class="n">bridge</span> <span class="n">name</span>    <span class="n">bridge</span> <span class="n">id</span>        <span class="n">STP</span> <span class="n">enabled</span>    <span class="n">interfaces</span>
+<span class="n">docker0</span>        <span class="mf">8000.02422f</span><span class="n">c7d74c</span>    <span class="n">no</span>        <span class="n">vethdefab17</span>
+
+
+<span class="n">root</span><span class="err">@</span><span class="n">w</span><span class="o">:~</span><span class="err">#</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">show</span>
+<span class="mi">1</span><span class="o">:</span> <span class="n">lo</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">LOOPBACK</span><span class="p">,</span><span class="n">UP</span><span class="p">,</span><span class="n">LOWER_UP</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">65536</span> <span class="n">qdisc</span> <span class="n">noqueue</span> <span class="n">state</span> <span class="n">UNKNOWN</span> <span class="n">mode</span> <span class="n">DEFAULT</span> <span class="n">group</span> <span class="k">default</span> <span class="n">qlen</span> <span class="mi">1000</span>
+    <span class="n">link</span><span class="o">/</span><span class="n">loopback</span> <span class="mo">00</span><span class="o">:</span><span class="mo">00</span><span class="o">:</span><span class="mo">00</span><span class="o">:</span><span class="mo">00</span><span class="o">:</span><span class="mo">00</span><span class="o">:</span><span class="mo">00</span> <span class="n">brd</span> <span class="mo">00</span><span class="o">:</span><span class="mo">00</span><span class="o">:</span><span class="mo">00</span><span class="o">:</span><span class="mo">00</span><span class="o">:</span><span class="mo">00</span><span class="o">:</span><span class="mo">00</span>
+<span class="mi">2</span><span class="o">:</span> <span class="n">ens3</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="p">,</span><span class="n">UP</span><span class="p">,</span><span class="n">LOWER_UP</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">mq</span> <span class="n">state</span> <span class="n">UP</span> <span class="n">mode</span> <span class="n">DEFAULT</span> <span class="n">group</span> <span class="k">default</span> <span class="n">qlen</span> <span class="mi">1000</span>
+    <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="mi">56</span><span class="o">:</span><span class="mo">00</span><span class="o">:</span><span class="mo">02</span><span class="o">:</span><span class="mi">37</span><span class="o">:</span><span class="mi">5</span><span class="n">b</span><span class="o">:</span><span class="mi">32</span> <span class="n">brd</span> <span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span>
+<span class="mi">3</span><span class="o">:</span> <span class="n">docker0</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="p">,</span><span class="n">UP</span><span class="p">,</span><span class="n">LOWER_UP</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">noqueue</span> <span class="n">state</span> <span class="n">UP</span> <span class="n">mode</span> <span class="n">DEFAULT</span> <span class="n">group</span> <span class="k">default</span> 
+    <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="mo">02</span><span class="o">:</span><span class="mi">42</span><span class="o">:</span><span class="mf">2f</span><span class="o">:</span><span class="n">c7</span><span class="o">:</span><span class="n">d7</span><span class="o">:</span><span class="mi">4</span><span class="n">c</span> <span class="n">brd</span> <span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span>
+<span class="mi">9</span><span class="o">:</span> <span class="n">vethdefab17</span><span class="err">@</span><span class="n">if8</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="p">,</span><span class="n">UP</span><span class="p">,</span><span class="n">LOWER_UP</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">noqueue</span> <span class="n">master</span> <span class="n">docker0</span> <span class="n">state</span> <span class="n">UP</span> <span class="n">mode</span> <span class="n">DEFAULT</span> <span class="n">group</span> <span class="k">default</span> 
+    <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="n">be</span><span class="o">:</span><span class="mi">51</span><span class="o">:</span><span class="mf">1f</span><span class="o">:</span><span class="n">ef</span><span class="o">:</span><span class="mi">0</span><span class="n">e</span><span class="o">:</span><span class="n">c0</span> <span class="n">brd</span> <span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span> <span class="n">link</span><span class="o">-</span><span class="n">netnsid</span> <span class="mi">0</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">#</span> <span class="nt">docker</span> <span class="nt">network</span> <span class="nt">inspect</span> <span class="nt">bridge</span>
+<span class="cp">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="s2">&quot;bridge&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Id&quot;</span><span class="p">:</span> <span class="s2">&quot;51b5dfa10b6e2db69dfb8f2bb59f9f0c5a6a028fa2ad66b7484f0b66124f76f0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Created&quot;</span><span class="p">:</span> <span class="s2">&quot;2019-08-11T03:25:45.658544312Z&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Scope&quot;</span><span class="p">:</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Driver&quot;</span><span class="p">:</span> <span class="s2">&quot;bridge&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;EnableIPv6&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">&quot;IPAM&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Driver&quot;</span><span class="p">:</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Options&quot;</span><span class="p">:</span> <span class="kt">null</span><span class="p">,</span>
+            <span class="s2">&quot;Config&quot;</span><span class="p">:</span> <span class="err">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;Subnet&quot;</span><span class="p">:</span> <span class="s2">&quot;172.17.0.0/16&quot;</span>
+                <span class="p">}</span>
+            <span class="cp">]</span>
+        <span class="err">}</span><span class="o">,</span>
+        <span class="s2">&quot;Internal&quot;</span><span class="o">:</span> <span class="nt">false</span><span class="o">,</span>
+        <span class="s2">&quot;Attachable&quot;</span><span class="o">:</span> <span class="nt">false</span><span class="o">,</span>
+        <span class="s2">&quot;Ingress&quot;</span><span class="o">:</span> <span class="nt">false</span><span class="o">,</span>
+        <span class="s2">&quot;ConfigFrom&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Network&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span><span class="o">,</span>
+        <span class="s2">&quot;ConfigOnly&quot;</span><span class="o">:</span> <span class="nt">false</span><span class="o">,</span>
+        <span class="s2">&quot;Containers&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;11dd458e175df74b0388dd7174d222c06f9fe8bdbd3b8f2f148cce2e187ad798&quot;</span><span class="o">:</span> <span class="err">{</span>
+                <span class="s2">&quot;Name&quot;</span><span class="o">:</span> <span class="s2">&quot;myNginx&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;EndpointID&quot;</span><span class="o">:</span> <span class="s2">&quot;7f0cb7baad73d87d3b88190335f973f2f70ab2125029040adca6ade432998630&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;MacAddress&quot;</span><span class="o">:</span> <span class="s2">&quot;02:42:ac:11:00:02&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;IPv4Address&quot;</span><span class="o">:</span> <span class="s2">&quot;172.17.0.2/16&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;IPv6Address&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">}</span>
+        <span class="err">}</span><span class="o">,</span>
+        <span class="s2">&quot;Options&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;com.docker.network.bridge.default_bridge&quot;</span><span class="o">:</span> <span class="s2">&quot;true&quot;</span><span class="o">,</span>
+            <span class="s2">&quot;com.docker.network.bridge.enable_icc&quot;</span><span class="o">:</span> <span class="s2">&quot;true&quot;</span><span class="o">,</span>
+            <span class="s2">&quot;com.docker.network.bridge.enable_ip_masquerade&quot;</span><span class="o">:</span> <span class="s2">&quot;true&quot;</span><span class="o">,</span>
+            <span class="s2">&quot;com.docker.network.bridge.host_binding_ipv4&quot;</span><span class="o">:</span> <span class="s2">&quot;0.0.0.0&quot;</span><span class="o">,</span>
+            <span class="s2">&quot;com.docker.network.bridge.name&quot;</span><span class="o">:</span> <span class="s2">&quot;docker0&quot;</span><span class="o">,</span>
+            <span class="s2">&quot;com.docker.network.driver.mtu&quot;</span><span class="o">:</span> <span class="s2">&quot;1500&quot;</span>
+        <span class="p">}</span><span class="o">,</span>
+        <span class="s2">&quot;Labels&quot;</span><span class="o">:</span> <span class="p">{}</span>
+    <span class="err">}</span>
+<span class="o">]</span>
+</pre></div>
+
+
+<h2 id="_1">外部访问容器</h2>
+<ul>
+<li>通过 -P 或 -p 参数来指定端口映射</li>
+<li>主机的 49155 被映射到了容器的 5000 端口。此时访问本机的 49155 端口即可访问容器内 web 应用提供的界面。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">P</span> <span class="n">training</span><span class="o">/</span><span class="n">webapp</span> <span class="n">python</span> <span class="n">app</span><span class="p">.</span><span class="n">py</span>
+
+<span class="err">$</span> <span class="n">docker</span> <span class="n">ps</span> <span class="o">-</span><span class="n">l</span>
+<span class="n">CONTAINER</span> <span class="n">ID</span>  <span class="n">IMAGE</span>                   <span class="n">COMMAND</span>       <span class="n">CREATED</span>        <span class="n">STATUS</span>        <span class="n">PORTS</span>                    <span class="n">NAMES</span>
+<span class="n">bc533791f3f5</span>  <span class="n">training</span><span class="o">/</span><span class="n">webapp</span><span class="o">:</span><span class="n">latest</span>  <span class="n">python</span> <span class="n">app</span><span class="p">.</span><span class="n">py</span> <span class="mi">5</span> <span class="n">seconds</span> <span class="n">ago</span>  <span class="n">Up</span> <span class="mi">2</span> <span class="n">seconds</span>  <span class="mf">0.0.0.0</span><span class="o">:</span><span class="mi">49155</span><span class="o">-&gt;</span><span class="mi">5000</span><span class="o">/</span><span class="n">tcp</span>  <span class="n">nostalgic_morse</span>
+</pre></div>
+
+
+<h3 id="-p">-p 则可以指定要映射的端口</h3>
+<ul>
+<li>在一个指定端口上只可以绑定一个容器</li>
+</ul>
+<p><code>ip:hostPort:containerPort | ip::containerPort | hostPort:containerPort</code></p>
+<h3 id="docker-logs">docker logs 命令来查看应用的信息</h3>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">logs</span> <span class="o">-</span><span class="n">f</span> <span class="n">nostalgic_morse</span>
+<span class="o">*</span> <span class="n">Running</span> <span class="n">on</span> <span class="n">http</span><span class="o">:</span><span class="c1">//0.0.0.0:5000/</span>
+<span class="mf">10.0.2.2</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">23</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2014</span> <span class="mi">20</span><span class="o">:</span><span class="mi">16</span><span class="o">:</span><span class="mi">31</span><span class="p">]</span> <span class="s">&quot;GET / HTTP/1.1&quot;</span> <span class="mi">200</span> <span class="o">-</span>
+<span class="mf">10.0.2.2</span> <span class="o">-</span> <span class="o">-</span> <span class="p">[</span><span class="mi">23</span><span class="o">/</span><span class="n">May</span><span class="o">/</span><span class="mi">2014</span> <span class="mi">20</span><span class="o">:</span><span class="mi">16</span><span class="o">:</span><span class="mi">31</span><span class="p">]</span> <span class="s">&quot;GET /favicon.ico HTTP/1.1&quot;</span> <span class="mi">404</span> <span class="o">-</span>
+</pre></div>
+
+
+<h3 id="_2">映射所有接口地址</h3>
+<ul>
+<li>使用 hostPort:containerPort 格式本地的 5000 端口映射到容器的 5000 端口</li>
+<li>此时默认会绑定本地所有接口上的所有地址。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">p</span> <span class="mi">5000</span><span class="o">:</span><span class="mi">5000</span> <span class="n">training</span><span class="o">/</span><span class="n">webapp</span> <span class="n">python</span> <span class="n">app</span><span class="p">.</span><span class="n">py</span>
+</pre></div>
+
+
+<h4 id="_3">映射到指定地址的指定端口</h4>
+<ul>
+<li>可以使用 ip:hostPort:containerPort 格式指定映射使用一个特定地址，比如 localhost 地址 127.0.0.1</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">p</span> <span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">5000</span><span class="o">:</span><span class="mi">5000</span> <span class="n">training</span><span class="o">/</span><span class="n">webapp</span> <span class="n">python</span> <span class="n">app</span><span class="p">.</span><span class="n">py</span>
+</pre></div>
+
+
+<h4 id="_4">映射到指定地址的任意端口</h4>
+<ul>
+<li>使用 ip::containerPort 绑定 localhost 的任意端口到容器的 5000 端口，本地主机会自动分配一个端口。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">p</span> <span class="mf">127.0.0.1</span><span class="o">::</span><span class="mi">5000</span> <span class="n">training</span><span class="o">/</span><span class="n">webapp</span> <span class="n">python</span> <span class="n">app</span><span class="p">.</span><span class="n">py</span>
+</pre></div>
+
+
+<ul>
+<li>还可以使用 udp 标记来指定 udp 端口</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">p</span> <span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">5000</span><span class="o">:</span><span class="mi">5000</span><span class="o">/</span><span class="n">udp</span> <span class="n">training</span><span class="o">/</span><span class="n">webapp</span> <span class="n">python</span> <span class="n">app</span><span class="p">.</span><span class="n">py</span>
+</pre></div>
+
+
+<h4 id="_5">查看映射端口配置</h4>
+<ul>
+<li>使用 docker port 来查看当前映射的端口配置，也可以查看到绑定的地址</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">port</span> <span class="n">nostalgic_morse</span> <span class="mi">5000</span>
+<span class="mf">127.0.0.1</span><span class="o">:</span><span class="mf">49155.</span>
+</pre></div>
+
+
+<ul>
+<li>
+<p>容器有自己的内部网络和 ip 地址（使用 docker inspect 可以获取所有的变量，Docker 还可以有一个可变的网络配置。）</p>
+</li>
+<li>
+<p>-p 标记可以多次使用来绑定多个端口</p>
+</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> \
+    <span class="o">-</span><span class="n">p</span> <span class="mi">5000</span><span class="o">:</span><span class="mi">5000</span> \
+    <span class="o">-</span><span class="n">p</span> <span class="mi">3000</span><span class="o">:</span><span class="mi">80</span> \
+    <span class="n">training</span><span class="o">/</span><span class="n">webapp</span> \
+    <span class="n">python</span> <span class="n">app</span><span class="p">.</span><span class="n">py</span>
+</pre></div>
+
+
+<h3 id="_6">容器互联</h3>
+<ul>
+<li>将容器加入自定义的 Docker 网络来连接多个容器</li>
+</ul>
+<h4 id="_7">新建网络</h4>
+<ul>
+<li>创建一个新的 Docker 网络</li>
+<li>-d 参数指定 Docker 网络类型，有 bridge overlay</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">network</span> <span class="n">create</span> <span class="o">-</span><span class="n">d</span> <span class="n">bridge</span> <span class="n">my</span><span class="o">-</span><span class="n">net</span>
+</pre></div>
+
+
+<h4 id="_8">连接容器</h4>
+<ul>
+<li>运行一个容器并连接到新建的 my-net 网络</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">it</span> <span class="o">--</span><span class="n">rm</span> <span class="o">--</span><span class="n">name</span> <span class="n">busybox1</span> <span class="o">--</span><span class="n">net</span> <span class="n">my</span><span class="o">-</span><span class="n">net</span> <span class="n">busybox</span> <span class="n">sh</span>
+</pre></div>
+
+
+<ul>
+<li>打开新的终端，再运行一个容器并加入到 my-net 网络</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">it</span> <span class="o">--</span><span class="n">rm</span> <span class="o">--</span><span class="n">name</span> <span class="n">busybox2</span> <span class="o">--</span><span class="n">net</span> <span class="n">my</span><span class="o">-</span><span class="n">net</span> <span class="n">busybox</span> <span class="n">sh</span>
+</pre></div>
+
+
+<ul>
+<li>再打开一个新的终端查看容器信息</li>
+</ul>
+<div class="hlcode"><pre><span class="n">CONTAINER</span> <span class="n">ID</span>        <span class="n">IMAGE</span>               <span class="n">COMMAND</span>             <span class="n">CREATED</span>             <span class="n">STATUS</span>              <span class="n">PORTS</span>               <span class="n">NAMES</span>
+<span class="n">b47060aca56b</span>        <span class="n">busybox</span>             <span class="s">&quot;sh&quot;</span>                <span class="mi">11</span> <span class="n">minutes</span> <span class="n">ago</span>      <span class="n">Up</span> <span class="mi">11</span> <span class="n">minutes</span>                           <span class="n">busybox2</span>
+<span class="mi">8720575823</span><span class="n">ec</span>        <span class="n">busybox</span>             <span class="s">&quot;sh&quot;</span>                <span class="mi">16</span> <span class="n">minutes</span> <span class="n">ago</span>      <span class="n">Up</span> <span class="mi">16</span> <span class="n">minutes</span>                           <span class="n">busybox1</span>
+</pre></div>
+
+
+<ul>
+<li>通过 ping 来证明 busybox1 容器和 busybox2 容器建立了互联关系。</li>
+</ul>
+<div class="hlcode"><pre><span class="o">/</span> <span class="err">#</span> <span class="n">ping</span> <span class="n">busybox2</span>
+<span class="n">PING</span> <span class="n">busybox2</span> <span class="p">(</span><span class="mf">172.19.0.3</span><span class="p">)</span><span class="o">:</span> <span class="mi">56</span> <span class="n">data</span> <span class="n">bytes</span>
+<span class="mi">64</span> <span class="n">bytes</span> <span class="n">from</span> <span class="mf">172.19.0.3</span><span class="o">:</span> <span class="n">seq</span><span class="o">=</span><span class="mi">0</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">64</span> <span class="n">time</span><span class="o">=</span><span class="mf">0.072</span> <span class="n">ms</span>
+<span class="mi">64</span> <span class="n">bytes</span> <span class="n">from</span> <span class="mf">172.19.0.3</span><span class="o">:</span> <span class="n">seq</span><span class="o">=</span><span class="mi">1</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">64</span> <span class="n">time</span><span class="o">=</span><span class="mf">0.118</span> <span class="n">ms</span>
+
+<span class="o">/</span> <span class="err">#</span> <span class="n">ping</span> <span class="n">busybox1</span>
+<span class="n">PING</span> <span class="n">busybox1</span> <span class="p">(</span><span class="mf">172.19.0.2</span><span class="p">)</span><span class="o">:</span> <span class="mi">56</span> <span class="n">data</span> <span class="n">bytes</span>
+<span class="mi">64</span> <span class="n">bytes</span> <span class="n">from</span> <span class="mf">172.19.0.2</span><span class="o">:</span> <span class="n">seq</span><span class="o">=</span><span class="mi">0</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">64</span> <span class="n">time</span><span class="o">=</span><span class="mf">0.064</span> <span class="n">ms</span>
+<span class="mi">64</span> <span class="n">bytes</span> <span class="n">from</span> <span class="mf">172.19.0.2</span><span class="o">:</span> <span class="n">seq</span><span class="o">=</span><span class="mi">1</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">64</span> <span class="n">time</span><span class="o">=</span><span class="mf">0.143</span> <span class="n">ms</span>
+</pre></div>
+
+
+<h2 id="_9">高级网络配置</h2>
+<blockquote>
+<p>当 Docker 启动时，会自动在主机上创建一个 docker0 虚拟网桥，实际上是 Linux 的一个 bridge，可以理解为一个软件交换机。它会在挂载到它的网口之间进行转发。<br />
+同时，Docker 随机分配一个本地未占用的私有网段（在 RFC1918 中定义）中的一个地址给 docker0 接口。比如典型的 172.17.42.1，掩码为 255.255.0.0。此后启动的容器内的网口也会自动分配一个同一网段（172.17.0.0/16）的地址。<br />
+当创建一个 Docker 容器的时候，同时会创建了一对 veth pair 接口（当数据包发送到一个接口时，另外一个接口也可以收到相同的数据包）。这对接口一端在容器内，即 eth0；另一端在本地并被挂载到 docker0 网桥，名称以 veth 开头（例如 vethAQI2QT）。通过这种方式，主机可以跟容器通信，容器之间也可以相互通信。Docker 就创建了在主机和所有容器之间一个虚拟共享网络。</p>
+</blockquote>
+<p><img alt="img" src="https://yeasy.gitbooks.io/docker_practice/content/advanced_network/_images/network.png" /></p>
+<h2 id="_10">快速配置指南</h2>
+<ul>
+<li>其中有些命令选项只有在 Docker 服务启动的时候才能配置，而且不能马上生效</li>
+</ul>
+<blockquote>
+<p>-b BRIDGE 或 --bridge=BRIDGE 指定容器挂载的网桥<br />
+--bip=CIDR 定制 docker0 的掩码<br />
+-H SOCKET... 或 --host=SOCKET... Docker 服务端接收命令的通道<br />
+--icc=true|false 是否支持容器之间进行通信<br />
+--ip-forward=true|false 请看下文容器之间的通信<br />
+--iptables=true|false 是否允许 Docker 添加 iptables 规则<br />
+--mtu=BYTES 容器网络中的 MTU</p>
+</blockquote>
+<ul>
+<li>下面2个命令选项既可以在启动服务时指定，也可以在启动容器时指定。在 Docker 服务启动的时候指定则会成为默认值，后面执行 docker run 时可以覆盖设置的默认值。</li>
+</ul>
+<blockquote>
+<p>--dns=IP_ADDRESS... 使用指定的DNS服务器<br />
+--dns-search=DOMAIN... 指定DNS搜索域</p>
+</blockquote>
+<ul>
+<li>最后这些选项只有在 docker run 执行时使用，因为它是针对容器的特性内容</li>
+</ul>
+<blockquote>
+<p>-h HOSTNAME 或 --hostname=HOSTNAME 配置容器主机名<br />
+--link=CONTAINER_NAME:ALIAS 添加到另一个容器的连接<br />
+--net=bridge|none|container:NAME_or_ID|host 配置容器的桥接模式<br />
+-p SPEC 或 --publish=SPEC 映射容器端口到宿主主机<br />
+-P or --publish-all=true|false 映射容器所有端口到宿主主机</p>
+</blockquote>
+<h4 id="dns">配置 DNS</h4>
+<ul>
+<li>
+<p>Docker 利用虚拟文件来挂载容器的 3 个相关配置文件。</p>
+</li>
+<li>
+<p>在容器中使用 mount 命令可以看到挂载信息：</p>
+</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">mount</span>
+<span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">disk</span><span class="o">/</span><span class="n">by</span><span class="o">-</span><span class="n">uuid</span><span class="o">/</span><span class="mf">1f</span><span class="n">ec</span><span class="p">...</span><span class="n">ebdf</span> <span class="n">on</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">hostname</span> <span class="n">type</span> <span class="n">ext4</span> <span class="p">...</span>
+<span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">disk</span><span class="o">/</span><span class="n">by</span><span class="o">-</span><span class="n">uuid</span><span class="o">/</span><span class="mf">1f</span><span class="n">ec</span><span class="p">...</span><span class="n">ebdf</span> <span class="n">on</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">hosts</span> <span class="n">type</span> <span class="n">ext4</span> <span class="p">...</span>
+<span class="n">tmpfs</span> <span class="n">on</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">resolv</span><span class="p">.</span><span class="n">conf</span> <span class="n">type</span> <span class="n">tmpfs</span> <span class="p">...</span>
+</pre></div>
+
+
+<ul>
+<li>
+<p>这种机制可以让宿主主机 DNS 信息发生更新后，所有 Docker 容器的 DNS 配置通过 /etc/resolv.conf 文件立刻得到更新。</p>
+</li>
+<li>
+<p>配置全部容器的 DNS ，也可以在 /etc/docker/daemon.json 文件中增加以下内容来设置。</p>
+</li>
+</ul>
+<div class="hlcode"><pre><span class="p">{</span>
+  <span class="s2">&quot;dns&quot;</span> <span class="o">:</span> <span class="cp">[</span>
+    <span class="s2">&quot;114.114.114.114&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;8.8.8.8&quot;</span>
+  <span class="cp">]</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<ul>
+<li>使用以下命令来证明其已经生效。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">it</span> <span class="o">--</span><span class="n">rm</span> <span class="n">ubuntu</span><span class="o">:</span><span class="mf">17.10</span>  <span class="n">cat</span> <span class="n">etc</span><span class="o">/</span><span class="n">resolv</span><span class="p">.</span><span class="n">conf</span>
+
+<span class="n">nameserver</span> <span class="mf">114.114.114.114</span>
+<span class="n">nameserver</span> <span class="mf">8.8.8.8</span>
+</pre></div>
+
+
+<ul>
+<li>如果用户想要手动指定容器的配置，可以利用下面的选项。</li>
+</ul>
+<blockquote>
+<p>-h HOSTNAME 或者 --hostname=HOSTNAME 设定容器的主机名，它会被写到容器内的 /etc/hostname 和 /etc/hosts。但它在容器外部看不到，既不会在 docker ps 中显示，也不会在其他的容器的 /etc/hosts 看到。<br />
+--dns=IP_ADDRESS 添加 DNS 服务器到容器的 /etc/resolv.conf 中，让容器用这个服务器来解析所有不在 /etc/hosts 中的主机名。<br />
+--dns-search=DOMAIN 设定容器的搜索域，当设定搜索域为 .example.com 时，在搜索一个名为 host 的主机时，DNS 不仅搜索 host，还会搜索 host.example.com。<br />
+注意： 如果没有上述最后 2 个选项，Docker 会默认用主机上的 /etc/resolv.conf 来配置容器。</p>
+</blockquote>
+<p>容器访问控制</p>
+<ul>
+<li>通过 Linux 上的 iptables 防火墙来进行管理和实现</li>
+</ul>
+<h5 id="_11">容器访问外部网络</h5>
+<ul>
+<li>容器要想访问外部网络，需要本地系统的转发支持。在Linux 系统中，检查转发是否打开,如果为 0，说明没有开启转发</li>
+<li>如果在启动 Docker 服务的时候设定 --ip-forward=true, Docker 就会自动设定系统的 ip_forward 参数为 1</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span><span class="n">sysctl</span> <span class="n">net</span><span class="p">.</span><span class="n">ipv4</span><span class="p">.</span><span class="n">ip_forward</span>
+<span class="n">net</span><span class="p">.</span><span class="n">ipv4</span><span class="p">.</span><span class="n">ip_forward</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+
+
+<h5 id="_12">容器之间访问</h5>
+<ul>
+<li>容器的网络拓扑是否已经互联。默认情况下，所有容器都会被连接到 docker0 网桥上。</li>
+<li>本地系统的防火墙软件 -- iptables 是否允许通过。</li>
+</ul>
+<h6 id="_13">访问所有端口</h6>
+<blockquote>
+<p>当启动 Docker 服务时候，默认会添加一条转发策略到 iptables 的 FORWARD 链上。策略为通过（ACCEPT）还是禁止（DROP）取决于配置--icc=true（缺省值）还是 --icc=false。当然，如果手动指定 --iptables=false 则不会添加 iptables 规则。<br />
+可见，默认情况下，不同容器之间是允许网络互通的。如果为了安全考虑，可以在 /etc/default/docker 文件中配置 DOCKER_OPTS=--icc=false 来禁止它。</p>
+</blockquote>
+<h6 id="_14">访问指定端口</h6>
+<blockquote>
+<p>在通过 -icc=false 关闭网络访问后，还可以通过 --link=CONTAINER_NAME:ALIAS 选项来访问容器的开放端口。<br />
+例如，在启动 Docker 服务时，可以同时使用 icc=false --iptables=true 参数来关闭允许相互的网络访问，并让 Docker 可以修改系统中的 iptables 规则。</p>
+</blockquote>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">iptables</span> <span class="o">-</span><span class="n">nL</span>
+<span class="p">...</span>
+<span class="n">Chain</span> <span class="n">FORWARD</span> <span class="p">(</span><span class="n">policy</span> <span class="n">ACCEPT</span><span class="p">)</span>
+<span class="n">target</span>     <span class="n">prot</span> <span class="n">opt</span> <span class="n">source</span>               <span class="n">destination</span>
+<span class="n">DROP</span>       <span class="n">all</span>  <span class="o">--</span>  <span class="mf">0.0.0.0</span><span class="o">/</span><span class="mi">0</span>            <span class="mf">0.0.0.0</span><span class="o">/</span><span class="mi">0</span>
+<span class="p">...</span>
+</pre></div>
+
+
+<blockquote>
+<p>之后，启动容器（docker run）时使用 --link=CONTAINER_NAME:ALIAS 选项。Docker 会在 iptable 中为 两个容器分别添加一条 ACCEPT 规则，允许相互访问开放的端口（取决于 Dockerfile 中的 EXPOSE 指令）。<br />
+当添加了 --link=CONTAINER_NAME:ALIAS 选项后，添加了 iptables 规则。</p>
+</blockquote>
+<ul>
+<li>注意：--link=CONTAINER_NAME:ALIAS 中的 CONTAINER_NAME 目前必须是 Docker 分配的名字，或使用 --name 参数指定的名字。主机名则不会被识别。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">iptables</span> <span class="o">-</span><span class="n">nL</span>
+<span class="p">...</span>
+<span class="n">Chain</span> <span class="n">FORWARD</span> <span class="p">(</span><span class="n">policy</span> <span class="n">ACCEPT</span><span class="p">)</span>
+<span class="n">target</span>     <span class="n">prot</span> <span class="n">opt</span> <span class="n">source</span>               <span class="n">destination</span>
+<span class="n">ACCEPT</span>     <span class="n">tcp</span>  <span class="o">--</span>  <span class="mf">172.17.0.2</span>           <span class="mf">172.17.0.3</span>           <span class="n">tcp</span> <span class="n">spt</span><span class="o">:</span><span class="mi">80</span>
+<span class="n">ACCEPT</span>     <span class="n">tcp</span>  <span class="o">--</span>  <span class="mf">172.17.0.3</span>           <span class="mf">172.17.0.2</span>           <span class="n">tcp</span> <span class="n">dpt</span><span class="o">:</span><span class="mi">80</span>
+<span class="n">DROP</span>       <span class="n">all</span>  <span class="o">--</span>  <span class="mf">0.0.0.0</span><span class="o">/</span><span class="mi">0</span>            <span class="mf">0.0.0.0</span><span class="o">/</span><span class="mi">0</span>
+</pre></div>
+
+
+<h4 id="_15">映射容器端口到宿主主机的实现</h4>
+<h5 id="_16">容器访问外部实现</h5>
+<ul>
+<li>容器所有到外部网络的连接，源地址都会被 NAT 成本地系统的 IP 地址。这是使用 iptables 的源地址伪装操作实现的</li>
+<li>将所有源地址在 172.17.0.0/16 网段，目标地址为其他网段（外部网络）的流量动态伪装为从系统网卡发出。MASQUERADE 跟传统 SNAT 的好处是它能动态从网卡获取地址。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">iptables</span> <span class="o">-</span><span class="n">t</span> <span class="n">nat</span> <span class="o">-</span><span class="n">nL</span>
+<span class="p">...</span>
+<span class="n">Chain</span> <span class="n">POSTROUTING</span> <span class="p">(</span><span class="n">policy</span> <span class="n">ACCEPT</span><span class="p">)</span>
+<span class="n">target</span>     <span class="n">prot</span> <span class="n">opt</span> <span class="n">source</span>               <span class="n">destination</span>
+<span class="n">MASQUERADE</span>  <span class="n">all</span>  <span class="o">--</span>  <span class="mf">172.17.0.0</span><span class="o">/</span><span class="mi">16</span>       <span class="o">!</span><span class="mf">172.17.0.0</span><span class="o">/</span><span class="mi">16</span>
+<span class="p">...</span>
+</pre></div>
+
+
+<h5 id="_17">外部访问容器实现</h5>
+<ul>
+<li>容器允许外部访问，可以在 docker run 时候通过 -p 或 -P 参数来启用。</li>
+<li>不管用那种办法，其实也是在本地的 iptable 的 nat 表中添加相应的规则。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">iptables</span> <span class="o">-</span><span class="n">t</span> <span class="n">nat</span> <span class="o">-</span><span class="n">nL</span>
+<span class="p">...</span>
+<span class="n">Chain</span> <span class="n">DOCKER</span> <span class="p">(</span><span class="mi">2</span> <span class="n">references</span><span class="p">)</span>
+<span class="n">target</span>     <span class="n">prot</span> <span class="n">opt</span> <span class="n">source</span>               <span class="n">destination</span>
+<span class="n">DNAT</span>       <span class="n">tcp</span>  <span class="o">--</span>  <span class="mf">0.0.0.0</span><span class="o">/</span><span class="mi">0</span>            <span class="mf">0.0.0.0</span><span class="o">/</span><span class="mi">0</span>            <span class="n">tcp</span> <span class="n">dpt</span><span class="o">:</span><span class="mi">49153</span> <span class="n">to</span><span class="o">:</span><span class="mf">172.17.0.2</span><span class="o">:</span><span class="mi">80</span>
+</pre></div>
+
+
+<ul>
+<li>使用 -p 80:80 时：</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">iptables</span> <span class="o">-</span><span class="n">t</span> <span class="n">nat</span> <span class="o">-</span><span class="n">nL</span>
+<span class="n">Chain</span> <span class="n">DOCKER</span> <span class="p">(</span><span class="mi">2</span> <span class="n">references</span><span class="p">)</span>
+<span class="n">target</span>     <span class="n">prot</span> <span class="n">opt</span> <span class="n">source</span>               <span class="n">destination</span>
+<span class="n">DNAT</span>       <span class="n">tcp</span>  <span class="o">--</span>  <span class="mf">0.0.0.0</span><span class="o">/</span><span class="mi">0</span>            <span class="mf">0.0.0.0</span><span class="o">/</span><span class="mi">0</span>            <span class="n">tcp</span> <span class="n">dpt</span><span class="o">:</span><span class="mi">80</span> <span class="n">to</span><span class="o">:</span><span class="mf">172.17.0.2</span><span class="o">:</span><span class="mi">80</span>
+</pre></div>
+
+
+<ul>
+<li>如果希望永久绑定到某个固定的 IP 地址，可以在 Docker 配置文件 /etc/docker/daemon.json 中添加如下内容。</li>
+</ul>
+<div class="hlcode"><pre><span class="p">{</span>
+  <span class="s">&quot;ip&quot;</span><span class="o">:</span> <span class="s">&quot;0.0.0.0&quot;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h4 id="docker0">配置 docker0 网桥</h4>
+<ul>
+<li>Docker 服务默认会创建一个 docker0 网桥（其上有一个 docker0 内部接口），它在内核层连通了其他的物理或虚拟网卡，这就将所有容器和本地主机都放到同一个物理网络。<br />
+  *目前 Docker 网桥是 Linux 网桥，用户可以使用 brctl show 来查看网桥和端口连接信息。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">brctl</span> <span class="n">show</span>
+<span class="n">bridge</span> <span class="n">name</span>     <span class="n">bridge</span> <span class="n">id</span>               <span class="n">STP</span> <span class="n">enabled</span>     <span class="n">interfaces</span>
+<span class="n">docker0</span>         <span class="mf">8000.3</span><span class="n">a1d7362b4ee</span>       <span class="n">no</span>              <span class="n">veth65f9</span>
+                                             <span class="n">vethdda6</span>
+</pre></div>
+
+
+<ul>
+<li>
+<p>注：brctl 命令在 Debian、Ubuntu 中可以使用 sudo apt-get install bridge-utils 来安装。</p>
+</li>
+<li>
+<p>每次创建一个新容器的时候，Docker 从可用的地址段中选择一个空闲的 IP 地址分配给容器的 eth0 端口。使用本地主机上 docker0 接口的 IP 作为所有容器的默认网关。</p>
+</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">t</span> <span class="o">--</span><span class="n">rm</span> <span class="n">base</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span>
+<span class="err">$</span> <span class="n">ip</span> <span class="n">addr</span> <span class="n">show</span> <span class="n">eth0</span>
+<span class="mi">24</span><span class="o">:</span> <span class="n">eth0</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">UP</span><span class="p">,</span><span class="n">LOWER_UP</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">pfifo_fast</span> <span class="n">state</span> <span class="n">UP</span> <span class="n">group</span> <span class="k">default</span> <span class="n">qlen</span> <span class="mi">1000</span>
+    <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="mi">32</span><span class="o">:</span><span class="mf">6f</span><span class="o">:</span><span class="n">e0</span><span class="o">:</span><span class="mi">35</span><span class="o">:</span><span class="mi">57</span><span class="o">:</span><span class="mi">91</span> <span class="n">brd</span> <span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span>
+    <span class="n">inet</span> <span class="mf">172.17.0.3</span><span class="o">/</span><span class="mi">16</span> <span class="n">scope</span> <span class="n">global</span> <span class="n">eth0</span>
+       <span class="n">valid_lft</span> <span class="n">forever</span> <span class="n">preferred_lft</span> <span class="n">forever</span>
+    <span class="n">inet6</span> <span class="n">fe80</span><span class="o">::</span><span class="mf">306f</span><span class="o">:</span><span class="n">e0ff</span><span class="o">:</span><span class="n">fe35</span><span class="o">:</span><span class="mi">5791</span><span class="o">/</span><span class="mi">64</span> <span class="n">scope</span> <span class="n">link</span>
+       <span class="n">valid_lft</span> <span class="n">forever</span> <span class="n">preferred_lft</span> <span class="n">forever</span>
+<span class="err">$</span> <span class="n">ip</span> <span class="n">route</span>
+<span class="k">default</span> <span class="n">via</span> <span class="mf">172.17.42.1</span> <span class="n">dev</span> <span class="n">eth0</span>
+<span class="mf">172.17.0.0</span><span class="o">/</span><span class="mi">16</span> <span class="n">dev</span> <span class="n">eth0</span>  <span class="n">proto</span> <span class="n">kernel</span>  <span class="n">scope</span> <span class="n">link</span>  <span class="n">src</span> <span class="mf">172.17.0.3</span>
+</pre></div>
+
+
+<h4 id="_18">自定义网桥</h4>
+<ul>
+<li>
+<p>使用 -b BRIDGE或--bridge=BRIDGE 来指定使用的网桥。</p>
+</li>
+<li>
+<p>如果服务已经运行，那需要先停止服务，并删除旧的网桥。</p>
+</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">stop</span> <span class="n">docker</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">set</span> <span class="n">dev</span> <span class="n">docker0</span> <span class="n">down</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">brctl</span> <span class="n">delbr</span> <span class="n">docker0</span>
+</pre></div>
+
+
+<ul>
+<li>创建一个网桥 bridge0</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">brctl</span> <span class="n">addbr</span> <span class="n">bridge0</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">addr</span> <span class="n">add</span> <span class="mf">192.168.5.1</span><span class="o">/</span><span class="mi">24</span> <span class="n">dev</span> <span class="n">bridge0</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">set</span> <span class="n">dev</span> <span class="n">bridge0</span> <span class="n">up</span>
+</pre></div>
+
+
+<ul>
+<li>确认网桥创建并启动。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">ip</span> <span class="n">addr</span> <span class="n">show</span> <span class="n">bridge0</span>
+<span class="mi">4</span><span class="o">:</span> <span class="n">bridge0</span><span class="o">:</span> <span class="o">&lt;</span><span class="n">BROADCAST</span><span class="p">,</span><span class="n">MULTICAST</span><span class="o">&gt;</span> <span class="n">mtu</span> <span class="mi">1500</span> <span class="n">qdisc</span> <span class="n">noop</span> <span class="n">state</span> <span class="n">UP</span> <span class="n">group</span> <span class="k">default</span>
+    <span class="n">link</span><span class="o">/</span><span class="n">ether</span> <span class="mi">66</span><span class="o">:</span><span class="mi">38</span><span class="o">:</span><span class="n">d0</span><span class="o">:</span><span class="mi">0</span><span class="n">d</span><span class="o">:</span><span class="mi">76</span><span class="o">:</span><span class="mi">18</span> <span class="n">brd</span> <span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span><span class="o">:</span><span class="n">ff</span>
+    <span class="n">inet</span> <span class="mf">192.168.5.1</span><span class="o">/</span><span class="mi">24</span> <span class="n">scope</span> <span class="n">global</span> <span class="n">bridge0</span>
+       <span class="n">valid_lft</span> <span class="n">forever</span> <span class="n">preferred_lft</span> <span class="n">forever</span>
+</pre></div>
+
+
+<ul>
+<li>在 Docker 配置文件 /etc/docker/daemon.json 中添加如下内容，即可将 Docker 默认桥接到创建的网桥上。</li>
+</ul>
+<div class="hlcode"><pre><span class="p">{</span>
+  <span class="s">&quot;bridge&quot;</span><span class="o">:</span> <span class="s">&quot;bridge0&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h4 id="pipework">pipework</h4>
+<ul>
+<li>Jérôme Petazzoni 编写了一个叫 pipework 的 shell 脚本，可以帮助用户在比较复杂的场景中完成容器的连接</li>
+</ul>
+<h4 id="playground">playground</h4>
+<ul>
+<li>Brandon Rhodes 创建了一个提供完整的 Docker 容器网络拓扑管理的 Python库，包括路由、NAT 防火墙；以及一些提供 HTTP, SMTP, POP, IMAP, Telnet, SSH, FTP 的服务器。</li>
+</ul>
+<h4 id="_19">创建一个点到点连接</h4>
+<blockquote>
+<p>默认情况下，Docker 会将所有容器连接到由 docker0 提供的虚拟子网中。<br />
+用户有时候需要两个容器之间可以直连通信，而不用通过主机网桥进行桥接。<br />
+解决办法很简单：创建一对 peer 接口，分别放到两个容器中，配置成点到点链路类型即可。</p>
+</blockquote>
+<ul>
+<li>首先启动 2 个容器：</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">t</span> <span class="o">--</span><span class="n">rm</span> <span class="o">--</span><span class="n">net</span><span class="o">=</span><span class="n">none</span> <span class="n">base</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span>
+<span class="n">root</span><span class="err">@</span><span class="mf">1f1f</span><span class="mi">4</span><span class="n">c1f931a</span><span class="o">:/</span><span class="err">#</span>
+<span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">t</span> <span class="o">--</span><span class="n">rm</span> <span class="o">--</span><span class="n">net</span><span class="o">=</span><span class="n">none</span> <span class="n">base</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span>
+<span class="n">root</span><span class="err">@</span><span class="mf">12e343489</span><span class="n">d2f</span><span class="o">:/</span><span class="err">#</span>
+</pre></div>
+
+
+<ul>
+<li>找到进程号，然后创建网络命名空间的跟踪文件。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">inspect</span> <span class="o">-</span><span class="n">f</span> <span class="err">&#39;</span><span class="p">{{.</span><span class="n">State</span><span class="p">.</span><span class="n">Pid</span><span class="p">}}</span><span class="err">&#39;</span> <span class="mf">1f1f</span><span class="mi">4</span><span class="n">c1f931a</span>
+<span class="mi">2989</span>
+<span class="err">$</span> <span class="n">docker</span> <span class="n">inspect</span> <span class="o">-</span><span class="n">f</span> <span class="err">&#39;</span><span class="p">{{.</span><span class="n">State</span><span class="p">.</span><span class="n">Pid</span><span class="p">}}</span><span class="err">&#39;</span> <span class="mf">12e343489</span><span class="n">d2f</span>
+<span class="mi">3004</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">netns</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ln</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="mi">2989</span><span class="o">/</span><span class="n">ns</span><span class="o">/</span><span class="n">net</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">netns</span><span class="o">/</span><span class="mi">2989</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ln</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="mi">3004</span><span class="o">/</span><span class="n">ns</span><span class="o">/</span><span class="n">net</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">netns</span><span class="o">/</span><span class="mi">3004</span>
+</pre></div>
+
+
+<ul>
+<li>创建一对 peer 接口，然后配置路由</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">add</span> <span class="n">A</span> <span class="n">type</span> <span class="n">veth</span> <span class="n">peer</span> <span class="n">name</span> <span class="n">B</span>
+
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">set</span> <span class="n">A</span> <span class="n">netns</span> <span class="mi">2989</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">netns</span> <span class="n">exec</span> <span class="mi">2989</span> <span class="n">ip</span> <span class="n">addr</span> <span class="n">add</span> <span class="mf">10.1.1.1</span><span class="o">/</span><span class="mi">32</span> <span class="n">dev</span> <span class="n">A</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">netns</span> <span class="n">exec</span> <span class="mi">2989</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">set</span> <span class="n">A</span> <span class="n">up</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">netns</span> <span class="n">exec</span> <span class="mi">2989</span> <span class="n">ip</span> <span class="n">route</span> <span class="n">add</span> <span class="mf">10.1.1.2</span><span class="o">/</span><span class="mi">32</span> <span class="n">dev</span> <span class="n">A</span>
+
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">set</span> <span class="n">B</span> <span class="n">netns</span> <span class="mi">3004</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">netns</span> <span class="n">exec</span> <span class="mi">3004</span> <span class="n">ip</span> <span class="n">addr</span> <span class="n">add</span> <span class="mf">10.1.1.2</span><span class="o">/</span><span class="mi">32</span> <span class="n">dev</span> <span class="n">B</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">netns</span> <span class="n">exec</span> <span class="mi">3004</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">set</span> <span class="n">B</span> <span class="n">up</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">netns</span> <span class="n">exec</span> <span class="mi">3004</span> <span class="n">ip</span> <span class="n">route</span> <span class="n">add</span> <span class="mf">10.1.1.1</span><span class="o">/</span><span class="mi">32</span> <span class="n">dev</span> <span class="n">B</span>
+</pre></div>
+
+
+<blockquote>
+<p>现在这 2 个容器就可以相互 ping 通，并成功建立连接。点到点链路不需要子网和子网掩码。<br />
+此外，也可以不指定 --net=none 来创建点到点链路。这样容器还可以通过原先的网络来通信。<br />
+利用类似的办法，可以创建一个只跟主机通信的容器。但是一般情况下，更推荐使用 --icc=false 来关闭容器之间的通信。</p>
+</blockquote>
+<h4 id="docker">Docker 网络实现</h4>
+<h5 id="_20">基本原理</h5>
+<blockquote>
+<p>首先，要实现网络通信，机器需要至少一个网络接口（物理接口或虚拟接口）来收发数据包；此外，如果不同子网之间要进行通信，需要路由机制。<br />
+Docker 中的网络接口默认都是虚拟的接口。虚拟接口的优势之一是转发效率较高。 Linux 通过在内核中进行数据复制来实现虚拟接口之间的数据转发，发送接口的发送缓存中的数据包被直接复制到接收接口的接收缓存中。对于本地系统和容器内系统看来就像是一个正常的以太网卡，只是它不需要真正同外部网络设备通信，速度要快很多。<br />
+Docker 容器网络就利用了这项技术。它在本地主机和容器内分别创建一个虚拟接口，并让它们彼此连通（这样的一对接口叫做 veth pair）。</p>
+</blockquote>
+<h5 id="_21">创建网络参数</h5>
+<blockquote>
+<p>Docker 创建一个容器的时候，会执行如下操作：<br />
+创建一对虚拟接口，分别放到本地主机和新容器中；<br />
+本地主机一端桥接到默认的 docker0 或指定网桥上，并具有一个唯一的名字，如 veth65f9；<br />
+容器一端放到新容器中，并修改名字作为 eth0，这个接口只在容器的命名空间可见；<br />
+从网桥可用地址段中获取一个空闲地址分配给容器的 eth0，并配置默认路由到桥接网卡 veth65f9。<br />
+完成这些之后，容器就可以使用 eth0 虚拟网卡来连接其他容器和其他网络。<br />
+可以在 docker run 的时候通过 --net 参数来指定容器的网络配置，有4个可选值：<br />
+--net=bridge 这个是默认值，连接到默认的网桥。<br />
+--net=host 告诉 Docker 不要将容器网络放到隔离的命名空间中，即不要容器化容器内的网络。此时容器使用本地主机的网络，它拥有完全的本地主机接口访问权限。容器进程可以跟主机其它 root 进程一样可以打开低范围的端口，可以访问本地网络服务比如 D-bus，还可以让容器做一些影响整个主机系统的事情，比如重启主机。因此使用这个选项的时候要非常小心。如果进一步的使用 --privileged=true，容器会被允许直接配置主机的网络堆栈。<br />
+--net=container:NAME_or_ID 让 Docker 将新建容器的进程放到一个已存在容器的网络栈中，新容器进程有自己的文件系统、进程列表和资源限制，但会和已存在的容器共享 IP 地址和端口等网络资源，两者进程可以直接通过 lo 环回接口通信。<br />
+--net=none 让 Docker 将新容器放到隔离的网络栈中，但是不进行网络配置。之后，用户可以自己进行配置。</p>
+</blockquote>
+<h5 id="_22">网络配置细节</h5>
+<blockquote>
+<p>用户使用 --net=none 后，可以自行配置网络，让容器达到跟平常一样具有访问网络的权限。通过这个过程，可以了解 Docker 配置网络的细节。</p>
+</blockquote>
+<ul>
+<li>启动一个 /bin/bash 容器，指定 --net=none 参数。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">t</span> <span class="o">--</span><span class="n">rm</span> <span class="o">--</span><span class="n">net</span><span class="o">=</span><span class="n">none</span> <span class="n">base</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span>
+<span class="n">root</span><span class="err">@</span><span class="mf">63f36f</span><span class="n">c01b5f</span><span class="o">:/</span><span class="err">#</span>
+</pre></div>
+
+
+<ul>
+<li>在本地主机查找容器的进程 id，并为它创建网络命名空间。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">inspect</span> <span class="o">-</span><span class="n">f</span> <span class="err">&#39;</span><span class="p">{{.</span><span class="n">State</span><span class="p">.</span><span class="n">Pid</span><span class="p">}}</span><span class="err">&#39;</span> <span class="mf">63f36f</span><span class="n">c01b5f</span>
+<span class="mi">2778</span>
+<span class="err">$</span> <span class="n">pid</span><span class="o">=</span><span class="mi">2778</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">netns</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ln</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="err">$</span><span class="n">pid</span><span class="o">/</span><span class="n">ns</span><span class="o">/</span><span class="n">net</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">netns</span><span class="o">/</span><span class="err">$</span><span class="n">pid</span>
+</pre></div>
+
+
+<ul>
+<li>检查桥接网卡的 IP 和子网掩码信息。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">ip</span> <span class="n">addr</span> <span class="n">show</span> <span class="n">docker0</span>
+<span class="mi">21</span><span class="o">:</span> <span class="n">docker0</span><span class="o">:</span> <span class="p">...</span>
+<span class="n">inet</span> <span class="mf">172.17.42.1</span><span class="o">/</span><span class="mi">16</span> <span class="n">scope</span> <span class="n">global</span> <span class="n">docker0</span>
+<span class="p">...</span>
+</pre></div>
+
+
+<ul>
+<li>创建一对 “veth pair” 接口 A 和 B，绑定 A 到网桥 docker0，并启用它</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">add</span> <span class="n">A</span> <span class="n">type</span> <span class="n">veth</span> <span class="n">peer</span> <span class="n">name</span> <span class="n">B</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">brctl</span> <span class="n">addif</span> <span class="n">docker0</span> <span class="n">A</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">set</span> <span class="n">A</span> <span class="n">up</span>
+</pre></div>
+
+
+<ul>
+<li>将B放到容器的网络命名空间，命名为 eth0，启动它并配置一个可用 IP（桥接网段）和默认网关。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">set</span> <span class="n">B</span> <span class="n">netns</span> <span class="err">$</span><span class="n">pid</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">netns</span> <span class="n">exec</span> <span class="err">$</span><span class="n">pid</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">set</span> <span class="n">dev</span> <span class="n">B</span> <span class="n">name</span> <span class="n">eth0</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">netns</span> <span class="n">exec</span> <span class="err">$</span><span class="n">pid</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">set</span> <span class="n">eth0</span> <span class="n">up</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">netns</span> <span class="n">exec</span> <span class="err">$</span><span class="n">pid</span> <span class="n">ip</span> <span class="n">addr</span> <span class="n">add</span> <span class="mf">172.17.42.99</span><span class="o">/</span><span class="mi">16</span> <span class="n">dev</span> <span class="n">eth0</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">ip</span> <span class="n">netns</span> <span class="n">exec</span> <span class="err">$</span><span class="n">pid</span> <span class="n">ip</span> <span class="n">route</span> <span class="n">add</span> <span class="k">default</span> <span class="n">via</span> <span class="mf">172.17.42.1</span>
+</pre></div>
+
+
+<blockquote>
+<p>当容器结束后，Docker 会清空容器，容器内的 eth0 会随网络命名空间一起被清除，A 接口也被自动从 docker0 卸载。<br />
+此外，用户可以使用 ip netns exec 命令来在指定网络命名空间中进行配置，从而配置容器内的网络。</p>
+</blockquote>
+<h1 id="overlay-network">Overlay Network</h1>
+<p>通过在叠加网络，即封装一个新的IP封包形成隧道</p>
+<h2 id="docker-compose">Docker Compose 项目</h2>
+<h3 id="compose">Compose 简介</h3>
+<p>通过第一部分中的介绍，我们知道使用一个 Dockerfile 模板文件，可以让用户很方便的定义一个单独的应用容器。然而，在日常工作中，经常会碰到需要多个容器相互配合来完成某项任务的情况。例如要实现一个 Web 项目，除了 Web 服务容器本身，往往还需要再加上后端的数据库服务容器，甚至还包括负载均衡容器等。</p>
+<p>Compose 恰好满足了这样的需求。它允许用户通过一个单独的 docker-compose.yml 模板文件（YAML 格式）来定义一组相关联的应用容器为一个项目（project）。</p>
+<ul>
+<li>
+<p>Compose 中有两个重要的概念：</p>
+</li>
+<li>
+<p>服务 (service)：一个应用的容器，实际上可以包括若干运行相同镜像的容器实例。</p>
+</li>
+<li>
+<p>项目 (project)：由一组关联的应用容器组成的一个完整业务单元，在 docker-compose.yml 文件中定义。</p>
+</li>
+<li>
+<p>Compose 的默认管理对象是项目，通过子命令对项目中的一组容器进行便捷地生命周期管理。</p>
+</li>
+<li>
+<p>Compose 项目由 Python 编写，实现上调用了 Docker 服务提供的 API 来对容器进行管理。因此，只要所操作的平台支持 Docker API，就可以在其上利用 Compose 来进行编排管理。</p>
+</li>
+</ul>
+<h3 id="_23">安装</h3>
+<ul>
+<li>Compose 可以通过 Python 的包管理工具 pip 进行安装，也可以直接下载编译好的二进制文件使用，甚至能够直接在 Docker 容器中运行。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span><span class="o">-</span><span class="n">compose</span> <span class="o">--</span><span class="n">version</span>
+
+<span class="n">docker</span><span class="o">-</span><span class="n">compose</span> <span class="n">version</span> <span class="mf">1.17.1</span><span class="p">,</span> <span class="n">build</span> <span class="mi">6</span><span class="n">d101fb</span>
+</pre></div>
+
+
+<h4 id="_24">二进制包</h4>
+<ul>
+<li>在 Linux 上的也安装十分简单，从 官方 GitHub Release 处直接下载编译好的二进制文件即可。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">curl</span> <span class="o">-</span><span class="n">L</span> <span class="n">https</span><span class="o">:</span><span class="c1">//github.com/docker/compose/releases/download/1.17.1/docker-compose-`uname -s`-`uname -m` &gt; /usr/local/bin/docker-compose</span>
+<span class="err">$</span> <span class="n">sudo</span> <span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">docker</span><span class="o">-</span><span class="n">compose</span>
+</pre></div>
+
+
+<h4 id="pip">PIP 安装</h4>
+<ul>
+<li>x86_64 架构的 Linux 建议按照上边的方法下载二进制包进行安装，如果您计算机的架构是 ARM (例如，树莓派)，再使用 pip 安装。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">U</span> <span class="n">docker</span><span class="o">-</span><span class="n">compose</span>
+</pre></div>
+
+
+<h4 id="bash">bash 补全命令</h4>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">curl</span> <span class="o">-</span><span class="n">L</span> <span class="n">https</span><span class="o">:</span><span class="c1">//raw.githubusercontent.com/docker/compose/1.8.0/contrib/completion/bash/docker-compose &gt; /etc/bash_completion.d/docker-compose</span>
+</pre></div>
+
+
+<h4 id="_25">容器中执行</h4>
+<ul>
+<li>Compose 既然是一个 Python 应用，自然也可以直接用容器来执行它。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">curl</span> <span class="o">-</span><span class="n">L</span> <span class="n">https</span><span class="o">:</span><span class="c1">//github.com/docker/compose/releases/download/1.8.0/run.sh &gt; /usr/local/bin/docker-compose</span>
+<span class="err">$</span> <span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">docker</span><span class="o">-</span><span class="n">compose</span>
+</pre></div>
+
+
+<ul>
+<li>实际上，查看下载的 run.sh 脚本内容，如下</li>
+</ul>
+<div class="hlcode"><pre><span class="n">set</span> <span class="o">-</span><span class="n">e</span>
+
+<span class="n">VERSION</span><span class="o">=</span><span class="s">&quot;1.8.0&quot;</span>
+<span class="n">IMAGE</span><span class="o">=</span><span class="s">&quot;docker/compose:$VERSION&quot;</span>
+
+
+<span class="cp"># Setup options for connecting to docker host</span>
+<span class="k">if</span> <span class="p">[</span> <span class="o">-</span><span class="n">z</span> <span class="s">&quot;$DOCKER_HOST&quot;</span> <span class="p">];</span> <span class="n">then</span>
+    <span class="n">DOCKER_HOST</span><span class="o">=</span><span class="s">&quot;/var/run/docker.sock&quot;</span>
+<span class="n">fi</span>
+<span class="k">if</span> <span class="p">[</span> <span class="o">-</span><span class="n">S</span> <span class="s">&quot;$DOCKER_HOST&quot;</span> <span class="p">];</span> <span class="n">then</span>
+    <span class="n">DOCKER_ADDR</span><span class="o">=</span><span class="s">&quot;-v $DOCKER_HOST:$DOCKER_HOST -e DOCKER_HOST&quot;</span>
+<span class="k">else</span>
+    <span class="n">DOCKER_ADDR</span><span class="o">=</span><span class="s">&quot;-e DOCKER_HOST -e DOCKER_TLS_VERIFY -e DOCKER_CERT_PATH&quot;</span>
+<span class="n">fi</span>
+
+
+<span class="cp"># Setup volume mounts for compose config and context</span>
+<span class="k">if</span> <span class="p">[</span> <span class="s">&quot;$(pwd)&quot;</span> <span class="o">!=</span> <span class="sc">&#39;/&#39;</span> <span class="p">];</span> <span class="n">then</span>
+    <span class="n">VOLUMES</span><span class="o">=</span><span class="s">&quot;-v $(pwd):$(pwd)&quot;</span>
+<span class="n">fi</span>
+<span class="k">if</span> <span class="p">[</span> <span class="o">-</span><span class="n">n</span> <span class="s">&quot;$COMPOSE_FILE&quot;</span> <span class="p">];</span> <span class="n">then</span>
+    <span class="n">compose_dir</span><span class="o">=</span><span class="err">$</span><span class="p">(</span><span class="n">dirname</span> <span class="err">$</span><span class="n">COMPOSE_FILE</span><span class="p">)</span>
+<span class="n">fi</span>
+<span class="cp"># TODO: also check --file argument</span>
+<span class="k">if</span> <span class="p">[</span> <span class="o">-</span><span class="n">n</span> <span class="s">&quot;$compose_dir&quot;</span> <span class="p">];</span> <span class="n">then</span>
+    <span class="n">VOLUMES</span><span class="o">=</span><span class="s">&quot;$VOLUMES -v $compose_dir:$compose_dir&quot;</span>
+<span class="n">fi</span>
+<span class="k">if</span> <span class="p">[</span> <span class="o">-</span><span class="n">n</span> <span class="s">&quot;$HOME&quot;</span> <span class="p">];</span> <span class="n">then</span>
+    <span class="n">VOLUMES</span><span class="o">=</span><span class="s">&quot;$VOLUMES -v $HOME:$HOME -v $HOME:/root&quot;</span> <span class="err">#</span> <span class="n">mount</span> <span class="err">$</span><span class="n">HOME</span> <span class="k">in</span> <span class="o">/</span><span class="n">root</span> <span class="n">to</span> <span class="n">share</span> <span class="n">docker</span><span class="p">.</span><span class="n">config</span>
+<span class="n">fi</span>
+
+<span class="cp"># Only allocate tty if we detect one</span>
+<span class="k">if</span> <span class="p">[</span> <span class="o">-</span><span class="n">t</span> <span class="mi">1</span> <span class="p">];</span> <span class="n">then</span>
+    <span class="n">DOCKER_RUN_OPTIONS</span><span class="o">=</span><span class="s">&quot;-t&quot;</span>
+<span class="n">fi</span>
+<span class="k">if</span> <span class="p">[</span> <span class="o">-</span><span class="n">t</span> <span class="mi">0</span> <span class="p">];</span> <span class="n">then</span>
+    <span class="n">DOCKER_RUN_OPTIONS</span><span class="o">=</span><span class="s">&quot;$DOCKER_RUN_OPTIONS -i&quot;</span>
+<span class="n">fi</span>
+
+<span class="n">exec</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">rm</span> <span class="err">$</span><span class="n">DOCKER_RUN_OPTIONS</span> <span class="err">$</span><span class="n">DOCKER_ADDR</span> <span class="err">$</span><span class="n">COMPOSE_OPTIONS</span> <span class="err">$</span><span class="n">VOLUMES</span> <span class="o">-</span><span class="n">w</span> <span class="s">&quot;$(pwd)&quot;</span> <span class="err">$</span><span class="n">IMAGE</span> <span class="s">&quot;$@&quot;</span>
+</pre></div>
+
+
+<h3 id="_26">卸载</h3>
+<ul>
+<li>如果是二进制包方式安装的，删除二进制文件即可。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">rm</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">docker</span><span class="o">-</span><span class="n">compose</span>
+</pre></div>
+
+
+<ul>
+<li>如果是通过 pip 安装的，则执行如下命令即可删除。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">pip</span> <span class="n">uninstall</span> <span class="n">docker</span><span class="o">-</span><span class="n">compose</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

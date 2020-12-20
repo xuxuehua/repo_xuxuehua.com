@@ -36,6 +36,32 @@ S3 list 结果和emr数据不一致的时候，需要开启EMRFS一致性视图(
 
 
 
+
+
+## scaling
+
+![image-20201216133108864](emr.assets/image-20201216133108864.png)
+
+
+
+
+
+## User Role Mapper
+
+![image-20201216134938013](emr.assets/image-20201216134938013.png)
+
+
+
+![image-20201216135047983](emr.assets/image-20201216135047983.png)
+
+
+
+## EKS
+
+![image-20201216140523381](emr.assets/image-20201216140523381.png)
+
+
+
 # HBase
 
 ![image-20200408140912281](emr.assets/image-20200408140912281.png)

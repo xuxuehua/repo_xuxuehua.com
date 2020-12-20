@@ -246,3 +246,11 @@ document.body.innerHTML = document.body.innerHTML.replace(/user-select/g, "XYZ")
 document.head.innerHTML = document.head.innerHTML.replace(/user-select/g, "XYZ")
 ```
 
+
+
+
+
+# 教程
+
+https://developer.mozilla.org/zh-CN/docs/Learn/Getting_started_with_the_web
+

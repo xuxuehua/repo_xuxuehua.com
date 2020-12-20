@@ -362,4 +362,53 @@ $$
 
 
 
+# pyspark
+
+
+
+## example
+
+```
+SET python_operator="""
+def tier(spark, **kwargs):
+    date_input=kwargs['date_input']
+    import boto3
+    import botocore
+    BUCKET_NAME = 'prod_appannie_ios' # replace with your bucket name
+    KEY = ('tier-price/{}/price_matrix').format(date_input) # replace with your object key
+    s3 = boto3.resource('s3')
+    try:
+        s3.Bucket(BUCKET_NAME).download_file(KEY, '/tmp/price_matrix')
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == "404":
+            print("The object does not exist.")
+        else:
+            raise
+    import json
+    import zlib
+    from ast import literal_eval
+    import pandas as pd
+    import datetime
+    count=1
+    date=datetime.datetime.strptime(date_input, '%Y-%m-%d')
+    df = pd.DataFrame(columns=('id','tier','currency_code','price','date'))
+    with open("/tmp/price_matrix", 'rb') as f:
+        raw = f.read()
+        json_raw_data=json.loads(literal_eval(zlib.decompress(raw).decode('utf-8'))).get('data').get('pricingTiers')
+        for i in json_raw_data:
+            tier=i['tierStem']
+            info=i['pricingInfo']
+            for m,n in enumerate(info):
+                currency_code=n['currencyCode']
+                price=n['retailPrice']
+                df=df.append(pd.DataFrame({'id':[count],'tier':[tier],'currency_code':[currency_code],'price':[price],'date':[date]}),ignore_index=True)
+                count=count+1
+    dfr=spark.createDataFrame(df)
+    return dfr
+"""
+```
+
+
+
+
 

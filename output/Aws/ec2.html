@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>ec2 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Aws">Aws</a>&nbsp;&#187;&nbsp;ec2
+    <span class="updated">Page Updated&nbsp;
+      2019-06-24 09:48
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">ec2</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#elastic-compute-cloud">Elastic Compute Cloud</a><ul>
+<li><a href="#characteristic">Characteristic</a></li>
+<li><a href="#launch">Launch</a><ul>
+<li><a href="#user-data">User data</a></li>
+<li><a href="#metadata-service">Metadata Service</a></li>
+</ul>
+</li>
+<li><a href="#instance-technologies">Instance Technologies</a></li>
+<li><a href="#current-generation-instances">Current Generation Instances</a><ul>
+<li><a href="#habana-instances">Habana instances</a></li>
+</ul>
+</li>
+<li><a href="#amd-instance">AMD instance</a></li>
+<li><a href="#extending-the-cloud">Extending the cloud</a></li>
+<li><a href="#reboot-vs-stop-vs-terminate">Reboot vs Stop vs Terminate</a></li>
+</ul>
+</li>
+<li><a href="#auto-scaling">Auto-scaling</a><ul>
+<li><a href="#launch-configurations">Launch configurations</a></li>
+<li><a href="#load-balancer-types">Load Balancer Types</a></li>
+</ul>
+</li>
+<li><a href="#ec2-spot-instance">EC2 Spot Instance</a><ul>
+<li><a href="#_1">购买</a></li>
+<li><a href="#spot-spot-instance-pool">Spot 实例池 Spot Instance Pool</a></li>
+<li><a href="#spot-spot-fleet">Spot队列  Spot Fleet</a></li>
+<li><a href="#spot-blocks">Spot blocks</a></li>
+<li><a href="#_2">中断</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="elastic-compute-cloud">Elastic Compute Cloud</h1>
+<p>Deploy across AWS Regions and Availablity Zones for reliability</p>
+<h2 id="characteristic">Characteristic</h2>
+<p>All data is automatically deleted when an EC2 instance stops, fails or is terminated</p>
+<h2 id="launch">Launch</h2>
+<p>Can be launch from a pre-configured Amazon Machine Image (AMI)</p>
+<h3 id="user-data">User data</h3>
+<p>In Advanced Details, here we could input below data for bootstrap</p>
+<table class="hlcodetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="hlcode"><pre><span class="c">#!/bin/bash</span>
+yum -y install httpd
+systemctl start httpd 
+<span class="k">if</span> <span class="o">[</span> ! -f /var/www/html/lab2-app.tar.gz <span class="o">]</span>; <span class="k">then </span>
+<span class="nb">cd</span> /var/www/html
+wget https://us-west-2-aws-training.s3.amazonaws.com/awsu-ilt/AWS-100-ESS/v4.1/lab-2-configure-website-datastore/scripts/lab2-app.tar.gz
+
+tar xvfz lab2-app.tar.gz
+chown apache:root /var/www/html/rds.config.php
+<span class="k">fi</span>
+</pre></div>
+</td></tr></table>
+
+<p>query user-data info</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="n">http</span><span class="o">:</span><span class="c1">//169.254.169.254/latest/user-data</span>
+</pre></div>
+
+
+<h3 id="metadata-service">Metadata Service</h3>
+<p>e.g.</p>
+<div class="hlcode"><pre><span class="nl">http:</span><span class="c1">//169.254.169.254/latest/meta-data/iam/security-credentials/rolename</span>
+</pre></div>
+
+
+<h2 id="instance-technologies">Instance Technologies</h2>
+<p><img alt="image-20200313170002408" src="ec2.assets/image-20200313170002408.png" /></p>
+<h2 id="current-generation-instances">Current Generation Instances</h2>
+<p><img alt="image-20200313170015940" src="ec2.assets/image-20200313170015940.png" /></p>
+<p><img alt="image-20201203110837226" src="ec2.assets/image-20201203110837226.png" /></p>
+<p><img alt="image-20201203111246961" src="ec2.assets/image-20201203111246961.png" /></p>
+<h3 id="habana-instances">Habana instances</h3>
+<p><img alt="image-20201203111139909" src="ec2.assets/image-20201203111139909.png" /></p>
+<h2 id="amd-instance">AMD instance</h2>
+<p><img alt="image-20201203112227765" src="ec2.assets/image-20201203112227765.png" /></p>
+<h2 id="extending-the-cloud">Extending the cloud</h2>
+<p><img alt="image-20201203114817948" src="ec2.assets/image-20201203114817948.png" /></p>
+<h2 id="reboot-vs-stop-vs-terminate">Reboot vs Stop vs Terminate</h2>
+<p><img alt="image-20200313170029266" src="ec2.assets/image-20200313170029266.png" /></p>
+<h1 id="auto-scaling">Auto-scaling</h1>
+<h2 id="launch-configurations">Launch configurations</h2>
+<p>Specify below info when launch a instance</p>
+<div class="hlcode"><pre><span class="n">AMI</span> <span class="n">ID</span>
+<span class="n">Instance</span> <span class="n">type</span>
+<span class="n">Key</span> <span class="n">pair</span>
+<span class="n">Security</span> <span class="n">groups</span>
+<span class="n">Block</span> <span class="n">deivce</span> <span class="n">mapping</span>
+<span class="n">User</span> <span class="n">data</span>
+</pre></div>
+
+
+<p><img alt="image-20200313170041422" src="ec2.assets/image-20200313170041422.png" /></p>
+<h2 id="load-balancer-types">Load Balancer Types</h2>
+<p><img alt="image-20200313170057040" src="ec2.assets/image-20200313170057040.png" /></p>
+<h1 id="ec2-spot-instance">EC2 Spot Instance</h1>
+<p>EC2 Spot 是 AWS服务中的可用空闲计算容量。与按需实例的价格相比，这类实例可提供超低折扣</p>
+<p>可在预算相同的情况下将应用程序的吞吐量提高到10倍。您只需在启动 EC2 实例时选择“Spot”，即可节省按需实例价格的 90%；</p>
+<p>The Spot price of each instance type in each Availability Zone is set by Amazon EC2, and adjusted gradually based on the long-term supply of and demand for Spot Instances. </p>
+<p>按需实例和 Spot 实例的唯一区别在于，当 EC2 需要更多容量时，它会发出两分钟的通知继而中断 Spot 实例</p>
+<p>EC2 Spot 还可与其他 AWS 产品紧密集成，包括 EMR、Auto Scaling、Elastic Container Service (ECS)、CloudFormation等，让您可以灵活选择如何启动和维护 Spot 实例上运行的应用程序</p>
+<h2 id="_1">购买</h2>
+<p>Spot实例的现货价格根据供需情况定期变化</p>
+<p>价格将根据供需关系确定（不超过按需实例价格）；用户也可以设置一个最高价，当设置的最高价高于当前现货价格的期间内运行此类实例。</p>
+<p>现货价格 – Spot 实例当前的每小时市场价格，该价格由 Amazon EC2 根据执行的最后出价设置</p>
+<h2 id="spot-spot-instance-pool">Spot 实例池 Spot Instance Pool</h2>
+<p>一组未使用的 EC2 实例，具有相同的实例类型、操作系统、可用区,和网络平台</p>
+<h2 id="spot-spot-fleet">Spot队列  Spot Fleet</h2>
+<p>一组基于指定条件启动的 Spot 实例。 </p>
+<p>Spot 队列会选择满足您的需要的 Spot 实例池，并启动 Spot 实例以满足队列的目标容量。</p>
+<p>默认情况下，在队列中的 Spot 实例终止之后，系统会启动替代实例以维持 Spot 队列的目标容量。您可以将 Spot 队列作为一次性请求来提交，这种请求在实例终止后不会被保留。</p>
+<h2 id="spot-blocks">Spot blocks</h2>
+<p>Spot Instances with a specified duration, which are designed not to be interrupted and will run continuously for the duration you select</p>
+<p>In rare situations, Spot blocks may be interrupted due to Amazon EC2 capacity needs. </p>
+<h2 id="_2">中断</h2>
+<p>用户可以通过EC2的元数据中instance-action条目获取到该实例的状态，可以按如下方式检索它：</p>
+<div class="hlcode"><pre><span class="n">curl</span> <span class="n">http</span><span class="o">:</span><span class="c1">//169.254.169.254/latest/meta-data/spot/instance-action</span>
+</pre></div>
+
+
+<p>instance-action 项目指定操作 (停止或终止) 和操作发生的大致时间 (用 UTC 表示)。以下示例指示将停止此实例的时间：</p>
+<div class="hlcode"><pre><span class="p">{</span><span class="s">&quot;action&quot;</span><span class="o">:</span> <span class="s">&quot;stop&quot;</span><span class="p">,</span> <span class="s">&quot;time&quot;</span><span class="o">:</span> <span class="s">&quot;2017-09-18T08:22:00&quot;</span><span class="p">}</span>
+</pre></div>
+
+
+<p>以下示例指示将终止此实例的时间：</p>
+<div class="hlcode"><pre><span class="p">{</span><span class="s">&quot;action&quot;</span><span class="o">:</span> <span class="s">&quot;terminate&quot;</span><span class="p">,</span> <span class="s">&quot;time&quot;</span><span class="o">:</span> <span class="s">&quot;2017-09-18T08:22:00&quot;</span><span class="p">}</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>exception 异常处理 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Selenium">Selenium</a>&nbsp;&#187;&nbsp;exception 异常处理
+    <span class="updated">Page Updated&nbsp;
+      2018-07-19 18:35
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">exception 异常处理</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">异常处理</a><ul>
+<li><a href="#_2">元素等待</a><ul>
+<li><a href="#_3">显式等待</a></li>
+<li><a href="#_4">隐式等待</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">异常处理</h1>
+<h2 id="_2">元素等待</h2>
+<p>WebDriver提供了两种类型的等待：<strong>显式等待</strong>和<strong>隐式等待</strong>。</p>
+<h3 id="_3">显式等待</h3>
+<p>显式等待使WebdDriver等待某个条件成立时继续执行，否则在达到最大时长时抛出超时异常（TimeoutException）。</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">selenium</span> <span class="n">import</span> <span class="n">webdriver</span>
+<span class="n">from</span> <span class="n">selenium</span><span class="p">.</span><span class="n">webdriver</span><span class="p">.</span><span class="n">common</span><span class="p">.</span><span class="n">by</span> <span class="n">import</span> <span class="n">By</span>
+<span class="n">from</span> <span class="n">selenium</span><span class="p">.</span><span class="n">webdriver</span><span class="p">.</span><span class="n">support</span><span class="p">.</span><span class="n">ui</span> <span class="n">import</span> <span class="n">WebDriverWait</span>
+<span class="n">from</span> <span class="n">selenium</span><span class="p">.</span><span class="n">webdriver</span><span class="p">.</span><span class="n">support</span> <span class="n">import</span> <span class="n">expected_conditions</span> <span class="n">as</span> <span class="n">EC</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="p">.</span><span class="n">Firefox</span><span class="p">()</span>
+<span class="n">driver</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;http://www.baidu.com&quot;</span><span class="p">)</span>
+
+<span class="n">element</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">).</span><span class="n">until</span><span class="p">(</span>
+                      <span class="n">EC</span><span class="p">.</span><span class="n">presence_of_element_located</span><span class="p">((</span><span class="n">By</span><span class="p">.</span><span class="n">ID</span><span class="p">,</span> <span class="s">&quot;kw&quot;</span><span class="p">))</span>
+                      <span class="p">)</span>
+<span class="n">element</span><span class="p">.</span><span class="n">send_keys</span><span class="p">(</span><span class="err">&#39;</span><span class="n">selenium</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">driver</span><span class="p">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+
+
+<p>WebDriverWait类是由WebDirver 提供的等待方法。在设置时间内，默认每隔一段时间检测一次当前页面元素是否存在，如果超过设置时间检测不到则抛出异常。具体格式如下：</p>
+<div class="hlcode"><pre><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">poll_frequency</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ignored_exceptions</span><span class="o">=</span><span class="n">None</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>driver ：浏览器驱动。</li>
+<li>timeout ：最长超时时间，默认以秒为单位。</li>
+<li>poll_frequency ：检测的间隔（步长）时间，默认为0.5S。</li>
+<li>ignored_exceptions ：超时后的异常信息，默认情况下抛NoSuchElementException异常。</li>
+</ul>
+<p>WebDriverWait()一般由until()或until_not()方法配合使用，下面是until()和until_not()方法的说明。 * until(method, message=‘’) 调用该方法提供的驱动程序作为一个参数，直到返回值为True。 * until_not(method, message=‘’) 调用该方法提供的驱动程序作为一个参数，直到返回值为False。</p>
+<p>在本例中，通过as关键字将expected_conditions 重命名为EC，并调用presence_of_element_located()方法判断元素是否存在。</p>
+<h3 id="_4">隐式等待</h3>
+<p>WebDriver提供了implicitly_wait()方法来实现隐式等待，默认设置为0。它的用法相对来说要简单得多。</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">selenium</span> <span class="n">import</span> <span class="n">webdriver</span>
+<span class="n">from</span> <span class="n">selenium</span><span class="p">.</span><span class="n">common</span><span class="p">.</span><span class="n">exceptions</span> <span class="n">import</span> <span class="n">NoSuchElementException</span>
+<span class="n">from</span> <span class="n">time</span> <span class="n">import</span> <span class="n">ctime</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="p">.</span><span class="n">Firefox</span><span class="p">()</span>
+
+<span class="cp"># 设置隐式等待为10秒</span>
+<span class="n">driver</span><span class="p">.</span><span class="n">implicitly_wait</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">driver</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;http://www.baidu.com&quot;</span><span class="p">)</span>
+
+<span class="nl">try:</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">ctime</span><span class="p">())</span>
+    <span class="n">driver</span><span class="p">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="s">&quot;kw22&quot;</span><span class="p">).</span><span class="n">send_keys</span><span class="p">(</span><span class="err">&#39;</span><span class="n">selenium</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">except</span> <span class="n">NoSuchElementException</span> <span class="n">as</span> <span class="n">e</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="nl">finally:</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">ctime</span><span class="p">())</span>
+    <span class="n">driver</span><span class="p">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+
+
+<p>implicitly_wait()默认参数的单位为秒，本例中设置等待时长为10秒。首先这10秒并非一个固定的等待时间，它并不影响脚本的执行速度。其次，它并不针对页面上的某一元素进行等待。当脚本执行到某个元素定位时，如果元素可以定位，则继续执行；如果元素定位不到，则它将以轮询的方式不断地判断元素是否被定位到。假设在第6秒定位到了元素则继续执行，若直到超出设置时长（10秒）还没有定位到元素，则抛出异常。</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

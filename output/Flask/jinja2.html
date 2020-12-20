@@ -1,0 +1,538 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>jinja2 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Flask">Flask</a>&nbsp;&#187;&nbsp;jinja2
+    <span class="updated">Page Updated&nbsp;
+      2019-06-02 16:21
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">jinja2</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#jinja2">jinja2</a><ul>
+<li><a href="#_1">模版继承</a><ul>
+<li><a href="#_2">子模板</a></li>
+<li><a href="#import">局部模版 import插入</a></li>
+</ul>
+</li>
+<li><a href="#_3">内置全局函数</a><ul>
+<li><a href="#flask">Flask 内置全局函数</a><ul>
+<li><a href="#url_for">url_for 函数</a></li>
+</ul>
+</li>
+<li><a href="#template_global">自定义全局函数 template_global</a></li>
+</ul>
+</li>
+<li><a href="#_4">模板环境变量</a></li>
+</ul>
+</li>
+<li><a href="#flash">flash 消息闪现</a></li>
+<li><a href="#macro">宏macro</a><ul>
+<li><a href="#_5">加载静态资源</a></li>
+</ul>
+</li>
+<li><a href="#filter">filter  过滤器</a><ul>
+<li><a href="#default">default</a></li>
+<li><a href="#length">length</a></li>
+<li><a href="#safe">safe</a></li>
+<li><a href="#template_filter">自定义过滤器 template_filter()</a></li>
+</ul>
+</li>
+<li><a href="#_6">测试器</a><ul>
+<li><a href="#number">number</a></li>
+<li><a href="#string">string</a></li>
+<li><a href="#template_test">自定义测试器template_test</a></li>
+<li><a href="#message-flash">message flash</a><ul>
+<li><a href="#set">set方法</a></li>
+</ul>
+</li>
+<li><a href="#_7"></a><ul>
+<li><a href="#with">with方法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_8">全局上下文变量</a><ul>
+<li><a href="#for">for 循环</a></li>
+<li><a href="#_9">常用循环变量</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="jinja2">jinja2</h1>
+<p>使用.来获取变量属性</p>
+<p>如user.username 等同于获取字典中user['username']</p>
+<ol>
+<li>模板不支持多继承，也就是子模板中定义的块，不可能同时被两个父模板替换。</li>
+<li>模板中不能定义多个同名的块，子模板和父模板都不行，因为这样无法知道要替换哪一个部分的内容。</li>
+</ol>
+<p>建议在<code>endblock</code>关键字后也加上块名，比如<code>{% endblock block_name %}</code>。虽然对程序没什么作用，但是当有多个块嵌套时，可读性好很多。</p>
+<h2 id="_1">模版继承</h2>
+<p>super函数可以向基类模板中的块追加内容, 即父类块中添加内容</p>
+<p>将父模板”layout.html”改为</p>
+<div class="hlcode"><pre><span class="cp">&lt;!doctype html&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="cp">{%</span> <span class="k">block</span> <span class="nv">head</span> <span class="cp">%}</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">url_for</span><span class="o">(</span><span class="s1">&#39;static&#39;</span><span class="o">,</span> <span class="nv">filename</span><span class="o">=</span><span class="s1">&#39;style.css&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span><span class="cp">{%</span> <span class="k">block</span> <span class="nv">title</span> <span class="cp">%}{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="nt">&lt;/title&gt;</span>
+    <span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;page&quot;</span><span class="nt">&gt;</span>
+    <span class="cp">{%</span> <span class="k">block</span> <span class="nv">body</span> <span class="cp">%}</span>
+    <span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+    <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</pre></div>
+
+
+<p>并在子模板里，加上”head”块和”title”块</p>
+<div class="hlcode"><pre><span class="cp">{%</span> <span class="k">block</span> <span class="nv">title</span> <span class="cp">%}</span>Block Sample<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">head</span> <span class="cp">%}</span>
+    <span class="cp">{{</span> <span class="nb">super</span><span class="o">()</span> <span class="cp">}}</span>
+    <span class="nt">&lt;style</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+        h1 { color: #336699; }
+    <span class="nt">&lt;/style&gt;</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+</pre></div>
+
+
+<p>父模板同子模板的”head”块中都有内容。运行后，你可以看到，父模板中的”head”块语句先被加载，而后是子模板中的”head”块语句。这就得益于我们在子模板的”head”块中加上了表达式<code>{{ super() }}</code>。</p>
+<h3 id="_2">子模板</h3>
+<p>避免块混乱，结束标签可以指明块名称</p>
+<div class="hlcode"><pre><span class="cp">{%</span> <span class="k">block</span> <span class="nv">body</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    ...</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="nv">body</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+
+<h3 id="import">局部模版 import插入</h3>
+<p>使用include标签插入，一般为了和普通模板区分开，通常以下划线开头</p>
+<div class="hlcode"><pre><span class="p">{</span><span class="o">%</span> <span class="n">include</span> <span class="err">&#39;</span><span class="n">_banner</span><span class="p">.</span><span class="n">html</span><span class="err">&#39;</span> <span class="o">%</span><span class="p">}</span>
+</pre></div>
+
+
+<p>默认情况下包含include一个局部模板会传递当前上下文到局部模板中，但是import不会(引入macro).</p>
+<p>具体来说，使用render_template() 函数渲染一个foo.html模板时，这个foo.html 的模板上下文中包含下列对象</p>
+<div class="hlcode"><pre><span class="n">Flask</span> <span class="err">使用内置的模板上下文处理函数提供的</span><span class="n">g</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">request</span>
+<span class="err">扩展使用内置的模板上下文处理函数提供的变量</span>
+<span class="err">自定义模板上下文处理器传入的变量</span>
+<span class="err">使用</span><span class="n">render_tempalte</span><span class="p">()</span> <span class="err">函数传入的变量</span>
+<span class="n">Jinja2</span> <span class="err">和</span><span class="n">Flask</span><span class="err">内置以及自定义的全局对象</span>
+<span class="n">Jinja2</span> <span class="err">内置及自定义过滤器</span>
+<span class="n">Jinja2</span> <span class="err">内置及自定义测试器</span>
+</pre></div>
+
+
+<p>然而导入一个并非直接渲染的模板(macros.html， 这个模板仅仅包含下列对象</p>
+<div class="hlcode"><pre><span class="n">Jinja2</span> <span class="err">和</span><span class="n">Flask</span><span class="err">内置以及自定义的全局对象</span>
+<span class="n">Jinja2</span> <span class="err">内置及自定义过滤器</span>
+<span class="n">Jinja2</span> <span class="err">内置及自定义测试器</span>
+</pre></div>
+
+
+<p>若需显示使用with context 声明</p>
+<div class="hlcode"><pre><span class="p">{</span><span class="o">%</span> <span class="n">from</span> <span class="s">&quot;macros.html&quot;</span> <span class="n">import</span> <span class="n">foo</span> <span class="n">with</span> <span class="n">context</span> <span class="o">%</span><span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_3">内置全局函数</h2>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Range([start, ] stop[, step])</td>
+<td>和Python中的range()用法相同</td>
+</tr>
+<tr>
+<td>lipsum(n=5, html=True, min=20, max=100)</td>
+<td>生成随机文本(lorem ipsum) ，可以在测试时用来填充页面，默认生成5段HTML文本，每段包含20-100个单词</td>
+</tr>
+<tr>
+<td>dict(**items)</td>
+<td>和Python中的dict()用法相同</td>
+</tr>
+</tbody>
+</table>
+<h3 id="flask">Flask 内置全局函数</h3>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>url_for()</td>
+<td>用于生成URL的函数</td>
+</tr>
+<tr>
+<td>get_flashed_messages()</td>
+<td>用于获取flash消息的函数</td>
+</tr>
+</tbody>
+</table>
+<h4 id="url_for">url_for 函数</h4>
+<p>通过相对固定的endpoint来构建URL地址， 即生成URL地址</p>
+<div class="hlcode"><pre> <span class="o">&lt;</span><span class="n">link</span> <span class="n">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;{{ url_for(&#39;static&#39;, filename=&#39;test.css&#39;) }}&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<blockquote>
+<p>static 是endpoint地址</p>
+</blockquote>
+<h3 id="template_global">自定义全局函数 template_global</h3>
+<p>使用template_global 装饰器直接将函数注册为模板函数</p>
+<div class="hlcode"><pre><span class="err">@</span><span class="n">app</span><span class="p">.</span><span class="n">template_global</span><span class="p">()</span>
+<span class="n">def</span> <span class="n">bar</span><span class="p">()</span><span class="o">:</span>
+    <span class="k">return</span> <span class="err">&#39;</span><span class="n">I</span> <span class="n">am</span> <span class="n">bar</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="_4">模板环境变量</h2>
+<p>删除所在行之前的空格和制表符</p>
+<div class="hlcode"><pre><span class="n">app</span><span class="p">.</span><span class="n">jinja_env</span><span class="p">.</span><span class="n">trim_blocks</span> <span class="o">=</span> <span class="n">True</span>
+<span class="n">app</span><span class="p">.</span><span class="n">jinja_env</span><span class="p">.</span><span class="n">lstrip_blocks</span> <span class="o">=</span> <span class="n">True</span>
+</pre></div>
+
+
+<h1 id="flash">flash 消息闪现</h1>
+<p>flash函数发送的消息存储在session中，需要使用全局函数get_flashed_messages() 获取消息</p>
+<p>Flask， Jinja2和Werkzeug等相关依赖均将文本类型设定为Unicode</p>
+<p>需要在HTMLheader标签中添加编码声明</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">meta</span> <span class="n">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h1 id="macro">宏macro</h1>
+<p>把一部分模板代码封装到宏里面，使用传递的参数来构建内容，最后返回构建后的内容</p>
+<p>通常把宏存储在单独的文件中，如macros.html 或者_macros.html</p>
+<div class="hlcode"><pre><span class="p">{</span><span class="o">%</span> <span class="n">macro</span> <span class="n">qux</span><span class="p">(</span><span class="n">amount</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span><span class="p">}</span>
+    <span class="p">{</span><span class="o">%</span> <span class="k">if</span> <span class="n">amount</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">%</span><span class="p">}</span>
+        <span class="n">I</span> <span class="n">am</span> <span class="n">qux</span>
+    <span class="p">{</span><span class="o">%</span> <span class="n">elif</span> <span class="n">amount</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">%</span><span class="p">}</span>
+        <span class="n">We</span> <span class="n">are</span> <span class="n">quxs</span><span class="p">.</span>
+    <span class="p">{</span><span class="o">%</span> <span class="n">endif</span> <span class="o">%</span><span class="p">}</span>
+<span class="p">{</span><span class="o">%</span> <span class="n">endmacro</span> <span class="o">%</span><span class="p">}</span>
+</pre></div>
+
+
+<p>使用import 语句导入，然后作为函数调用，传入必要的参数</p>
+<div class="hlcode"><pre><span class="p">{</span><span class="o">%</span> <span class="n">from</span> <span class="err">&#39;</span><span class="n">macros</span><span class="p">.</span><span class="n">html</span><span class="err">&#39;</span> <span class="n">import</span> <span class="n">qux</span> <span class="o">%</span><span class="p">}</span>
+    <span class="p">.</span>
+<span class="p">{{</span> <span class="n">qux</span><span class="p">(</span><span class="n">amount</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="p">}}</span>
+</pre></div>
+
+
+<p>宏接收表单类实例的字段属性和附加的关键字参数作为输入，返回包含label标签，表单字段，错误消息列表的HTML表单字段代码</p>
+<div class="hlcode"><pre><span class="cp">{%</span> <span class="k">macro</span> <span class="nv">form_field</span><span class="o">(</span><span class="nv">field</span><span class="o">)</span> <span class="cp">%}</span>
+  <span class="cp">{{</span> <span class="nv">field.label</span> <span class="cp">}}</span><span class="nt">&lt;br&gt;</span>
+  <span class="cp">{{</span> <span class="nv">field</span><span class="o">(**</span><span class="nv">kwargs</span><span class="o">)</span> <span class="cp">}}</span><span class="nt">&lt;br&gt;</span>
+    <span class="cp">{%</span> <span class="k">if</span> <span class="nv">field.errors</span> <span class="cp">%}</span>
+        <span class="cp">{%</span> <span class="k">for</span> <span class="nv">error</span> <span class="k">in</span> <span class="nv">field.errors</span> <span class="cp">%}</span>
+        <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">&quot;error&quot;</span><span class="nt">&gt;</span><span class="cp">{{</span> <span class="nv">error</span> <span class="cp">}}</span><span class="nt">&lt;/small&gt;&lt;br&gt;</span>
+        <span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span>
+    <span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
+<span class="cp">{%</span> <span class="k">endmacro</span> <span class="cp">%}</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="p">{</span><span class="o">%</span> <span class="nb">from</span> <span class="s1">&#39;macros.html&#39;</span> <span class="k">import</span> <span class="nx">form_field</span> <span class="o">%</span><span class="p">}</span>
+<span class="o">&lt;</span><span class="nb">form</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;post&quot;</span><span class="o">&gt;</span>
+    <span class="p">{{</span> <span class="nx">form.csrf_token</span> <span class="p">}}</span>
+    <span class="p">{{</span> <span class="nx">form_field</span><span class="p">(</span><span class="nx">form.username</span><span class="p">)</span> <span class="p">}}</span>
+    <span class="p">{{</span> <span class="nx">form_field</span><span class="p">(</span><span class="nx">form.password</span><span class="p">)</span> <span class="p">}}</span>
+        <span class="nx">...</span>
+<span class="o">&lt;/</span><span class="nb">form</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h2 id="_5">加载静态资源</h2>
+<div class="hlcode"><pre><span class="cp">{%</span> <span class="k">macro</span> <span class="nv">static_file</span><span class="o">(</span><span class="nv">type</span><span class="o">,</span> <span class="nv">filename_or_url</span><span class="o">,</span> <span class="nv">local</span><span class="o">=</span><span class="kp">True</span><span class="o">)</span> <span class="cp">%}</span>
+    <span class="cp">{%</span> <span class="k">if</span> <span class="nv">local</span> <span class="cp">%}</span>
+        <span class="cp">{%</span> <span class="k">set</span> <span class="nv">filename_or_url</span> <span class="o">=</span> <span class="nv">url_for</span><span class="o">(</span><span class="s1">&#39;static&#39;</span><span class="o">,</span> <span class="nv">filename</span><span class="o">=</span><span class="nv">filename_or_url</span><span class="o">)</span> <span class="cp">%}</span>
+    <span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
+    <span class="cp">{%</span> <span class="k">if</span> <span class="nv">type</span> <span class="o">==</span> <span class="s1">&#39;css&#39;</span> <span class="cp">%}</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span><span class="err">,</span> <span class="na">href=</span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">filename_or_url</span> <span class="cp">}}</span><span class="s">&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+    <span class="cp">{%</span> <span class="k">elif</span> <span class="nv">type</span> <span class="o">==</span> <span class="s1">&#39;js&#39;</span> <span class="cp">%}</span>
+        <span class="nt">&lt;script</span> <span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src=</span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">filename_or_url</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
+    <span class="cp">{%</span> <span class="k">elif</span> <span class="nv">type</span> <span class="o">==</span> <span class="s1">&#39;icon&#39;</span> <span class="cp">%}</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;icon&quot;</span> <span class="na">href=</span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">filename_or_url</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="nt">&gt;</span>
+    <span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
+<span class="cp">{%</span> <span class="k">endmacro</span> <span class="cp">%}</span>
+</pre></div>
+
+
+<h1 id="filter">filter  过滤器</h1>
+<p>用来修改和过滤变量值的特殊函数</p>
+<div class="hlcode"><pre><span class="p">{{</span> <span class="n">name</span><span class="o">|</span><span class="n">title</span> <span class="p">}}</span>
+</pre></div>
+
+
+<blockquote>
+<p>name变量使用title 过滤器</p>
+</blockquote>
+<div class="hlcode"><pre><span class="p">{</span><span class="o">%</span> <span class="n">filter</span> <span class="n">upper</span> <span class="o">%</span><span class="p">}</span>
+    <span class="n">This</span> <span class="n">text</span> <span class="n">becomes</span> <span class="n">upper</span> <span class="k">case</span><span class="p">.</span>
+<span class="p">{</span><span class="o">%</span> <span class="n">endfilter</span> <span class="o">%</span><span class="p">}</span>
+</pre></div>
+
+
+<h2 id="default">default</h2>
+<p>内置过滤器，类似于管道命令，设置默认值并作为参数传入</p>
+<div class="hlcode"><pre><span class="cp">{%</span> <span class="k">extends</span> <span class="s1">&#39;layout.html&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">content</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{{</span> <span class="nb">super</span><span class="o">()</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{{</span> <span class="nv">data.age</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">data.age</span> <span class="o">&lt;</span> <span class="m">18</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{{</span> <span class="nv">data.name</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">elif</span> <span class="nv">data.age</span> <span class="o">==</span> <span class="m">30</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{{</span> <span class="nv">data.school</span> <span class="o">|</span> <span class="nf">default</span><span class="o">(</span><span class="s1">&#39;Unnamed&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">else</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{{</span> <span class="nv">data.age</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+
+<blockquote>
+<p>默认data里面没有school这个键，所以会显示default所定义的Unnamed信息</p>
+</blockquote>
+<h2 id="length">length</h2>
+<p>内置过滤器，返回变量长度</p>
+<div class="hlcode"><pre><span class="p">{{</span> <span class="n">data</span> <span class="o">|</span> <span class="n">length</span><span class="p">()</span> <span class="p">}}</span>
+</pre></div>
+
+
+<blockquote>
+<p>获取到data的长度信息</p>
+</blockquote>
+<h2 id="safe">safe</h2>
+<p>将变量值标记为安全，避免转义</p>
+<p>不要直接对用户输入的内容使用safe过滤器，否则很容器被植入恶意代码，导致XSS攻击</p>
+<h2 id="template_filter">自定义过滤器 template_filter()</h2>
+<p>使用app.template_filter() 装饰器可以自定义过滤器</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">flask</span> <span class="n">import</span> <span class="n">Markup</span>
+
+<span class="err">@</span><span class="n">app</span><span class="p">.</span><span class="n">template_filter</span><span class="p">()</span>
+<span class="n">def</span> <span class="n">musical</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">return</span> <span class="n">s</span> <span class="o">+</span> <span class="n">Markup</span><span class="p">(</span><span class="err">&#39;</span> <span class="o">&amp;</span><span class="err">#</span><span class="mi">9835</span><span class="p">;</span> <span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>musical过滤器会在被过滤的变量字符后面添加一个音符图标'</p>
+</blockquote>
+<h1 id="_6">测试器</h1>
+<p>测试变量或者表达式</p>
+<h2 id="number">number</h2>
+<p>内置测试器，判断变量是否为数字</p>
+<div class="hlcode"><pre><span class="cp">{%</span> <span class="k">if</span> <span class="nv">age</span> <span class="k">is</span> <span class="nf">number</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{{</span> <span class="nv">age</span> <span class="o">*</span> <span class="m">365</span> <span class="cp">}}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">else</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    Invalid number</span>
+<span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+
+<h2 id="string">string</h2>
+<p>内置测试器，判断变量是否为字符串</p>
+<h2 id="template_test">自定义测试器template_test</h2>
+<p>使用app.template_test() 装饰器来自定义</p>
+<div class="hlcode"><pre><span class="err">@</span><span class="n">app</span><span class="p">.</span><span class="n">template_test</span><span class="p">()</span>
+<span class="n">def</span> <span class="n">baz</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="err">&#39;</span><span class="n">baz</span><span class="err">&#39;</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">True</span>
+    <span class="k">return</span> <span class="n">False</span>
+</pre></div>
+
+
+<h2 id="message-flash">message flash</h2>
+<h3 id="set">set方法</h3>
+<p>每一个flask 消息变量只会存在在一个block中</p>
+<p>在secure.py 里面设置独一无二的key</p>
+<div class="hlcode"><pre><span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="err">&#39;</span><span class="mi">123413141431341</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<p>在web的路由函数下面，生成闪现消息</p>
+<div class="hlcode"><pre><span class="err">@</span><span class="n">web</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">test</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">def</span> <span class="n">test</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="err">&#39;</span><span class="n">name</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;&#39;</span><span class="p">,</span>
+        <span class="err">&#39;</span><span class="n">age</span><span class="err">&#39;</span><span class="o">:</span> <span class="mi">30</span>
+    <span class="p">}</span>
+    <span class="n">flash</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Hello</span><span class="p">,</span> <span class="n">Rick</span><span class="err">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="err">&#39;</span><span class="n">test</span><span class="p">.</span><span class="n">html</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">r</span><span class="p">)</span>
+</pre></div>
+
+
+<p>在模版文件中调用</p>
+<div class="hlcode"><pre><span class="cp">{%</span> <span class="k">extends</span> <span class="s1">&#39;layout.html&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">content</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{{</span> <span class="nb">super</span><span class="o">()</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{{</span> <span class="nv">data.age</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">data.age</span> <span class="o">&lt;</span> <span class="m">18</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{{</span> <span class="nv">data.name</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">elif</span> <span class="nv">data.age</span> <span class="o">==</span> <span class="m">30</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{{</span> <span class="nv">data.school</span> <span class="o">|</span> <span class="nf">default</span><span class="o">(</span><span class="s1">&#39;Unnamed&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{%</span> <span class="k">set</span> <span class="nv">messages</span> <span class="o">=</span> <span class="nv">get_flashed_messages</span><span class="o">()</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{{</span> <span class="nv">messages</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">else</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{{</span> <span class="nv">data.age</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+
+<p>在模板中定义变量，使用set标签</p>
+<div class="hlcode"><pre><span class="p">{</span><span class="o">%</span> <span class="nb">set</span> <span class="n">navigation</span> <span class="o">=</span> <span class="err">[</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;Home&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;/about&#39;</span><span class="p">,</span> <span class="s1">&#39;About&#39;</span><span class="p">)</span><span class="cp">]</span> %}
+
+{% set navigation %}
+    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;/&quot;</span><span class="nt">&gt;</span>Home<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;/about&quot;</span><span class="nt">&gt;</span>About<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+{% endset %}
+</pre></div>
+
+
+<h2 id="_7"></h2>
+<h3 id="with">with方法</h3>
+<p>消息只会在with之间有效果</p>
+<p>相比较于set，with需要语法闭合</p>
+<div class="hlcode"><pre><span class="cp">{%</span> <span class="k">extends</span> <span class="s1">&#39;layout.html&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">content</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{{</span> <span class="nb">super</span><span class="o">()</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{{</span> <span class="nv">data.age</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">data.age</span> <span class="o">&lt;</span> <span class="m">18</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{{</span> <span class="nv">data.name</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">elif</span> <span class="nv">data.age</span> <span class="o">==</span> <span class="m">30</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{{</span> <span class="nv">data.school</span> <span class="o">|</span> <span class="nf">default</span><span class="o">(</span><span class="s1">&#39;Unnamed&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{%</span> <span class="k">with</span> <span class="nv">messages</span> <span class="o">=</span> <span class="nv">get_flashed_messages</span><span class="o">()</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{{</span> <span class="nv">messages</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{%</span> <span class="k">endwith</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">else</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">        </span><span class="cp">{{</span> <span class="nv">data.age</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+
+<h1 id="_8">全局上下文变量</h1>
+<p>内置的上下文变量，可以在模板中直接使用</p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>config</td>
+<td>当前的配置对象</td>
+</tr>
+<tr>
+<td>request</td>
+<td>当前的请求对象，在已激活的请求环境下可用</td>
+</tr>
+<tr>
+<td>session</td>
+<td>当前的会话对象，在已激活的请求环境下可用</td>
+</tr>
+<tr>
+<td>g</td>
+<td>与请求绑定的全局变量，在已激活的请求环境下可用</td>
+</tr>
+</tbody>
+</table>
+<h2 id="for">for 循环</h2>
+<div class="hlcode"><pre><span class="p">{</span><span class="o">%</span> <span class="nb">for</span> <span class="n">movie</span> <span class="k">in</span> <span class="nx">movies</span> <span class="o">%</span><span class="p">}</span>
+    <span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;</span><span class="p">{{</span> <span class="nx">movie.name</span> <span class="p">}}</span> <span class="o">-</span> <span class="p">{{</span> <span class="nx">movie.year</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="nx">li</span><span class="o">&gt;</span>
+<span class="p">{</span><span class="o">%</span> <span class="nx">endfor</span> <span class="o">%</span><span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_9">常用循环变量</h2>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>loop.index</td>
+<td>当前迭代数，从1开始计数</td>
+</tr>
+<tr>
+<td>loop.index()</td>
+<td>当前迭代数，从0开始计数</td>
+</tr>
+<tr>
+<td>loop.revindex</td>
+<td>当前反向迭代数，从1开始计数</td>
+</tr>
+<tr>
+<td>loop.revindex()</td>
+<td>当前反向迭代数，从0开始计数</td>
+</tr>
+<tr>
+<td>loop.first</td>
+<td>如果是第一个元素，则为True</td>
+</tr>
+<tr>
+<td>loop.last</td>
+<td>如果是最后一个元素，则为True</td>
+</tr>
+<tr>
+<td>loop.previtem</td>
+<td>上一个迭代的条目</td>
+</tr>
+<tr>
+<td>loop.nextitem</td>
+<td>下一个迭代的条目</td>
+</tr>
+<tr>
+<td>loop.length</td>
+<td>序列包含的元素数量</td>
+</tr>
+</tbody>
+</table>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

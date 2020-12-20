@@ -1,0 +1,292 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>wrap_class 包装类型 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java_core_classes">Java_core_classes</a>&nbsp;&#187;&nbsp;wrap_class 包装类型
+    <span class="updated">Page Updated&nbsp;
+      2019-10-20 20:18
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">wrap_class 包装类型</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">包装类型</a><ul>
+<li><a href="#_2">原理</a></li>
+<li><a href="#auto-boxing">自动装箱（Auto Boxing）</a></li>
+<li><a href="#auto-unboxing">自动拆箱（Auto Unboxing）</a></li>
+</ul>
+</li>
+<li><a href="#_3">不变类</a></li>
+<li><a href="#_4">静态工厂方法</a></li>
+<li><a href="#integer">Integer</a><ul>
+<li><a href="#parseint">parseInt 进制转换</a></li>
+<li><a href="#tostringtohexstringtooctalstringtobinarystring">toString/toHexString/toOctalString/toBinaryString</a></li>
+<li><a href="#_5">无符号整型</a></li>
+</ul>
+</li>
+<li><a href="#_6">静态变量</a></li>
+</ul>
+</div>
+<h1 id="_1">包装类型</h1>
+<p>Java核心库为每种基本类型都提供了对应的包装类型：</p>
+<table>
+<thead>
+<tr>
+<th align="left">基本类型</th>
+<th align="left">对应的引用类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">boolean</td>
+<td align="left">java.lang.Boolean</td>
+</tr>
+<tr>
+<td align="left">byte</td>
+<td align="left">java.lang.Byte</td>
+</tr>
+<tr>
+<td align="left">short</td>
+<td align="left">java.lang.Short</td>
+</tr>
+<tr>
+<td align="left">int</td>
+<td align="left">java.lang.Integer</td>
+</tr>
+<tr>
+<td align="left">long</td>
+<td align="left">java.lang.Long</td>
+</tr>
+<tr>
+<td align="left">float</td>
+<td align="left">java.lang.Float</td>
+</tr>
+<tr>
+<td align="left">double</td>
+<td align="left">java.lang.Double</td>
+</tr>
+<tr>
+<td align="left">char</td>
+<td align="left">java.lang.Character</td>
+</tr>
+</tbody>
+</table>
+<p>可以直接使用，并不需要自己去定义</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+        <span class="c1">// 通过new操作符创建Integer实例(不推荐使用,会有编译警告):</span>
+        <span class="n">Integer</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Integer</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+        <span class="c1">// 通过静态方法valueOf(int)创建Integer实例:</span>
+        <span class="n">Integer</span> <span class="n">n2</span> <span class="o">=</span> <span class="n">Integer</span><span class="p">.</span><span class="n">valueOf</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+        <span class="c1">// 通过静态方法valueOf(String)创建Integer实例:</span>
+        <span class="n">Integer</span> <span class="n">n3</span> <span class="o">=</span> <span class="n">Integer</span><span class="p">.</span><span class="n">valueOf</span><span class="p">(</span><span class="s">&quot;100&quot;</span><span class="p">);</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">n3</span><span class="p">.</span><span class="n">intValue</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">100</span>
+</pre></div>
+
+
+<h2 id="_2">原理</h2>
+<p>Java的数据类型分两种：</p>
+<ul>
+<li>基本类型：<code>byte</code>，<code>short</code>，<code>int</code>，<code>long</code>，<code>boolean</code>，<code>float</code>，<code>double</code>，<code>char</code></li>
+<li>引用类型：所有<code>class</code>和<code>interface</code>类型</li>
+</ul>
+<p>想要把<code>int</code>基本类型变成一个引用类型，我们可以定义一个<code>Integer</code>类，它只包含一个实例字段<code>int</code>，这样，<code>Integer</code>类就可以视为<code>int</code>的包装类（Wrapper Class）</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Integer</span> <span class="p">{</span>
+    <span class="n">private</span> <span class="kt">int</span> <span class="n">value</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="nf">Integer</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">this</span><span class="p">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="kt">int</span> <span class="nf">intValue</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">this</span><span class="p">.</span><span class="n">value</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>定义好了<code>Integer</code>类，我们就可以把<code>int</code>和<code>Integer</code>互相转换</p>
+<div class="hlcode"><pre><span class="n">Integer</span> <span class="n">n</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+<span class="n">Integer</span> <span class="n">n2</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Integer</span><span class="p">(</span><span class="mi">99</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">n3</span> <span class="o">=</span> <span class="n">n2</span><span class="p">.</span><span class="n">intValue</span><span class="p">();</span>
+</pre></div>
+
+
+<h2 id="auto-boxing">自动装箱（Auto Boxing）</h2>
+<p>直接把<code>int</code>变为<code>Integer</code>的赋值写法，称为自动装箱（Auto Boxing）</p>
+<p>自动装箱和自动拆箱只发生在编译阶段（JDK&gt;=1.5），目的是为了少写代码</p>
+<p>因为<code>int</code>和<code>Integer</code>可以互相转换</p>
+<div class="hlcode"><pre><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+<span class="n">Integer</span> <span class="n">n</span> <span class="o">=</span> <span class="n">Integer</span><span class="p">.</span><span class="n">valueOf</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">n</span><span class="p">.</span><span class="n">intValue</span><span class="p">();</span>
+</pre></div>
+
+
+<p>所以，Java编译器可以帮助我们自动在<code>int</code>和<code>Integer</code>之间转型</p>
+<div class="hlcode"><pre><span class="n">Integer</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span> <span class="c1">// 编译器自动使用Integer.valueOf(int)</span>
+<span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span> <span class="c1">// 编译器自动使用Integer.intValue()</span>
+</pre></div>
+
+
+<h2 id="auto-unboxing">自动拆箱（Auto Unboxing）</h2>
+<p>把<code>Integer</code>变为<code>int</code>的赋值写法，称为自动拆箱（Auto Unboxing）</p>
+<p>自动装箱和自动拆箱只发生在编译阶段（JDK&gt;=1.5），目的是为了少写代码</p>
+<p>装箱和拆箱会影响代码的执行效率，因为编译后的<code>class</code>代码是严格区分基本类型和引用类型的。并且，自动拆箱执行时可能会报<code>NullPointerException</code></p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Integer</span> <span class="n">n</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h1 id="_3">不变类</h1>
+<p>所有的包装类型都是不变类</p>
+<p>查看<code>Integer</code>的源码可知，它的核心代码如下</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">final</span> <span class="n">class</span> <span class="n">Integer</span> <span class="p">{</span>
+    <span class="n">private</span> <span class="n">final</span> <span class="kt">int</span> <span class="n">value</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>一旦创建了<code>Integer</code>对象，该对象就是不变的。</p>
+<p>对两个<code>Integer</code>实例进行比较要特别注意：绝对不能用<code>==</code>比较，因为<code>Integer</code>是引用类型，必须使用<code>equals()</code>比较</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Integer</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">127</span><span class="p">;</span>
+        <span class="n">Integer</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">127</span><span class="p">;</span>
+        <span class="n">Integer</span> <span class="n">m</span> <span class="o">=</span> <span class="mi">99999</span><span class="p">;</span>
+        <span class="n">Integer</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">99999</span><span class="p">;</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;x == y: &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="n">y</span><span class="p">));</span> <span class="c1">// true</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;m == n: &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="n">m</span><span class="o">==</span><span class="n">n</span><span class="p">));</span> <span class="c1">// false</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;x.equals(y): &quot;</span> <span class="o">+</span> <span class="n">x</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">y</span><span class="p">));</span> <span class="c1">// true</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;m.equals(n): &quot;</span> <span class="o">+</span> <span class="n">m</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">n</span><span class="p">));</span> <span class="c1">// true</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="o">:</span> <span class="nb">true</span>
+<span class="n">m</span> <span class="o">==</span> <span class="n">n</span><span class="o">:</span> <span class="nb">false</span>
+<span class="n">x</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">:</span> <span class="nb">true</span>
+<span class="n">m</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">:</span> <span class="nb">true</span>
+</pre></div>
+
+
+<blockquote>
+<p><code>==</code>比较，较小的两个相同的<code>Integer</code>返回<code>true</code>，较大的两个相同的<code>Integer</code>返回<code>false</code>，这是因为<code>Integer</code>是不变类，编译器把<code>Integer x = 127;</code>自动变为<code>Integer x = Integer.valueOf(127);</code>，为了节省内存，<code>Integer.valueOf()</code>对于较小的数，始终返回相同的实例，因此，<code>==</code>比较“恰好”为<code>true</code>，但我们<em>绝不能</em>因为Java标准库的<code>Integer</code>内部有缓存优化就用<code>==</code>比较，必须用<code>equals()</code>方法比较两个`Integer</p>
+</blockquote>
+<h1 id="_4">静态工厂方法</h1>
+<p>创建<code>Integer</code>的时候，以下两种方法：</p>
+<ul>
+<li>方法1：<code>Integer n = new Integer(100);</code></li>
+<li>方法2：<code>Integer n = Integer.valueOf(100);</code></li>
+</ul>
+<p>方法2更好，因为方法1总是创建新的<code>Integer</code>实例，方法2把内部优化留给<code>Integer</code>的实现者去做，即使在当前版本没有优化，也有可能在下一个版本进行优化。</p>
+<p>我们把能创建“新”对象的静态方法称为静态工厂方法。<code>Integer.valueOf()</code>就是静态工厂方法，它尽可能地返回缓存的实例以节省内存</p>
+<p>如果我们考察<code>Byte.valueOf()</code>方法的源码，可以看到，标准库返回的<code>Byte</code>实例全部是缓存实例，但调用者并不关心静态工厂方法以何种方式创建新实例还是直接返回缓存的实例</p>
+<h1 id="integer">Integer</h1>
+<h2 id="parseint">parseInt 进制转换</h2>
+<p><code>Integer</code>类本身还提供了大量方法，例如，最常用的静态方法<code>parseInt()</code>可以把字符串解析成一个整数</p>
+<div class="hlcode"><pre><span class="kt">int</span> <span class="n">x1</span> <span class="o">=</span> <span class="n">Integer</span><span class="p">.</span><span class="n">parseInt</span><span class="p">(</span><span class="s">&quot;100&quot;</span><span class="p">);</span> <span class="c1">// 100</span>
+<span class="kt">int</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">Integer</span><span class="p">.</span><span class="n">parseInt</span><span class="p">(</span><span class="s">&quot;100&quot;</span><span class="p">,</span> <span class="mi">16</span><span class="p">);</span> <span class="c1">// 256,因为按16进制解析</span>
+</pre></div>
+
+
+<h2 id="tostringtohexstringtooctalstringtobinarystring">toString/toHexString/toOctalString/toBinaryString</h2>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">Integer</span><span class="p">.</span><span class="n">toString</span><span class="p">(</span><span class="mi">100</span><span class="p">));</span> <span class="c1">// &quot;100&quot;,表示为10进制</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">Integer</span><span class="p">.</span><span class="n">toString</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">36</span><span class="p">));</span> <span class="c1">// &quot;2s&quot;,表示为36进制</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">Integer</span><span class="p">.</span><span class="n">toHexString</span><span class="p">(</span><span class="mi">100</span><span class="p">));</span> <span class="c1">// &quot;64&quot;,表示为16进制</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">Integer</span><span class="p">.</span><span class="n">toOctalString</span><span class="p">(</span><span class="mi">100</span><span class="p">));</span> <span class="c1">// &quot;144&quot;,表示为8进制</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">Integer</span><span class="p">.</span><span class="n">toBinaryString</span><span class="p">(</span><span class="mi">100</span><span class="p">));</span> <span class="c1">// &quot;1100100&quot;,表示为2进制</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">100</span>
+<span class="mi">2</span><span class="n">s</span>
+<span class="mi">64</span>
+<span class="mi">144</span>
+<span class="mi">1100100</span>
+</pre></div>
+
+
+<h2 id="_5">无符号整型</h2>
+<p>在Java中，并没有无符号整型（Unsigned）的基本数据类型。<code>byte</code>、<code>short</code>、<code>int</code>和<code>long</code>都是带符号整型，最高位是符号位。而C语言则提供了CPU支持的全部数据类型，包括无符号整型。无符号整型和有符号整型的转换在Java中就需要借助包装类型的静态方法完成。</p>
+<p>例如，byte是有符号整型，范围是<code>-128</code>~<code>+127</code>，但如果把<code>byte</code>看作无符号整型，它的范围就是<code>0</code>~<code>255</code>。我们把一个负的<code>byte</code>按无符号整型转换为<code>int</code></p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">byte</span> <span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="n">byte</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">127</span><span class="p">;</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">Byte</span><span class="p">.</span><span class="n">toUnsignedInt</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">Byte</span><span class="p">.</span><span class="n">toUnsignedInt</span><span class="p">(</span><span class="n">y</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">255</span>
+<span class="mi">127</span>
+</pre></div>
+
+
+<h1 id="_6">静态变量</h1>
+<p>Java的包装类型还定义了一些有用的静态变量</p>
+<div class="hlcode"><pre><span class="c1">// boolean只有两个值true/false，其包装类型只需要引用Boolean提供的静态字段:</span>
+<span class="n">Boolean</span> <span class="n">t</span> <span class="o">=</span> <span class="n">Boolean</span><span class="p">.</span><span class="no">TRUE</span><span class="p">;</span>
+<span class="n">Boolean</span> <span class="n">f</span> <span class="o">=</span> <span class="n">Boolean</span><span class="p">.</span><span class="no">FALSE</span><span class="p">;</span>
+<span class="c1">// int可表示的最大/最小值:</span>
+<span class="k">int</span> <span class="n">max</span> <span class="o">=</span> <span class="n">Integer</span><span class="p">.</span><span class="no">MAX_VALUE</span><span class="p">;</span> <span class="c1">// 2147483647</span>
+<span class="k">int</span> <span class="n">min</span> <span class="o">=</span> <span class="n">Integer</span><span class="p">.</span><span class="no">MIN_VALUE</span><span class="p">;</span> <span class="c1">// -2147483648</span>
+<span class="c1">// long类型占用的bit和byte数量:</span>
+<span class="k">int</span> <span class="n">sizeOfLong</span> <span class="o">=</span> <span class="n">Long</span><span class="p">.</span><span class="no">SIZE</span><span class="p">;</span> <span class="c1">// 64 (bits)</span>
+<span class="k">int</span> <span class="n">bytesOfLong</span> <span class="o">=</span> <span class="n">Long</span><span class="p">.</span><span class="no">BYTES</span><span class="p">;</span> <span class="c1">// 8 (bytes)</span>
+</pre></div>
+
+
+<p>所有的整数和浮点数的包装类型都继承自<code>Number</code>，因此，可以非常方便地直接通过包装类型获取各种基本类型</p>
+<div class="hlcode"><pre><span class="c1">// 向上转型为Number:</span>
+<span class="n">Number</span> <span class="n">num</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Integer</span><span class="p">(</span><span class="mh">999</span><span class="p">);</span>
+<span class="c1">// 获取byte, int, long, float, double:</span>
+<span class="k">byte</span> <span class="n">b</span> <span class="o">=</span> <span class="n">num</span><span class="p">.</span><span class="n">byteValue</span><span class="p">();</span>
+<span class="k">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">num</span><span class="p">.</span><span class="n">intValue</span><span class="p">();</span>
+<span class="n">long</span> <span class="n">ln</span> <span class="o">=</span> <span class="n">num</span><span class="p">.</span><span class="n">longValue</span><span class="p">();</span>
+<span class="n">float</span> <span class="n">f</span> <span class="o">=</span> <span class="n">num</span><span class="p">.</span><span class="n">floatValue</span><span class="p">();</span>
+<span class="n">double</span> <span class="n">d</span> <span class="o">=</span> <span class="n">num</span><span class="p">.</span><span class="n">doubleValue</span><span class="p">();</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

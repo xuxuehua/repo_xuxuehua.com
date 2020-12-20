@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>faq 常见问题 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Git">Git</a>&nbsp;&#187;&nbsp;faq 常见问题
+    <span class="updated">Page Updated&nbsp;
+      2018-09-15 11:17
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">faq 常见问题</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#faq">FAQ</a><ul>
+<li><a href="#author-name-email-address">Author name / email address</a></li>
+<li><a href="#credential">credential</a></li>
+<li><a href="#detached-head">detached HEAD</a></li>
+<li><a href="#everything-up-to-date">Everything up-to-date</a></li>
+<li><a href="#the-following-untracked-working-tree-files-would-be-overwritten-by-merge">The following untracked working tree files would be overwritten by merge:</a></li>
+<li><a href="#git-fire">Git fire</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="faq">FAQ</h1>
+<h2 id="author-name-email-address">Author name / email address</h2>
+<p>use Git's "filter-branch" command. It allows you to batch-process a (potentially large) number of commits with a script.<br />
+You can run the below sample script in your repository (filling in real values for the old and new email and name):</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">filter</span><span class="o">-</span><span class="n">branch</span> <span class="o">--</span><span class="n">env</span><span class="o">-</span><span class="n">filter</span> <span class="err">&#39;</span>
+<span class="n">WRONG_EMAIL</span><span class="o">=</span><span class="s">&quot;wrong@example.com&quot;</span>
+<span class="n">NEW_NAME</span><span class="o">=</span><span class="s">&quot;New Name Value&quot;</span>
+<span class="n">NEW_EMAIL</span><span class="o">=</span><span class="s">&quot;correct@example.com&quot;</span>
+
+<span class="k">if</span> <span class="p">[</span> <span class="s">&quot;$GIT_COMMITTER_EMAIL&quot;</span> <span class="o">=</span> <span class="s">&quot;$WRONG_EMAIL&quot;</span> <span class="p">]</span>
+<span class="n">then</span>
+    <span class="n">export</span> <span class="n">GIT_COMMITTER_NAME</span><span class="o">=</span><span class="s">&quot;$NEW_NAME&quot;</span>
+    <span class="n">export</span> <span class="n">GIT_COMMITTER_EMAIL</span><span class="o">=</span><span class="s">&quot;$NEW_EMAIL&quot;</span>
+<span class="n">fi</span>
+<span class="k">if</span> <span class="p">[</span> <span class="s">&quot;$GIT_AUTHOR_EMAIL&quot;</span> <span class="o">=</span> <span class="s">&quot;$WRONG_EMAIL&quot;</span> <span class="p">]</span>
+<span class="n">then</span>
+    <span class="n">export</span> <span class="n">GIT_AUTHOR_NAME</span><span class="o">=</span><span class="s">&quot;$NEW_NAME&quot;</span>
+    <span class="n">export</span> <span class="n">GIT_AUTHOR_EMAIL</span><span class="o">=</span><span class="s">&quot;$NEW_EMAIL&quot;</span>
+<span class="n">fi</span>
+<span class="err">&#39;</span> <span class="o">--</span><span class="n">tag</span><span class="o">-</span><span class="n">name</span><span class="o">-</span><span class="n">filter</span> <span class="n">cat</span> <span class="o">--</span> <span class="o">--</span><span class="n">branches</span> <span class="o">--</span><span class="n">tags</span>
+</pre></div>
+
+
+<p>Using --amend for the Very Last Commit</p>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">commit</span> <span class="o">--</span><span class="n">amend</span> <span class="o">--</span><span class="n">author</span><span class="o">=</span><span class="s">&quot;Rick Xu &lt;me@xurick.com&gt;&quot;</span>
+</pre></div>
+
+
+<h2 id="credential">credential</h2>
+<div class="hlcode"><pre><span class="n">git</span> <span class="n">config</span> <span class="n">credential</span><span class="p">.</span><span class="n">helper</span> <span class="err">&#39;</span><span class="n">cache</span> <span class="o">--</span><span class="n">timeout</span> <span class="mi">1800</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="detached-head">detached HEAD</h2>
+<p>分离头指针状态，即没有分支的状态下产生的问题</p>
+<p>需要将当前操作挂到一个分支上或一个tag上以确保变更不会被丢弃</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">checkout</span> <span class="mi">941</span><span class="n">a378ffcc76dc8fb30d3cc29a</span>
+<span class="nl">Note:</span> <span class="n">checking</span> <span class="n">out</span> <span class="err">&#39;</span><span class="mi">941</span><span class="n">a378ffcc76dc8fb30d3cc29a</span><span class="err">&#39;</span><span class="p">.</span>
+
+<span class="n">You</span> <span class="n">are</span> <span class="n">in</span> <span class="err">&#39;</span><span class="n">detached</span> <span class="n">HEAD</span><span class="err">&#39;</span> <span class="n">state</span><span class="p">.</span> <span class="n">You</span> <span class="n">can</span> <span class="n">look</span> <span class="n">around</span><span class="p">,</span> <span class="n">make</span> <span class="n">experimental</span>
+<span class="n">changes</span> <span class="n">and</span> <span class="n">commit</span> <span class="n">them</span><span class="p">,</span> <span class="n">and</span> <span class="n">you</span> <span class="n">can</span> <span class="n">discard</span> <span class="n">any</span> <span class="n">commits</span> <span class="n">you</span> <span class="n">make</span> <span class="n">in</span> <span class="n">this</span>
+<span class="n">state</span> <span class="n">without</span> <span class="n">impacting</span> <span class="n">any</span> <span class="n">branches</span> <span class="n">by</span> <span class="n">performing</span> <span class="n">another</span> <span class="n">checkout</span><span class="p">.</span>
+
+<span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">create</span> <span class="n">a</span> <span class="n">new</span> <span class="n">branch</span> <span class="n">to</span> <span class="n">retain</span> <span class="n">commits</span> <span class="n">you</span> <span class="n">create</span><span class="p">,</span> <span class="n">you</span> <span class="n">may</span>
+<span class="k">do</span> <span class="n">so</span> <span class="p">(</span><span class="n">now</span> <span class="n">or</span> <span class="n">later</span><span class="p">)</span> <span class="n">by</span> <span class="n">using</span> <span class="o">-</span><span class="n">b</span> <span class="n">with</span> <span class="n">the</span> <span class="n">checkout</span> <span class="n">command</span> <span class="n">again</span><span class="p">.</span> <span class="n">Example</span><span class="o">:</span>
+
+  <span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="o">&lt;</span><span class="n">new</span><span class="o">-</span><span class="n">branch</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+
+<span class="n">HEAD</span> <span class="n">is</span> <span class="n">now</span> <span class="n">at</span> <span class="mi">941</span><span class="n">a378</span> <span class="n">Updates</span>
+</pre></div>
+
+
+<p>常用于测试的操作，其不在任何分支当中</p>
+<p>若需撤销此操作，<code>git checkout</code> 到其他分支即可</p>
+<h2 id="everything-up-to-date">Everything up-to-date</h2>
+<p>确保配置了基本的user.name &amp; user.email</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">config</span> <span class="o">-</span><span class="n">l</span>
+<span class="n">credential</span><span class="p">.</span><span class="n">helper</span><span class="o">=</span><span class="n">osxkeychain</span>
+<span class="n">core</span><span class="p">.</span><span class="n">repositoryformatversion</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">core</span><span class="p">.</span><span class="n">filemode</span><span class="o">=</span><span class="nb">true</span>
+<span class="n">core</span><span class="p">.</span><span class="n">bare</span><span class="o">=</span><span class="nb">false</span>
+<span class="n">core</span><span class="p">.</span><span class="n">logallrefupdates</span><span class="o">=</span><span class="nb">true</span>
+<span class="n">core</span><span class="p">.</span><span class="n">ignorecase</span><span class="o">=</span><span class="nb">true</span>
+<span class="n">core</span><span class="p">.</span><span class="n">precomposeunicode</span><span class="o">=</span><span class="nb">true</span>
+<span class="n">remote</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">url</span><span class="o">=</span><span class="n">git</span><span class="err">@</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">:</span><span class="n">xuxuehua</span><span class="o">/</span><span class="n">scripts</span><span class="p">.</span><span class="n">git</span>
+<span class="n">remote</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">fetch</span><span class="o">=+</span><span class="n">refs</span><span class="o">/</span><span class="n">heads</span><span class="o">/*:</span><span class="n">refs</span><span class="o">/</span><span class="n">remotes</span><span class="o">/</span><span class="n">origin</span><span class="o">/*</span>
+<span class="n">branch</span><span class="p">.</span><span class="n">master</span><span class="p">.</span><span class="n">remote</span><span class="o">=</span><span class="n">origin</span>
+<span class="n">branch</span><span class="p">.</span><span class="n">master</span><span class="p">.</span><span class="n">merge</span><span class="o">=</span><span class="n">refs</span><span class="o">/</span><span class="n">heads</span><span class="o">/</span><span class="n">master</span>
+<span class="n">user</span><span class="p">.</span><span class="n">email</span><span class="o">=</span><span class="n">xuxuehua3</span><span class="err">@</span><span class="n">gmail</span><span class="p">.</span><span class="n">com</span>
+<span class="n">user</span><span class="p">.</span><span class="n">name</span><span class="o">=</span><span class="n">Xuehua</span> <span class="n">Xu</span>
+</pre></div>
+
+
+<p>出现这个问题的原因是git提交改动到缓存，要push的时候不会将本地所有的分支都push掉，所以出现这个问题。我们应该告诉git提交哪个分支。</p>
+<p>这里有种特殊的情况是如果你是fork别人的仓库再clone到本地的话，即使git上只有一个主分支，他还是可能出现这个错误。那么我们就需要新建分支提交改动然后合并分支。</p>
+<p>接下来先创建一个新分支提交改动</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">branch</span> <span class="n">newbranch</span>
+</pre></div>
+
+
+<p>然后输入这条命令检查是否创建成功</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">branch</span>
+</pre></div>
+
+
+<p>这时终端输出</p>
+<div class="hlcode"><pre>  <span class="n">newbranch</span>
+<span class="o">*</span> <span class="n">master</span>
+</pre></div>
+
+
+<p>这样就创建成功了，前面的*代表的是当前你所在的工作分支。我们接下来就要切换工作分支。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">checkout</span> <span class="n">newbranch</span>
+</pre></div>
+
+
+<p>这样就切换完了，可以<code>$ git branch</code>确认下。然后你要将你的改动提交到新的分支上。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">add</span> <span class="p">.</span>
+<span class="err">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">a</span>
+</pre></div>
+
+
+<p>此时可以<code>$ git status</code>检查下提交情况。如果提交成功，我们接下来就要回主分支了，代码和之前一样。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span>
+</pre></div>
+
+
+<p>然后我们要将新分支提交的改动合并到主分支上</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">merge</span> <span class="n">newbranch</span>
+</pre></div>
+
+
+<p>合并分支可能产生冲突这是正常的，虽然我们这是新建的分支不会产生冲突，但还是在这里记录下。下面的代码可以查看产生冲突的文件，然后做对应的修改再提交一次就可以了。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">diff</span>
+</pre></div>
+
+
+<p>我们的问题就解决了，接下来就可以push代码了。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">push</span> <span class="o">-</span><span class="n">u</span> <span class="n">origin</span> <span class="n">master</span>
+</pre></div>
+
+
+<p>新建分支的朋友别忘了删除这个分支</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">git</span> <span class="n">branch</span> <span class="o">-</span><span class="n">D</span> <span class="n">newbranch</span>
+</pre></div>
+
+
+<p>如果想保留分支只是想删除已经合并的部分只要把大写的D改成小写的d就行了。</p>
+<h2 id="the-following-untracked-working-tree-files-would-be-overwritten-by-merge">The following untracked working tree files would be overwritten by merge:</h2>
+<p>we want to overwrite these files.</p>
+<div class="hlcode"><pre><span class="err">`</span><span class="n">git</span> <span class="n">fetch</span> <span class="o">--</span><span class="n">all</span><span class="err">``</span><span class="n">git</span> <span class="n">reset</span> <span class="o">--</span><span class="n">hard</span> <span class="n">origin</span><span class="err">``</span><span class="o">/</span><span class="n">master</span><span class="err">`</span>
+</pre></div>
+
+
+<p>This grabs the latest repository files without merging and resets the master branch and overwrites the modified ones.</p>
+<h2 id="git-fire">Git fire</h2>
+<div class="hlcode"><pre><span class="err">程序员的消防演习：</span>
+<span class="n">alias</span> <span class="n">incaseoffire</span><span class="o">=</span><span class="s">&quot;git checkout -b $USER-emergency; git add .; git commit -m fire; git push origin $USER-emergency -f&quot;</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

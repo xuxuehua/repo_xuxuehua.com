@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>basic_knowledge - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Bitcoin">Bitcoin</a>&nbsp;&#187;&nbsp;basic_knowledge
+    <span class="updated">Page Updated&nbsp;
+      2018-08-13 12:19
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">basic_knowledge</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">比特币</a><ul>
+<li><a href="#_2">初始化文章</a></li>
+<li><a href="#_3">论坛</a></li>
+<li><a href="#bitcoin-vs-checks-vs-credit-card">bitcoin vs checks vs Credit Card</a></li>
+</ul>
+</li>
+<li><a href="#_4">指标</a><ul>
+<li><a href="#_5">恐慌贪婪指数</a></li>
+<li><a href="#nvt">NVT</a></li>
+<li><a href="#mvrv">MVRV</a></li>
+<li><a href="#ahr999">ahr999 （也称囤币指数）</a></li>
+<li><a href="#100tui">减半价格关系指数（100TUI）</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">比特币</h1>
+<h2 id="_2">初始化文章</h2>
+<p><a href="http://article.gmane.org/gmane.comp.encryption.general/12588">http://article.gmane.org/gmane.comp.encryption.general/12588</a></p>
+<div class="hlcode"><pre><span class="n">From</span><span class="o">:</span> <span class="n">Satoshi</span> <span class="n">Nakamoto</span> <span class="o">&lt;</span><span class="n">satoshi</span> <span class="o">&lt;</span><span class="n">at</span><span class="o">&gt;</span> <span class="n">vistomail</span><span class="o">.</span><span class="na">com</span><span class="o">&gt;</span>
+<span class="n">Subject</span><span class="o">:</span> <span class="n">Bitcoin</span> <span class="n">P2P</span> <span class="n">e</span><span class="o">-</span><span class="n">cash</span> <span class="n">paper</span>
+<span class="n">Newsgroups</span><span class="o">:</span> <span class="n">gmane</span><span class="o">.</span><span class="na">comp</span><span class="o">.</span><span class="na">encryption</span><span class="o">.</span><span class="na">general</span>
+<span class="n">Date</span><span class="o">:</span> <span class="n">Friday</span> <span class="mi">31</span><span class="n">st</span> <span class="n">October</span> <span class="mi">2008</span> <span class="mi">18</span><span class="o">:</span><span class="mi">10</span><span class="o">:</span><span class="mi">00</span> <span class="n">UTC</span> <span class="o">(</span><span class="n">over</span> <span class="mi">9</span> <span class="n">years</span> <span class="n">ago</span><span class="o">)</span>
+<span class="n">I</span><span class="s1">&#39;ve been working on a new electronic cash system that&#39;</span><span class="n">s</span> <span class="n">fully</span>
+<span class="n">peer</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">peer</span><span class="o">,</span> <span class="k">with</span> <span class="n">no</span> <span class="n">trusted</span> <span class="n">third</span> <span class="n">party</span><span class="o">.</span>
+
+<span class="n">The</span> <span class="n">paper</span> <span class="k">is</span> <span class="n">available</span> <span class="n">at</span><span class="o">:</span>
+<span class="n">http</span><span class="o">://</span><span class="n">www</span><span class="o">.</span><span class="na">bitcoin</span><span class="o">.</span><span class="na">org</span><span class="o">/</span><span class="n">bitcoin</span><span class="o">.</span><span class="na">pdf</span>
+
+<span class="n">The</span> <span class="n">main</span> <span class="n">properties</span><span class="o">:</span>
+ <span class="n">Double</span><span class="o">-</span><span class="n">spending</span> <span class="k">is</span> <span class="n">prevented</span> <span class="k">with</span> <span class="n">a</span> <span class="n">peer</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">peer</span> <span class="n">network</span><span class="o">.</span>
+ <span class="n">No</span> <span class="n">mint</span> <span class="n">or</span> <span class="n">other</span> <span class="n">trusted</span> <span class="n">parties</span><span class="o">.</span>
+ <span class="n">Participants</span> <span class="n">can</span> <span class="n">be</span> <span class="n">anonymous</span><span class="o">.</span>
+ <span class="n">New</span> <span class="n">coins</span> <span class="n">are</span> <span class="n">made</span> <span class="n">from</span> <span class="n">Hashcash</span> <span class="n">style</span> <span class="n">proof</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">work</span><span class="o">.</span>
+ <span class="n">The</span> <span class="n">proof</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">work</span> <span class="k">for</span> <span class="k">new</span> <span class="n">coin</span> <span class="n">generation</span> <span class="n">also</span> <span class="n">powers</span> <span class="n">the</span>
+    <span class="n">network</span> <span class="n">to</span> <span class="n">prevent</span> <span class="n">double</span><span class="o">-</span><span class="n">spending</span><span class="o">.</span>
+
+<span class="n">Bitcoin</span><span class="o">:</span> <span class="n">A</span> <span class="n">Peer</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">Peer</span> <span class="n">Electronic</span> <span class="n">Cash</span> <span class="n">System</span>
+
+<span class="n">Abstract</span><span class="o">.</span>  <span class="n">A</span> <span class="n">purely</span> <span class="n">peer</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">peer</span> <span class="n">version</span> <span class="n">of</span> <span class="n">electronic</span> <span class="n">cash</span> <span class="n">would</span>
+<span class="n">allow</span> <span class="n">online</span> <span class="n">payments</span> <span class="n">to</span> <span class="n">be</span> <span class="n">sent</span> <span class="n">directly</span> <span class="n">from</span> <span class="n">one</span> <span class="n">party</span> <span class="n">to</span> <span class="n">another</span>
+<span class="n">without</span> <span class="n">the</span> <span class="n">burdens</span> <span class="n">of</span> <span class="n">going</span> <span class="n">through</span> <span class="n">a</span> <span class="n">financial</span> <span class="n">institution</span><span class="o">.</span>
+<span class="n">Digital</span> <span class="n">signatures</span> <span class="n">provide</span> <span class="n">part</span> <span class="n">of</span> <span class="n">the</span> <span class="n">solution</span><span class="o">,</span> <span class="n">but</span> <span class="n">the</span> <span class="n">main</span>
+<span class="n">benefits</span> <span class="n">are</span> <span class="n">lost</span> <span class="k">if</span> <span class="n">a</span> <span class="n">trusted</span> <span class="n">party</span> <span class="k">is</span> <span class="n">still</span> <span class="n">required</span> <span class="n">to</span> <span class="n">prevent</span>
+<span class="n">double</span><span class="o">-</span><span class="n">spending</span><span class="o">.</span>  <span class="n">We</span> <span class="n">propose</span> <span class="n">a</span> <span class="n">solution</span> <span class="n">to</span> <span class="n">the</span> <span class="n">double</span><span class="o">-</span><span class="n">spending</span>
+<span class="n">problem</span> <span class="n">using</span> <span class="n">a</span> <span class="n">peer</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">peer</span> <span class="n">network</span><span class="o">.</span>  <span class="n">The</span> <span class="n">network</span> <span class="n">timestamps</span>
+<span class="n">transactions</span> <span class="n">by</span> <span class="n">hashing</span> <span class="n">them</span> <span class="n">into</span> <span class="n">an</span> <span class="n">ongoing</span> <span class="n">chain</span> <span class="n">of</span> <span class="n">hash</span><span class="o">-</span><span class="n">based</span>
+<span class="n">proof</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">work</span><span class="o">,</span> <span class="n">forming</span> <span class="n">a</span> <span class="n">record</span> <span class="n">that</span> <span class="n">cannot</span> <span class="n">be</span> <span class="n">changed</span> <span class="n">without</span>
+<span class="n">redoing</span> <span class="n">the</span> <span class="n">proof</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">work</span><span class="o">.</span>  <span class="n">The</span> <span class="n">longest</span> <span class="n">chain</span> <span class="n">not</span> <span class="n">only</span> <span class="n">serves</span> <span class="k">as</span>
+<span class="n">proof</span> <span class="n">of</span> <span class="n">the</span> <span class="n">sequence</span> <span class="n">of</span> <span class="n">events</span> <span class="n">witnessed</span><span class="o">,</span> <span class="n">but</span> <span class="n">proof</span> <span class="n">that</span> <span class="n">it</span> <span class="n">came</span>
+<span class="n">from</span> <span class="n">the</span> <span class="n">largest</span> <span class="n">pool</span> <span class="n">of</span> <span class="n">CPU</span> <span class="n">power</span><span class="o">.</span>  <span class="n">As</span> <span class="n">long</span> <span class="k">as</span> <span class="n">honest</span> <span class="n">nodes</span> <span class="n">control</span>
+<span class="n">the</span> <span class="n">most</span> <span class="n">CPU</span> <span class="n">power</span> <span class="n">on</span> <span class="n">the</span> <span class="n">network</span><span class="o">,</span> <span class="n">they</span> <span class="n">can</span> <span class="n">generate</span> <span class="n">the</span> <span class="n">longest</span>
+<span class="n">chain</span> <span class="n">and</span> <span class="n">outpace</span> <span class="n">any</span> <span class="n">attackers</span><span class="o">.</span>  <span class="n">The</span> <span class="n">network</span> <span class="n">itself</span> <span class="n">requires</span>
+<span class="n">minimal</span> <span class="n">structure</span><span class="o">.</span>  <span class="n">Messages</span> <span class="n">are</span> <span class="n">broadcasted</span> <span class="n">on</span> <span class="n">a</span> <span class="n">best</span> <span class="n">effort</span> <span class="n">basis</span><span class="o">,</span>
+<span class="n">and</span> <span class="n">nodes</span> <span class="n">can</span> <span class="n">leave</span> <span class="n">and</span> <span class="n">rejoin</span> <span class="n">the</span> <span class="n">network</span> <span class="n">at</span> <span class="n">will</span><span class="o">,</span> <span class="n">accepting</span> <span class="n">the</span>
+<span class="n">longest</span> <span class="n">proof</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">work</span> <span class="n">chain</span> <span class="k">as</span> <span class="n">proof</span> <span class="n">of</span> <span class="n">what</span> <span class="n">happened</span> <span class="k">while</span> <span class="n">they</span>
+<span class="n">were</span> <span class="n">gone</span><span class="o">.</span>
+
+<span class="n">Full</span> <span class="n">paper</span> <span class="n">at</span><span class="o">:</span>
+<span class="n">http</span><span class="o">://</span><span class="n">www</span><span class="o">.</span><span class="na">bitcoin</span><span class="o">.</span><span class="na">org</span><span class="o">/</span><span class="n">bitcoin</span><span class="o">.</span><span class="na">pdf</span>
+
+<span class="n">Satoshi</span> <span class="n">Nakamoto</span>
+</pre></div>
+
+
+<h2 id="_3">论坛</h2>
+<p>bitcointalk.org</p>
+<h2 id="bitcoin-vs-checks-vs-credit-card">bitcoin vs checks vs Credit Card</h2>
+<p><img alt="image-20200716224851299" src="basic_knowledge.assets/image-20200716224851299.png" /></p>
+<h1 id="_4">指标</h1>
+<h2 id="_5">恐慌贪婪指数</h2>
+<p>每天通过不同的来源和数据分析人们的情绪，来形成一个简单的指数，实时数据见如下网站：https://alternative.me/crypto/fear-and-greed-index/</p>
+<p>它从六个方面来收集数据：波动，资金量，社交媒体，调查，市值占比，关键词趋势。</p>
+<p>1.波动（占25%）<br />
+评估当前的波动及比特币最大的下跌量，并且同过去30天、90天的平均值比较。</p>
+<p>2.市场资金出入量、交易量（占25%）</p>
+<p>3.社交媒体（占15%）</p>
+<p>4.调查（占15%）（疫情期间暂停）</p>
+<p>5.市值比重（占10%）</p>
+<p>6.关键词趋势（占比10%）</p>
+<h2 id="nvt">NVT</h2>
+<p>NVT 市值与交易量的比率 （Network Value to Transactions Ratio）<br />
+NVT=比特币总市值/每日链上交易量（以美元为单位、非交易平台成交额）</p>
+<p>以 7 月 13 日为例，比特币市值 1702.49 亿美元，当日链上交易量 21.93亿美元，我们选取 coinmetrics.io 数据<br />
+NVT（Bitcoin）=1702.49 （亿美元）/21.93（亿美元）= 77.63</p>
+<p>后来发现使用一天的链上交易量具有滞后性，就改为90天移动均线。<br />
+于是用总市值除以链上交易量的90天移动均线作为NVTS指标</p>
+<p>NVTS=总市值 / 链上交易量的90天移动均线（美元、非交易平台成量）</p>
+<p>一般认为，NVTS &gt; 100 , 比特币被高估；NVTS&lt; 50 , 比特币被低估；<br />
+在 50 和 100 之间时，比特币价格处在合理区间范围内，目前值为84。</p>
+<p>今年3月12大跌NVTS最低48（BTC 4000美元）；<br />
+2017年大牛市NVTS最高107（比特币2万美元）；去年NVTS最高为113（2019年BTC最高1.4万）；</p>
+<p>目前在网站1https://coinmetrics.io/charts/#assets=btc_right=NVTAdj90或http://charts.woobull.com/bitcoin-nvt-signal/可以查询比特币的实时 NVT</p>
+<h2 id="mvrv">MVRV</h2>
+<p>MVRV 的计算公式是 MVRV = Market Cap（流通市值） / Realised Cap（已实现市值）</p>
+<p>已实现市值 Realised Cap 是链上所有币的数量乘以“最后市场价格”的求和。每个比特币最后一次转账时的价值之和。</p>
+<p>比如假设比特币只有一个投资者 A，昨天以 10000 美元的价格买入 10 个比特币，今天比特币价格跌倒 8000 美元时卖出 3 个。那么此时，<br />
+比特币总市值 Market Cap= 8000<em>10 = 80000 美元，已实现市值 Realised Cap = 7</em>10000（上次交易的最后市场价格）+ 3*8000 = 94000 美元，MVRV = 80000/94000 = 0.85 左右。</p>
+<p>一般认为，当 MVRV&lt;1 时，比特币价格被严重低估；1&lt; MVRA &lt; 2 时，比特币价格被部分低估；MVRV 处在2-3 区间说明存在过热现象，3-4 区间则可以认为存在巨大泡沫。</p>
+<p>目前在网页https://www.qkl123.com/data/mvrv/btc或https://coinmetrics.io/charts/#assets=btc_right=CapMVRVCur或http://charts.woobull.com/bitcoin-mvrv-ratio/可以查看实时比特币 MVRV 指数。</p>
+<h2 id="ahr999">ahr999 （也称囤币指数）</h2>
+<p>https://ahr999.com/index.htm</p>
+<p><img alt="image-20200716225316731" src="basic_knowledge.assets/image-20200716225316731.png" /></p>
+<p>在什么区间内购买比特币最划算呢？同时满足两个条件：<br />
+<em> 比特币价格低于200日定投平均成本，意味着在这个时候买币，可以跑赢定投的人。<br />
+</em> 比特币价格低于指数增长模型的估值，意味着在这个时候，币价被低估了。</p>
+<p>定义两个比值，比特币价格/指数增长估值，比特币价格/200日定投成本（http://www.btcie.com/ratio/）。在这两个比值同时小于1时候，就是比特币价格被低估，并且直接购买比特币比长期定投更划算的时候。</p>
+<p>ahr999指数 = （比特币价格/200日定投成本） * （比特币价格/指数增长估值）</p>
+<p>ahr999指数小于0.45，这就是抄底区间；<br />
+在0.45与1.2之间，这就是定投区间；<br />
+在1.2与5之间，这就是等待起飞的区间。<br />
+大于5的时间，逃顶的时间</p>
+<h2 id="100tui">减半价格关系指数（100TUI）</h2>
+<p>该指数以比特币对美元价格为基础，根据距离最近的 BTC 区块奖励减半日期的天数计算，并使用颜色渲染。渐变色的变化表现了区块奖励减半日与价格之间的关系。<br />
+距离区块奖励减半日越远，红移越强；距离减半日越近，蓝移越强。在该指数图表中，我们可以从中观察到减半日这一比特币供给发生变化的事件对比特币市场价格造成的影响。<br />
+图中蓝色结束的点就是减半日，大家可以看下减半日与币价的关系<br />
+查看网站1：https://digitalik.net/btc/查看网站2：http://gbi.news/zh/market-data/</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

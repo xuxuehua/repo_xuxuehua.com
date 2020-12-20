@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>rsync - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;rsync
+    <span class="updated">Page Updated&nbsp;
+      2018-09-21 21:08
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">rsync</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#rsync">rsync</a><ul>
+<li><a href="#-a">-a 归档拷贝</a></li>
+<li><a href="#-v-verbose">-v verbose</a></li>
+<li><a href="#-e-ssh-tunnel">-e ssh tunnel</a></li>
+<li><a href="#-exclude">--exclude 排除文件或目录</a></li>
+<li><a href="#push">本地到远程  PUSH</a></li>
+<li><a href="#pull">远程到本地  PULL</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="rsync">rsync</h1>
+<p>remote sync。rsync是Linux系统下的文件同步和数据传输工具，它采用“rsync”算法，可以将一个客户机和远程文件服务器之间的文件同步，也可以在本地系统中将数据从一个分区备份到另一个分区上。与scp相比，它可以以最小的代价备份文件，只备份有差异的文件，这样每次备份就少了很多时间</p>
+<p>如果rsync在备份过程中出现了数据传输中断，恢复后可以继续传输不一致的部分。</p>
+<p>rsync可以执行完整备份或增量备份。它的主要特点有：<br />
+1.可以镜像保存整个目录树和文件系统；<br />
+2.可以很容易做到保持原来文件的权限、时间、软硬链接；无须特殊权限即可安装；<br />
+3.可以增量同步数据，文件传输效率高，因而同步时间短；<br />
+4.可以使用rcp、ssh等方式来传输文件，当然也可以通过直接的socket连接；<br />
+5.支持匿名传输，以方便进行网站镜象等；<br />
+6.加密传输数据，保证了数据的安全性；</p>
+<h2 id="-a">-a 归档拷贝</h2>
+<p>表示以递归方式传输文件，并保持所有文件属性，链接等,等于-rlptgoD</p>
+<h2 id="-v-verbose">-v verbose</h2>
+<h2 id="-e-ssh-tunnel">-e ssh tunnel</h2>
+<div class="hlcode"><pre><span class="n">rsync</span> <span class="o">-</span><span class="n">avz</span> <span class="o">-</span><span class="n">e</span> <span class="s">&quot;ssh -i ./1 -p 54321 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null&quot;</span> <span class="o">--</span><span class="n">progress</span> <span class="n">localmedia</span> <span class="n">ubuntu</span><span class="err">@</span><span class="n">destination_ip</span><span class="o">:/</span><span class="n">tmp</span> 
+</pre></div>
+
+
+<h2 id="-exclude">--exclude 排除文件或目录</h2>
+<div class="hlcode"><pre><span class="n">rsync</span> <span class="o">-</span><span class="n">av</span> <span class="o">--</span><span class="n">exclude</span><span class="o">=</span><span class="n">ONE_DIRECTORY</span> <span class="p">.</span><span class="o">/*</span> <span class="n">ONE_DIRECTORY</span>
+</pre></div>
+
+
+<h2 id="push">本地到远程  PUSH</h2>
+<div class="hlcode"><pre><span class="n">rsync</span> <span class="o">-</span><span class="n">avH</span> <span class="p">[</span><span class="n">ssh</span><span class="p">]</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">source</span> <span class="n">user</span><span class="err">@</span><span class="n">des</span><span class="o">:/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">local</span>  
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">rsync</span> <span class="o">-</span><span class="n">av</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">software</span><span class="o">/</span> <span class="n">hadoop102</span><span class="o">:/</span><span class="n">opt</span><span class="o">/</span><span class="n">software</span>
+</pre></div>
+
+
+<h2 id="pull">远程到本地  PULL</h2>
+<div class="hlcode"><pre><span class="n">rsync</span> <span class="o">-</span><span class="n">avH</span> <span class="p">[</span><span class="n">ssh</span><span class="p">]</span> <span class="n">user</span><span class="err">@</span><span class="n">des</span><span class="o">:/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">source</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">local</span>  
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">rsync</span> <span class="o">-</span><span class="n">vare</span> <span class="n">ssh</span> <span class="n">jono</span><span class="err">@</span><span class="mf">192.168.0.2</span><span class="o">:/</span><span class="n">home</span><span class="o">/</span><span class="n">jono</span><span class="o">/</span><span class="n">importantfiles</span><span class="o">/*</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">jono</span><span class="o">/</span><span class="n">backup</span><span class="o">/</span>
+</pre></div>
+
+
+<blockquote>
+<p>备份了192.168.0.2地址上/home/jono/importantfiles/目录下的所有文件到当前机器上的/home/jono/backup目录下。</p>
+</blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

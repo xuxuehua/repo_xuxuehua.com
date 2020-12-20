@@ -1,0 +1,187 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>table - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Mysql">Mysql</a>&nbsp;&#187;&nbsp;table
+    <span class="updated">Page Updated&nbsp;
+      2020-06-25 18:10
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">table</div>
+
+  <p>[toc]</p>
+<h1 id="_1">表</h1>
+<h2 id="_2">字符集</h2>
+<p>主要是为了保存emoji表情，例如: 微信昵称，就有很多带有emoji表情的，这里我们使用utf8mb4字符集，千万不要使用blob类型来存储</p>
+<h2 id="_3">主/外键类型</h2>
+<p>主键的设定是非常重要的，在主键的选择上，应该满足以下几个条件:</p>
+<div class="hlcode"><pre><span class="mf">1.</span> <span class="err">唯一性</span> <span class="p">(</span><span class="err">必要条件</span><span class="p">)</span>
+<span class="mf">2.</span> <span class="err">非空性</span>
+<span class="mf">3.</span> <span class="err">有序性</span>
+<span class="mf">4.</span> <span class="err">可读性</span>
+<span class="mf">5.</span> <span class="err">可扩展性</span>
+</pre></div>
+
+
+<blockquote>
+<p>有序性就有不少好处。例如: 查询时，为有序IO，就可提高查询效率，存储的顺序也是有序的，往远了看，分库分表也是有好处的。因此，我建议使8字节无符号的bigint(20)作为主键的数据类型  </p>
+<p>主外键的数据类型一定要一致！</p>
+<p>每个表中的主键命名保持一致！</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">create</span> <span class="n">table</span> <span class="n">t_base_user</span><span class="p">(</span>
+<span class="n">id</span> <span class="n">bigint</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="kt">unsigned</span> <span class="n">not</span> <span class="n">null</span> <span class="n">primary</span> <span class="n">key</span> <span class="n">auto_increment</span><span class="p">;</span>
+<span class="p">....</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<h2 id="_4">无符号与有符号的区别</h2>
+<p>有符号允许存储负数，无符号只允许从正数开始，无符号最小值为0，最大值根据类型不同而不同。</p>
+<h2 id="_5">外键约束</h2>
+<p>外键约束用来保证数据完整性的。但不建议在数据库表中加外键约束，因为在数据表中添加外键约束，会影响性能，</p>
+<p>例如: 每一次修改数据时，都要在另外的一张表中执行查询。应该是：在应用层，也就是代码层面，来维持外键关系。</p>
+<h2 id="comment">comment 添加注释</h2>
+<p>添加注释，这是非常重要的，其中包括表注释，字段注释。主要是为了后期表结构的维护</p>
+<div class="hlcode"><pre><span class="n">create</span> <span class="n">table</span> <span class="n">t_base_user</span><span class="p">(</span>
+ <span class="n">id</span> <span class="n">bigint</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="n">UNSIGNED</span> <span class="n">not</span> <span class="n">null</span> <span class="n">primary</span> <span class="n">key</span> <span class="n">auto_increment</span> <span class="n">comment</span> <span class="s">&quot;主键&quot;</span><span class="p">,</span>
+ <span class="n">name</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="n">character</span> <span class="n">set</span> <span class="n">utf8mb4</span> <span class="n">comment</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+ <span class="n">created_time</span> <span class="n">datetime</span> <span class="n">null</span> <span class="k">default</span> <span class="n">now</span><span class="p">()</span> <span class="n">comment</span> <span class="s">&quot;创建时间&quot;</span><span class="p">,</span>
+ <span class="n">updated_time</span> <span class="n">datetime</span> <span class="n">null</span> <span class="k">default</span> <span class="n">now</span><span class="p">()</span> <span class="n">comment</span> <span class="s">&quot;修改时间&quot;</span><span class="p">,</span>
+ <span class="n">deleted</span> <span class="n">tinyint</span> <span class="n">not</span> <span class="n">null</span> <span class="k">default</span> <span class="mi">1</span> <span class="n">comment</span> <span class="s">&quot;逻辑删除 0正常数据 1删除数据&quot;</span>
+<span class="p">)</span><span class="n">engine</span><span class="o">=</span><span class="n">InnoDB</span> <span class="n">charset</span><span class="o">=</span><span class="n">utf8</span> <span class="n">comment</span> <span class="s">&quot;用户表&quot;</span><span class="p">;</span>
+
+<span class="c1">//添加索引</span>
+<span class="n">alter</span> <span class="n">table</span> <span class="n">t_base_user</span> <span class="nf">idx_created_time</span><span class="p">(</span><span class="n">created_time</span><span class="p">);</span>
+</pre></div>
+
+
+<h1 id="_6">定义</h1>
+<h2 id="_7">字段</h2>
+<div class="hlcode"><pre><span class="err">字段：字段名，</span> <span class="err">字段数据类型，修饰符</span>
+</pre></div>
+
+
+<h2 id="_8">索引</h2>
+<p>应该创建在经常用作查询条件的字段上</p>
+<p>实现级别在存储引擎</p>
+<h3 id="_9">稠密索引</h3>
+<p>B+索引， hash索引， R树索引， FULLTEXT索引</p>
+<h3 id="_10">稀疏索引</h3>
+<p>聚合索引， 非聚合索引</p>
+<p>简单索引，组合索引</p>
+<h1 id="_11">表操作</h1>
+<h2 id="_12">创建表</h2>
+<p>直接创建</p>
+<div class="hlcode"><pre><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">help</span> <span class="n">create</span> <span class="n">table</span>
+<span class="n">CREATE</span> <span class="p">[</span><span class="n">TEMPORARY</span><span class="p">]</span> <span class="n">TABLE</span> <span class="p">[</span><span class="n">IF</span> <span class="n">NOT</span> <span class="n">EXISTS</span><span class="p">]</span> <span class="n">tbl_name</span>
+    <span class="p">(</span><span class="n">create_definition</span><span class="p">,...)</span>
+    <span class="p">[</span><span class="n">table_options</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">partition_options</span><span class="p">]</span>
+</pre></div>
+
+
+<p>通过现存的表创建，新表会被直接插入查询而来的数据</p>
+<div class="hlcode"><pre><span class="n">CREATE</span> <span class="p">[</span><span class="n">TEMPORARY</span><span class="p">]</span> <span class="n">TABLE</span> <span class="p">[</span><span class="n">IF</span> <span class="n">NOT</span> <span class="n">EXISTS</span><span class="p">]</span> <span class="n">tbl_name</span>
+    <span class="p">[(</span><span class="n">create_definition</span><span class="p">,...)]</span>
+    <span class="p">[</span><span class="n">table_options</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">partition_options</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">IGNORE</span> <span class="o">|</span> <span class="n">REPLACE</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">AS</span><span class="p">]</span> <span class="n">query_expression</span>
+</pre></div>
+
+
+<p>通过复制现存表结构创建，只复制表不复制数据</p>
+<div class="hlcode"><pre><span class="n">CREATE</span> <span class="p">[</span><span class="n">TEMPORARY</span><span class="p">]</span> <span class="n">TABLE</span> <span class="p">[</span><span class="n">IF</span> <span class="n">NOT</span> <span class="n">EXISTS</span><span class="p">]</span> <span class="n">tbl_name</span>
+    <span class="p">{</span> <span class="n">LIKE</span> <span class="n">old_tbl_name</span> <span class="o">|</span> <span class="p">(</span><span class="n">LIKE</span> <span class="n">old_tbl_name</span><span class="p">)</span> <span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_13">表类型</h2>
+<p>Storage Engine 是指表类型，也就是在表创建时指明其使用的存储引擎</p>
+<p>同一个库中表要使用同一种存储引擎类型</p>
+<div class="hlcode"><pre><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">GLOBAL</span> <span class="n">VARIABLES</span> <span class="n">LIKE</span> <span class="err">&#39;</span><span class="o">%</span><span class="k">default</span><span class="o">%</span><span class="n">engine</span><span class="o">%</span><span class="err">&#39;</span><span class="p">;</span>
+<span class="o">+----------------------------+--------+</span>
+<span class="o">|</span> <span class="n">Variable_name</span>              <span class="o">|</span> <span class="n">Value</span>  <span class="o">|</span>
+<span class="o">+----------------------------+--------+</span>
+<span class="o">|</span> <span class="n">default_storage_engine</span>     <span class="o">|</span> <span class="n">InnoDB</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">default_tmp_storage_engine</span> <span class="o">|</span> <span class="n">InnoDB</span> <span class="o">|</span>
+<span class="o">+----------------------------+--------+</span>
+<span class="mi">2</span> <span class="n">rows</span> <span class="n">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="_14">表结构</h2>
+<div class="hlcode"><pre><span class="n">DESCRIBE</span> <span class="n">tbl_name</span><span class="p">;</span>
+</pre></div>
+
+
+<h2 id="_15">表状态信息</h2>
+<div class="hlcode"><pre><span class="n">SHOW</span> <span class="p">[</span><span class="n">FULL</span><span class="p">]</span> <span class="n">TABLES</span> <span class="p">[{</span><span class="n">FROM</span> <span class="o">|</span> <span class="n">IN</span> <span class="p">}</span> <span class="n">db_name</span><span class="p">]</span> <span class="p">[</span><span class="n">LIKE</span> <span class="err">&#39;</span><span class="n">pattern</span><span class="err">&#39;</span> <span class="o">|</span> <span class="n">WHERE</span> <span class="n">expr</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">SHOW</span> <span class="n">TABLE</span> <span class="n">STATUS</span> <span class="n">LIKE</span> <span class="err">&#39;</span><span class="n">t1</span><span class="err">&#39;\</span><span class="n">G</span><span class="p">;</span>
+<span class="o">***************************</span> <span class="mf">1.</span> <span class="n">row</span> <span class="o">***************************</span>
+           <span class="nl">Name:</span> <span class="n">t1</span>
+         <span class="nl">Engine:</span> <span class="n">InnoDB</span>
+        <span class="nl">Version:</span> <span class="mi">10</span>
+     <span class="nl">Row_format:</span> <span class="n">Dynamic</span>
+           <span class="nl">Rows:</span> <span class="mi">0</span>
+ <span class="nl">Avg_row_length:</span> <span class="mi">0</span>
+    <span class="nl">Data_length:</span> <span class="mi">16384</span>
+<span class="nl">Max_data_length:</span> <span class="mi">0</span>
+   <span class="nl">Index_length:</span> <span class="mi">0</span>
+      <span class="nl">Data_free:</span> <span class="mi">0</span>
+ <span class="nl">Auto_increment:</span> <span class="mi">5</span>
+    <span class="nl">Create_time:</span> <span class="mi">2018</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">20</span> <span class="mi">13</span><span class="o">:</span><span class="mi">43</span><span class="o">:</span><span class="mi">39</span>
+    <span class="nl">Update_time:</span> <span class="nb">NULL</span>
+     <span class="nl">Check_time:</span> <span class="nb">NULL</span>
+      <span class="nl">Collation:</span> <span class="n">utf8mb4_0900_ai_ci</span>
+       <span class="nl">Checksum:</span> <span class="nb">NULL</span>
+ <span class="nl">Create_options:</span>
+        <span class="nl">Comment:</span>
+<span class="mi">1</span> <span class="n">row</span> <span class="n">in</span> <span class="n">set</span> <span class="p">(</span><span class="mf">0.00</span> <span class="n">sec</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="_16">修改表</h2>
+<div class="hlcode"><pre><span class="n">ALTER</span> <span class="n">TABLE</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">ALTER</span> <span class="n">TABLE</span> <span class="n">movie</span> <span class="n">CHANGE</span> <span class="err">`</span><span class="n">start</span><span class="err">`</span> <span class="n">star</span> <span class="n">smallint</span><span class="p">(</span><span class="mi">6</span><span class="p">);</span>
+</pre></div>
+
+
+<h2 id="_17">删除表</h2>
+<div class="hlcode"><pre><span class="n">DROP</span> <span class="n">TABLE</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

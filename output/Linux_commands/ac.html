@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>ac linux_debugger - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;ac linux_debugger
+    <span class="updated">Page Updated&nbsp;
+      2018-11-05 21:37
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">ac linux_debugger</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#ac">ac</a><ul>
+<li><a href="#-d-daily-totals">-d, --daily-totals</a></li>
+<li><a href="#silence">silence</a></li>
+<li><a href="#-p-individual-totals">-p, --individual-totals</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="ac">ac</h1>
+<p>打印用户连接时间</p>
+<p>print statistics about users' connect time</p>
+<p>显示所有用户连接总时间</p>
+<h2 id="-d-daily-totals">-d, --daily-totals</h2>
+<p>显示每天所有用户连接总时间</p>
+<p>Print totals for each day rather than just one big total at the end.  The output looks like this:<br />
+Jul  3  total     1.17<br />
+Jul  4  total     2.10<br />
+Jul  5  total     8.23<br />
+Jul  6  total     2.10<br />
+Jul  7  total     0.30</p>
+<h2 id="silence">silence</h2>
+<p>显示指定用户连接时间</p>
+<div class="hlcode"><pre><span class="n">ac</span> <span class="o">-</span><span class="n">d</span> <span class="n">silence</span>   <span class="err">#显示指定用户每天连接时间</span>
+</pre></div>
+
+
+<h2 id="-p-individual-totals">-p, --individual-totals</h2>
+<p>显示每个用户连接时间</p>
+<p>Print time totals for each user in addition to the usual everything-lumped-into-one value.  It looks like:<br />
+bob       8.06<br />
+goff      0.60<br />
+maley     7.37<br />
+root      0.12<br />
+total    16.15</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

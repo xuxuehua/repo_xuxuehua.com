@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>pickle - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;pickle
+    <span class="updated">Page Updated&nbsp;
+      2018-08-24 12:39
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">pickle</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#pickle">pickle</a><ul>
+<li><a href="#dump">dump</a></li>
+<li><a href="#dumps">dumps 序列化</a></li>
+<li><a href="#load">load</a></li>
+<li><a href="#loads">loads 反序列化</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="pickle">pickle</h1>
+<p>仅支持Python所有的数据类型， 可以序列化任何数据</p>
+<h2 id="dump">dump</h2>
+<p>对象序列化为bytes对象</p>
+<p><code>pickle.dump(info, f)</code></p>
+<p>等同于</p>
+<p><code>f.write(pickle.dumps(info))</code></p>
+<h2 id="dumps">dumps 序列化</h2>
+<p>对象序列化到文件对象，就是存入文件中</p>
+<p>将内存中的对象转换为文本流</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">pickle</span>
+
+<span class="n">class</span> <span class="n">Bird</span><span class="p">(</span><span class="n">object</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">have_feather</span> <span class="o">=</span> <span class="n">True</span>
+    <span class="n">way_of_reproduction</span> <span class="o">=</span> <span class="s">&quot;egg&quot;</span>
+
+<span class="n">summer</span> <span class="o">=</span> <span class="n">Bird</span><span class="p">()</span>
+<span class="cp"># serialize object</span>
+<span class="n">picklestring</span> <span class="o">=</span> <span class="n">pickle</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">summer</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="load">load</h2>
+<p>对象反序列化，从文件中读取数据</p>
+<p><code>pickle.load(f)</code></p>
+<p>等同于</p>
+<p><code>pickle.loads(f.read())</code></p>
+<p>要从文本中读取文本，存储到字符串(文本文件的输入输出)。然后使用pickle.loads(str)的方法，将字符串转换称为对象。</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">pickle</span>
+
+<span class="n">class</span> <span class="n">Bird</span><span class="p">(</span><span class="n">object</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">have_feather</span> <span class="o">=</span> <span class="n">True</span>
+    <span class="n">way_of_reproduction</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">egg</span><span class="err">&#39;</span>
+
+<span class="n">fn</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">a</span><span class="p">.</span><span class="n">pkl</span><span class="err">&#39;</span>
+<span class="n">with</span> <span class="n">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="sc">&#39;r&#39;</span><span class="p">)</span> <span class="n">as</span> <span class="n">f</span><span class="o">:</span>
+    <span class="n">summer</span> <span class="o">=</span> <span class="n">pickle</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="loads">loads 反序列化</h2>
+<p>从bytes对象反序列化</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

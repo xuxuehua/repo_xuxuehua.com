@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>view 视图 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Mysql">Mysql</a>&nbsp;&#187;&nbsp;view 视图
+    <span class="updated">Page Updated&nbsp;
+      2020-03-22 11:37
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">view 视图</div>
+
+  <p>[toc]</p>
+<h1 id="_1">视图</h1>
+<p>将一段查询sql封装为一个虚拟的表。 相当于是一张表或多张表的数据结果集</p>
+<p>这个虚拟表只保存了sql逻辑，不会保存任何查询结果。</p>
+<h2 id="_2">特点</h2>
+<p>在大型项目中，以及数据表比较复杂的情况下，视图的价值就凸显出来了，它可以帮助我们把经常查询的结果集放到虚拟表中，提升使用效率</p>
+<p>视图提供了一个统一访问数据的接口。（即可以允许用户通过视图访问数据的安全机制，而不授予用户直接访问底层表的权限），从而加强了安全性，使用户只能看到视图所显示的数据</p>
+<p>mysql的视图中不允许有from 后面的子查询，但oracle可以</p>
+<h2 id="_3">嵌套视图</h2>
+<p>创建好一张视图之后，还可以在它的基础上继续创建视图</p>
+<div class="hlcode"><pre><span class="n">CREATE</span> <span class="n">VIEW</span> <span class="n">player_above_above_avg_height</span> <span class="n">AS</span>
+<span class="n">SELECT</span> <span class="n">player_id</span><span class="p">,</span> <span class="n">height</span>
+<span class="n">FROM</span> <span class="n">player</span>
+<span class="n">WHERE</span> <span class="n">height</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">SELECT</span> <span class="n">AVG</span><span class="p">(</span><span class="n">height</span><span class="p">)</span> <span class="n">from</span> <span class="n">player_above_avg_height</span><span class="p">);</span>
+</pre></div>
+
+
+<h1 id="_4">使用</h1>
+<h2 id="_5">创建</h2>
+<div class="hlcode"><pre><span class="n">CREATE</span> <span class="n">VIEW</span> <span class="n">view_name</span>  
+<span class="n">AS</span> 
+<span class="n">SELECT</span> <span class="n">column_name</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> 
+<span class="n">FROM</span> <span class="n">table_name</span> 
+<span class="n">WHERE</span> <span class="n">condition</span> 
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">CREATE</span> <span class="n">VIEW</span> <span class="n">player_above_avg_height</span> <span class="n">AS</span>
+<span class="n">SELECT</span> <span class="n">player_id</span><span class="p">,</span> <span class="n">height</span>
+<span class="n">FROM</span> <span class="n">player</span>
+<span class="n">WHERE</span> <span class="n">height</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">SELECT</span> <span class="n">AVG</span><span class="p">(</span><span class="n">height</span><span class="p">)</span> <span class="n">from</span> <span class="n">player</span><span class="p">);</span>
+</pre></div>
+
+
+<h2 id="_6">查询</h2>
+<div class="hlcode"><pre><span class="n">select</span> <span class="o">*</span> <span class="n">from</span> <span class="n">view_name</span><span class="p">;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">SELECT</span> <span class="o">*</span> <span class="n">FROM</span> <span class="n">player_above_avg_height</span><span class="p">;</span>
+</pre></div>
+
+
+<h2 id="_7">更新</h2>
+<div class="hlcode"><pre><span class="n">CREATE</span> <span class="n">OR</span> <span class="n">REPLACE</span> <span class="n">VIEW</span> <span class="n">view_name</span>  
+<span class="n">AS</span> 
+<span class="n">SELECT</span> <span class="n">column_name</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> 
+<span class="n">FROM</span> <span class="n">table_name</span> 
+<span class="n">WHERE</span> <span class="n">condition</span> 
+</pre></div>
+
+
+<h2 id="_8">修改</h2>
+<div class="hlcode"><pre><span class="n">ALTER</span> <span class="n">VIEW</span> <span class="n">view_name</span> <span class="n">AS</span>
+<span class="n">SELECT</span> <span class="n">column1</span><span class="p">,</span> <span class="n">column2</span>
+<span class="n">FROM</span> <span class="n">table</span>
+<span class="n">WHERE</span> <span class="n">condition</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">ALTER</span> <span class="n">VIEW</span> <span class="n">player_above_avg_height</span> <span class="n">AS</span>
+<span class="n">SELECT</span> <span class="n">player_id</span><span class="p">,</span> <span class="n">player_name</span><span class="p">,</span> <span class="n">height</span>
+<span class="n">FROM</span> <span class="n">player</span>
+<span class="n">WHERE</span> <span class="n">height</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">SELECT</span> <span class="n">AVG</span><span class="p">(</span><span class="n">height</span><span class="p">)</span> <span class="n">from</span> <span class="n">player</span><span class="p">);</span>
+</pre></div>
+
+
+<h2 id="_9">删除</h2>
+<div class="hlcode"><pre><span class="n">DROP</span> <span class="n">VIEW</span> <span class="p">[</span><span class="n">IF</span> <span class="n">EXISTS</span><span class="p">]</span>
+    <span class="n">view_name</span> <span class="p">[,</span> <span class="n">view_name</span><span class="p">]</span> <span class="p">...</span>
+    <span class="p">[</span><span class="n">RESTRICT</span> <span class="o">|</span> <span class="n">CASCADE</span><span class="p">]</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

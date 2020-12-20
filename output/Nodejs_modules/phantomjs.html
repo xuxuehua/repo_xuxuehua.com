@@ -1,0 +1,410 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>phantomjs - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Nodejs_modules">Nodejs_modules</a>&nbsp;&#187;&nbsp;phantomjs
+    <span class="updated">Page Updated&nbsp;
+      2018-08-15 15:58
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">phantomjs</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#phantomjs">PhantomJS</a><ul>
+<li><a href="#_1">概述</a></li>
+<li><a href="#_2">安装</a></li>
+<li><a href="#repl">REPL环境</a></li>
+<li><a href="#webpage">webpage模块</a><ul>
+<li><a href="#open">open()</a></li>
+<li><a href="#evaluate">evaluate()</a></li>
+<li><a href="#includejs">includeJs()</a></li>
+<li><a href="#render">render()</a></li>
+<li><a href="#viewportsize">viewportSize</a></li>
+<li><a href="#zoomfactor">zoomFactor</a></li>
+<li><a href="#onresourcerequested">onResourceRequested</a></li>
+<li><a href="#onresourcereceived">onResourceReceived</a></li>
+</ul>
+</li>
+<li><a href="#system">system模块</a></li>
+<li><a href="#_3">过滤资源</a></li>
+<li><a href="#_4">截图</a></li>
+<li><a href="#_5">抓取图片</a></li>
+<li><a href="#_6">生成网页</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="phantomjs">PhantomJS</h1>
+<h2 id="_1">概述</h2>
+<p>有时，我们需要浏览器处理网页，但并不需要浏览，比如生成网页的截图、抓取网页数据等操作。<a href="http://phantomjs.org/">PhantomJS</a>的功能，就是提供一个浏览器环境的命令行接口，你可以把它看作一个“虚拟浏览器”，除了不能浏览，其他与正常浏览器一样。它的内核是WebKit引擎，不提供图形界面，只能在命令行下使用，我们可以用它完成一些特殊的用途。</p>
+<h2 id="_2">安装</h2>
+<p>PhantomJS是二进制程序，需要<a href="http://phantomjs.org/download.html">安装</a>后使用。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">npm</span> <span class="n">install</span> <span class="n">phantomjs</span> <span class="o">-</span><span class="n">g</span>
+</pre></div>
+
+
+<p>使用下面的命令，查看是否安装成功。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">phantomjs</span> <span class="o">--</span><span class="n">version</span>
+</pre></div>
+
+
+<h2 id="repl">REPL环境</h2>
+<p>phantomjs提供了一个完整的REPL环境，允许用户通过命令行与PhantomJS互动。键入phantomjs，就进入了该环境。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">phantomjs</span>
+</pre></div>
+
+
+<p>这时会跳出一个phantom提示符，就可以输入Javascript命令了。</p>
+<div class="hlcode"><pre><span class="nx">phantomjs</span><span class="o">&gt;</span> <span class="mi">1</span><span class="o">+</span><span class="mi">2</span>
+<span class="mi">3</span>
+
+<span class="nx">phantomjs</span><span class="o">&gt;</span> <span class="kd">function</span> <span class="nx">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="p">;</span> <span class="p">}</span>
+<span class="kc">undefined</span>
+
+<span class="nx">phantomjs</span><span class="o">&gt;</span> <span class="nx">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="mi">3</span>
+</pre></div>
+
+
+<h2 id="webpage">webpage模块</h2>
+<p>webpage模块是PhantomJS的核心模块，用于网页操作。</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">webPage</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="err">&#39;</span><span class="n">webpage</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">page</span> <span class="o">=</span> <span class="n">webPage</span><span class="p">.</span><span class="n">create</span><span class="p">();</span>
+</pre></div>
+
+
+<p>上面代码表示加载PhantomJS的webpage模块，并创建一个实例。</p>
+<h3 id="open">open()</h3>
+<p>open方法用于打开具体的网页。</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpage&#39;</span><span class="p">).</span><span class="nx">create</span><span class="p">();</span>
+
+<span class="nx">page</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">&#39;http://slashdot.org&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span>
+  <span class="nx">phantom</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>上面代码中，open()方法，用于打开具体的网页。它接受两个参数。第一个参数是网页的网址，这里打开的是著名新闻网站<a href="http://slashdot.org/">Slashdot</a>，第二个参数是回调函数，网页打开后该函数将会运行，它的参数是一个表示状态的字符串，如果打开成功就是success，否则就是fail。</p>
+<p>注意，只要接收到服务器返回的结果，PhantomJS就会报告网页打开成功，而不管服务器是否返回404或500错误。</p>
+<p>open方法默认使用GET方法，与服务器通信，但是也可以使用其他方法。</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">webPage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpage&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">webPage</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">postBody</span> <span class="o">=</span> <span class="s1">&#39;user=username&amp;password=password&#39;</span><span class="p">;</span>
+
+<span class="nx">page</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">&#39;http://www.google.com/&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span> <span class="nx">postBody</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Status: &#39;</span> <span class="o">+</span> <span class="nx">status</span><span class="p">);</span>
+  <span class="c1">// Do other things here...</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>上面代码中，使用POST方法向服务器发送数据。open方法的第二个参数用来指定HTTP方法，第三个参数用来指定该方法所要使用的数据。</p>
+<p>open方法还允许提供配置对象，对HTTP请求进行更详细的配置。</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">webPage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpage&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">webPage</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">settings</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">operation</span><span class="o">:</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+  <span class="nx">encoding</span><span class="o">:</span> <span class="s2">&quot;utf8&quot;</span><span class="p">,</span>
+  <span class="nx">headers</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;Content-Type&quot;</span><span class="o">:</span> <span class="s2">&quot;application/json&quot;</span>
+  <span class="p">},</span>
+  <span class="nx">data</span><span class="o">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+    <span class="nx">some</span><span class="o">:</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+    <span class="nx">another</span><span class="o">:</span> <span class="cp">[</span><span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="cp">]</span>
+  <span class="p">})</span>
+<span class="p">};</span>
+
+<span class="nx">page</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">&#39;http://your.custom.api&#39;</span><span class="p">,</span> <span class="nx">settings</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Status: &#39;</span> <span class="o">+</span> <span class="nx">status</span><span class="p">);</span>
+  <span class="c1">// Do other things here...</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<h3 id="evaluate">evaluate()</h3>
+<p>evaluate方法用于打开网页以后，在页面中执行JavaScript代码。</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpage&#39;</span><span class="p">).</span><span class="nx">create</span><span class="p">();</span>
+
+<span class="nx">page</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">title</span> <span class="o">=</span> <span class="nx">page</span><span class="p">.</span><span class="nx">evaluate</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">;</span>
+  <span class="p">});</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Page title is &#39;</span> <span class="o">+</span> <span class="nx">title</span><span class="p">);</span>
+  <span class="nx">phantom</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>网页内部的console语句，以及evaluate方法内部的console语句，默认不会显示在命令行。这时可以采用onConsoleMessage回调函数，上面的例子可以改写如下。</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpage&#39;</span><span class="p">).</span><span class="nx">create</span><span class="p">();</span>
+
+<span class="nx">page</span><span class="p">.</span><span class="nx">onConsoleMessage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Page title is &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="nx">page</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">page</span><span class="p">.</span><span class="nx">evaluate</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">);</span>
+  <span class="p">});</span>
+  <span class="nx">phantom</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>上面代码中，evaluate方法内部有console语句，默认不会输出在命令行。这时，可以用onConsoleMessage方法监听这个事件，进行处理。</p>
+<h3 id="includejs">includeJs()</h3>
+<p>includeJs方法用于页面加载外部脚本，加载结束后就调用指定的回调函数。</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpage&#39;</span><span class="p">).</span><span class="nx">create</span><span class="p">();</span>
+<span class="nx">page</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">&#39;http://www.sample.com&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">page</span><span class="p">.</span><span class="nx">includeJs</span><span class="p">(</span><span class="s2">&quot;http://path/to/jquery.min.js&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">page</span><span class="p">.</span><span class="nx">evaluate</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;button&quot;</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
+    <span class="p">});</span>
+    <span class="nx">phantom</span><span class="p">.</span><span class="nx">exit</span><span class="p">()</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>上面的例子在页面中注入jQuery脚本，然后点击所有的按钮。需要注意的是，由于是异步加载，所以<code>phantom.exit()</code>语句要放在<code>page.includeJs()</code>方法的回调函数之中，否则页面会过早退出。</p>
+<h3 id="render">render()</h3>
+<p>render方法用于将网页保存成图片，参数就是指定的文件名。该方法根据后缀名，将网页保存成不同的格式，目前支持PNG、GIF、JPEG和PDF。</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">webPage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpage&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">webPage</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+
+<span class="nx">page</span><span class="p">.</span><span class="nx">viewportSize</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">width</span><span class="o">:</span> <span class="mi">1920</span><span class="p">,</span> <span class="nx">height</span><span class="o">:</span> <span class="mi">1080</span> <span class="p">};</span>
+<span class="nx">page</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&quot;http://www.google.com&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="nx">start</span><span class="p">(</span><span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">page</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;google_home.jpeg&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">format</span><span class="o">:</span> <span class="s1">&#39;jpeg&#39;</span><span class="p">,</span> <span class="nx">quality</span><span class="o">:</span> <span class="s1">&#39;100&#39;</span><span class="p">});</span>
+  <span class="nx">phantom</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>该方法还可以接受一个配置对象，format字段用于指定图片格式，quality字段用于指定图片质量，最小为0，最大为100。</p>
+<h3 id="viewportsize">viewportSize</h3>
+<p>viewportSize属性指定浏览器视口的大小，即网页加载的初始浏览器窗口大小。</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">webPage</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="err">&#39;</span><span class="n">webpage</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">page</span> <span class="o">=</span> <span class="n">webPage</span><span class="p">.</span><span class="n">create</span><span class="p">();</span>
+
+<span class="n">page</span><span class="p">.</span><span class="n">viewportSize</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nl">width:</span> <span class="mi">480</span><span class="p">,</span>
+  <span class="nl">height:</span> <span class="mi">800</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>viewportSize的Height字段必须指定，不可省略。</p>
+<h3 id="zoomfactor">zoomFactor</h3>
+<p>zoomFactor属性用来指定渲染时（render方法和renderBase64方法）页面的放大系数，默认是1（即100%）。</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">webPage</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="err">&#39;</span><span class="n">webpage</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">page</span> <span class="o">=</span> <span class="n">webPage</span><span class="p">.</span><span class="n">create</span><span class="p">();</span>
+
+<span class="n">page</span><span class="p">.</span><span class="n">zoomFactor</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">;</span>
+<span class="n">page</span><span class="p">.</span><span class="n">render</span><span class="p">(</span><span class="err">&#39;</span><span class="n">capture</span><span class="p">.</span><span class="n">png</span><span class="err">&#39;</span><span class="p">);</span>
+</pre></div>
+
+
+<h3 id="onresourcerequested">onResourceRequested</h3>
+<p>onResourceRequested属性用来指定一个回调函数，当页面请求一个资源时，会触发这个回调函数。它的第一个参数是HTTP请求的元数据对象，第二个参数是发出的网络请求对象。</p>
+<p>HTTP请求包括以下字段。</p>
+<ul>
+<li>id：所请求资源的编号</li>
+<li>method：使用的HTTP方法</li>
+<li>url：所请求的资源 URL</li>
+<li>time：一个包含请求时间的Date对象</li>
+<li>headers：HTTP头信息数组</li>
+</ul>
+<p>网络请求对象包含以下方法。</p>
+<ul>
+<li>abort()：终止当前的网络请求，这会导致调用onResourceError回调函数。</li>
+<li>changeUrl(newUrl)：改变当前网络请求的URL。</li>
+<li>setHeader(key, value)：设置HTTP头信息。</li>
+</ul>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">webPage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpage&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">webPage</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+
+<span class="nx">page</span><span class="p">.</span><span class="nx">onResourceRequested</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">requestData</span><span class="p">,</span> <span class="nx">networkRequest</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Request (#&#39;</span> <span class="o">+</span> <span class="nx">requestData</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;): &#39;</span> <span class="o">+</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">requestData</span><span class="p">));</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<h3 id="onresourcereceived">onResourceReceived</h3>
+<p>onResourceReceived属性用于指定一个回调函数，当网页收到所请求的资源时，就会执行该回调函数。它的参数就是服务器发来的HTTP回应的元数据对象，包括以下字段。</p>
+<ul>
+<li>id：所请求的资源编号</li>
+<li>url：所请求的资源的URL r- time：包含HTTP回应时间的Date对象</li>
+<li>headers：HTTP头信息数组</li>
+<li>bodySize：解压缩后的收到的内容大小</li>
+<li>contentType：接到的内容种类</li>
+<li>redirectURL：重定向URL（如果有的话）</li>
+<li>stage：对于多数据块的HTTP回应，头一个数据块为start，最后一个数据块为end。</li>
+<li>status：HTTP状态码，成功时为200。</li>
+<li>statusText：HTTP状态信息，比如OK。</li>
+</ul>
+<p>如果HTTP回应非常大，分成多个数据块发送，onResourceReceived会在收到每个数据块时触发回调函数。</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">webPage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpage&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">webPage</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+
+<span class="nx">page</span><span class="p">.</span><span class="nx">onResourceReceived</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Response (#&#39;</span> <span class="o">+</span> <span class="nx">response</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;, stage &quot;&#39;</span> <span class="o">+</span> <span class="nx">response</span><span class="p">.</span><span class="nx">stage</span> <span class="o">+</span> <span class="s1">&#39;&quot;): &#39;</span> <span class="o">+</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">response</span><span class="p">));</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<h2 id="system">system模块</h2>
+<p>system模块可以加载操作系统变量，system.args就是参数数组。</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpage&#39;</span><span class="p">).</span><span class="nx">create</span><span class="p">(),</span>
+    <span class="nx">system</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;system&#39;</span><span class="p">),</span>
+    <span class="nx">t</span><span class="p">,</span> <span class="nx">address</span><span class="p">;</span>
+
+<span class="c1">// 如果命令行没有给出网址</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">system</span><span class="p">.</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Usage: page.js &lt;some URL&gt;&#39;</span><span class="p">);</span>
+    <span class="nx">phantom</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="nx">t</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+<span class="nx">address</span> <span class="o">=</span> <span class="nx">system</span><span class="p">.</span><span class="nx">args</span><span class="cp">[</span><span class="mi">1</span><span class="cp">]</span><span class="p">;</span>
+<span class="nx">page</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">address</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">status</span> <span class="o">!==</span> <span class="s1">&#39;success&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;FAIL to load the address&#39;</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">t</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">-</span> <span class="nx">t</span><span class="p">;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Loading time &#39;</span> <span class="o">+</span> <span class="nx">t</span> <span class="o">+</span> <span class="s1">&#39; ms&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">phantom</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>使用方法如下：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">phantomjs</span> <span class="n">page</span><span class="p">.</span><span class="n">js</span> <span class="n">http</span><span class="o">:</span><span class="c1">//www.google.com</span>
+</pre></div>
+
+
+<h2 id="_3">过滤资源</h2>
+<p>处理页面的时候，有时不希望加载某些特定资源。这时，可以对URL进行匹配，一旦符合规则，就中断对资源的连接。</p>
+<div class="hlcode"><pre><span class="nx">page</span><span class="p">.</span><span class="nx">onResourceRequested</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">requestData</span><span class="p">,</span> <span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">((</span><span class="sr">/http:\/\/.+?\.css$/gi</span><span class="p">).</span><span class="nx">test</span><span class="p">(</span><span class="nx">requestData</span><span class="cp">[</span><span class="s1">&#39;url&#39;</span><span class="cp">]</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Skipping&#39;</span><span class="p">,</span> <span class="nx">requestData</span><span class="cp">[</span><span class="s1">&#39;url&#39;</span><span class="cp">]</span><span class="p">);</span>
+    <span class="nx">request</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span>
+  <span class="p">}</span>   
+<span class="p">};</span>
+</pre></div>
+
+
+<p>上面代码一旦发现加载的资源是CSS文件，就会使用<code>request.abort</code>方法中断连接。</p>
+<h2 id="_4">截图</h2>
+<p>最简单的生成网页截图的方法如下。</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpage&#39;</span><span class="p">).</span><span class="nx">create</span><span class="p">();</span>
+<span class="nx">page</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">&#39;http://google.com&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">page</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;google.png&#39;</span><span class="p">);</span>
+    <span class="nx">phantom</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>page对象代表一个网页实例；open方法表示打开某个网址，它的第一个参数是目标网址，第二个参数是网页载入成功后，运行的回调函数;render方法则是渲染页面，然后以图片格式输出，该方法的参数就是输出的图片文件名。</p>
+<p>除了简单截图以外，还可以设置各种截图参数。</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpage&#39;</span><span class="p">).</span><span class="nx">create</span><span class="p">();</span>
+<span class="nx">page</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">&#39;http://google.com&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">page</span><span class="p">.</span><span class="nx">zoomFactor</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">page</span><span class="p">.</span><span class="nx">renderBase64</span><span class="p">());</span>
+    <span class="nx">phantom</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>zoomFactor表示将截图缩小至原图的25%大小；renderBase64方法则是表示将截图（PNG格式）编码成Base64格式的字符串输出。</p>
+<p>下面的例子则是使用了更多参数。</p>
+<div class="hlcode"><pre><span class="c1">// page.js</span>
+
+<span class="k">var</span> <span class="n">page</span> <span class="o">=</span> <span class="n">require</span><span class="p">(&#39;</span><span class="n">webpage</span><span class="p">&#39;).</span><span class="n">create</span><span class="p">();</span>
+
+<span class="n">page</span><span class="p">.</span><span class="n">settings</span><span class="p">.</span><span class="n">userAgent</span> <span class="o">=</span> <span class="p">&#39;</span><span class="n">WebKit</span><span class="o">/</span><span class="mf">534.46</span> <span class="n">Mobile</span><span class="o">/</span><span class="mh">9</span><span class="no">A405</span> <span class="n">Safari</span><span class="o">/</span><span class="mf">7534.48.3</span><span class="p">&#39;;</span>
+<span class="n">page</span><span class="p">.</span><span class="n">settings</span><span class="p">.</span><span class="n">viewportSize</span> <span class="o">=</span> <span class="p">{</span> <span class="nl">width:</span> <span class="mh">400</span><span class="p">,</span> <span class="nl">height:</span> <span class="mh">600</span> <span class="p">};</span>
+
+<span class="n">page</span><span class="p">.</span><span class="n">open</span><span class="p">(&#39;</span><span class="nl">http:</span><span class="c1">//slashdot.org&#39;, function (status) {</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">status</span> <span class="o">!==</span> <span class="p">&#39;</span><span class="n">success</span><span class="p">&#39;)</span> <span class="p">{</span>
+    <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(&#39;</span><span class="n">Unable</span> <span class="n">to</span> <span class="n">load</span><span class="o">!</span><span class="p">&#39;);</span>
+    <span class="n">phantom</span><span class="p">.</span><span class="n">exit</span><span class="p">();</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">var</span> <span class="n">title</span> <span class="o">=</span> <span class="n">page</span><span class="p">.</span><span class="n">evaluate</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">var</span> <span class="n">posts</span> <span class="o">=</span> <span class="n">document</span><span class="p">.</span><span class="n">getElementsByClassName</span><span class="p">(</span><span class="s">&quot;article&quot;</span><span class="p">);</span>
+          <span class="n">posts</span><span class="p">[</span><span class="mh">0</span><span class="p">].</span><span class="n">style</span><span class="p">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="s">&quot;#FFF&quot;</span><span class="p">;</span>
+          <span class="k">return</span> <span class="n">document</span><span class="p">.</span><span class="n">title</span><span class="p">;</span>
+      <span class="p">});</span>
+
+    <span class="n">window</span><span class="p">.</span><span class="n">setTimeout</span><span class="p">(</span><span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="n">page</span><span class="p">.</span><span class="n">clipRect</span> <span class="o">=</span> <span class="p">{</span> <span class="nl">top:</span> <span class="mh">0</span><span class="p">,</span> <span class="nl">left:</span> <span class="mh">0</span><span class="p">,</span> <span class="nl">width:</span> <span class="mh">600</span><span class="p">,</span> <span class="nl">height:</span> <span class="mh">700</span> <span class="p">};</span>
+        <span class="n">page</span><span class="p">.</span><span class="n">render</span><span class="p">(</span><span class="n">title</span> <span class="o">+</span> <span class="s">&quot;1.png&quot;</span><span class="p">);</span>
+        <span class="n">page</span><span class="p">.</span><span class="n">clipRect</span> <span class="o">=</span> <span class="p">{</span> <span class="nl">left:</span> <span class="mh">0</span><span class="p">,</span> <span class="nl">top:</span> <span class="mh">600</span><span class="p">,</span> <span class="nl">width:</span> <span class="mh">400</span><span class="p">,</span> <span class="nl">height:</span> <span class="mh">600</span> <span class="p">};</span>
+      <span class="n">page</span><span class="p">.</span><span class="n">render</span><span class="p">(</span><span class="n">title</span> <span class="o">+</span> <span class="p">&#39;</span><span class="mf">2.</span><span class="n">png</span><span class="p">&#39;);</span>
+        <span class="n">phantom</span><span class="p">.</span><span class="n">exit</span><span class="p">();</span>
+    <span class="p">},</span> <span class="mh">1000</span><span class="p">);</span>     
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>上面代码中的几个属性和方法解释如下：</p>
+<ul>
+<li>settings.userAgent：指定HTTP请求的userAgent头信息，上面例子是手机浏览器的userAgent。</li>
+<li>settings.viewportSize：指定浏览器窗口的大小，这里是400x600。</li>
+<li>evaluate()：用来在网页上运行Javascript代码。在这里，我们抓取第一条新闻，然后修改背景颜色，并返回该条新闻的标题。</li>
+<li>clipRect：用来指定网页截图的大小，这里的截图左上角从网页的(0. 0)坐标开始，宽600像素，高700像素。如果不指定这个值，就表示对整张网页截图。</li>
+<li>render()：根据clipRect的范围，在当前目录下生成以第一条新闻的名字命名的截图。</li>
+</ul>
+<h2 id="_5">抓取图片</h2>
+<p>使用官方网站提供的<a href="https://github.com/ariya/phantomjs/blob/master/examples/rasterize.js">rasterize.js</a>，可以抓取网络上的图片，将其保存在本地。</p>
+<div class="hlcode"><pre><span class="n">phantomjs</span> <span class="n">rasterize</span><span class="p">.</span><span class="n">js</span> <span class="n">http</span><span class="o">:</span><span class="c1">//ariya.github.com/svg/tiger.svg tiger.png</span>
+</pre></div>
+
+
+<p>使用<a href="https://github.com/ariya/phantomjs/blob/master/examples/rasterize.js">rasterize.js</a>，还可以将网页保存为pdf文件。</p>
+<div class="hlcode"><pre><span class="n">phantomjs</span> <span class="n">rasterize</span><span class="p">.</span><span class="n">js</span> <span class="err">&#39;</span><span class="n">http</span><span class="o">:</span><span class="c1">//en.wikipedia.org/w/index.php?title=Jakarta&amp;printable=yes&#39; jakarta.pdf</span>
+</pre></div>
+
+
+<h2 id="_6">生成网页</h2>
+<p>phantomjs可以生成网页，使用content方法指定网页的HTML代码。</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="n">page</span> <span class="o">=</span> <span class="k">require</span><span class="err">(&#39;</span><span class="n">webpage</span><span class="s1">&#39;).create();</span>
+<span class="s1">page.viewportSize = { width: 400, height : 400 };</span>
+<span class="s1">page.content = &#39;</span><span class="o">&lt;</span><span class="nx">html</span><span class="o">&gt;&lt;</span><span class="nb">body</span><span class="o">&gt;&lt;</span><span class="nx">canvas</span> <span class="n">id</span><span class="o">=</span><span class="s2">&quot;surface&quot;</span><span class="o">&gt;&lt;/</span><span class="nx">canvas</span><span class="o">&gt;&lt;/</span><span class="nb">body</span><span class="o">&gt;&lt;/</span><span class="nx">html</span><span class="o">&gt;</span><span class="s1">&#39;;</span>
+<span class="s1">phantom.exit();</span>
+</pre></div>
+
+
+<p>官方网站有一个<a href="https://github.com/ariya/phantomjs/blob/master/examples/colorwheel.js">例子</a>，通过创造svg图片，然后截图保存成png文件。</p>
+<p><img alt="img" src="https://lh3.googleusercontent.com/-xSIzxPtJULw/TVzeP4NPMDI/AAAAAAAAB10/k-c8jB6I5Cg/s288/colorwheel.png" /></p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

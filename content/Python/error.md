@@ -66,6 +66,32 @@ except IndexError as err:
 print('continue')
 ```
 
+
+
+```
+In [3]: try:
+   ...:     1/0
+   ...: except Exception as e:
+   ...:     print(e)
+   ...: else:
+   ...:     print('else section')
+   ...: 
+division by zero
+
+In [4]: try:
+   ...:     1/1
+   ...: except Exception as e:
+   ...:     print(e)
+   ...: else:
+   ...:     print('else section')
+   ...: 
+else section
+```
+
+
+
+
+
 ## 异常类型
 
 [https://docs.python.org/3/library/exceptions.html#bltin-exceptions](https://docs.python.org/3/library/exceptions.html#bltin-exceptions)
@@ -356,6 +382,51 @@ if __debug__:
 
 
 
+
+
+
+# 错误处理
+
+
+
+
+
+## 减少使用Exception
+
+catch异常的时候，你不应该使用Exception这么宽泛的类型。你应该正好catch可能发生的那种异常A。
+
+使用宽泛的异常类型有很大的问题，因为它会不经意的catch住另外的异常（比如B）。你的代码逻辑是基于判断A是否出现，可你却catch所有的异常（Exception类），所以当其它的异常B出现的时候，你的代码就会出现莫名其妙的问题，因为你以为A出现了，而其实它没有。
+
+这种bug，有时候甚至使用debugger都难以发现。
+
+
+
+
+
+## 精确catch
+
+try { … } catch里面，应该包含尽量少的代码。比如，如果`foo`和`bar`都可能产生异常A，你的代码应该尽可能写成：
+
+```
+try {
+  foo();
+} catch (A e) {...}
+
+try {
+  bar();
+} catch (A e) {...}
+```
+
+而不是
+
+```
+try {
+  foo();
+  bar();
+} catch (A e) {...}
+```
+
+第一种写法能明确的分辨是哪一个函数出了问题，而第二种写法全都混在一起。明确的分辨是哪一个函数出了问题，有很多的好处。比如，如果你的catch代码里面包含log，它可以提供给你更加精确的错误信息，这样会大大地加速你的调试过程。
 
 
 

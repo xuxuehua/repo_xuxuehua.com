@@ -1,0 +1,299 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>int - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java">Java</a>&nbsp;&#187;&nbsp;int
+    <span class="updated">Page Updated&nbsp;
+      2019-10-06 11:16
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">int</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#int">int 整型</a><ul>
+<li><a href="#_1">整型范围</a></li>
+<li><a href="#byte">byte</a></li>
+<li><a href="#short">short</a></li>
+<li><a href="#int_1">int</a></li>
+<li><a href="#long">long</a></li>
+<li><a href="#_2">四则运算</a></li>
+<li><a href="#_3">自增/自减 （不推荐）</a></li>
+</ul>
+</li>
+<li><a href="#_4">溢出</a></li>
+<li><a href="#_5">逻辑运算符</a><ul>
+<li><a href="#_6">三元操作符 ?</a></li>
+</ul>
+</li>
+<li><a href="#_7">移位运算</a><ul>
+<li><a href="#_8"></a></li>
+<li><a href="#_9">&lt;&lt; 左移</a></li>
+<li><a href="#_10">&gt;&gt; 右移</a></li>
+<li><a href="#_11">&gt;&gt;&gt; 不带符号右移</a></li>
+</ul>
+</li>
+<li><a href="#_12">位运算</a></li>
+<li><a href="#_13">类型转换</a><ul>
+<li><a href="#short-to-int">short to int</a></li>
+<li><a href="#int-to-short">int to short</a></li>
+<li><a href="#_14">强制类型转换</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="int">int 整型</h1>
+<p>Java只定义了带符号的整型，没有无符号的整型</p>
+<p>应该选择合适范围的整型（<code>int</code>或<code>long</code>），没有必要为了节省内存而使用<code>byte</code>和<code>short</code>进行整数运算</p>
+<h2 id="_1">整型范围</h2>
+<p>各种整型能表示的最大范围小·</p>
+<p>byte：-128 ~ 127</p>
+<p>short: -32768 ~ 32767</p>
+<p>int: -2147483648 ~ 2147483647</p>
+<p>long: -9223372036854775808 ~ 9223372036854775807</p>
+<h2 id="byte">byte</h2>
+<p>1个字节存储</p>
+<h2 id="short">short</h2>
+<p>2个字节存储</p>
+<h2 id="int_1">int</h2>
+<p>4个字节存储</p>
+<h2 id="long">long</h2>
+<p>8个字节存储</p>
+<h2 id="_2">四则运算</h2>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span> <span class="o">+</span> <span class="mi">200</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">99</span> <span class="o">-</span> <span class="mi">88</span><span class="p">);</span> <span class="c1">// 3300</span>
+        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">7</span> <span class="o">*</span> <span class="p">(</span><span class="mi">5</span> <span class="o">+</span> <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">9</span><span class="p">));</span> <span class="c1">// 23072</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">3300</span>
+<span class="mi">23072</span>
+</pre></div>
+
+
+<h2 id="_3">自增/自减 （不推荐）</h2>
+<p>Java还提供了<code>++</code>运算和<code>--</code>运算，它们可以对一个整数进行加1和减1的操作</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">3300</span><span class="p">;</span>
+        <span class="n">n</span><span class="o">++</span><span class="p">;</span> <span class="c1">// 3301, 相当于 n = n + 1;</span>
+        <span class="n">n</span><span class="o">--</span><span class="p">;</span> <span class="c1">// 3300, 相当于 n = n - 1;</span>
+        <span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">+</span> <span class="p">(</span><span class="o">++</span><span class="n">n</span><span class="p">);</span> <span class="c1">// 不要这么写, 会先加然后再计算</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">3401</span>
+</pre></div>
+
+
+<blockquote>
+<p>不建议把<code>++</code>运算混入到常规运算中</p>
+</blockquote>
+<h1 id="_4">溢出</h1>
+<p>要特别注意，整数由于存在范围限制，如果计算结果超出了范围，就会产生溢出，而溢出<em>不会出错</em>，却会得到一个奇怪的结果</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">2147483640</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">sum</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="o">-</span><span class="mi">2147483641</span>
+</pre></div>
+
+
+<p>要解决上面的问题，可以把<code>int</code>换成<code>long</code>类型，由于<code>long</code>可表示的整型范围更大，所以结果就不会溢出</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">long</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">2147483640</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span>
+        <span class="kt">long</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">sum</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">2147483655</span>
+</pre></div>
+
+
+<h1 id="_5">逻辑运算符</h1>
+<div class="hlcode"><pre><span class="err">与</span> <span class="o">&amp;&amp;</span>
+
+<span class="err">或</span> <span class="o">||</span>
+
+<span class="err">非</span> <span class="o">!</span> 
+</pre></div>
+
+
+<h2 id="_6">三元操作符 ?</h2>
+<div class="hlcode"><pre><span class="n">condition</span> <span class="o">?</span> <span class="n">expression1</span><span class="o">:</span> <span class="n">expression2</span>
+</pre></div>
+
+
+<blockquote>
+<p>若条件为true， 为第一个表达式的值，否则为第二个表达式的值</p>
+</blockquote>
+<h1 id="_7">移位运算</h1>
+<h2 id="_8"></h2>
+<h2 id="_9">&lt;&lt; 左移</h2>
+<p>在计算机中，整数总是以二进制的形式表示。例如，<code>int</code>类型的整数<code>7</code>使用4字节表示的二进制如下：</p>
+<div class="hlcode"><pre><span class="mo">00000000</span> <span class="mo">0000000</span> <span class="mo">0000000</span> <span class="mo">00000111</span>
+</pre></div>
+
+
+<p>可以对整数进行移位运算。对整数<code>7</code>左移1位将得到整数<code>14</code>，左移两位将得到整数<code>28</code>：</p>
+<div class="hlcode"><pre><span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>       <span class="c1">// 00000000 0000000 0000000 00000111</span>
+<span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// 00000000 0000000 0000000 00001110 &lt;= 14</span>
+<span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span><span class="p">;</span>  <span class="c1">// 00000000 0000000 0000000 00011100 &lt;= 28</span>
+<span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="mi">28</span><span class="p">;</span> <span class="c1">// 01110000 0000000 0000000 00000000 &lt;= 1879048192</span>
+<span class="kt">int</span> <span class="n">d</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="mi">29</span><span class="p">;</span> <span class="c1">// 11100000 0000000 0000000 00000000 &lt;= -536870912</span>
+</pre></div>
+
+
+<p>左移29位时，由于最高位变成<code>1</code>，因此结果变成了负数。</p>
+<h2 id="_10">&gt;&gt; 右移</h2>
+<p>类似的，对整数28进行右移，结果如下：</p>
+<div class="hlcode"><pre><span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>       <span class="c1">// 00000000 0000000 0000000 00000111</span>
+<span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// 00000000 0000000 0000000 00000011 &lt;= 3</span>
+<span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">2</span><span class="p">;</span>  <span class="c1">// 00000000 0000000 0000000 00000001 &lt;= 1</span>
+<span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">3</span><span class="p">;</span>  <span class="c1">// 00000000 0000000 0000000 00000000 &lt;= 0</span>
+</pre></div>
+
+
+<p>如果对一个负数进行右移，最高位的<code>1</code>不动，结果仍然是一个负数：</p>
+<div class="hlcode"><pre><span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="o">-</span><span class="mi">536870912</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// 11110000 0000000 0000000 00000000 &lt;= -268435456</span>
+<span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">2</span><span class="p">;</span>  <span class="c1">// 10111000 0000000 0000000 00000000 &lt;= -134217728</span>
+<span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">28</span><span class="p">;</span> <span class="c1">// 10000000 0000000 0000000 00000001 &lt;= -2</span>
+<span class="kt">int</span> <span class="n">d</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;</span> <span class="mi">29</span><span class="p">;</span> <span class="c1">// 10000000 0000000 0000000 00000000 &lt;= -1</span>
+</pre></div>
+
+
+<h2 id="_11">&gt;&gt;&gt; 不带符号右移</h2>
+<p>还有一种不带符号的右移运算，使用<code>&gt;&gt;&gt;</code>，它的特点是符号位跟着动，因此，对一个负数进行<code>&gt;&gt;&gt;</code>右移，它会变成正数，原因是最高位的<code>1</code>变成了<code>0</code>：</p>
+<div class="hlcode"><pre><span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="o">-</span><span class="mi">536870912</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// 01110000 0000000 0000000 00000000 &lt;= 1879048192</span>
+<span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">2</span><span class="p">;</span>  <span class="c1">// 00111000 0000000 0000000 00000000 &lt;= 939524096</span>
+<span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">29</span><span class="p">;</span> <span class="c1">// 00000000 0000000 0000000 00000111 &lt;= 7</span>
+<span class="kt">int</span> <span class="n">d</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;&gt;&gt;</span> <span class="mi">31</span><span class="p">;</span> <span class="c1">// 00000000 0000000 0000000 00000001 &lt;= 1</span>
+</pre></div>
+
+
+<p>对<code>byte</code>和<code>short</code>类型进行移位时，会首先转换为<code>int</code>再进行位移。</p>
+<p>仔细观察可发现，左移实际上就是不断地×2，右移实际上就是不断地÷2。</p>
+<h1 id="_12">位运算</h1>
+<p>位运算是按位进行与、或、非和异或的运算。</p>
+<p>与运算的规则是，必须两个数同时为<code>1</code>，结果才为<code>1</code>：</p>
+<div class="hlcode"><pre><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 0</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 0</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 0</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 1</span>
+</pre></div>
+
+
+<p>或运算的规则是，只要任意一个为<code>1</code>，结果就为<code>1</code>：</p>
+<div class="hlcode"><pre><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">|</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 0</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">|</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 1</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">|</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 1</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">|</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 1</span>
+</pre></div>
+
+
+<p>非运算的规则是，<code>0</code>和<code>1</code>互换：</p>
+<div class="hlcode"><pre><span class="n">n</span> <span class="o">=</span> <span class="o">~</span><span class="mi">0</span><span class="p">;</span> <span class="c1">// 1</span>
+<span class="n">n</span> <span class="o">=</span> <span class="o">~</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// 0</span>
+</pre></div>
+
+
+<p>异或运算的规则是，如果两个数不同，结果为<code>1</code>，否则为<code>0</code>：</p>
+<div class="hlcode"><pre><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">^</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 0</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">^</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 1</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">^</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 1</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">^</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 0</span>
+</pre></div>
+
+
+<h1 id="_13">类型转换</h1>
+<p>虚线会丢失精度</p>
+<p><img alt="img" src="https://snipboard.io/1dsbL4.jpg" /></p>
+<h2 id="short-to-int">short to int</h2>
+<p>在运算过程中，如果参与运算的两个数类型不一致，那么计算结果为较大类型的整型。例如，<code>short</code>和<code>int</code>计算，结果总是<code>int</code>，原因是<code>short</code>首先自动被转型为<code>int</code></p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">short</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">1234</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">123456</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">s</span> <span class="o">+</span> <span class="n">i</span><span class="p">;</span> <span class="c1">// s自动转型为int</span>
+        <span class="kt">short</span> <span class="n">y</span> <span class="o">=</span> <span class="n">s</span> <span class="o">+</span> <span class="n">i</span><span class="p">;</span> <span class="c1">// 编译错误!</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="int-to-short">int to short</h2>
+<p>可以将结果强制转型，即将大范围的整数转型为小范围的整数。强制转型使用<code>(类型)</code>，例如，将<code>int</code>强制转型为<code>short</code></p>
+<div class="hlcode"><pre><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">12345</span><span class="p">;</span>
+<span class="kt">short</span> <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="kt">short</span><span class="p">)</span> <span class="n">i</span><span class="p">;</span> <span class="c1">// 12345</span>
+</pre></div>
+
+
+<p>要注意，超出范围的强制转型会得到错误的结果，原因是转型时，<code>int</code>的两个高位字节直接被扔掉，仅保留了低位的两个字节</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">i1</span> <span class="o">=</span> <span class="mi">1234567</span><span class="p">;</span>
+        <span class="kt">short</span> <span class="n">s1</span> <span class="o">=</span> <span class="p">(</span><span class="kt">short</span><span class="p">)</span> <span class="n">i1</span><span class="p">;</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">s1</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="n">i2</span> <span class="o">=</span> <span class="mi">1345678</span><span class="p">;</span>
+        <span class="kt">short</span> <span class="n">s2</span> <span class="o">=</span> <span class="p">(</span><span class="kt">short</span><span class="p">)</span> <span class="n">i2</span><span class="p">;</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">s2</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="o">-</span><span class="mi">10617</span>
+<span class="o">-</span><span class="mi">30578</span>
+</pre></div>
+
+
+<h2 id="_14">强制类型转换</h2>
+<p>通过(cast) 实现这个操作, 括号中是想要转换的目标类型</p>
+<div class="hlcode"><pre><span class="kt">double</span> <span class="n">x</span> <span class="o">=</span> <span class="mf">9.997</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">nx</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">x</span><span class="p">;</span> <span class="c1">// 9</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

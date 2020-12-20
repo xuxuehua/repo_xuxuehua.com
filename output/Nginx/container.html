@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>container - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Nginx">Nginx</a>&nbsp;&#187;&nbsp;container
+    <span class="updated">Page Updated&nbsp;
+      2019-02-19 00:14
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">container</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#ngnix">Ngnix 容器</a><ul>
+<li><a href="#_1">数组</a></li>
+<li><a href="#_2">链接</a></li>
+<li><a href="#_3">队列</a></li>
+<li><a href="#_4">哈希表 （常用）</a></li>
+<li><a href="#_5">红黑树（常用）</a><ul>
+<li><a href="#_6">常用模块</a></li>
+</ul>
+</li>
+<li><a href="#_7">基数树</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="ngnix">Ngnix 容器</h1>
+<h2 id="_1">数组</h2>
+<p>多块连续内存</p>
+<h2 id="_2">链接</h2>
+<h2 id="_3">队列</h2>
+<h2 id="_4">哈希表 （常用）</h2>
+<p>仅仅用于静态不变内容</p>
+<p>bucket size 需要考虑CPU对齐问题</p>
+<p>O1的复杂度，非常快</p>
+<p>![image-20190219101337598](/Users/xhxu/Library/Application Support/typora-user-images/image-20190219101337598.png)</p>
+<h2 id="_5">红黑树（常用）</h2>
+<p>遍历复杂度为O(n)</p>
+<p>左子节点小于右子节点</p>
+<h3 id="_6">常用模块</h3>
+<div class="hlcode"><pre><span class="n">ngx_conf_module</span>
+<span class="n">ngx_event_timer_rbtree</span>
+<span class="n">ngx_http_file_cache</span>
+<span class="n">ngx_http_geo_module</span>
+<span class="n">ngx_http_limit_conn_module</span>
+<span class="n">ngx_http_limit_req_module</span>
+<span class="nl">ngx_http_lua_shdict:</span><span class="n">ngx</span><span class="p">.</span><span class="n">shared</span><span class="p">.</span><span class="n">DICT</span>
+<span class="n">resolver</span>  <span class="kt">ngx_resolver_t</span>
+<span class="n">ngx_stream_geo_module</span>
+<span class="n">ngx_stream_limit_conn_module</span>
+</pre></div>
+
+
+<h2 id="_7">基数树</h2>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

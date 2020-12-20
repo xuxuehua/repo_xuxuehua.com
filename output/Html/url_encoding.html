@@ -1,0 +1,1354 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>url_encoding - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Html">Html</a>&nbsp;&#187;&nbsp;url_encoding
+    <span class="updated">Page Updated&nbsp;
+      2020-03-16 21:10
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">url_encoding</div>
+
+  <p>[toc]</p>
+<h1 id="url-encoding">URL Encoding</h1>
+<h2 id="ascii-encoding-reference">ASCII Encoding Reference</h2>
+<p>URLs can only be sent over the Internet using the <a href="https://www.w3schools.com/charsets/ref_html_ascii.asp">ASCII character-set</a>.</p>
+<p>Since URLs often contain characters outside the ASCII set, the URL has to be converted into a valid ASCII format.</p>
+<p>URL encoding replaces unsafe ASCII characters with a "%" followed by two hexadecimal digits.</p>
+<p>URLs cannot contain spaces. URL encoding normally replaces a space with a plus (+) sign or with %20.</p>
+<p>The default character-set in HTML5 is UTF-8.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Character</th>
+<th align="left">From Windows-1252</th>
+<th align="left">From UTF-8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">space</td>
+<td align="left">%20</td>
+<td align="left">%20</td>
+</tr>
+<tr>
+<td align="left">!</td>
+<td align="left">%21</td>
+<td align="left">%21</td>
+</tr>
+<tr>
+<td align="left">"</td>
+<td align="left">%22</td>
+<td align="left">%22</td>
+</tr>
+<tr>
+<td align="left">#</td>
+<td align="left">%23</td>
+<td align="left">%23</td>
+</tr>
+<tr>
+<td align="left">$</td>
+<td align="left">%24</td>
+<td align="left">%24</td>
+</tr>
+<tr>
+<td align="left">%</td>
+<td align="left">%25</td>
+<td align="left">%25</td>
+</tr>
+<tr>
+<td align="left">&amp;</td>
+<td align="left">%26</td>
+<td align="left">%26</td>
+</tr>
+<tr>
+<td align="left">'</td>
+<td align="left">%27</td>
+<td align="left">%27</td>
+</tr>
+<tr>
+<td align="left">(</td>
+<td align="left">%28</td>
+<td align="left">%28</td>
+</tr>
+<tr>
+<td align="left">)</td>
+<td align="left">%29</td>
+<td align="left">%29</td>
+</tr>
+<tr>
+<td align="left">*</td>
+<td align="left">%2A</td>
+<td align="left">%2A</td>
+</tr>
+<tr>
+<td align="left">+</td>
+<td align="left">%2B</td>
+<td align="left">%2B</td>
+</tr>
+<tr>
+<td align="left">,</td>
+<td align="left">%2C</td>
+<td align="left">%2C</td>
+</tr>
+<tr>
+<td align="left">-</td>
+<td align="left">%2D</td>
+<td align="left">%2D</td>
+</tr>
+<tr>
+<td align="left">.</td>
+<td align="left">%2E</td>
+<td align="left">%2E</td>
+</tr>
+<tr>
+<td align="left">/</td>
+<td align="left">%2F</td>
+<td align="left">%2F</td>
+</tr>
+<tr>
+<td align="left">0</td>
+<td align="left">%30</td>
+<td align="left">%30</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">%31</td>
+<td align="left">%31</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">%32</td>
+<td align="left">%32</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">%33</td>
+<td align="left">%33</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">%34</td>
+<td align="left">%34</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">%35</td>
+<td align="left">%35</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">%36</td>
+<td align="left">%36</td>
+</tr>
+<tr>
+<td align="left">7</td>
+<td align="left">%37</td>
+<td align="left">%37</td>
+</tr>
+<tr>
+<td align="left">8</td>
+<td align="left">%38</td>
+<td align="left">%38</td>
+</tr>
+<tr>
+<td align="left">9</td>
+<td align="left">%39</td>
+<td align="left">%39</td>
+</tr>
+<tr>
+<td align="left">:</td>
+<td align="left">%3A</td>
+<td align="left">%3A</td>
+</tr>
+<tr>
+<td align="left">;</td>
+<td align="left">%3B</td>
+<td align="left">%3B</td>
+</tr>
+<tr>
+<td align="left">&lt;</td>
+<td align="left">%3C</td>
+<td align="left">%3C</td>
+</tr>
+<tr>
+<td align="left">=</td>
+<td align="left">%3D</td>
+<td align="left">%3D</td>
+</tr>
+<tr>
+<td align="left">&gt;</td>
+<td align="left">%3E</td>
+<td align="left">%3E</td>
+</tr>
+<tr>
+<td align="left">?</td>
+<td align="left">%3F</td>
+<td align="left">%3F</td>
+</tr>
+<tr>
+<td align="left">@</td>
+<td align="left">%40</td>
+<td align="left">%40</td>
+</tr>
+<tr>
+<td align="left">A</td>
+<td align="left">%41</td>
+<td align="left">%41</td>
+</tr>
+<tr>
+<td align="left">B</td>
+<td align="left">%42</td>
+<td align="left">%42</td>
+</tr>
+<tr>
+<td align="left">C</td>
+<td align="left">%43</td>
+<td align="left">%43</td>
+</tr>
+<tr>
+<td align="left">D</td>
+<td align="left">%44</td>
+<td align="left">%44</td>
+</tr>
+<tr>
+<td align="left">E</td>
+<td align="left">%45</td>
+<td align="left">%45</td>
+</tr>
+<tr>
+<td align="left">F</td>
+<td align="left">%46</td>
+<td align="left">%46</td>
+</tr>
+<tr>
+<td align="left">G</td>
+<td align="left">%47</td>
+<td align="left">%47</td>
+</tr>
+<tr>
+<td align="left">H</td>
+<td align="left">%48</td>
+<td align="left">%48</td>
+</tr>
+<tr>
+<td align="left">I</td>
+<td align="left">%49</td>
+<td align="left">%49</td>
+</tr>
+<tr>
+<td align="left">J</td>
+<td align="left">%4A</td>
+<td align="left">%4A</td>
+</tr>
+<tr>
+<td align="left">K</td>
+<td align="left">%4B</td>
+<td align="left">%4B</td>
+</tr>
+<tr>
+<td align="left">L</td>
+<td align="left">%4C</td>
+<td align="left">%4C</td>
+</tr>
+<tr>
+<td align="left">M</td>
+<td align="left">%4D</td>
+<td align="left">%4D</td>
+</tr>
+<tr>
+<td align="left">N</td>
+<td align="left">%4E</td>
+<td align="left">%4E</td>
+</tr>
+<tr>
+<td align="left">O</td>
+<td align="left">%4F</td>
+<td align="left">%4F</td>
+</tr>
+<tr>
+<td align="left">P</td>
+<td align="left">%50</td>
+<td align="left">%50</td>
+</tr>
+<tr>
+<td align="left">Q</td>
+<td align="left">%51</td>
+<td align="left">%51</td>
+</tr>
+<tr>
+<td align="left">R</td>
+<td align="left">%52</td>
+<td align="left">%52</td>
+</tr>
+<tr>
+<td align="left">S</td>
+<td align="left">%53</td>
+<td align="left">%53</td>
+</tr>
+<tr>
+<td align="left">T</td>
+<td align="left">%54</td>
+<td align="left">%54</td>
+</tr>
+<tr>
+<td align="left">U</td>
+<td align="left">%55</td>
+<td align="left">%55</td>
+</tr>
+<tr>
+<td align="left">V</td>
+<td align="left">%56</td>
+<td align="left">%56</td>
+</tr>
+<tr>
+<td align="left">W</td>
+<td align="left">%57</td>
+<td align="left">%57</td>
+</tr>
+<tr>
+<td align="left">X</td>
+<td align="left">%58</td>
+<td align="left">%58</td>
+</tr>
+<tr>
+<td align="left">Y</td>
+<td align="left">%59</td>
+<td align="left">%59</td>
+</tr>
+<tr>
+<td align="left">Z</td>
+<td align="left">%5A</td>
+<td align="left">%5A</td>
+</tr>
+<tr>
+<td align="left">[</td>
+<td align="left">%5B</td>
+<td align="left">%5B</td>
+</tr>
+<tr>
+<td align="left">\</td>
+<td align="left">%5C</td>
+<td align="left">%5C</td>
+</tr>
+<tr>
+<td align="left">]</td>
+<td align="left">%5D</td>
+<td align="left">%5D</td>
+</tr>
+<tr>
+<td align="left">^</td>
+<td align="left">%5E</td>
+<td align="left">%5E</td>
+</tr>
+<tr>
+<td align="left">_</td>
+<td align="left">%5F</td>
+<td align="left">%5F</td>
+</tr>
+<tr>
+<td align="left">`</td>
+<td align="left">%60</td>
+<td align="left">%60</td>
+</tr>
+<tr>
+<td align="left">a</td>
+<td align="left">%61</td>
+<td align="left">%61</td>
+</tr>
+<tr>
+<td align="left">b</td>
+<td align="left">%62</td>
+<td align="left">%62</td>
+</tr>
+<tr>
+<td align="left">c</td>
+<td align="left">%63</td>
+<td align="left">%63</td>
+</tr>
+<tr>
+<td align="left">d</td>
+<td align="left">%64</td>
+<td align="left">%64</td>
+</tr>
+<tr>
+<td align="left">e</td>
+<td align="left">%65</td>
+<td align="left">%65</td>
+</tr>
+<tr>
+<td align="left">f</td>
+<td align="left">%66</td>
+<td align="left">%66</td>
+</tr>
+<tr>
+<td align="left">g</td>
+<td align="left">%67</td>
+<td align="left">%67</td>
+</tr>
+<tr>
+<td align="left">h</td>
+<td align="left">%68</td>
+<td align="left">%68</td>
+</tr>
+<tr>
+<td align="left">i</td>
+<td align="left">%69</td>
+<td align="left">%69</td>
+</tr>
+<tr>
+<td align="left">j</td>
+<td align="left">%6A</td>
+<td align="left">%6A</td>
+</tr>
+<tr>
+<td align="left">k</td>
+<td align="left">%6B</td>
+<td align="left">%6B</td>
+</tr>
+<tr>
+<td align="left">l</td>
+<td align="left">%6C</td>
+<td align="left">%6C</td>
+</tr>
+<tr>
+<td align="left">m</td>
+<td align="left">%6D</td>
+<td align="left">%6D</td>
+</tr>
+<tr>
+<td align="left">n</td>
+<td align="left">%6E</td>
+<td align="left">%6E</td>
+</tr>
+<tr>
+<td align="left">o</td>
+<td align="left">%6F</td>
+<td align="left">%6F</td>
+</tr>
+<tr>
+<td align="left">p</td>
+<td align="left">%70</td>
+<td align="left">%70</td>
+</tr>
+<tr>
+<td align="left">q</td>
+<td align="left">%71</td>
+<td align="left">%71</td>
+</tr>
+<tr>
+<td align="left">r</td>
+<td align="left">%72</td>
+<td align="left">%72</td>
+</tr>
+<tr>
+<td align="left">s</td>
+<td align="left">%73</td>
+<td align="left">%73</td>
+</tr>
+<tr>
+<td align="left">t</td>
+<td align="left">%74</td>
+<td align="left">%74</td>
+</tr>
+<tr>
+<td align="left">u</td>
+<td align="left">%75</td>
+<td align="left">%75</td>
+</tr>
+<tr>
+<td align="left">v</td>
+<td align="left">%76</td>
+<td align="left">%76</td>
+</tr>
+<tr>
+<td align="left">w</td>
+<td align="left">%77</td>
+<td align="left">%77</td>
+</tr>
+<tr>
+<td align="left">x</td>
+<td align="left">%78</td>
+<td align="left">%78</td>
+</tr>
+<tr>
+<td align="left">y</td>
+<td align="left">%79</td>
+<td align="left">%79</td>
+</tr>
+<tr>
+<td align="left">z</td>
+<td align="left">%7A</td>
+<td align="left">%7A</td>
+</tr>
+<tr>
+<td align="left">{</td>
+<td align="left">%7B</td>
+<td align="left">%7B</td>
+</tr>
+<tr>
+<td align="left">|</td>
+<td align="left">%7C</td>
+<td align="left">%7C</td>
+</tr>
+<tr>
+<td align="left">}</td>
+<td align="left">%7D</td>
+<td align="left">%7D</td>
+</tr>
+<tr>
+<td align="left">~</td>
+<td align="left">%7E</td>
+<td align="left">%7E</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">%7F</td>
+<td align="left">%7F</td>
+</tr>
+<tr>
+<td align="left">`</td>
+<td align="left">%80</td>
+<td align="left">%E2%82%AC</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">%81</td>
+<td align="left">%81</td>
+</tr>
+<tr>
+<td align="left">‚</td>
+<td align="left">%82</td>
+<td align="left">%E2%80%9A</td>
+</tr>
+<tr>
+<td align="left">ƒ</td>
+<td align="left">%83</td>
+<td align="left">%C6%92</td>
+</tr>
+<tr>
+<td align="left">„</td>
+<td align="left">%84</td>
+<td align="left">%E2%80%9E</td>
+</tr>
+<tr>
+<td align="left">…</td>
+<td align="left">%85</td>
+<td align="left">%E2%80%A6</td>
+</tr>
+<tr>
+<td align="left">†</td>
+<td align="left">%86</td>
+<td align="left">%E2%80%A0</td>
+</tr>
+<tr>
+<td align="left">‡</td>
+<td align="left">%87</td>
+<td align="left">%E2%80%A1</td>
+</tr>
+<tr>
+<td align="left">ˆ</td>
+<td align="left">%88</td>
+<td align="left">%CB%86</td>
+</tr>
+<tr>
+<td align="left">‰</td>
+<td align="left">%89</td>
+<td align="left">%E2%80%B0</td>
+</tr>
+<tr>
+<td align="left">Š</td>
+<td align="left">%8A</td>
+<td align="left">%C5%A0</td>
+</tr>
+<tr>
+<td align="left">‹</td>
+<td align="left">%8B</td>
+<td align="left">%E2%80%B9</td>
+</tr>
+<tr>
+<td align="left">Œ</td>
+<td align="left">%8C</td>
+<td align="left">%C5%92</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">%8D</td>
+<td align="left">%C5%8D</td>
+</tr>
+<tr>
+<td align="left">Ž</td>
+<td align="left">%8E</td>
+<td align="left">%C5%BD</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">%8F</td>
+<td align="left">%8F</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">%90</td>
+<td align="left">%C2%90</td>
+</tr>
+<tr>
+<td align="left">‘</td>
+<td align="left">%91</td>
+<td align="left">%E2%80%98</td>
+</tr>
+<tr>
+<td align="left">’</td>
+<td align="left">%92</td>
+<td align="left">%E2%80%99</td>
+</tr>
+<tr>
+<td align="left">“</td>
+<td align="left">%93</td>
+<td align="left">%E2%80%9C</td>
+</tr>
+<tr>
+<td align="left">”</td>
+<td align="left">%94</td>
+<td align="left">%E2%80%9D</td>
+</tr>
+<tr>
+<td align="left">•</td>
+<td align="left">%95</td>
+<td align="left">%E2%80%A2</td>
+</tr>
+<tr>
+<td align="left">–</td>
+<td align="left">%96</td>
+<td align="left">%E2%80%93</td>
+</tr>
+<tr>
+<td align="left">—</td>
+<td align="left">%97</td>
+<td align="left">%E2%80%94</td>
+</tr>
+<tr>
+<td align="left">˜</td>
+<td align="left">%98</td>
+<td align="left">%CB%9C</td>
+</tr>
+<tr>
+<td align="left">™</td>
+<td align="left">%99</td>
+<td align="left">%E2%84</td>
+</tr>
+<tr>
+<td align="left">š</td>
+<td align="left">%9A</td>
+<td align="left">%C5%A1</td>
+</tr>
+<tr>
+<td align="left">›</td>
+<td align="left">%9B</td>
+<td align="left">%E2%80</td>
+</tr>
+<tr>
+<td align="left">œ</td>
+<td align="left">%9C</td>
+<td align="left">%C5%93</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">%9D</td>
+<td align="left">%9D</td>
+</tr>
+<tr>
+<td align="left">ž</td>
+<td align="left">%9E</td>
+<td align="left">%C5%BE</td>
+</tr>
+<tr>
+<td align="left">Ÿ</td>
+<td align="left">%9F</td>
+<td align="left">%C5%B8</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">%A0</td>
+<td align="left">%C2%A0</td>
+</tr>
+<tr>
+<td align="left">¡</td>
+<td align="left">%A1</td>
+<td align="left">%C2%A1</td>
+</tr>
+<tr>
+<td align="left">¢</td>
+<td align="left">%A2</td>
+<td align="left">%C2%A2</td>
+</tr>
+<tr>
+<td align="left">£</td>
+<td align="left">%A3</td>
+<td align="left">%C2%A3</td>
+</tr>
+<tr>
+<td align="left">¤</td>
+<td align="left">%A4</td>
+<td align="left">%C2%A4</td>
+</tr>
+<tr>
+<td align="left">¥</td>
+<td align="left">%A5</td>
+<td align="left">%C2%A5</td>
+</tr>
+<tr>
+<td align="left">¦</td>
+<td align="left">%A6</td>
+<td align="left">%C2%A6</td>
+</tr>
+<tr>
+<td align="left">§</td>
+<td align="left">%A7</td>
+<td align="left">%C2%A7</td>
+</tr>
+<tr>
+<td align="left">¨</td>
+<td align="left">%A8</td>
+<td align="left">%C2%A8</td>
+</tr>
+<tr>
+<td align="left">©</td>
+<td align="left">%A9</td>
+<td align="left">%C2%A9</td>
+</tr>
+<tr>
+<td align="left">ª</td>
+<td align="left">%AA</td>
+<td align="left">%C2%AA</td>
+</tr>
+<tr>
+<td align="left">«</td>
+<td align="left">%AB</td>
+<td align="left">%C2%AB</td>
+</tr>
+<tr>
+<td align="left">¬</td>
+<td align="left">%AC</td>
+<td align="left">%C2%AC</td>
+</tr>
+<tr>
+<td align="left">­</td>
+<td align="left">%AD</td>
+<td align="left">%C2%AD</td>
+</tr>
+<tr>
+<td align="left">®</td>
+<td align="left">%AE</td>
+<td align="left">%C2%AE</td>
+</tr>
+<tr>
+<td align="left">¯</td>
+<td align="left">%AF</td>
+<td align="left">%C2%AF</td>
+</tr>
+<tr>
+<td align="left">°</td>
+<td align="left">%B0</td>
+<td align="left">%C2%B0</td>
+</tr>
+<tr>
+<td align="left">±</td>
+<td align="left">%B1</td>
+<td align="left">%C2%B1</td>
+</tr>
+<tr>
+<td align="left">²</td>
+<td align="left">%B2</td>
+<td align="left">%C2%B2</td>
+</tr>
+<tr>
+<td align="left">³</td>
+<td align="left">%B3</td>
+<td align="left">%C2%B3</td>
+</tr>
+<tr>
+<td align="left">´</td>
+<td align="left">%B4</td>
+<td align="left">%C2%B4</td>
+</tr>
+<tr>
+<td align="left">µ</td>
+<td align="left">%B5</td>
+<td align="left">%C2%B5</td>
+</tr>
+<tr>
+<td align="left">¶</td>
+<td align="left">%B6</td>
+<td align="left">%C2%B6</td>
+</tr>
+<tr>
+<td align="left">·</td>
+<td align="left">%B7</td>
+<td align="left">%C2%B7</td>
+</tr>
+<tr>
+<td align="left">¸</td>
+<td align="left">%B8</td>
+<td align="left">%C2%B8</td>
+</tr>
+<tr>
+<td align="left">¹</td>
+<td align="left">%B9</td>
+<td align="left">%C2%B9</td>
+</tr>
+<tr>
+<td align="left">º</td>
+<td align="left">%BA</td>
+<td align="left">%C2%BA</td>
+</tr>
+<tr>
+<td align="left">»</td>
+<td align="left">%BB</td>
+<td align="left">%C2%BB</td>
+</tr>
+<tr>
+<td align="left">¼</td>
+<td align="left">%BC</td>
+<td align="left">%C2%BC</td>
+</tr>
+<tr>
+<td align="left">½</td>
+<td align="left">%BD</td>
+<td align="left">%C2%BD</td>
+</tr>
+<tr>
+<td align="left">¾</td>
+<td align="left">%BE</td>
+<td align="left">%C2%BE</td>
+</tr>
+<tr>
+<td align="left">¿</td>
+<td align="left">%BF</td>
+<td align="left">%C2%BF</td>
+</tr>
+<tr>
+<td align="left">À</td>
+<td align="left">%C0</td>
+<td align="left">%C3%80</td>
+</tr>
+<tr>
+<td align="left">Á</td>
+<td align="left">%C1</td>
+<td align="left">%C3%81</td>
+</tr>
+<tr>
+<td align="left">Â</td>
+<td align="left">%C2</td>
+<td align="left">%C3%82</td>
+</tr>
+<tr>
+<td align="left">Ã</td>
+<td align="left">%C3</td>
+<td align="left">%C3%83</td>
+</tr>
+<tr>
+<td align="left">Ä</td>
+<td align="left">%C4</td>
+<td align="left">%C3%84</td>
+</tr>
+<tr>
+<td align="left">Å</td>
+<td align="left">%C5</td>
+<td align="left">%C3%85</td>
+</tr>
+<tr>
+<td align="left">Æ</td>
+<td align="left">%C6</td>
+<td align="left">%C3%86</td>
+</tr>
+<tr>
+<td align="left">Ç</td>
+<td align="left">%C7</td>
+<td align="left">%C3%87</td>
+</tr>
+<tr>
+<td align="left">È</td>
+<td align="left">%C8</td>
+<td align="left">%C3%88</td>
+</tr>
+<tr>
+<td align="left">É</td>
+<td align="left">%C9</td>
+<td align="left">%C3%89</td>
+</tr>
+<tr>
+<td align="left">Ê</td>
+<td align="left">%CA</td>
+<td align="left">%C3%8A</td>
+</tr>
+<tr>
+<td align="left">Ë</td>
+<td align="left">%CB</td>
+<td align="left">%C3%8B</td>
+</tr>
+<tr>
+<td align="left">Ì</td>
+<td align="left">%CC</td>
+<td align="left">%C3%8C</td>
+</tr>
+<tr>
+<td align="left">Í</td>
+<td align="left">%CD</td>
+<td align="left">%C3%8D</td>
+</tr>
+<tr>
+<td align="left">Î</td>
+<td align="left">%CE</td>
+<td align="left">%C3%8E</td>
+</tr>
+<tr>
+<td align="left">Ï</td>
+<td align="left">%CF</td>
+<td align="left">%C3%8F</td>
+</tr>
+<tr>
+<td align="left">Ð</td>
+<td align="left">%D0</td>
+<td align="left">%C3%90</td>
+</tr>
+<tr>
+<td align="left">Ñ</td>
+<td align="left">%D1</td>
+<td align="left">%C3%91</td>
+</tr>
+<tr>
+<td align="left">Ò</td>
+<td align="left">%D2</td>
+<td align="left">%C3%92</td>
+</tr>
+<tr>
+<td align="left">Ó</td>
+<td align="left">%D3</td>
+<td align="left">%C3%93</td>
+</tr>
+<tr>
+<td align="left">Ô</td>
+<td align="left">%D4</td>
+<td align="left">%C3%94</td>
+</tr>
+<tr>
+<td align="left">Õ</td>
+<td align="left">%D5</td>
+<td align="left">%C3%95</td>
+</tr>
+<tr>
+<td align="left">Ö</td>
+<td align="left">%D6</td>
+<td align="left">%C3%96</td>
+</tr>
+<tr>
+<td align="left">×</td>
+<td align="left">%D7</td>
+<td align="left">%C3%97</td>
+</tr>
+<tr>
+<td align="left">Ø</td>
+<td align="left">%D8</td>
+<td align="left">%C3%98</td>
+</tr>
+<tr>
+<td align="left">Ù</td>
+<td align="left">%D9</td>
+<td align="left">%C3%99</td>
+</tr>
+<tr>
+<td align="left">Ú</td>
+<td align="left">%DA</td>
+<td align="left">%C3%9A</td>
+</tr>
+<tr>
+<td align="left">Û</td>
+<td align="left">%DB</td>
+<td align="left">%C3%9B</td>
+</tr>
+<tr>
+<td align="left">Ü</td>
+<td align="left">%DC</td>
+<td align="left">%C3%9C</td>
+</tr>
+<tr>
+<td align="left">Ý</td>
+<td align="left">%DD</td>
+<td align="left">%C3%9D</td>
+</tr>
+<tr>
+<td align="left">Þ</td>
+<td align="left">%DE</td>
+<td align="left">%C3%9E</td>
+</tr>
+<tr>
+<td align="left">ß</td>
+<td align="left">%DF</td>
+<td align="left">%C3%9F</td>
+</tr>
+<tr>
+<td align="left">à</td>
+<td align="left">%E0</td>
+<td align="left">%C3%A0</td>
+</tr>
+<tr>
+<td align="left">á</td>
+<td align="left">%E1</td>
+<td align="left">%C3%A1</td>
+</tr>
+<tr>
+<td align="left">â</td>
+<td align="left">%E2</td>
+<td align="left">%C3%A2</td>
+</tr>
+<tr>
+<td align="left">ã</td>
+<td align="left">%E3</td>
+<td align="left">%C3%A3</td>
+</tr>
+<tr>
+<td align="left">ä</td>
+<td align="left">%E4</td>
+<td align="left">%C3%A4</td>
+</tr>
+<tr>
+<td align="left">å</td>
+<td align="left">%E5</td>
+<td align="left">%C3%A5</td>
+</tr>
+<tr>
+<td align="left">æ</td>
+<td align="left">%E6</td>
+<td align="left">%C3%A6</td>
+</tr>
+<tr>
+<td align="left">ç</td>
+<td align="left">%E7</td>
+<td align="left">%C3%A7</td>
+</tr>
+<tr>
+<td align="left">è</td>
+<td align="left">%E8</td>
+<td align="left">%C3%A8</td>
+</tr>
+<tr>
+<td align="left">é</td>
+<td align="left">%E9</td>
+<td align="left">%C3%A9</td>
+</tr>
+<tr>
+<td align="left">ê</td>
+<td align="left">%EA</td>
+<td align="left">%C3%AA</td>
+</tr>
+<tr>
+<td align="left">ë</td>
+<td align="left">%EB</td>
+<td align="left">%C3%AB</td>
+</tr>
+<tr>
+<td align="left">ì</td>
+<td align="left">%EC</td>
+<td align="left">%C3%AC</td>
+</tr>
+<tr>
+<td align="left">í</td>
+<td align="left">%ED</td>
+<td align="left">%C3%AD</td>
+</tr>
+<tr>
+<td align="left">î</td>
+<td align="left">%EE</td>
+<td align="left">%C3%AE</td>
+</tr>
+<tr>
+<td align="left">ï</td>
+<td align="left">%EF</td>
+<td align="left">%C3%AF</td>
+</tr>
+<tr>
+<td align="left">ð</td>
+<td align="left">%F0</td>
+<td align="left">%C3%B0</td>
+</tr>
+<tr>
+<td align="left">ñ</td>
+<td align="left">%F1</td>
+<td align="left">%C3%B1</td>
+</tr>
+<tr>
+<td align="left">ò</td>
+<td align="left">%F2</td>
+<td align="left">%C3%B2</td>
+</tr>
+<tr>
+<td align="left">ó</td>
+<td align="left">%F3</td>
+<td align="left">%C3%B3</td>
+</tr>
+<tr>
+<td align="left">ô</td>
+<td align="left">%F4</td>
+<td align="left">%C3%B4</td>
+</tr>
+<tr>
+<td align="left">õ</td>
+<td align="left">%F5</td>
+<td align="left">%C3%B5</td>
+</tr>
+<tr>
+<td align="left">ö</td>
+<td align="left">%F6</td>
+<td align="left">%C3%B6</td>
+</tr>
+<tr>
+<td align="left">÷</td>
+<td align="left">%F7</td>
+<td align="left">%C3%B7</td>
+</tr>
+<tr>
+<td align="left">ø</td>
+<td align="left">%F8</td>
+<td align="left">%C3%B8</td>
+</tr>
+<tr>
+<td align="left">ù</td>
+<td align="left">%F9</td>
+<td align="left">%C3%B9</td>
+</tr>
+<tr>
+<td align="left">ú</td>
+<td align="left">%FA</td>
+<td align="left">%C3%BA</td>
+</tr>
+<tr>
+<td align="left">û</td>
+<td align="left">%FB</td>
+<td align="left">%C3%BB</td>
+</tr>
+<tr>
+<td align="left">ü</td>
+<td align="left">%FC</td>
+<td align="left">%C3%BC</td>
+</tr>
+<tr>
+<td align="left">ý</td>
+<td align="left">%FD</td>
+<td align="left">%C3%BD</td>
+</tr>
+<tr>
+<td align="left">þ</td>
+<td align="left">%FE</td>
+<td align="left">%C3%BE</td>
+</tr>
+<tr>
+<td align="left">ÿ</td>
+<td align="left">%FF</td>
+<td align="left">%C3%BF</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="url-encoding-reference">URL Encoding Reference</h2>
+<p>The ASCII control characters <strong>%00-%1F</strong> were originally designed to control hardware devices.</p>
+<p>Control characters have nothing to do inside a URL.</p>
+<table>
+<thead>
+<tr>
+<th align="left">ASCII Character</th>
+<th align="left">Description</th>
+<th align="left">URL-encoding</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">NUL</td>
+<td align="left">null character</td>
+<td align="left">%00</td>
+</tr>
+<tr>
+<td align="left">SOH</td>
+<td align="left">start of header</td>
+<td align="left">%01</td>
+</tr>
+<tr>
+<td align="left">STX</td>
+<td align="left">start of text</td>
+<td align="left">%02</td>
+</tr>
+<tr>
+<td align="left">ETX</td>
+<td align="left">end of text</td>
+<td align="left">%03</td>
+</tr>
+<tr>
+<td align="left">EOT</td>
+<td align="left">end of transmission</td>
+<td align="left">%04</td>
+</tr>
+<tr>
+<td align="left">ENQ</td>
+<td align="left">enquiry</td>
+<td align="left">%05</td>
+</tr>
+<tr>
+<td align="left">ACK</td>
+<td align="left">acknowledge</td>
+<td align="left">%06</td>
+</tr>
+<tr>
+<td align="left">BEL</td>
+<td align="left">bell (ring)</td>
+<td align="left">%07</td>
+</tr>
+<tr>
+<td align="left">BS</td>
+<td align="left">backspace</td>
+<td align="left">%08</td>
+</tr>
+<tr>
+<td align="left">HT</td>
+<td align="left">horizontal tab</td>
+<td align="left">%09</td>
+</tr>
+<tr>
+<td align="left">LF</td>
+<td align="left">line feed</td>
+<td align="left">%0A</td>
+</tr>
+<tr>
+<td align="left">VT</td>
+<td align="left">vertical tab</td>
+<td align="left">%0B</td>
+</tr>
+<tr>
+<td align="left">FF</td>
+<td align="left">form feed</td>
+<td align="left">%0C</td>
+</tr>
+<tr>
+<td align="left">CR</td>
+<td align="left">carriage return</td>
+<td align="left">%0D</td>
+</tr>
+<tr>
+<td align="left">SO</td>
+<td align="left">shift out</td>
+<td align="left">%0E</td>
+</tr>
+<tr>
+<td align="left">SI</td>
+<td align="left">shift in</td>
+<td align="left">%0F</td>
+</tr>
+<tr>
+<td align="left">DLE</td>
+<td align="left">data link escape</td>
+<td align="left">%10</td>
+</tr>
+<tr>
+<td align="left">DC1</td>
+<td align="left">device control 1</td>
+<td align="left">%11</td>
+</tr>
+<tr>
+<td align="left">DC2</td>
+<td align="left">device control 2</td>
+<td align="left">%12</td>
+</tr>
+<tr>
+<td align="left">DC3</td>
+<td align="left">device control 3</td>
+<td align="left">%13</td>
+</tr>
+<tr>
+<td align="left">DC4</td>
+<td align="left">device control 4</td>
+<td align="left">%14</td>
+</tr>
+<tr>
+<td align="left">NAK</td>
+<td align="left">negative acknowledge</td>
+<td align="left">%15</td>
+</tr>
+<tr>
+<td align="left">SYN</td>
+<td align="left">synchronize</td>
+<td align="left">%16</td>
+</tr>
+<tr>
+<td align="left">ETB</td>
+<td align="left">end transmission block</td>
+<td align="left">%17</td>
+</tr>
+<tr>
+<td align="left">CAN</td>
+<td align="left">cancel</td>
+<td align="left">%18</td>
+</tr>
+<tr>
+<td align="left">EM</td>
+<td align="left">end of medium</td>
+<td align="left">%19</td>
+</tr>
+<tr>
+<td align="left">SUB</td>
+<td align="left">substitute</td>
+<td align="left">%1A</td>
+</tr>
+<tr>
+<td align="left">ESC</td>
+<td align="left">escape</td>
+<td align="left">%1B</td>
+</tr>
+<tr>
+<td align="left">FS</td>
+<td align="left">file separator</td>
+<td align="left">%1C</td>
+</tr>
+<tr>
+<td align="left">GS</td>
+<td align="left">group separator</td>
+<td align="left">%1D</td>
+</tr>
+<tr>
+<td align="left">RS</td>
+<td align="left">record separator</td>
+<td align="left">%1E</td>
+</tr>
+<tr>
+<td align="left">US</td>
+<td align="left">unit separator</td>
+<td align="left">%1F</td>
+</tr>
+</tbody>
+</table>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

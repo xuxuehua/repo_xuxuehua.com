@@ -1,0 +1,444 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>api_server - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Kubernetes">Kubernetes</a>&nbsp;&#187;&nbsp;api_server
+    <span class="updated">Page Updated&nbsp;
+      2020-05-02 00:04
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">api_server</div>
+
+  <p>[toc]</p>
+<h1 id="api-vs-api">声明式 API vs 命令式 API</h1>
+<p><a href="https://en.wikipedia.org/wiki/Declarative_programming">Declarative</a>（声明式设计）指的是这么一种软件设计理念和做法：我们向一个工具描述我们想要让一个事物达到的目标状态，由这个工具自己内部去figure out如何令这个事物达到目标状态。</p>
+<p>和Declarative（声明式设计）相对的是<a href="https://en.wikipedia.org/wiki/Imperative_programming">Imperative</a>或Procedural（过程式设计）。两者的区别是：在Declarative中，我们描述的是目标状态（Goal State），而在Imperative模式中，我们描述的是一系列的动作。这一系列的动作如果被正确的顺利执行，最终结果是这个事物达到了我们期望的目标状态的。</p>
+<p>声明式（Declarative）的编程方式一直都会被工程师们拿来与命令式（Imperative）进行对比，这两者是完全不同的编程方法。我们最常接触的其实是命令式编程，它要求我们描述为了达到某一个效果或者目标所需要完成的指令，常见的编程语言 Go、Ruby、C++ 其实都为开发者了命令式的编程方法，</p>
+<p>声明式和命令式是两种截然不同的编程方式:</p>
+<ul>
+<li>在命令式 API 中，我们可以直接发出服务器要执行的命令，例如： “运行容器”、“停止容器”等；</li>
+<li>在声明式 API 中，我们声明系统要执行的操作，系统将不断向该状态驱动。</li>
+</ul>
+<h2 id="api">声明式 API</h2>
+<p>SQL 其实就是一种常见的声明式『编程语言』，它能够让开发者自己去指定想要的数据是什么。或者说，告诉数据库想要的结果是什么，数据库会帮我们设计获取这个结果集的执行路径，并返回结果集。众所周知，使用 SQL 语言获取数据，要比自行编写处理过程去获取数据容易的多。</p>
+<div class="hlcode"><pre><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">posts</span> <span class="k">WHERE</span> <span class="n">user_id</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">AND</span> <span class="n">title</span> <span class="k">LIKE</span> <span class="s1">&#39;hello%&#39;</span><span class="p">;</span>
+</pre></div>
+
+
+<p>我们来看看相同设计的 YAML，利用它，我们可以告诉 Kubernetes 最终想要的是什么，然后 Kubernetes 会完成目标。</p>
+<p>例如，在 Kubernetes 中，我们可以直接使用 YAML 文件定义服务的拓扑结构和状态：</p>
+<div class="hlcode"><pre><span class="l-Scalar-Plain">apiVersion</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">v1</span>
+<span class="l-Scalar-Plain">kind</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Pod</span>
+<span class="l-Scalar-Plain">metadata</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">rss-site</span>
+  <span class="l-Scalar-Plain">labels</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">app</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">web</span>
+<span class="l-Scalar-Plain">spec</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">containers</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">front-end</span>
+      <span class="l-Scalar-Plain">image</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">nginx</span>
+      <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">containerPort</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">80</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">rss-reader</span>
+      <span class="l-Scalar-Plain">image</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">nickchase/rss-php-nginx:v1</span>
+      <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">containerPort</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">88</span>
+</pre></div>
+
+
+<p>以下是 etcd 的 operator：</p>
+<div class="hlcode"><pre><span class="l-Scalar-Plain">apiVersion</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">extensions/v1beta1</span>
+<span class="l-Scalar-Plain">kind</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Deployment</span>
+<span class="l-Scalar-Plain">metadata</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">etcd-operator</span>
+<span class="l-Scalar-Plain">spec</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">replicas</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+  <span class="l-Scalar-Plain">template</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">metadata</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">labels</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">etcd-operator</span>
+    <span class="l-Scalar-Plain">spec</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">containers</span><span class="p-Indicator">:</span>
+      <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">etcd-operator</span>
+        <span class="l-Scalar-Plain">image</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">quay.io/coreos/etcd-operator:v0.2.1</span>
+        <span class="l-Scalar-Plain">env</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MY_POD_NAMESPACE</span>
+          <span class="l-Scalar-Plain">valueFrom</span><span class="p-Indicator">:</span>
+            <span class="l-Scalar-Plain">fieldRef</span><span class="p-Indicator">:</span>
+              <span class="l-Scalar-Plain">fieldPath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">metadata.namespace</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MY_POD_NAME</span>
+          <span class="l-Scalar-Plain">valueFrom</span><span class="p-Indicator">:</span>
+            <span class="l-Scalar-Plain">fieldRef</span><span class="p-Indicator">:</span>
+              <span class="l-Scalar-Plain">fieldPath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">metadata.name</span>
+</pre></div>
+
+
+<p>Kubernetes 中的 YAML 文件也有着相同的原理，我们可以告诉 Kubernetes 想要的最终状态是什么，而它会帮助我们从现有的状态进行迁移。</p>
+<h1 id="api-server">API Server</h1>
+<p>提供资源统一的入口</p>
+<h2 id="_1">资源路径</h2>
+<p>在 Kubernetes 项目中，一个 API 对象在 Etcd 里的完整资源路径，是由:Group(API 组)、 Version(API 版本)和 Resource(API 资源类型)三个部分组成的</p>
+<p>若声明一个CronJob对象，</p>
+<div class="hlcode"><pre><span class="n">apiVersion</span><span class="o">:</span> <span class="n">batch</span><span class="o">/</span><span class="n">v2alpha1</span> 
+<span class="n">kind</span><span class="o">:</span> <span class="n">CronJob</span>
+<span class="o">...</span>
+</pre></div>
+
+
+<blockquote>
+<p>“CronJob”就是这个 API 对象的资源类型 (Resource)，</p>
+<p>“batch”就是它的组(Group)，</p>
+<p>v2alpha1 就是它的版本(Version)</p>
+</blockquote>
+<p><img alt="image-20200501110453171" src="api_server.assets/image-20200501110453171.png" /></p>
+<h2 id="_2">对象创建</h2>
+<p><img alt="image-20200501111402525" src="api_server.assets/image-20200501111402525.png" /></p>
+<p>当我们发起了创建 CronJob 的 POST 请求之后，我们编写的 YAML 的信息就被提交给 了 APIServer。</p>
+<p>而 APIServer 的第一个功能，就是过滤这个请求，并完成一些前置性的工作，比如授权、超时 处理、审计等。</p>
+<p>然后，请求会进入 MUX 和 Routes 流程。如果你编写过 Web Server 的话就会知道，MUX 和 Routes 是 APIServer 完成 URL 和 Handler 绑定的场所。而 APIServer 的 Handler 要做的事 情，就是按照我刚刚介绍的匹配过程，找到对应的 CronJob 类型定义。</p>
+<p>接着，APIServer 最重要的职责就来了:根据这个 CronJob 类型定义，使用用户提交的 YAML 文件里的字段，创建一个 CronJob 对象。</p>
+<p>而在这个过程中，APIServer 会进行一个 Convert 工作，即:把用户提交的 YAML 文件，转换 成一个叫作 Super Version 的对象，它正是该 API 资源类型所有版本的字段全集。这样用户提 交的不同版本的 YAML 文件，就都可以用这个 Super Version 对象来进行处理了。</p>
+<p>接下来，APIServer 会先后进行 Admission() 和 Validation() 操作。比如，我在上一篇文章中 提到的 Admission Controller 和 Initializer，就都属于 Admission 的内容。</p>
+<p>而 Validation，则负责验证这个对象里的各个字段是否合法。这个被验证过的 API 对象，都保 存在了 APIServer 里一个叫作 Registry 的数据结构中。也就是说，只要一个 API 对象的定义能 在 Registry 里查到，它就是一个有效的 Kubernetes API 对象。</p>
+<p>最后，APIServer 会把验证过的 API 对象转换成用户最初提交的版本，进行序列化操作，并调 用 Etcd 的 API 把它保存起来。</p>
+<p>由此可见，声明式 API 对于 Kubernetes 来说非常重要。所以，APIServer 这样一个在其他项 目里“平淡无奇”的组件，却成了 Kubernetes 项目的重中之重。它不仅是 Google Borg 设计 思想的集中体现，也是 Kubernetes 项目里唯一一个被 Google 公司和 RedHat 公司双重控 制、其他势力根本无法参与其中的组件。</p>
+<h2 id="api_1">自定义API资源</h2>
+<p>此外，由于同时要兼顾性能、API 完备性、版本化、向后兼容等很多工程化指标，所以 Kubernetes 团队在 APIServer 项目里大量使用了 Go 语言的代码生成功能，来自动化诸如 Convert、DeepCopy 等与 API 资源相关的操作。这部分自动生成的代码，曾一度占到 Kubernetes 项目总代码的 20%~30%。</p>
+<p>这也是为何，在过去很长一段时间里，在这样一个极其“复杂”的 APIServer 中，添加一个 Kubernetes 风格的 API 资源类型，是一个非常困难的工作。</p>
+<p>不过，在 Kubernetes v1.7 之后，这个工作就变得轻松得多了。这，当然得益于一个全新的 API 插件机制:CRD。</p>
+<p>CRD 的全称是 Custom Resource Definition。顾名思义，它指的就是，允许用户在 Kubernetes 中添加一个跟 Pod、Node 类似的、新的 API 资源类型，即:自定义 API 资源。</p>
+<h3 id="network-api">Network API</h3>
+<p>若为 Kubernetes 添加一个名叫 Network 的 API 资源类型</p>
+<p>一旦用户创建一个 Network 对象，那么 Kubernetes 就应该使用这个对象定义的 网络参数，调用真实的网络插件，比如 Neutron 项目，为用户创建一个真正的“网络”。这样，将来用户创建的 Pod，就可以声明使用这个“网络”了。</p>
+<p>example-network.yaml</p>
+<div class="hlcode"><pre><span class="n">apiVersion</span><span class="o">:</span> <span class="n">samplecrd</span><span class="o">.</span><span class="na">k8s</span><span class="o">.</span><span class="na">io</span><span class="o">/</span><span class="n">v1</span>
+<span class="n">kind</span><span class="o">:</span> <span class="n">Network</span>
+<span class="n">metadata</span><span class="o">:</span>
+  <span class="n">name</span><span class="o">:</span> <span class="n">example</span><span class="o">-</span><span class="n">network</span>
+<span class="n">spec</span><span class="o">:</span>
+  <span class="n">cidr</span><span class="o">:</span> <span class="s2">&quot;192.168.0.0/16&quot;</span>
+  <span class="n">gateway</span><span class="o">:</span> <span class="s2">&quot;192.168.0.1&quot;</span>
+</pre></div>
+
+
+<blockquote>
+<p>API 资源类型是 Network;</p>
+<p>API 组是 samplecrd.k8s.io;</p>
+<p>API 版本是 v1</p>
+</blockquote>
+<p>其实，上面的这个 YAML 文件，就是一个具体的“自定义 API 资源”实例，也叫 CR(Custom Resource)。而为了能够让 Kubernetes 认识这个 CR，你就需要让 Kubernetes 明白这个 CR 的宏观定义是什么，也就是 CRD(Custom Resource Definition)</p>
+<p>编写一个 CRD 的 YAML 文件，它的名字叫作 network.yaml</p>
+<div class="hlcode"><pre><span class="n">apiVersion</span><span class="o">:</span> <span class="n">apiextensions</span><span class="o">.</span><span class="na">k8s</span><span class="o">.</span><span class="na">io</span><span class="o">/</span><span class="n">v1beta1</span>
+<span class="n">kind</span><span class="o">:</span> <span class="n">CustomResourceDefinition</span>
+<span class="n">metadata</span><span class="o">:</span>
+  <span class="n">name</span><span class="o">:</span> <span class="n">networks</span><span class="o">.</span><span class="na">samplecrd</span><span class="o">.</span><span class="na">k8s</span><span class="o">.</span><span class="na">io</span>
+<span class="n">spec</span><span class="o">:</span>
+  <span class="n">group</span><span class="o">:</span> <span class="n">samplecrd</span><span class="o">.</span><span class="na">k8s</span><span class="o">.</span><span class="na">io</span>
+  <span class="n">version</span><span class="o">:</span> <span class="n">v1</span>
+  <span class="n">names</span><span class="o">:</span>
+    <span class="n">kind</span><span class="o">:</span> <span class="n">Network</span>
+    <span class="n">plural</span><span class="o">:</span> <span class="n">networks</span>
+  <span class="n">scope</span><span class="o">:</span> <span class="n">Namespaced</span>
+</pre></div>
+
+
+<blockquote>
+<p>这里指定了“group: samplecrd.k8s.io”“version: v1”这样的 API 信息，也指定了这个 CR 的资源类型叫作 Network，复数(plural)是 networks</p>
+<p>scope 是 Namespaced，即:我们定义的这个 Network 是一个属于 Namespace 的对象，类似于 Pod</p>
+</blockquote>
+<p>接下来，我还需要让 Kubernetes“认识”这种 YAML 文件里描述的“网络”部分，比 如“cidr”(网段)，“gateway”(网关)这些字段的含义。</p>
+<p>要在 GOPATH 下，创建一个结构如下的项目 or download it at <a href="https://github.com/resouer/k8s-controller-custom-resource.git">https://github.com/resouer/k8s-controller-custom-resource.git</a></p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">tree</span> <span class="err">$</span><span class="n">GOPATH</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">/&lt;</span><span class="n">your</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;/</span><span class="n">k8s</span><span class="o">-</span><span class="n">controller</span><span class="o">-</span><span class="n">custom</span><span class="o">-</span><span class="n">resource</span>
+<span class="p">.</span>
+<span class="err">├──</span> <span class="n">controller</span><span class="p">.</span><span class="n">go</span>
+<span class="err">├──</span> <span class="n">crd</span>
+<span class="err">│</span>   <span class="err">└──</span> <span class="n">network</span><span class="p">.</span><span class="n">yaml</span>
+<span class="err">├──</span> <span class="n">example</span>
+<span class="err">│</span>   <span class="err">└──</span> <span class="n">example</span><span class="o">-</span><span class="n">network</span><span class="p">.</span><span class="n">yaml</span>
+<span class="err">├──</span> <span class="n">main</span><span class="p">.</span><span class="n">go</span>
+<span class="err">└──</span> <span class="n">pkg</span>
+<span class="err">└──</span> <span class="n">apis</span>
+  <span class="err">└──</span> <span class="n">samplecrd</span>
+      <span class="err">├──</span> <span class="k">register</span><span class="p">.</span><span class="n">go</span>
+      <span class="err">└──</span> <span class="n">v1</span>
+          <span class="err">├──</span> <span class="n">doc</span><span class="p">.</span><span class="n">go</span>
+          <span class="err">├──</span> <span class="k">register</span><span class="p">.</span><span class="n">go</span>
+          <span class="err">└──</span> <span class="n">types</span><span class="p">.</span><span class="n">go</span>
+</pre></div>
+
+
+<blockquote>
+<p>pkg/apis/samplecrd 就是 API 组的名字，v1 是版本，而 v1 下面的 types.go 文件里，则定义了 Network 对象的完整描述</p>
+</blockquote>
+<p>在 pkg/apis/samplecrd 目录下创建了一个 register.go 文件，用来放置后面要用到的全局变量</p>
+<div class="hlcode"><pre><span class="n">package</span> <span class="n">samplecrd</span>
+
+<span class="k">const</span> <span class="p">(</span>
+<span class="n">GroupName</span> <span class="o">=</span> <span class="s">&quot;samplecrd.k8s.io&quot;</span>
+<span class="n">Version</span>   <span class="o">=</span> <span class="s">&quot;v1&quot;</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>在 pkg/apis/samplecrd 目录下添加一个 doc.go 文件（Golang 的文档源文件）</p>
+<div class="hlcode"><pre><span class="c1">// +k8s:deepcopy-gen=package</span>
+
+<span class="c1">// +groupName=samplecrd.k8s.io</span>
+<span class="kn">package</span> <span class="n">v1</span>
+</pre></div>
+
+
+<blockquote>
+<p>在这个文件中，你会看到 +<tag_name>[=value] 格式的注释，这就是 Kubernetes 进行代码生成要用的 Annotation 风格的注释。</p>
+<p>其中，+k8s:deepcopy-gen=package 意思是，请为整个 v1 包里的所有类型定义自动生成 DeepCopy 方法；而<code>+groupName=samplecrd.k8s.io</code>，则定义了这个包对应的 API 组的名字。</p>
+<p>可以看到，这些定义在 doc.go 文件的注释，起到的是全局的代码生成控制的作用，所以也被称为 Global Tags。</p>
+</blockquote>
+<p>需要添加 types.go 文件**。顾名思义，它的作用就是定义一个 Network 类型到底有哪些字段（比如，spec 字段里的内容）</p>
+<div class="hlcode"><pre><span class="n">package</span> <span class="n">v1</span>
+<span class="p">...</span>
+<span class="c1">// +genclient</span>
+<span class="c1">// +genclient:noStatus</span>
+<span class="c1">// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object</span>
+
+<span class="c1">// Network describes a Network resource</span>
+<span class="n">type</span> <span class="n">Network</span> <span class="k">struct</span> <span class="p">{</span>
+<span class="c1">// TypeMeta is the metadata for the resource, like kind and apiversion</span>
+<span class="n">metav1</span><span class="p">.</span><span class="n">TypeMeta</span> <span class="err">`</span><span class="n">json</span><span class="o">:</span><span class="s">&quot;,inline&quot;</span><span class="err">`</span>
+<span class="c1">// ObjectMeta contains the metadata for the particular object, including</span>
+<span class="c1">// things like...</span>
+<span class="c1">//  - name</span>
+<span class="c1">//  - namespace</span>
+<span class="c1">//  - self link</span>
+<span class="c1">//  - labels</span>
+<span class="c1">//  - ... etc ...</span>
+<span class="n">metav1</span><span class="p">.</span><span class="n">ObjectMeta</span> <span class="err">`</span><span class="n">json</span><span class="o">:</span><span class="s">&quot;metadata,omitempty&quot;</span><span class="err">`</span>
+
+<span class="n">Spec</span> <span class="n">networkspec</span> <span class="err">`</span><span class="n">json</span><span class="o">:</span><span class="s">&quot;spec&quot;</span><span class="err">`</span>
+<span class="p">}</span>
+<span class="c1">// networkspec is the spec for a Network resource</span>
+<span class="n">type</span> <span class="n">networkspec</span> <span class="k">struct</span> <span class="p">{</span>
+<span class="n">Cidr</span>    <span class="n">string</span> <span class="err">`</span><span class="n">json</span><span class="o">:</span><span class="s">&quot;cidr&quot;</span><span class="err">`</span>
+<span class="n">Gateway</span> <span class="n">string</span> <span class="err">`</span><span class="n">json</span><span class="o">:</span><span class="s">&quot;gateway&quot;</span><span class="err">`</span>
+<span class="p">}</span>
+
+<span class="c1">// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object</span>
+
+<span class="c1">// NetworkList is a list of Network resources</span>
+<span class="n">type</span> <span class="n">NetworkList</span> <span class="k">struct</span> <span class="p">{</span>
+<span class="n">metav1</span><span class="p">.</span><span class="n">TypeMeta</span> <span class="err">`</span><span class="n">json</span><span class="o">:</span><span class="s">&quot;,inline&quot;</span><span class="err">`</span>
+<span class="n">metav1</span><span class="p">.</span><span class="n">ListMeta</span> <span class="err">`</span><span class="n">json</span><span class="o">:</span><span class="s">&quot;metadata&quot;</span><span class="err">`</span>
+
+<span class="n">Items</span> <span class="p">[]</span><span class="n">Network</span> <span class="err">`</span><span class="n">json</span><span class="o">:</span><span class="s">&quot;items&quot;</span><span class="err">`</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p>在上面这部分代码里，你可以看到 Network 类型定义方法跟标准的 Kubernetes 对象一样，都包括了 TypeMeta（API 元数据）和 ObjectMeta（对象元数据）字段。</p>
+<p>而其中的 Spec 字段，就是需要我们自己定义的部分。所以，在 networkspec 里，我定义了 Cidr 和 Gateway 两个字段。其中，每个字段最后面的部分比如<code>json:"cidr"</code>，指的就是这个字段被转换成 JSON 格式之后的名字，也就是 YAML 文件里的字段名字。</p>
+<p>此外，除了定义 Network 类型，你还需要定义一个 NetworkList 类型，用来描述<strong>一组 Network 对象</strong>应该包括哪些字段。之所以需要这样一个类型，是因为在 Kubernetes 中，获取所有 X 对象的 List() 方法，返回值都是List 类型，而不是 X 类型的数组。这是不一样的。</p>
+</blockquote>
+<p>其中，+genclient 的意思是：请为下面这个 API 资源类型生成对应的 Client 代码（这个 Client，我马上会讲到）。而 +genclient:noStatus 的意思是：这个 API 资源类型定义里，没有 Status 字段。否则，生成的 Client 就会自动带上 UpdateStatus 方法。</p>
+<p>如果你的类型定义包括了 Status 字段的话，就不需要这句 +genclient:noStatus 注释了。</p>
+<div class="hlcode"><pre><span class="c1">// +genclient</span>
+
+<span class="c1">// Network is a specification for a Network resource</span>
+<span class="k">type</span> <span class="n">Network</span> <span class="k">struct</span> <span class="p">{</span>
+<span class="n">metav1</span><span class="p">.</span><span class="n">TypeMeta</span>   <span class="no">`json</span><span class="o">:</span><span class="s">&quot;,inline&quot;</span><span class="err">`</span>
+<span class="n">metav1</span><span class="p">.</span><span class="n">ObjectMeta</span> <span class="no">`json</span><span class="o">:</span><span class="s">&quot;metadata,omitempty&quot;</span><span class="err">`</span>
+
+<span class="n">Spec</span>   <span class="n">NetworkSpec</span>   <span class="no">`json</span><span class="o">:</span><span class="s">&quot;spec&quot;</span><span class="err">`</span>
+<span class="n">Status</span> <span class="n">NetworkStatus</span> <span class="no">`json</span><span class="o">:</span><span class="s">&quot;status&quot;</span><span class="err">`</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>需要注意的是，+genclient 只需要写在 Network 类型上，而不用写在 NetworkList 上。因为 NetworkList 只是一个返回值类型，Network 才是“主类型”。</p>
+<p>而由于我在 Global Tags 里已经定义了为所有类型生成 DeepCopy 方法，所以这里就不需要再显式地加上 +k8s:deepcopy-gen=true 了。当然，这也就意味着你可以用 +k8s:deepcopy-gen=false 来阻止为某些类型生成 DeepCopy。</p>
+<p>你可能已经注意到，在这两个类型上面还有一句<code>+k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object</code>的注释。它的意思是，请在生成 DeepCopy 的时候，实现 Kubernetes 提供的 runtime.Object 接口。否则，在某些版本的 Kubernetes 里，你的这个类型定义会出现编译错误。这是一个固定的操作，记住即可。</p>
+<p>不过，你或许会有这样的顾虑：这些代码生成注释这么灵活，我该怎么掌握呢？</p>
+<p>其实，上面我所讲述的内容，已经足以应对 99% 的场景了。当然，如果你对代码生成感兴趣的话，我推荐你阅读<a href="https://blog.openshift.com/kubernetes-deep-dive-code-generation-customresources/">这篇博客</a>，它详细地介绍了 Kubernetes 的代码生成语法。</p>
+<p><strong>最后，我需要再编写的一个 pkg/apis/samplecrd/v1/register.go 文件</strong>。</p>
+<p>在前面对 APIServer 工作原理的讲解中，我已经提到，“registry”的作用就是注册一个类型（Type）给 APIServer。其中，Network 资源类型在服务器端的注册的工作，APIServer 会自动帮我们完成。但与之对应的，我们还需要让客户端也能“知道”Network 资源类型的定义。这就需要我们在项目里添加一个 register.go 文件。它最主要的功能，就是定义了如下所示的 addKnownTypes() 方法：</p>
+<div class="hlcode"><pre><span class="n">package</span> <span class="n">v1</span>
+<span class="p">...</span>
+<span class="c1">// addKnownTypes adds our types to the API scheme by registering</span>
+<span class="c1">// Network and NetworkList</span>
+<span class="n">func</span> <span class="n">addKnownTypes</span><span class="p">(</span><span class="n">scheme</span> <span class="o">*</span><span class="n">runtime</span><span class="p">.</span><span class="n">Scheme</span><span class="p">)</span> <span class="n">error</span> <span class="p">{</span>
+<span class="n">scheme</span><span class="p">.</span><span class="n">AddKnownTypes</span><span class="p">(</span>
+<span class="n">SchemeGroupVersion</span><span class="p">,</span>
+<span class="o">&amp;</span><span class="n">Network</span><span class="p">{},</span>
+<span class="o">&amp;</span><span class="n">NetworkList</span><span class="p">{},</span>
+<span class="p">)</span>
+
+<span class="c1">// register the type in the scheme</span>
+<span class="n">metav1</span><span class="p">.</span><span class="n">AddToGroupVersion</span><span class="p">(</span><span class="n">scheme</span><span class="p">,</span> <span class="n">SchemeGroupVersion</span><span class="p">)</span>
+<span class="k">return</span> <span class="n">nil</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p>有了这个方法，Kubernetes 就能够在后面生成客户端的时候，“知道”Network 以及 NetworkList 类型的定义了。</p>
+</blockquote>
+<p>像上面这种<strong>register.go 文件里的内容其实是非常固定的，你以后可以直接使用我提供的这部分代码做模板，然后把其中的资源类型、GroupName 和 Version 替换成你自己的定义即可。</strong></p>
+<p>这样，Network 对象的定义工作就全部完成了。可以看到，它其实定义了两部分内容：</p>
+<ul>
+<li>第一部分是，自定义资源类型的 API 描述，包括：组（Group）、版本（Version）、资源类型（Resource）等。这相当于告诉了计算机：兔子是哺乳动物。</li>
+<li>第二部分是，自定义资源类型的对象描述，包括：Spec、Status 等。这相当于告诉了计算机：兔子有长耳朵和三瓣嘴。</li>
+</ul>
+<p>接下来，我就要使用 Kubernetes 提供的代码生成工具，为上面定义的 Network 资源类型自动生成 clientset、informer 和 lister。其中，clientset 就是操作 Network 对象所需要使用的客户端，而 informer 和 lister 这两个包的主要功能，我会在下一篇文章中重点讲解。</p>
+<p>这个代码生成工具名叫<code>k8s.io/code-generator</code>，使用方法如下所示：</p>
+<div class="hlcode"><pre><span class="cp"># 代码生成的工作目录，也就是我们的项目路径</span>
+<span class="err">$</span> <span class="n">ROOT_PACKAGE</span><span class="o">=</span><span class="s">&quot;github.com/resouer/k8s-controller-custom-resource&quot;</span>
+<span class="cp"># API Group</span>
+<span class="err">$</span> <span class="n">CUSTOM_RESOURCE_NAME</span><span class="o">=</span><span class="s">&quot;samplecrd&quot;</span>
+<span class="cp"># API Version</span>
+<span class="err">$</span> <span class="n">CUSTOM_RESOURCE_VERSION</span><span class="o">=</span><span class="s">&quot;v1&quot;</span>
+
+<span class="cp"># 安装 k8s.io/code-generator</span>
+<span class="err">$</span> <span class="n">go</span> <span class="n">get</span> <span class="o">-</span><span class="n">u</span> <span class="n">k8s</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">code</span><span class="o">-</span><span class="n">generator</span><span class="o">/</span><span class="p">...</span>
+<span class="err">$</span> <span class="n">cd</span> <span class="err">$</span><span class="n">GOPATH</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">k8s</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">code</span><span class="o">-</span><span class="n">generator</span>
+
+<span class="cp"># 执行代码自动生成，其中 pkg/client 是生成目标目录，pkg/apis 是类型定义目录</span>
+<span class="err">$</span> <span class="p">.</span><span class="o">/</span><span class="n">generate</span><span class="o">-</span><span class="n">groups</span><span class="p">.</span><span class="n">sh</span> <span class="n">all</span> <span class="s">&quot;$ROOT_PACKAGE/pkg/client&quot;</span> <span class="s">&quot;$ROOT_PACKAGE/pkg/apis&quot;</span> <span class="s">&quot;$CUSTOM_RESOURCE_NAME:$CUSTOM_RESOURCE_VERSION&quot;</span>
+</pre></div>
+
+
+<p>代码生成工作完成之后，我们再查看一下这个项目的目录结构：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">tree</span>
+<span class="p">.</span>
+<span class="err">├──</span> <span class="n">controller</span><span class="p">.</span><span class="n">go</span>
+<span class="err">├──</span> <span class="n">crd</span>
+<span class="err">│</span>   <span class="err">└──</span> <span class="n">network</span><span class="p">.</span><span class="n">yaml</span>
+<span class="err">├──</span> <span class="n">example</span>
+<span class="err">│</span>   <span class="err">└──</span> <span class="n">example</span><span class="o">-</span><span class="n">network</span><span class="p">.</span><span class="n">yaml</span>
+<span class="err">├──</span> <span class="n">main</span><span class="p">.</span><span class="n">go</span>
+<span class="err">└──</span> <span class="n">pkg</span>
+<span class="err">├──</span> <span class="n">apis</span>
+<span class="err">│</span>   <span class="err">└──</span> <span class="n">samplecrd</span>
+<span class="err">│</span>       <span class="err">├──</span> <span class="n">constants</span><span class="p">.</span><span class="n">go</span>
+<span class="err">│</span>       <span class="err">└──</span> <span class="n">v1</span>
+<span class="err">│</span>           <span class="err">├──</span> <span class="n">doc</span><span class="p">.</span><span class="n">go</span>
+<span class="err">│</span>           <span class="err">├──</span> <span class="k">register</span><span class="p">.</span><span class="n">go</span>
+<span class="err">│</span>           <span class="err">├──</span> <span class="n">types</span><span class="p">.</span><span class="n">go</span>
+<span class="err">│</span>           <span class="err">└──</span> <span class="n">zz_generated</span><span class="p">.</span><span class="n">deepcopy</span><span class="p">.</span><span class="n">go</span>
+<span class="err">└──</span> <span class="n">client</span>
+  <span class="err">├──</span> <span class="n">clientset</span>
+  <span class="err">├──</span> <span class="n">informers</span>
+  <span class="err">└──</span> <span class="n">listers</span>
+</pre></div>
+
+
+<p>其中，pkg/apis/samplecrd/v1 下面的 zz_generated.deepcopy.go 文件，就是自动生成的 DeepCopy 代码文件。</p>
+<p>而整个 client 目录，以及下面的三个包（clientset、informers、 listers），都是 Kubernetes 为 Network 类型生成的客户端库，这些库会在后面编写自定义控制器的时候用到。</p>
+<p>可以看到，到目前为止的这些工作，其实并不要求你写多少代码，主要考验的是“复制、粘贴、替换”这样的“基本功”。</p>
+<p>而有了这些内容，现在你就可以在 Kubernetes 集群里创建一个 Network 类型的 API 对象了。我们不妨一起来实验一下。</p>
+<p><strong>首先</strong>，使用 network.yaml 文件，在 Kubernetes 中创建 Network 对象的 CRD（Custom Resource Definition）：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">kubectl</span> <span class="n">apply</span> <span class="o">-</span><span class="n">f</span> <span class="n">crd</span><span class="o">/</span><span class="n">network</span><span class="p">.</span><span class="n">yaml</span>
+<span class="n">customresourcedefinition</span><span class="p">.</span><span class="n">apiextensions</span><span class="p">.</span><span class="n">k8s</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">networks</span><span class="p">.</span><span class="n">samplecrd</span><span class="p">.</span><span class="n">k8s</span><span class="p">.</span><span class="n">io</span> <span class="n">created</span>
+</pre></div>
+
+
+<p>这个操作，就告诉了 Kubernetes，我现在要添加一个自定义的 API 对象。而这个对象的 API 信息，正是 network.yaml 里定义的内容。我们可以通过 kubectl get 命令，查看这个 CRD：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">kubectl</span> <span class="n">get</span> <span class="n">crd</span>
+<span class="n">NAME</span>                        <span class="n">CREATED</span> <span class="n">AT</span>
+<span class="n">networks</span><span class="p">.</span><span class="n">samplecrd</span><span class="p">.</span><span class="n">k8s</span><span class="p">.</span><span class="n">io</span>   <span class="mi">2018</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">15</span><span class="n">T10</span><span class="o">:</span><span class="mi">57</span><span class="o">:</span><span class="mi">12</span><span class="n">Z</span>
+</pre></div>
+
+
+<p><strong>然后</strong>，我们就可以创建一个 Network 对象了，这里用到的是 example-network.yaml：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">kubectl</span> <span class="n">apply</span> <span class="o">-</span><span class="n">f</span> <span class="n">example</span><span class="o">/</span><span class="n">example</span><span class="o">-</span><span class="n">network</span><span class="p">.</span><span class="n">yaml</span> 
+<span class="n">network</span><span class="p">.</span><span class="n">samplecrd</span><span class="p">.</span><span class="n">k8s</span><span class="p">.</span><span class="n">io</span><span class="o">/</span><span class="n">example</span><span class="o">-</span><span class="n">network</span> <span class="n">created</span>
+</pre></div>
+
+
+<p>通过这个操作，你就在 Kubernetes 集群里创建了一个 Network 对象。它的 API 资源路径是<code>samplecrd.k8s.io/v1/networks</code>。</p>
+<p>这时候，你就可以通过 kubectl get 命令，查看到新创建的 Network 对象：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">kubectl</span> <span class="n">get</span> <span class="n">network</span>
+<span class="n">NAME</span>              <span class="n">AGE</span>
+<span class="n">example</span><span class="o">-</span><span class="n">network</span>   <span class="mi">8</span><span class="n">s</span>
+</pre></div>
+
+
+<p>你还可以通过 kubectl describe 命令，看到这个 Network 对象的细节：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="nx">kubectl</span> <span class="nb">describe</span> <span class="nx">network</span> <span class="nx">example</span><span class="na">-network</span>
+<span class="nb">Name</span><span class="p">:</span>         <span class="nx">example</span><span class="na">-network</span>
+<span class="nx">Namespace</span><span class="p">:</span>    <span class="nb">default</span>
+<span class="nx">Labels</span><span class="p">:</span>       <span class="o">&lt;</span><span class="kc">none</span><span class="o">&gt;</span>
+<span class="nx">...API</span> <span class="nb">Version</span><span class="p">:</span>  <span class="nx">samplecrd.k8s.io</span><span class="p">/</span><span class="nx">v1</span>
+<span class="nx">Kind</span><span class="p">:</span>         <span class="nx">Network</span>
+<span class="nx">Metadata</span><span class="p">:</span>
+<span class="nx">...</span>
+<span class="nx">Generation</span><span class="p">:</span>          <span class="mi">1</span>
+<span class="nx">Resource</span> <span class="nb">Version</span><span class="p">:</span>    <span class="mi">468239</span>
+<span class="nx">...</span>
+<span class="nx">Spec</span><span class="p">:</span>
+<span class="nx">Cidr</span><span class="p">:</span>     <span class="mf">192.168.0.0</span><span class="p">/</span><span class="nx">16</span>
+<span class="nx">Gateway</span><span class="p">:</span>  <span class="mf">192.168.0.1</span>
+</pre></div>
+
+
+<p>当然 ，你也可以编写更多的 YAML 文件来创建更多的 Network 对象，这和创建 Pod、Deployment 的操作，没有任何区别。</p>
+<h2 id="custom-controller">自定义控制器（Custom Controller）</h2>
+<p>声明式 API”并不像“命令式 API”那样有着明显的执行逻辑。这就使得<strong>基于声明式 API 的业务功能实现，往往需要通过控制器模式来“监视”API 对象的变化（比如，创建或者删除 Network），然后以此来决定实际要执行的具体工作。</strong></p>
+<p>接下来，我就和你一起通过编写代码来实现这个过程。这个项目和上一篇文章里的代码是同一个项目，你可以从<a href="https://github.com/resouer/k8s-controller-custom-resource">这个 GitHub 库</a>里找到它们。我在代码里还加上了丰富的注释，你可以随时参考。</p>
+<p>总得来说，编写自定义控制器代码的过程包括：编写 main 函数、编写自定义控制器的定义，以及编写控制器里的业务逻辑三个部分。</p>
+<h3 id="main">编写 main 函数</h3>
+<p>main 函数的主要工作就是，定义并初始化一个自定义控制器（Custom Controller），然后启动它。这部分代码的主要内容如下所示：</p>
+<div class="hlcode"><pre><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="o">...</span>
+
+<span class="nx">cfg</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">clientcmd</span><span class="p">.</span><span class="nx">BuildConfigFromFlags</span><span class="p">(</span><span class="nx">masterURL</span><span class="p">,</span> <span class="nx">kubeconfig</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="nx">kubeClient</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">kubernetes</span><span class="p">.</span><span class="nx">NewForConfig</span><span class="p">(</span><span class="nx">cfg</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="nx">networkClient</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">clientset</span><span class="p">.</span><span class="nx">NewForConfig</span><span class="p">(</span><span class="nx">cfg</span><span class="p">)</span>
+<span class="o">...</span>
+
+<span class="nx">networkInformerFactory</span> <span class="o">:=</span> <span class="nx">informers</span><span class="p">.</span><span class="nx">NewSharedInformerFactory</span><span class="p">(</span><span class="nx">networkClient</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+
+<span class="nx">controller</span> <span class="o">:=</span> <span class="nx">NewController</span><span class="p">(</span><span class="nx">kubeClient</span><span class="p">,</span> <span class="nx">networkClient</span><span class="p">,</span>
+<span class="nx">networkInformerFactory</span><span class="p">.</span><span class="nx">Samplecrd</span><span class="p">().</span><span class="nx">V1</span><span class="p">().</span><span class="nx">Networks</span><span class="p">())</span>
+
+<span class="k">go</span> <span class="nx">networkInformerFactory</span><span class="p">.</span><span class="nx">Start</span><span class="p">(</span><span class="nx">stopCh</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">controller</span><span class="p">.</span><span class="nx">Run</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">stopCh</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+<span class="nx">glog</span><span class="p">.</span><span class="nx">Fatalf</span><span class="p">(</span><span class="s">&quot;Error running controller: %s&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+<span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>可以看到，这个 main 函数主要通过三步完成了初始化并启动一个自定义控制器的工作。</p>
+<h3 id="_3">编写自定义控制器的定义</h3>
+<h3 id="_4">编写控制器里的业务逻辑</h3>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

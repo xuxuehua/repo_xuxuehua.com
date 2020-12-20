@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>github_pages - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Dns">Dns</a>&nbsp;&#187;&nbsp;github_pages
+    <span class="updated">Page Updated&nbsp;
+      2018-09-06 17:46
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">github_pages</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#github_pages">github_pages</a><ul>
+<li><a href="#reference">Reference</a></li>
+<li><a href="#a-records">A records</a></li>
+<li><a href="#over-https">Over HTTPS</a></li>
+<li><a href="#discontinue">Discontinue</a></li>
+<li><a href="#cname">CNAME</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="github_pages">github_pages</h1>
+<h2 id="reference">Reference</h2>
+<p>https://help.github.com/articles/troubleshooting-custom-domains/</p>
+<h2 id="a-records">A records</h2>
+<p>185.199.108.153</p>
+<p>185.199.109.153</p>
+<p>185.199.110.153</p>
+<p>185.199.111.153</p>
+<ul>
+<li>You may see a different IP address, since we serve Pages with a global <a href="http://en.wikipedia.org/wiki/Content_delivery_network">Content Delivery Network</a>. Use <code>dig username.github.io</code> to see the full resolution path. Note that DNS caching may cause a delay.</li>
+</ul>
+<h2 id="over-https">Over HTTPS</h2>
+<ul>
+<li>If you're using an <code>A</code> record that points to <code>192.30.252.153</code> or <code>192.30.252.154</code>, you'll need to update your DNS settings for your site to be available over HTTPS or served with a <a href="http://en.wikipedia.org/wiki/Content_delivery_network">Content Delivery Network</a>. For more information, see "<a href="https://help.github.com/articles/troubleshooting-custom-domains/#https-errors">HTTPS errors</a>."</li>
+</ul>
+<h2 id="discontinue">Discontinue</h2>
+<ul>
+<li>If you're using an <code>A</code> record that points to <code>207.97.227.245</code> or <code>204.232.175.78</code>, you'll need to update your DNS settings, as we no longer serve Pages directly from those servers.</li>
+</ul>
+<h2 id="cname">CNAME</h2>
+<p>If you configured <code>ALIAS</code>, <code>ANAME</code>, or <code>CNAME</code> records through your DNS provider, then your DNS record should point to your GitHub Pages default domain, such as <code>YOUR-GITHUB-USERNAME.github.io</code>. Your default GitHub Pages domain is determined by the type of pages site you have. For examples, see this <a href="https://help.github.com/articles/custom-domain-redirects-for-github-pages-sites">domain chart</a>.</p>
+<p>If you need help creating these records, contact your DNS provider as they should have the most detailed instructions. For some guidelines on configuring a DNS record with DNS providers, see "<a href="https://help.github.com/articles/using-a-custom-domain-with-github-pages/">Using a custom domain with GitHub Pages</a>."</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

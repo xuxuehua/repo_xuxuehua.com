@@ -1,0 +1,574 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>iptables_usage - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Iptables">Iptables</a>&nbsp;&#187;&nbsp;iptables_usage
+    <span class="updated">Page Updated&nbsp;
+      2018-11-27 18:44
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">iptables_usage</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#iptables">iptables 基本语法</a><ul>
+<li><a href="#-t-table">-t table</a></li>
+<li><a href="#sub-commands">Sub-commands 对链的操作</a><ul>
+<li><a href="#_1">链管理</a><ul>
+<li><a href="#-e">-E 重命名链</a></li>
+<li><a href="#-f">-F 清空规则</a></li>
+<li><a href="#-n">-N 自定义链</a></li>
+<li><a href="#-p">-P 默认策略</a></li>
+<li><a href="#-x">-X 删除空链</a></li>
+<li><a href="#-z">-Z 重置计数</a></li>
+</ul>
+</li>
+<li><a href="#_2">规则管理</a><ul>
+<li><a href="#-a">-A 追加新规则</a></li>
+<li><a href="#-i">-I 插入规则</a></li>
+<li><a href="#-d">-D 删除规则</a></li>
+<li><a href="#-r">-R 替换规则</a></li>
+<li><a href="#-l">-L 查看规则</a><ul>
+<li><a href="#-n-ip">-n 显示IP及端口</a></li>
+<li><a href="#-v-verbose-vv-vvv">-v verbose/ -vv / -vvv</a></li>
+<li><a href="#-x_1">-x 显示准确数值</a></li>
+<li><a href="#-line-numbers">--line-numbers 序号</a></li>
+<li><a href="#-modprobe">--modprobe 模块</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#createria">Createria 匹配条件</a><ul>
+<li><a href="#_3">基本匹配条件</a><ul>
+<li><a href="#-pprotocol">[!] -p/–protocol 协议</a></li>
+<li><a href="#-s-src-source">[!] -s/-src/-source 源地址</a></li>
+<li><a href="#-d-dst-destination">[!] -d/-dst/-destination 目的地址</a></li>
+<li><a href="#-i-in-interface">[!] -i/-in-interface 输入接口</a></li>
+<li><a href="#-o-out-interface">[!] -o/-out-interface 输出接口</a></li>
+</ul>
+</li>
+<li><a href="#_4">扩展匹配条件</a><ul>
+<li><a href="#_5">隐式扩展</a><ul>
+<li><a href="#-p-tcp">-p tcp</a></li>
+<li><a href="#-p-udp">-p udp</a></li>
+<li><a href="#-p-icmp">-p icmp</a></li>
+</ul>
+</li>
+<li><a href="#_6">显式扩展</a><ul>
+<li><a href="#multiport">multiport</a></li>
+<li><a href="#icmp">icmp</a></li>
+<li><a href="#iprange">iprange</a></li>
+<li><a href="#set">set</a></li>
+<li><a href="#string">string</a></li>
+<li><a href="#time">time</a></li>
+<li><a href="#connlimit">connlimit</a></li>
+<li><a href="#limit">limit</a></li>
+<li><a href="#state">state</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#target">Target 执行目标</a></li>
+<li><a href="#target_1">Target 采取的动作</a><ul>
+<li><a href="#accept">ACCEPT</a></li>
+<li><a href="#drop">DROP</a></li>
+<li><a href="#reject">REJECT</a></li>
+<li><a href="#return">RETURN</a></li>
+<li><a href="#log">LOG</a></li>
+<li><a href="#dnat">DNAT</a></li>
+<li><a href="#snat">SNAT</a></li>
+<li><a href="#redirect">REDIRECT</a></li>
+<li><a href="#masquerade">MASQUERADE</a></li>
+<li><a href="#mark">MARK</a></li>
+<li><a href="#_7">自定义链</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_8">保存及重载规则</a><ul>
+<li><a href="#iptables-save">iptables-save 保存现有规则</a></li>
+<li><a href="#iptables-restore">iptables-restore  导入规则</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="iptables">iptables 基本语法</h1>
+<div class="hlcode"><pre>iptables <span class="o">[</span>-t table<span class="o">]</span> Sub-commands Chain <span class="o">[</span>num<span class="o">]</span> Creatria -j Target
+</pre></div>
+
+
+<h2 id="-t-table">-t table</h2>
+<p>用来指明使用的表，有三种选项: filter，nat，mangle，raw</p>
+<p>若未指定，则默认使用filter表</p>
+<h2 id="sub-commands">Sub-commands 对链的操作</h2>
+<p>以下这些规则参数用于描述数据包的协议、源地址、目的地址、允许经过的网络接口，以及如何处理这些数据包</p>
+<h3 id="_1">链管理</h3>
+<h4 id="-e">-E 重命名链</h4>
+<p>rename，重命名自定义的链，引用计数不为0的自定义链，无法改名，也无法删除</p>
+<h4 id="-f">-F 清空规则</h4>
+<p>flush，清空指定表的指定链上所有规则；省略链名时，清空表中的所有链</p>
+<h4 id="-n">-N 自定义链</h4>
+<p>new，新建一条自定义的规则链；被内建链上的规则调用才能生效；[-j  chain_name]；自定义链只能作为默认链上的跳转对象，即在默认链通过引用来生效自定义链</p>
+<h4 id="-p">-P 默认策略</h4>
+<p>policy，设置链的默认处理机制；当所有都无法匹配或有匹配有无法做出有效处理机制时，默认策略即生效；</p>
+<p>filter表的可用策略：ACCEPT, DROP, REJECT</p>
+<h4 id="-x">-X 删除空链</h4>
+<p>drop，删除用户自定义的空链；非空自定义链和内置链无法删除；</p>
+<h4 id="-z">-Z 重置计数</h4>
+<p>zero, 将规则的计数器置0 </p>
+<h3 id="_2">规则管理</h3>
+<h4 id="-a">-A 追加新规则</h4>
+<p>append 追加，在指定链的尾部追加一条规则</p>
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">chain</span> <span class="n">firewall</span><span class="o">-</span><span class="n">rule</span>
+</pre></div>
+
+
+<blockquote>
+<p>-A chain – 指定要追加规则的链</p>
+<p>firewall-rule – 具体的规则参数</p>
+</blockquote>
+<h4 id="-i">-I 插入规则</h4>
+<p>insert 在指定的位置（省略位置时表示链首）插入一条规则；</p>
+<h4 id="-d">-D 删除规则</h4>
+<p>delelte 删除指定链上的指定规则</p>
+<h4 id="-r">-R 替换规则</h4>
+<p>replace， 将指定的规则替换为新规则；不能仅修改规则中的部分，而是整条规则完全替换；</p>
+<h4 id="-l">-L 查看规则</h4>
+<p>list，列出表中的链上的所有规则</p>
+<h5 id="-n-ip">-n 显示IP及端口</h5>
+<p>numeric，以数值格式显示输出中的IP地址和端口号，而不是默认的名字，比如主机名、网络名、程序名等，即不反解</p>
+<h5 id="-v-verbose-vv-vvv">-v verbose/ -vv / -vvv</h5>
+<p>verbose，显示规则的详细格式信息，包括规则计数器等</p>
+<h5 id="-x_1">-x 显示准确数值</h5>
+<p>exactly，使--list输出中的计数器显示准确的数值，而不用K、M、G等估值；</p>
+<h5 id="-line-numbers">--line-numbers 序号</h5>
+<p>该选项的作用是显示出每条规则在相应链中的序号，对插入新规则很有用；</p>
+<h5 id="-modprobe">--modprobe 模块</h5>
+<p>此选项告诉iptables探测并装载要使用的模块。这是非常有用的一个选项，若modprobe命令不在搜索路径中，就要用到了。有了这个选项， 在装载模块时，即使有一个需要用到的模块没装载上，iptables也知道要去搜索。</p>
+<h2 id="createria">Createria 匹配条件</h2>
+<p>多重条件：逻辑关系为“与”；匹配选项指定数据包与规则匹配所具有的特征，包括源地址，目的地址，传输协议和端口号</p>
+<h3 id="_3">基本匹配条件</h3>
+<h4 id="-pprotocol">[!] -p/–protocol 协议</h4>
+<p>检查报文中的协议，即ip首部中的protocols所标识的协议，protocol</p>
+<p>如tcp, udp, icmp等，可以使用all来指定所有协议。</p>
+<p>如果不指定-p参数，则默认是all值。这并不明智，请总是明确指定协议名称。</p>
+<p>可以使用协议名(如tcp)，或者是协议值（比如6代表tcp）来指定协议。映射关系请查看/etc/protocols</p>
+<h4 id="-s-src-source">[!] -s/-src/-source 源地址</h4>
+<p>检查报文中的源IP地址是否符合此处指定的地址或范围</p>
+<p>指定数据包的源地址</p>
+<p>参数可以使IP地址、网络地址、主机名</p>
+<p>例如：-s 192.168.1.101指定IP地址</p>
+<p>例如：-s 192.168.1.10/24指定网络地址</p>
+<p>如果不指定-s参数，就代表所有地址</p>
+<h4 id="-d-dst-destination">[!] -d/-dst/-destination 目的地址</h4>
+<p>检查报文中的目标IP地址是否符合此处指定的地址或范围</p>
+<p>参数和-s相同</p>
+<h4 id="-i-in-interface">[!] -i/-in-interface 输入接口</h4>
+<p>数据报文的流入接口；通常只用于INPUT, FORWARD 和 PREROUTING 链上的规则</p>
+<p>-i代表输入接口(input interface)</p>
+<p>-i指定了要处理来自哪个接口的数据包</p>
+<p>例如：-i eth0指定了要处理经由eth0进入的数据包</p>
+<p>如果不指定-i参数，那么将处理进入所有接口的数据包</p>
+<p>如果出现! -i eth0，那么将处理所有经由eth0以外的接口进入的数据包 </p>
+<p>如果出现-i eth+，那么将处理所有经由eth开头的接口进入的数据包</p>
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">INPUT</span> <span class="o">-</span><span class="n">d</span> <span class="mf">172.16.0.1</span> <span class="o">-</span><span class="n">i</span> <span class="n">eth0</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+</pre></div>
+
+
+<h4 id="-o-out-interface">[!] -o/-out-interface 输出接口</h4>
+<p>数据报文的流出接口；通常只用于 FORWARD, OUTPUT 和 POSTROUTING链上的规则；</p>
+<p>-o指定了数据包由哪个接口输出</p>
+<p>如果不指定-o选项，那么系统上的所有接口都可以作为输出接口</p>
+<p>如果出现! -o eth0，那么将从eth0以外的接口输出 </p>
+<p>如果出现-i eth+，那么将仅从eth开头的接口输出</p>
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">OUTPUT</span> <span class="o">-</span><span class="n">s</span> <span class="mf">172.16.0.1</span> <span class="o">-</span><span class="n">o</span> <span class="n">eth0</span> <span class="o">-</span><span class="n">J</span> <span class="n">ACCEPT</span>
+</pre></div>
+
+
+<h3 id="_4">扩展匹配条件</h3>
+<p>使用 iptables 的模块实现扩展性检查机制，扩展匹配又分为隐式扩展和显式扩展</p>
+<div class="hlcode"><pre><span class="o">-</span><span class="n">m</span> <span class="n">match_name</span> <span class="o">--</span><span class="n">spec_options</span>
+</pre></div>
+
+
+<h4 id="_5">隐式扩展</h4>
+<p>如果在通用匹配上使用 -p 选项指明了协议的话，就无需使用-m指定扩展模块</p>
+<h5 id="-p-tcp">-p tcp</h5>
+<div class="hlcode"><pre>-p tcp：隐含了-m tcp：针对 tcp 协议
+   <span class="o">[</span>!<span class="o">]</span> --source-port,--sport port<span class="o">[</span>:port<span class="o">]</span>：匹配报文中传输层的源端口；
+   <span class="o">[</span>!<span class="o">]</span> --destination-port,--dport port<span class="o">[</span>:port<span class="o">]</span>：匹配报文中传输层的目标端口；
+   <span class="o">[</span>!<span class="o">]</span> --tcp-flags L1 L2
+       SYN，ACK，FIN，RST，URG，PSH；    
+       检查L1所指明的所有标志位，且这其中L2表示所有标记为必须为1，而余下的必须为0。没有L1指明的，不做检查
+
+   <span class="o">[</span>!<span class="o">]</span> --syn：
+       相当于--tcp-flags  SYN,ACK,FIN,RST  SYN <span class="o">(</span>检查SYN，ACK，FIN，RST， 只能SYN为1， 即三次握手的第一次<span class="o">)</span>
+</pre></div>
+
+
+<h5 id="-p-udp">-p udp</h5>
+<div class="hlcode"><pre><span class="o">-</span><span class="n">p</span> <span class="n">udp</span><span class="err">：隐含了</span><span class="o">-</span><span class="n">m</span> <span class="n">udp</span><span class="err">：针对</span> <span class="n">udp</span> <span class="err">协议</span>
+    <span class="p">[</span><span class="o">!</span><span class="p">]</span> <span class="o">--</span><span class="n">source</span><span class="o">-</span><span class="n">port</span><span class="p">,</span><span class="o">--</span><span class="n">sport</span> <span class="n">port</span><span class="p">[</span><span class="o">:</span><span class="n">port</span><span class="p">]</span><span class="err">：匹配报文中传输层的源端口；</span>
+    <span class="p">[</span><span class="o">!</span><span class="p">]</span> <span class="o">--</span><span class="n">destination</span><span class="o">-</span><span class="n">port</span><span class="p">,</span><span class="o">--</span><span class="n">dport</span> <span class="n">port</span><span class="p">[</span><span class="o">:</span><span class="n">port</span><span class="p">]</span><span class="err">：匹配报文中传输层的目标端口；</span>
+</pre></div>
+
+
+<h5 id="-p-icmp">-p icmp</h5>
+<div class="hlcode"><pre><span class="o">-</span><span class="n">p</span> <span class="n">icmp</span><span class="err">：隐含了</span><span class="o">-</span><span class="n">m</span> <span class="n">icmp</span><span class="err">：针对</span> <span class="n">icmp</span> <span class="err">协议</span>
+    <span class="p">[</span><span class="o">!</span><span class="p">]</span> <span class="o">--</span><span class="n">icmp</span><span class="o">-</span><span class="n">type</span> <span class="p">{</span><span class="n">type</span><span class="p">[</span><span class="o">/</span><span class="n">code</span><span class="p">]</span><span class="o">|</span><span class="kr">typename</span><span class="p">}</span>
+        <span class="mi">8</span><span class="err">：</span><span class="n">echo</span><span class="o">-</span><span class="n">request</span>
+        <span class="mi">0</span><span class="err">：</span><span class="n">echo</span><span class="o">-</span><span class="n">reply</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">OUTPUT</span> <span class="o">-</span><span class="n">s</span> <span class="mf">172.16.0.9</span> <span class="o">-</span><span class="n">p</span> <span class="n">icmp</span> <span class="o">--</span><span class="n">icmp</span><span class="o">-</span><span class="n">type</span> <span class="mi">8</span> <span class="o">-</span><span class="n">J</span> <span class="n">ACCEPT</span>
+<span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">INPUT</span> <span class="o">-</span><span class="n">d</span> <span class="mf">172.16.0.9</span> <span class="o">-</span><span class="n">p</span> <span class="n">icmp</span> <span class="o">--</span><span class="n">icmp</span><span class="o">-</span><span class="n">type</span> <span class="mi">0</span> <span class="o">-</span><span class="n">J</span> <span class="n">ACCEPT</span>
+</pre></div>
+
+
+<h4 id="_6">显式扩展</h4>
+<p>必须使用-m选项指出match name使用的扩展机制，有的match可能存在专用的选项</p>
+<div class="hlcode"><pre> -m 模块名称
+</pre></div>
+
+
+<blockquote>
+<p>每个模块会引入新的匹配机制；可以通过 rpm -ql iptables 来获取哪些模块可用，模块是以 .so 结尾的</p>
+<p>CentOS 7 $ man iptables-extensions</p>
+</blockquote>
+<h5 id="multiport">multiport</h5>
+<p>多端口匹配</p>
+<p>以离散或连续的方式定义多端口匹配条件；最多指定15个端口；</p>
+<div class="hlcode"><pre><span class="o">[</span>!<span class="o">]</span> --source-ports,--sports port<span class="o">[</span>,port|,port:port<span class="o">]</span>...：指定多个源端口；
+<span class="o">[</span>!<span class="o">]</span> --destination-ports,--dports port<span class="o">[</span>,port|,port:port<span class="o">]</span>...：指定多个目标端口；
+<span class="o">[</span>!<span class="o">]</span> --ports port<span class="o">[</span>,port|,port:port<span class="o">]</span>...：指定多个端口；
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">INPUT</span> <span class="o">-</span><span class="n">s</span> <span class="mf">172.16.0.0</span><span class="o">/</span><span class="mi">16</span> <span class="o">-</span><span class="n">d</span> <span class="mf">172.16.0.9</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">-</span><span class="n">m</span> <span class="n">multiport</span> <span class="o">--</span><span class="n">dports</span> <span class="mi">22</span><span class="p">,</span><span class="mi">80</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+<span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">OUTPUT</span> <span class="o">-</span><span class="n">d</span> <span class="mf">172.16.0.0</span><span class="o">/</span><span class="mi">16</span> <span class="o">-</span><span class="n">s</span> <span class="mf">172.16.0.9</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">-</span><span class="n">m</span> <span class="n">multiport</span> <span class="o">--</span><span class="n">sports</span> <span class="mi">22</span><span class="p">,</span><span class="mi">80</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+</pre></div>
+
+
+<p>允许172.16.100.1-100对172.16.100.11的telnet23端口访问</p>
+<div class="hlcode"><pre><span class="c"># iptables -A INPUT -d 172.16.100.11 -p tcp --dport 23 -miprange --src-range172.16.100.1-172.16.100.100 -j ACCEPT</span>
+<span class="c"># iptables -A OUTPUT -s 172.16.100.11 -p tcp --sport 23-m iprange --dst-range 172.16.100.1-172.16.100.100 -j ACCEPT</span>
+</pre></div>
+
+
+<h5 id="icmp">icmp</h5>
+<p>icmp-type 8 请求</p>
+<p>icmp-type 0 应答</p>
+<p>基于发包速率作限制；</p>
+<div class="hlcode"><pre>        --limit n<span class="o">[</span>/second|/minit|/hour|/day<span class="o">]</span>
+        --limit-burst n
+</pre></div>
+
+
+<h5 id="iprange">iprange</h5>
+<p>以连续的ip地址范围, 指明连续的多地址匹配条件</p>
+<div class="hlcode"><pre><span class="o">[</span>!<span class="o">]</span> --src-range from<span class="o">[</span>-to<span class="o">]</span>：源IP地址范围
+<span class="o">[</span>!<span class="o">]</span> --dst-range from<span class="o">[</span>-to<span class="o">]</span>：目标IP地址范围
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">INPUT</span> <span class="o">-</span><span class="n">d</span> <span class="mf">172.16.0.9</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">-</span><span class="n">m</span> <span class="n">multiport</span> <span class="o">--</span><span class="n">dports</span> <span class="mi">22</span><span class="o">:</span><span class="mi">23</span><span class="p">,</span><span class="mi">80</span> <span class="o">-</span><span class="n">m</span> <span class="n">iprange</span> <span class="o">--</span><span class="n">src</span><span class="o">-</span><span class="n">range</span> <span class="mf">172.16.100.1</span><span class="o">-</span><span class="mf">172.16.100.100</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+<span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">OUTPUT</span> <span class="o">-</span><span class="n">s</span> <span class="mf">172.16.0.9</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">-</span><span class="n">m</span> <span class="n">multiport</span> <span class="o">--</span><span class="n">sports</span> <span class="mi">22</span><span class="o">:</span><span class="mi">23</span><span class="p">,</span><span class="mi">80</span> <span class="o">-</span><span class="n">m</span> <span class="n">iprange</span> <span class="o">--</span><span class="n">drc</span><span class="o">-</span><span class="n">range</span> <span class="mf">172.16.100.1</span><span class="o">-</span><span class="mf">172.16.100.100</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+</pre></div>
+
+
+<h5 id="set">set</h5>
+<p>依赖于ipset命令行工具</p>
+<h5 id="string">string</h5>
+<p>检查报文中出现的字符串，对报文中的应用层数据做字符串匹配检测</p>
+<p>字符串匹配检查算法：kmp，bm</p>
+<div class="hlcode"><pre><span class="o">--</span><span class="n">algo</span> <span class="p">{</span><span class="n">bm</span><span class="o">|</span><span class="n">kmp</span><span class="p">}</span>  <span class="err">字符串比对算法</span> <span class="err">（必选）</span>
+<span class="p">[</span><span class="o">!</span><span class="p">]</span> <span class="o">--</span><span class="n">string</span> <span class="n">pattern</span><span class="err">：要检测字符串模式；</span>
+<span class="p">[</span><span class="o">!</span><span class="p">]</span> <span class="o">--</span><span class="n">hex</span><span class="o">-</span><span class="n">string</span> <span class="n">pattern</span><span class="err">：要检测的字符串模式，</span><span class="mi">16</span><span class="err">进制编码；</span>
+</pre></div>
+
+
+<p>检查出口报文中含有movie的数据包</p>
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">OUTPUT</span> <span class="o">-</span><span class="n">m</span> <span class="n">string</span> <span class="o">--</span><span class="n">algo</span> <span class="n">bm</span> <span class="o">--</span><span class="n">string</span> <span class="err">&#39;</span><span class="n">movie</span><span class="err">&#39;</span> <span class="o">-</span><span class="n">j</span> <span class="n">REJECT</span> 
+</pre></div>
+
+
+<h5 id="time">time</h5>
+<p>根据报文到达的时间与指定的时间范围进行匹配度检测</p>
+<div class="hlcode"><pre><span class="o">--</span><span class="n">datestart</span> <span class="n">YYYY</span><span class="p">[</span><span class="o">-</span><span class="n">MM</span><span class="p">[</span><span class="o">-</span><span class="n">DD</span><span class="p">[</span><span class="n">Thh</span><span class="p">[</span><span class="o">:</span><span class="n">mm</span><span class="p">[</span><span class="o">:</span><span class="n">ss</span><span class="p">]]]]]</span><span class="err">：起始日期时间；</span>
+<span class="o">--</span><span class="n">datestop</span> <span class="n">YYYY</span><span class="p">[</span><span class="o">-</span><span class="n">MM</span><span class="p">[</span><span class="o">-</span><span class="n">DD</span><span class="p">[</span><span class="n">Thh</span><span class="p">[</span><span class="o">:</span><span class="n">mm</span><span class="p">[</span><span class="o">:</span><span class="n">ss</span><span class="p">]]]]]</span><span class="err">：结束日期时间；</span>
+<span class="o">--</span><span class="n">timestart</span> <span class="n">hh</span><span class="o">:</span><span class="n">mm</span><span class="p">[</span><span class="o">:</span><span class="n">ss</span><span class="p">]</span>
+<span class="o">--</span><span class="n">timestop</span>  <span class="n">hh</span><span class="o">:</span><span class="n">mm</span><span class="p">[</span><span class="o">:</span><span class="n">ss</span><span class="p">]</span>
+<span class="p">[</span><span class="o">!</span><span class="p">]</span> <span class="o">--</span><span class="n">monthdays</span> <span class="n">day</span><span class="p">[,</span><span class="n">day</span><span class="p">...]</span>
+<span class="p">[</span><span class="o">!</span><span class="p">]</span> <span class="o">--</span><span class="n">weekdays</span> <span class="n">day</span><span class="p">[,</span><span class="n">day</span><span class="p">...]</span>
+<span class="o">--</span><span class="n">kerneltz</span><span class="err">：使用内核中配置的时</span>
+</pre></div>
+
+
+<p>时间为UTC时间</p>
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">INPUT</span> <span class="o">-</span><span class="n">d</span> <span class="mf">172.16.0.9</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">--</span><span class="n">dport</span> <span class="mi">80</span> <span class="o">-</span><span class="n">m</span> <span class="n">time</span> <span class="o">--</span><span class="n">timestart</span> <span class="mi">14</span><span class="o">:</span><span class="mo">00</span> <span class="o">--</span><span class="n">timestop</span> <span class="mi">16</span><span class="o">:</span><span class="mo">00</span> <span class="o">-</span><span class="n">j</span> <span class="n">REJECT</span>
+</pre></div>
+
+
+<p>在周1,2,4,5的08:30-18:30拒绝172.16.100.11对80端口的访问</p>
+<div class="hlcode"><pre><span class="c"># iptables -A INPUT -d 172.16.100.11 -p tcp --dport 80 -m time --timestart 08:30 --timestop 18:30 --weekdays Mon,Tue,Thu,Fri -j REJECT</span>
+</pre></div>
+
+
+<h5 id="connlimit">connlimit</h5>
+<p>基于连接数作限制，对每个IP能够发起的并发连接数作限制；根据每客户端IP做并发连接数匹配；</p>
+<div class="hlcode"><pre>--connlimit-upto n：连接数数量小于等于n，此时应该允许；
+--connlimit-above n：连接数数量大于n，此时应该拒绝；
+--connlimit-mask prefix length：
+--connlimit-saddr：
+--connlimit-daddr：
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">INPUT</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">--</span><span class="n">dport</span> <span class="mi">22</span> <span class="o">-</span><span class="n">m</span> <span class="n">connlimit</span> <span class="o">--</span><span class="n">connlimt</span><span class="o">-</span><span class="n">above</span> <span class="mi">3</span> <span class="o">-</span><span class="n">j</span> <span class="n">REJECT</span>
+</pre></div>
+
+
+<p>当连接172.16.100.11的ssh数大于5时[包括5个]拒绝</p>
+<div class="hlcode"><pre><span class="c"># iptables -I INPUT 2 -d 172.16.100.11 -p tcp --dport 22 -m connlimit --connlimit-above 5 -j REJECT</span>
+<span class="c"># iptables -P INPUT ACCEPT</span>
+</pre></div>
+
+
+<p>配置本机的telnet服务，要求只允许来自于172.16.0.0/16网络中的主机访问，且只允许工作时间访问，而且，每个来源IP最多的并发连接数不能超过2个；</p>
+<div class="hlcode"><pre><span class="err">方法</span><span class="mi">1</span><span class="err">：</span>
+<span class="cp"># iptables -A INPUT -s 172.16.0.0/16-d 172.16.37.10 -p tcp --dport 23 -m time --timestart 01:00 --timestop 20:00 -mconnlimit ! --connlimit-above 2 -j ACCEPT</span>
+<span class="cp"># iptables -P DROP</span>
+
+<span class="err">方法</span><span class="mi">2</span><span class="err">：先拒绝在允许</span>
+<span class="cp"># iptables -I INPUT 1 -p tcp -dport 23 -m connlimit --connlimit-above 2 -jDROP</span>
+<span class="cp"># iptables -I INPUT 2 -p tcp -dport 23 -j ACCEPT</span>
+</pre></div>
+
+
+<h5 id="limit">limit</h5>
+<p>基于发包速率作限制</p>
+<p>专用选项：令牌桶算法</p>
+<div class="hlcode"><pre><span class="o">--</span><span class="n">limit</span>  <span class="n">n</span><span class="p">[</span><span class="o">/</span><span class="n">second</span><span class="o">|/</span><span class="n">minit</span><span class="o">|/</span><span class="n">hour</span><span class="o">|/</span><span class="n">day</span><span class="p">]</span>   
+<span class="o">--</span><span class="n">limit</span><span class="o">-</span><span class="n">burst</span> <span class="n">n</span>    <span class="err">峰值为几，即最大突发为几</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="o">--</span><span class="n">limit</span> <span class="mi">10</span><span class="o">/</span><span class="n">minit</span> <span class="err">指明每分钟允许</span><span class="mi">10</span><span class="err">个数据包</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">INPUT</span> <span class="o">-</span><span class="n">d</span> <span class="mf">172.16.0.1</span> <span class="o">-</span><span class="n">p</span> <span class="n">icmp</span> <span class="o">--</span><span class="n">icmp</span><span class="o">-</span><span class="n">type</span> <span class="mi">8</span> <span class="o">-</span><span class="n">m</span> <span class="n">limit</span> <span class="o">--</span><span class="n">limit</span> <span class="mi">30</span><span class="o">/</span><span class="n">minute</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="c"># iptables -A INPUT -p icmp --icmp-type 8 -m limit --limit 6/m --limit-burst 5 -j ACCEPT</span>
+<span class="c"># iptables -P INPUT DROP</span>
+</pre></div>
+
+
+<blockquote>
+<p>首先我们能看到前四个包的回应都非常正常，然后从第五个包开始，我们每10秒能收到一个正常的回应。这是因为我们设定了单位时间(在这里是每分钟)内允许通过的数据包的个数是每分钟6个，也即每10秒钟一个；其次我们又设定了事件触发阀值为5，所以我们的前四个包都是正常的，只是从第五个包开始，限制规则开始生效，故只能每10秒收到一个正常回应。</p>
+<p>假设我们停止ping，30秒后又开始ping，这时的现象是：</p>
+<p>前两个包是正常的，从第三个包开始丢包，这是因为在这里我的允许一个包通过的周期是10秒，如果在一个周期内系统没有收到符合条件的包，系统的触发值就会恢复1，所以如果我们30秒内没有符合条件的包通过，系统的触发值就会恢复到3，如果5个周期内都没有符合条件的包通过，系统都触发值就会完全恢复。</p>
+</blockquote>
+<h5 id="state">state</h5>
+<p>状态检测；连接追踪机制（conntrack）；</p>
+<p>调整连接追踪功能能够容纳的最大连接数量（需要单独提高）</p>
+<div class="hlcode"><pre><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">net</span><span class="o">/</span><span class="n">nf_conntrack_max</span> <span class="err">最大追踪的链接</span>
+</pre></div>
+
+
+<p>已经追踪到并记录下的追踪信息</p>
+<div class="hlcode"><pre><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">net</span><span class="o">/</span><span class="n">nf_conntrack</span>
+</pre></div>
+
+
+<p>不同协议或者连接类型的时长</p>
+<div class="hlcode"><pre><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">net</span><span class="o">/</span><span class="n">netfilter</span><span class="o">/</span>
+</pre></div>
+
+
+<p>启用连接追踪模板记录连接，并根据连接匹配连接状态的扩展；</p>
+<p>连接追踪模板，用于记录各连接及相关状态；基于IP实现，与是否为TCP协议无关；通过倒计时的方式删除条目；记录连接的状态有</p>
+<div class="hlcode"><pre><span class="n">NEW</span><span class="err">：新发出的请求，连接追踪模版中不存在此连接相关的信息条目，因此，将其识别为第一次发出的请求</span> 
+<span class="n">ESTABLISHED</span><span class="err">：</span><span class="n">NEW</span> <span class="err">状态之后，连接追踪模板中为其建立的条目在失效之前期间内所进行的通信状态</span>
+<span class="n">RELATED</span><span class="err">：相关的连接，如</span><span class="n">ftp</span><span class="err">协议的命令连接与数据连接即为相关联的连接；</span>
+<span class="n">UNTRACKED</span><span class="err">：未追踪的连接；</span>
+<span class="n">INVALID</span><span class="err">：无法识别的状态；</span> 
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="o">[</span>!<span class="o">]</span> --state STATE
+</pre></div>
+
+
+<p>放行icmp，22， 80 连接</p>
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">INPUT</span> <span class="o">-</span><span class="n">d</span> <span class="mf">172.16.0.1</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">--</span><span class="n">dport</span> <span class="mi">22</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">NEW</span><span class="p">,</span><span class="n">ESTABLISHED</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+<span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">OUTPUT</span> <span class="o">-</span><span class="n">s</span> <span class="mf">172.16.0.1</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">--</span><span class="n">sport</span> <span class="mi">22</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">ESTABLISHED</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">INPUT</span> <span class="o">-</span><span class="n">d</span> <span class="mf">172.16.0.1</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">--</span><span class="n">dport</span> <span class="mi">80</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">NEW</span><span class="p">,</span><span class="n">ESTABLISHED</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+<span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">OUTPUT</span> <span class="o">-</span><span class="n">s</span> <span class="mf">172.16.0.1</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">--</span><span class="n">sport</span> <span class="mi">80</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">ESTABLISHED</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">INPUT</span> <span class="o">-</span><span class="n">d</span> <span class="mf">172.16.0.1</span> <span class="o">-</span><span class="n">p</span> <span class="n">icmp</span> <span class="o">--</span><span class="n">icmp</span><span class="o">-</span><span class="n">type</span> <span class="mi">8</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">NEW</span><span class="p">,</span><span class="n">ESTABLISHED</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+<span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">OUTPUT</span> <span class="o">-</span><span class="n">s</span> <span class="mf">172.16.0.1</span> <span class="o">-</span><span class="n">p</span> <span class="n">icmp</span> <span class="o">--</span><span class="n">icmp</span><span class="o">-</span><span class="n">type</span> <span class="mi">0</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">ESBTALISHED</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+</pre></div>
+
+
+<p>规则优化，即已连接的数据包进行放行</p>
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">INPUT</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">ESTABLISHED</span> <span class="o">-</span><span class="n">m</span> <span class="n">ACCEPT</span>
+<span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">OUTPUT</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">ESTABLISHED</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+</pre></div>
+
+
+<p>单独对22，80等端口的建立进行检查</p>
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">I</span> <span class="n">INPUT</span> <span class="mi">2</span> <span class="o">-</span><span class="n">d</span> <span class="mf">172.16.0.1</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">-</span><span class="n">m</span> <span class="n">multiport</span> <span class="o">--</span><span class="n">dports</span> <span class="mi">22</span><span class="p">,</span><span class="mi">80</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">NEW</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+</pre></div>
+
+
+<p>开放被动模式的ftp服务</p>
+<ol>
+<li>装载ftp专用模块</li>
+</ol>
+<div class="hlcode"><pre><span class="cp"># ls -l /lib/modules/4.15.1-1.el7.elrepo.x86_64/kernel/net/netfilter/nf_conntrack_ftp.ko</span>
+<span class="o">-</span><span class="n">rwxr</span><span class="o">--</span><span class="n">r</span><span class="o">--</span><span class="p">.</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">27472</span> <span class="n">Feb</span>  <span class="mi">4</span>  <span class="mi">2018</span> <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="mf">4.15.1</span><span class="o">-</span><span class="mf">1.</span><span class="n">el7</span><span class="p">.</span><span class="n">elrepo</span><span class="p">.</span><span class="n">x86_64</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">net</span><span class="o">/</span><span class="n">netfilter</span><span class="o">/</span><span class="n">nf_conntrack_ftp</span><span class="p">.</span><span class="n">ko</span>
+
+<span class="cp"># modinfo nf_conntrack_ftp.ko</span>
+<span class="nl">filename:</span>       <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="mf">4.15.1</span><span class="o">-</span><span class="mf">1.</span><span class="n">el7</span><span class="p">.</span><span class="n">elrepo</span><span class="p">.</span><span class="n">x86_64</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">net</span><span class="o">/</span><span class="n">netfilter</span><span class="o">/</span><span class="n">nf_conntrack_ftp</span><span class="p">.</span><span class="n">ko</span>
+<span class="nl">alias:</span>          <span class="n">nfct</span><span class="o">-</span><span class="n">helper</span><span class="o">-</span><span class="n">ftp</span>
+<span class="nl">alias:</span>          <span class="n">ip_conntrack_ftp</span>
+<span class="nl">description:</span>    <span class="n">ftp</span> <span class="n">connection</span> <span class="n">tracking</span> <span class="n">helper</span>
+<span class="nl">author:</span>         <span class="n">Rusty</span> <span class="n">Russell</span> <span class="o">&lt;</span><span class="n">rusty</span><span class="err">@</span><span class="n">rustcorp</span><span class="p">.</span><span class="n">com</span><span class="p">.</span><span class="n">au</span><span class="o">&gt;</span>
+<span class="nl">license:</span>        <span class="n">GPL</span>
+<span class="nl">srcversion:</span>     <span class="n">F7866B81ED3FB7B77825505</span>
+<span class="nl">depends:</span>        <span class="n">nf_conntrack</span>
+<span class="nl">intree:</span>         <span class="n">Y</span>
+<span class="nl">name:</span>           <span class="n">nf_conntrack_ftp</span>
+<span class="nl">vermagic:</span>       <span class="mf">4.15.1</span><span class="o">-</span><span class="mf">1.</span><span class="n">el7</span><span class="p">.</span><span class="n">elrepo</span><span class="p">.</span><span class="n">x86_64</span> <span class="n">SMP</span> <span class="n">mod_unload</span> <span class="n">modversions</span>
+<span class="nl">parm:</span>           <span class="n">ports</span><span class="o">:</span><span class="n">array</span> <span class="n">of</span> <span class="n">ushort</span>
+<span class="nl">parm:</span>           <span class="n">loose</span><span class="o">:</span><span class="kt">bool</span>
+
+<span class="cp"># modprobe nf_conntrack_ftp</span>
+
+<span class="cp">#  lsmod | grep ftp</span>
+<span class="n">nf_conntrack_ftp</span>       <span class="mi">20480</span>  <span class="mi">0</span>
+<span class="n">nf_conntrack</span>          <span class="mi">135168</span>  <span class="mi">9</span> <span class="n">nf_conntrack_ipv6</span><span class="p">,</span><span class="n">nf_conntrack_ftp</span><span class="p">,</span><span class="n">nf_conntrack_ipv4</span><span class="p">,</span><span class="n">ipt_MASQUERADE</span><span class="p">,</span><span class="n">nf_nat_ipv6</span><span class="p">,</span><span class="n">nf_nat_masquerade_ipv4</span><span class="p">,</span><span class="n">xt_conntrack</span><span class="p">,</span><span class="n">nf_nat_ipv4</span><span class="p">,</span><span class="n">nf_nat</span>
+</pre></div>
+
+
+<ol>
+<li>放行请求报文</li>
+</ol>
+<p>命令连接： NEW ESTABLISHED</p>
+<p>数据连接：RELATED  ESTABLISHED</p>
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">INPUT</span> <span class="o">-</span><span class="n">d</span> <span class="n">local_ip</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">--</span><span class="n">dport</span> <span class="mi">21</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">NEW</span><span class="p">,</span><span class="n">ESTABLISHED</span> <span class="o">-</span><span class="n">m</span> <span class="n">ACCEPT</span>
+<span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">INPUT</span> <span class="o">-</span><span class="n">d</span> <span class="n">local_ip</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">RELATED</span><span class="p">,</span><span class="n">ESTABLISHED</span> <span class="o">-</span><span class="n">m</span> <span class="n">ACCEPT</span>
+</pre></div>
+
+
+<ol>
+<li>放行响应报文</li>
+</ol>
+<div class="hlcode"><pre><span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">OUTPUT</span> <span class="o">-</span><span class="n">s</span> <span class="n">local_ip</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">ESTABLISHED</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+</pre></div>
+
+
+<h2 id="target">Target 执行目标</h2>
+<p>-j代表”jump to target”</p>
+<p>-j指定了当与规则(Rule)匹配时如何处理数据包</p>
+<p>可能的值是ACCEPT, DROP, QUEUE, RETURN</p>
+<p>还可以指定其他链（Chain）作为目标</p>
+<h2 id="target_1">Target 采取的动作</h2>
+<p>target/jump决定符合条件的包到何处去，</p>
+<p>target的目标是具体的操作</p>
+<p>target指定要对包做的操作，比如DROP和ACCEPT。不同的target有不同的结果。一些target会使包停止前进，也就是不再继续比较当前链中的其他规则或父链中的其他规则。而另外一些target在对包做完操作之后，包还会继续和其他的规则比较，如LOG，ULOG和TOS。它们会对包进行记录，然后让包通过，以便匹配这条链中的其他规则。有了这样的target，就可以对同一个包既改变它的TTL又改变它的TOS。有些target必须要有准确的参数（如TOS需要确定的数值），有些就不是必须的，但如果我们想指定也可以（如日志的前缀，伪装使用的端口，等等）。</p>
+<h3 id="accept">ACCEPT</h3>
+<p>接受；当包满足了指定的匹配条件，就会被ACCEPT，允许包前往下一个目的地。不会再去匹配当前链中的其他规则或同一个表内的其他规则，但包还要通过其他表中的链，可能会被DROP。</p>
+<h3 id="drop">DROP</h3>
+<p>丢弃；当信息包与具有DROP目标的规则完全匹配时，会阻塞该信息包，并且不对它做进一步处理。该目标被指定为-j DROP。若包符合条件，该target就会将target丢掉，也就是说包的生命到此结束，效果就是包被阻塞了。在某些情况下，这个target会引起意外的结果，因为它不会向发送者返回任何信 息，也不会向路由器返回信息，这就可能会使连接的另一方的sockets因苦等回音而亡:) 解决这个问题的较 好的办法是使用REJECT target，（译者注：因为它在丢弃包的同时还会向发送者返 回一个错误信息，这样另一方就能正常结束），尤其是在阻止端口扫描工具获得更多的信息时，可以隐蔽被 过滤掉的端口等等（译者注：因为扫描工具扫描一个端口时，如果没有返回信息，一般会认为端口未打开或 被防火墙等设备过滤掉了）。还要注意如果包在子链中被DROP了，那么它在主链里也不会再继续前进，不管 是在当前的表还是在其他表里。总之，包死翘翘了。</p>
+<h3 id="reject">REJECT</h3>
+<p>拒绝；REJECT和DROP基本一样，区别在于它除了阻塞包之外， 还向发送者返回错误信息。target还只能用在INPUT、FORWARD、OUTPUT和它们的子链里，而且包含 REJECT的链也只能被它们调用，否则不能发挥作用。它只有一个选项，是用来控制 返回的错误信息的种类的。虽然有很多种类，但如果你有TCP/IP方面的基础知识，就很容易理解它们。拦阻该数据包，并返回数据包通知对方，可以返回的数据包有几个选择：ICMP port-unreachable、ICMP echo-reply 或是tcp-reset（这个数据包包会要求对方关闭联机），进行完此处理动作后，将不再比对其它规则，直接中断过滤程序。</p>
+<p>以上连接追踪功能内核会在内存中开辟一段专用的空间用于存储连接的状态等，由于此段内存空间是有限的，因此就必须对连接追踪功能进行一些调整限制，有关参数有：</p>
+<p>​       nf_conntrack内核模块；</p>
+<p>​            当前追踪到的所有连接：/proc/net/nf_conntrack文件中；</p>
+<p>​            能追踪的最大连接数量定义在：/proc/sys/net/nf_conntrack_max</p>
+<p>​                此值可自行定义，建议必要时调整到足够大；</p>
+<p>​            不同的协议的连接追踪的时长：/proc/sys/net/netfilter/</p>
+<p>​            日志：/etc/syslog.conf，将数据包相关信息纪录在 /var/log 中，进行完此处理动作后，将会继续比对其它规则。</p>
+<h3 id="return">RETURN</h3>
+<p>返回调用链</p>
+<h3 id="log">LOG</h3>
+<p>记录日志信息 </p>
+<p>​          --log-prefix "STRING" </p>
+<p>​            iptables -I INPUT 6 -d 10.76.33.201 -p icmp --icmp-type 8 -j LOG --log-prefix "-- firewall log for icmp --" </p>
+<p>​           </p>
+<h3 id="dnat">DNAT</h3>
+<p>目标地址转换 </p>
+<h3 id="snat">SNAT</h3>
+<p>源地址转换 </p>
+<h3 id="redirect">REDIRECT</h3>
+<p>端口重定向 </p>
+<p>​     </p>
+<h3 id="masquerade">MASQUERADE</h3>
+<p>地址伪装, 即SNAT</p>
+<p>​     </p>
+<h3 id="mark">MARK</h3>
+<p>做防火墙标记</p>
+<h3 id="_7">自定义链</h3>
+<p>由自定义链上的规则进行匹配检查</p>
+<h1 id="_8">保存及重载规则</h1>
+<h2 id="iptables-save">iptables-save 保存现有规则</h2>
+<div class="hlcode"><pre><span class="n">iptables</span><span class="o">-</span><span class="n">save</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">PATH</span><span class="o">/</span><span class="n">TO</span><span class="o">/</span><span class="n">SOMEFILE</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">iptables</span><span class="o">-</span><span class="n">save</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">iptables</span><span class="p">.</span><span class="n">rules</span>
+</pre></div>
+
+
+<h2 id="iptables-restore">iptables-restore  导入规则</h2>
+<div class="hlcode"><pre><span class="n">iptables</span><span class="o">-</span><span class="n">restore</span> <span class="o">&lt;</span> <span class="o">/</span><span class="n">PATH</span><span class="o">/</span><span class="n">TO</span><span class="o">/</span><span class="n">SOMEFILE</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">iptables</span><span class="o">-</span><span class="n">restore</span> <span class="o">&lt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">iptables</span><span class="p">.</span><span class="n">rules</span>
+</pre></div>
+
+
+<blockquote></blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

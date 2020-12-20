@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>hmac - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;hmac
+    <span class="updated">Page Updated&nbsp;
+      2018-08-26 19:23
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">hmac</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#hmac">hmac</a></li>
+</ul>
+</div>
+<h1 id="hmac">hmac</h1>
+<p>python 还有一个 hmac 模块，它内部对我们创建 key 和 内容 再进行处理然后再加密</p>
+<p>散列消息鉴别码，简称HMAC，是一种基于消息鉴别码MAC（Message Authentication Code）的鉴别机制。使用HMAC时,消息通讯的双方，通过验证消息中加入的鉴别密钥K来鉴别消息的真伪；</p>
+<p>一般用于网络通信中消息加密，前提是双方先要约定好key,就像接头暗号一样，然后消息发送把用key把消息加密，接收方用key ＋ 消息明文再加密，拿加密后的值 跟 发送者的相对比是否相等，这样就能验证消息的真实性，及发送者的合法性了。</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">31</span><span class="p">]</span><span class="o">:</span> <span class="n">import</span> <span class="n">hmac</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">39</span><span class="p">]</span><span class="o">:</span> <span class="n">h</span> <span class="o">=</span> <span class="n">hmac</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="n">b</span><span class="err">&#39;</span><span class="n">Hello</span> <span class="n">World</span><span class="err">&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">40</span><span class="p">]</span><span class="o">:</span> <span class="n">h</span><span class="p">.</span><span class="n">digest</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">40</span><span class="p">]</span><span class="o">:</span> <span class="n">b</span><span class="err">&#39;\</span><span class="n">x17</span><span class="err">\</span><span class="n">xef</span><span class="err">\</span><span class="n">x0b</span><span class="err">\</span><span class="n">x13D</span><span class="err">\</span><span class="n">xd4</span><span class="err">\</span><span class="n">xa6gT</span><span class="p">[</span><span class="mi">7</span><span class="err">\</span><span class="n">x8a</span><span class="err">\</span><span class="n">xfb</span><span class="s">&quot;</span><span class="se">\xa1</span><span class="s">+&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">41</span><span class="p">]</span><span class="o">:</span> <span class="n">h</span><span class="p">.</span><span class="n">hexdigest</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">41</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mi">17</span><span class="n">ef0b1344d4a667545b378afb22a12b</span><span class="err">&#39;</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

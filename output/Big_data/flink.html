@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>flink - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Big_data">Big_data</a>&nbsp;&#187;&nbsp;flink
+    <span class="updated">Page Updated&nbsp;
+      2019-07-15 08:58
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">flink</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#flink">Flink</a></li>
+</ul>
+</div>
+<h1 id="flink">Flink</h1>
+<p>前面说Spark Streaming是将实时数据流按时间分段后，当作小的批处理数据去计算。那么Flink则相反，一开始就是按照流处理计算去设计的。当把从文件系统（HDFS）中读入的数据也当做数据流看待，他就变成批处理系统了。</p>
+<p>为什么Flink既可以流处理又可以批处理呢？</p>
+<p>如果要进行流计算，Flink会初始化一个流执行环境StreamExecutionEnvironment，然后利用这个执行环境构建数据流DataStream。</p>
+<div class="hlcode"><pre><span class="nx">StreamExecutionEnvironment</span> <span class="n">see</span> <span class="o">=</span> <span class="nx">StreamExecutionEnvironment.getExecutionEnvironment</span><span class="p">();</span>
+
+<span class="nx">DataStream</span><span class="o">&lt;</span><span class="nx">WikipediaEditEvent</span><span class="o">&gt;</span> <span class="n">edits</span> <span class="o">=</span> <span class="nx">see.addSource</span><span class="p">(</span><span class="nb">new</span> <span class="nx">WikipediaEditsSource</span><span class="p">());</span>
+</pre></div>
+
+
+<p>如果要进行批处理计算，Flink会初始化一个批处理执行环境ExecutionEnvironment，然后利用这个环境构建数据集DataSet。</p>
+<div class="hlcode"><pre><span class="nx">ExecutionEnvironment</span> <span class="n">env</span> <span class="o">=</span> <span class="nx">ExecutionEnvironment.getExecutionEnvironment</span><span class="p">();</span>
+
+<span class="nx">DataSet</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span> <span class="n">text</span> <span class="o">=</span> <span class="nx">env.readTextFile</span><span class="p">(</span><span class="s2">&quot;/path/to/file&quot;</span><span class="p">);</span>
+</pre></div>
+
+
+<p>然后在DataStream或者DataSet上执行各种数据转换操作（transformation），这点很像Spark。不管是流处理还是批处理，Flink运行时的执行引擎是相同的，只是数据源不同而已。</p>
+<p>Flink处理实时数据流的方式跟Spark Streaming也很相似，也是将流数据分段后，一小批一小批地处理。流处理算是Flink里的“一等公民”，Flink对流处理的支持也更加完善，它可以对数据流执行window操作，将数据流切分到一个一个的window里，进而进行计算。</p>
+<p>在数据流上执行</p>
+<div class="hlcode"><pre><span class="p">.</span><span class="n">timeWindow</span><span class="p">(</span><span class="n">Time</span><span class="p">.</span><span class="n">seconds</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+
+
+<p>可以将数据切分到一个10秒的时间窗口，进一步对这个窗口里的一批数据进行统计汇总。</p>
+<p>Flink的架构和Hadoop 1或者Yarn看起来也很像，JobManager是Flink集群的管理者，Flink程序提交给JobManager后，JobManager检查集群中所有TaskManager的资源利用状况，如果有空闲TaskSlot（任务槽），就将计算任务分配给它执行。</p>
+<p><img alt="image-20200708084052436" src="flink.assets/image-20200708084052436.png" /></p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

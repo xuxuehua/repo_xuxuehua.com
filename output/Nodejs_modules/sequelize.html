@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>sequelize - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Nodejs_modules">Nodejs_modules</a>&nbsp;&#187;&nbsp;sequelize
+    <span class="updated">Page Updated&nbsp;
+      2018-08-05 01:39
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">sequelize</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#sequelize">sequelize 框架</a><ul>
+<li><a href="#_1">使用</a><ul>
+<li><a href="#_2">建立测试数据</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="sequelize">sequelize 框架</h1>
+<p>ORM技术：Object-Relational Mapping，把关系数据库的表结构映射到对象上。</p>
+<p>Node的ORM框架Sequelize来操作数据库</p>
+<h2 id="_1">使用</h2>
+<h3 id="_2">建立测试数据</h3>
+<div class="hlcode"><pre><span class="n">grant</span> <span class="n">all</span> <span class="n">privileges</span> <span class="n">on</span> <span class="n">test</span><span class="p">.</span><span class="o">*</span> <span class="n">to</span> <span class="err">&#39;</span><span class="n">www</span><span class="sc">&#39;@&#39;</span><span class="o">%</span><span class="err">&#39;</span> <span class="n">identified</span> <span class="n">by</span> <span class="err">&#39;</span><span class="n">www</span><span class="err">&#39;</span><span class="p">;</span>
+
+<span class="n">use</span> <span class="n">test</span><span class="p">;</span>
+
+<span class="n">create</span> <span class="n">table</span> <span class="n">pets</span> <span class="p">(</span>
+    <span class="n">id</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="n">not</span> <span class="n">null</span><span class="p">,</span>
+    <span class="n">name</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="n">not</span> <span class="n">null</span><span class="p">,</span>
+    <span class="n">gender</span> <span class="kt">bool</span> <span class="n">not</span> <span class="n">null</span><span class="p">,</span>
+    <span class="n">birth</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="n">not</span> <span class="n">null</span><span class="p">,</span>
+    <span class="n">createdAt</span> <span class="n">bigint</span> <span class="n">not</span> <span class="n">null</span><span class="p">,</span>
+    <span class="n">updatedAt</span> <span class="n">bigint</span> <span class="n">not</span> <span class="n">null</span><span class="p">,</span>
+    <span class="n">version</span> <span class="n">bigint</span> <span class="n">not</span> <span class="n">null</span><span class="p">,</span>
+    <span class="n">primary</span> <span class="n">key</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span>
+<span class="p">)</span> <span class="n">engine</span><span class="o">=</span><span class="n">innodb</span><span class="p">;</span>
+</pre></div>
+
+
+<blockquote>
+<p><code>grant</code>命令是创建MySQL的用户名和口令，均为<code>www</code>，并赋予操作<code>test</code>数据库的所有权限。</p>
+</blockquote>
+<p>Package.json</p>
+<div class="hlcode"><pre><span class="p">{</span>
+  <span class="s">&quot;name&quot;</span><span class="o">:</span> <span class="s">&quot;hello-sequelize&quot;</span><span class="p">,</span>
+  <span class="s">&quot;version&quot;</span><span class="o">:</span> <span class="s">&quot;0.0.1&quot;</span><span class="p">,</span>
+  <span class="s">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s">&quot;sequelize&quot;</span><span class="o">:</span> <span class="s">&quot;^4.38.0&quot;</span><span class="p">,</span>
+    <span class="s">&quot;mysql&quot;</span><span class="o">:</span> <span class="s">&quot;^2.16.0&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>config.js</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nl">database:</span> <span class="err">&#39;</span><span class="n">test</span><span class="err">&#39;</span><span class="p">,</span> <span class="c1">// 使用哪个数据库</span>
+    <span class="nl">username:</span> <span class="err">&#39;</span><span class="n">www</span><span class="err">&#39;</span><span class="p">,</span> <span class="c1">// 用户名</span>
+    <span class="nl">password:</span> <span class="err">&#39;</span><span class="n">www</span><span class="err">&#39;</span><span class="p">,</span> <span class="c1">// 口令</span>
+    <span class="nl">host:</span> <span class="err">&#39;</span><span class="n">localhost</span><span class="err">&#39;</span><span class="p">,</span> <span class="c1">// 主机名</span>
+    <span class="nl">port:</span> <span class="mi">3306</span> <span class="c1">// 端口号，MySQL默认3306</span>
+<span class="p">};</span>
+
+<span class="n">module</span><span class="p">.</span><span class="n">exports</span> <span class="o">=</span> <span class="n">config</span><span class="p">;</span>
+</pre></div>
+
+
+<p>app.js</p>
+<div class="hlcode"><pre>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

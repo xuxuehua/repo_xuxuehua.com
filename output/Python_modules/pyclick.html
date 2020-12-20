@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>pyclick - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;pyclick
+    <span class="updated">Page Updated&nbsp;
+      2020-04-01 01:54
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">pyclick</div>
+
+  <p>[toc]</p>
+<h1 id="pyclick">pyclick</h1>
+<h2 id="installation">installation</h2>
+<div class="hlcode"><pre><span class="n">pipenv</span> <span class="n">install</span> <span class="n">pyclick</span>
+</pre></div>
+
+
+<h1 id="example">example</h1>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">pyclick</span> <span class="n">import</span> <span class="n">HumanClicker</span>
+<span class="n">from</span> <span class="n">time</span> <span class="n">import</span> <span class="n">sleep</span>
+
+<span class="cp"># initialize HumanClicker object</span>
+
+<span class="cp"># move the mouse to position (100,100) on the screen in approximately 2 seconds</span>
+
+<span class="cp"># mouse click(left button)</span>
+<span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+    <span class="n">hc1</span> <span class="o">=</span> <span class="n">HumanClicker</span><span class="p">()</span>
+    <span class="n">hc1</span><span class="p">.</span><span class="n">move</span><span class="p">((</span><span class="mi">91</span><span class="p">,</span><span class="mi">91</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">hc1</span><span class="p">.</span><span class="n">click</span><span class="p">()</span>
+    <span class="n">print</span><span class="p">(</span><span class="s">&quot;Click Refresh&quot;</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">hc3</span> <span class="o">=</span> <span class="n">HumanClicker</span><span class="p">()</span>
+    <span class="n">hc3</span><span class="p">.</span><span class="n">move</span><span class="p">((</span><span class="mi">349</span><span class="p">,</span><span class="mi">710</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">hc3</span><span class="p">.</span><span class="n">click</span><span class="p">()</span>
+    <span class="n">print</span><span class="p">(</span><span class="s">&quot;Click recaptcha&quot;</span><span class="p">)</span>
+
+    <span class="n">hc5</span> <span class="o">=</span> <span class="n">HumanClicker</span><span class="p">()</span>
+    <span class="n">hc5</span><span class="p">.</span><span class="n">move</span><span class="p">((</span><span class="mi">520</span><span class="p">,</span><span class="mi">767</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">hc5</span><span class="p">.</span><span class="n">click</span><span class="p">()</span>
+    <span class="n">print</span><span class="p">(</span><span class="s">&quot;Click Roll&quot;</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">600</span><span class="p">)</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

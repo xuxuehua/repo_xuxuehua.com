@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>configparser - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;configparser
+    <span class="updated">Page Updated&nbsp;
+      2019-02-01 22:39
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">configparser</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#configparser">configparser</a><ul>
+<li><a href="#configparser_1">类 ConfigParser</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="configparser">configparser</h1>
+<p>在systemd的配置文件中，将section（中括号）作为key，section中存储着键值对组成字典，做成嵌套的字典</p>
+<h2 id="configparser_1">类 ConfigParser</h2>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">configparser</span> <span class="n">import</span> <span class="n">ConfigParser</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">test</span><span class="p">.</span><span class="n">ini</span><span class="err">&#39;</span>
+<span class="n">newfilename</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">mysql</span><span class="p">.</span><span class="n">ini</span><span class="err">&#39;</span>
+
+<span class="n">cfg</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="p">()</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">sections</span><span class="p">())</span>
+<span class="n">print</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">has_section</span><span class="p">(</span><span class="err">&#39;</span><span class="n">client</span><span class="err">&#39;</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="sc">&#39;-&#39;</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="n">in</span> <span class="n">cfg</span><span class="p">.</span><span class="n">items</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">items</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="n">cfg</span><span class="p">.</span><span class="n">has_section</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Install</span><span class="err">&#39;</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">cfg</span><span class="p">.</span><span class="n">remove_section</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Install</span><span class="err">&#39;</span><span class="p">)</span>
+
+<span class="n">cfg</span><span class="p">.</span><span class="n">add_section</span><span class="p">(</span><span class="err">&#39;</span><span class="n">test</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="err">&#39;</span><span class="n">test</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">test1</span><span class="err">&#39;</span><span class="p">,</span> <span class="sc">&#39;1&#39;</span><span class="p">)</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="err">&#39;</span><span class="n">test</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">test2</span><span class="err">&#39;</span><span class="p">,</span> <span class="sc">&#39;2&#39;</span><span class="p">)</span>
+
+
+<span class="n">with</span> <span class="n">open</span><span class="p">(</span><span class="n">newfilename</span><span class="p">,</span> <span class="sc">&#39;w&#39;</span><span class="p">)</span> <span class="n">as</span> <span class="n">f</span><span class="o">:</span>
+    <span class="n">cfg</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">[</span><span class="err">&#39;</span><span class="n">Unit</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Service</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Install</span><span class="err">&#39;</span><span class="p">]</span>
+<span class="n">False</span>
+<span class="o">--------</span>
+<span class="n">DEFAULT</span>
+<span class="p">[]</span>
+<span class="n">Unit</span>
+<span class="p">[(</span><span class="err">&#39;</span><span class="n">description</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">ipa_list</span><span class="err">&#39;</span><span class="p">)]</span>
+<span class="n">Service</span>
+<span class="p">[(</span><span class="err">&#39;</span><span class="n">type</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">simple</span><span class="err">&#39;</span><span class="p">),</span> <span class="p">(</span><span class="err">&#39;</span><span class="n">execstart</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="p">.</span><span class="n">pyenv</span><span class="o">/</span><span class="n">versions</span><span class="o">/</span><span class="n">env3</span><span class="mf">.5.3</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python</span> <span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">rtmbot_test</span><span class="o">/</span><span class="n">ipa_list</span><span class="p">.</span><span class="n">py</span><span class="err">&#39;</span><span class="p">),</span> <span class="p">(</span><span class="err">&#39;</span><span class="n">workingdirectory</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">rtmbot_test</span><span class="err">&#39;</span><span class="p">),</span> <span class="p">(</span><span class="err">&#39;</span><span class="n">restart</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">on</span><span class="o">-</span><span class="n">failure</span><span class="err">&#39;</span><span class="p">),</span> <span class="p">(</span><span class="err">&#39;</span><span class="n">limitcore</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">infinity</span><span class="err">&#39;</span><span class="p">)]</span>
+<span class="n">Install</span>
+<span class="p">[(</span><span class="err">&#39;</span><span class="n">wantedby</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">multi</span><span class="o">-</span><span class="n">user</span><span class="p">.</span><span class="n">target</span><span class="err">&#39;</span><span class="p">)]</span>
+</pre></div>
+
+
+<p>生成后的配置文件</p>
+<div class="hlcode"><pre><span class="k">[Unit]</span>
+<span class="na">description</span> <span class="o">=</span> <span class="s">ipa_list</span>
+
+<span class="k">[Service]</span>
+<span class="na">type</span> <span class="o">=</span> <span class="s">simple</span>
+<span class="na">execstart</span> <span class="o">=</span> <span class="s">/root/.pyenv/versions/env3.5.3/bin/python /root/rtmbot_test/ipa_list.py</span>
+<span class="na">workingdirectory</span> <span class="o">=</span> <span class="s">/root/rtmbot_test</span>
+<span class="na">restart</span> <span class="o">=</span> <span class="s">on-failure</span>
+<span class="na">limitcore</span> <span class="o">=</span> <span class="s">infinity</span>
+
+<span class="k">[test]</span>
+<span class="na">test1</span> <span class="o">=</span> <span class="s">1</span>
+<span class="na">test2</span> <span class="o">=</span> <span class="s">2</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

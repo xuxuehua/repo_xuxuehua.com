@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>email - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Flask">Flask</a>&nbsp;&#187;&nbsp;email
+    <span class="updated">Page Updated&nbsp;
+      2019-08-29 14:31
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">email</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#flask-mail">Flask-Mail</a><ul>
+<li><a href="#_1">配置变量</a></li>
+<li><a href="#_2">常用邮件服务</a></li>
+<li><a href="#_3">服务配置</a></li>
+<li><a href="#_4">发信</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="flask-mail">Flask-Mail</h1>
+<p>扩展第三方邮件服务, 通过SMTP服务来发送邮件</p>
+<div class="hlcode"><pre><span class="n">pip</span> <span class="n">install</span> <span class="n">flask</span><span class="o">-</span><span class="n">mail</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">flask_mail</span> <span class="n">import</span> <span class="n">Mail</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="p">...</span>
+<span class="n">mail</span> <span class="o">=</span> <span class="n">Mail</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="_1">配置变量</h2>
+<p><img alt="img" src="https://snipboard.io/IMGLhj.jpg" /></p>
+<p>STARTTLS 是另一种加密方式，会对不安全的连接进行升级(使用SSL或者TLS)， </p>
+<div class="hlcode"><pre><span class="n">MAIL_USE_TLS</span> <span class="o">=</span> <span class="n">True</span>
+<span class="n">MAIL_PORT</span> <span class="o">=</span> <span class="mi">587</span>
+</pre></div>
+
+
+<p>SSL/TLS加密</p>
+<div class="hlcode"><pre><span class="n">MAIL_USE_SSL</span> <span class="o">=</span> <span class="n">True</span>
+<span class="n">MAIL_PORT</span> <span class="o">=</span> <span class="mi">465</span>
+</pre></div>
+
+
+<h2 id="_2">常用邮件服务</h2>
+<p><img alt="img" src="https://snipboard.io/vOXpV9.jpg" /></p>
+<p>163 SMTP不支持STARTTLS， 需要使用SSL/TLS </p>
+<p>对于需要发送大量事务性邮件，使用自己配置的SMTP或者Send Grid， Mailgun等</p>
+<h2 id="_3">服务配置</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">os</span> 
+<span class="n">from</span> <span class="n">flask</span> <span class="n">import</span> <span class="n">Flask</span>
+<span class="n">from</span> <span class="n">flask_mail</span> <span class="n">import</span> <span class="n">Mail</span> 
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="p">.</span><span class="n">config</span><span class="p">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">...</span>
+        <span class="n">MAIL_SERVER</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="err">&#39;</span><span class="n">MAIL_SERVER</span><span class="err">&#39;</span><span class="p">)</span>
+        <span class="n">MAIL_PORT</span> <span class="o">=</span> <span class="mi">587</span>
+        <span class="n">MAIL_USE_TLS</span> <span class="o">=</span> <span class="n">True</span>
+        <span class="n">MAIL_USERNAME</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="err">&#39;</span><span class="n">MAIL_USERNAME</span><span class="err">&#39;</span><span class="p">)</span>
+        <span class="n">MAIL_PASSWORD</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="err">&#39;</span><span class="n">MAIL_PASSWORD</span><span class="err">&#39;</span><span class="p">)</span>
+        <span class="n">MAIL_DEFAULT_SENDER</span> <span class="o">=</span> <span class="p">(</span><span class="err">&#39;</span><span class="n">Rick</span> <span class="n">Xu</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="err">&#39;</span><span class="n">MAIL_USERNAME</span><span class="err">&#39;</span><span class="p">))</span>
+<span class="p">)</span>
+
+<span class="n">mail</span> <span class="o">=</span> <span class="n">Mail</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="_4">发信</h2>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">flask_mail</span> <span class="n">import</span> <span class="n">Mail</span><span class="p">,</span> <span class="n">Message</span> 
+<span class="p">...</span>
+<span class="n">mail</span> <span class="o">=</span> <span class="n">Mail</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="p">...</span>
+<span class="n">def</span> <span class="n">send_mail</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">recipients</span><span class="o">=</span><span class="p">[</span><span class="n">to</span><span class="p">],</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="n">mail</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">subscribe</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;GET&quot;</span><span class="p">,</span> <span class="s">&quot;POST&quot;</span><span class="p">])</span>
+<span class="n">def</span> <span class="n">subscribe</span><span class="p">()</span><span class="o">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">SubscribeForm</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">form</span><span class="p">.</span><span class="n">validate_on_submit</span><span class="p">()</span><span class="o">:</span>
+                <span class="n">email</span> <span class="o">=</span> <span class="n">form</span><span class="p">.</span><span class="n">email</span><span class="p">.</span><span class="n">data</span>
+                <span class="n">flash</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Welcome</span> <span class="n">you</span><span class="err">&#39;</span><span class="p">)</span>
+                <span class="n">send_email</span><span class="p">(</span><span class="s">&quot;Subscribe Success!&quot;</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">Hello</span><span class="p">,</span> <span class="n">thanks</span> <span class="k">for</span> <span class="n">subscribing</span><span class="err">&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="err">&#39;</span><span class="n">index</span><span class="err">&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="err">&#39;</span><span class="n">index</span><span class="p">.</span><span class="n">html</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

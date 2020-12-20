@@ -1,0 +1,1050 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>dockerfile - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Docker">Docker</a>&nbsp;&#187;&nbsp;dockerfile
+    <span class="updated">Page Updated&nbsp;
+      2018-10-24 16:12
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">dockerfile</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#dockerfile">dockerfile</a><ul>
+<li><a href="#from">FROM</a></li>
+<li><a href="#run">RUN 指令安装</a><ul>
+<li><a href="#shell">shell 格式</a></li>
+<li><a href="#exec">exec 格式</a></li>
+</ul>
+</li>
+<li><a href="#copy">COPY 复制文件</a><ul>
+<li><a href="#include-files-outside-of-dockers-build-context">include files outside of Docker's build context</a></li>
+</ul>
+</li>
+<li><a href="#add">ADD</a></li>
+<li><a href="#maintainer-deprecated">MAINTAINER 维护者 （deprecated ）</a></li>
+<li><a href="#cmd">CMD 容器启动命令</a><ul>
+<li><a href="#shell_1">shell 格式</a></li>
+<li><a href="#exec_1">exec 格式 （推荐）</a><ul>
+<li><a href="#_1">参数列表格式</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#entrypoint">ENTRYPOINT 入口点</a><ul>
+<li><a href="#exec_2">exec 格式</a></li>
+<li><a href="#docker-run">docker run 操作</a><ul>
+<li><a href="#shell_2">shell 格式</a></li>
+<li><a href="#shopt-s-nullglob">shopt -s nullglob</a></li>
+<li><a href="#if-101-then">if [ “${1:0:1}” = ‘-‘ ]; then…</a></li>
+<li><a href="#set-mysqld">set – mysqld “$@”</a></li>
+<li><a href="#exec_3">exec “$@”</a></li>
+<li><a href="#_2">情况判断</a></li>
+<li><a href="#mysql">${mysql[@]}</a></li>
+<li><a href="#exec-gosu-mysql-bash_source">exec gosu mysql “$BASH_SOURCE” “$@”</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#env">ENV 设置环境变量</a><ul>
+<li><a href="#_3">变量替换</a></li>
+</ul>
+</li>
+<li><a href="#arg">ARG 构建参数</a></li>
+<li><a href="#label">LABEL 定义标签</a></li>
+<li><a href="#volume">VOLUME 挂载点</a></li>
+<li><a href="#expose">EXPOSE 声明端口</a></li>
+<li><a href="#workdir">WORKDIR 指定工作目录</a></li>
+<li><a href="#user">USER 指定当前用户</a></li>
+<li><a href="#healthcheck">HEALTHCHECK 健康检查</a></li>
+<li><a href="#onbuild">ONBUILD 在子镜像中执行</a></li>
+<li><a href="#dockerignore">.dockerignore 文件</a></li>
+<li><a href="#_4">应用运行前的准备工作</a></li>
+</ul>
+</li>
+<li><a href="#example">example</a><ul>
+<li><a href="#mysql_1">mysql 构建过程</a></li>
+<li><a href="#_5">让镜像变成像命令一样使用</a><ul>
+<li><a href="#tomcat">tomcat</a><ul>
+<li><a href="#dockerfile_1">构建Dockerfile</a></li>
+<li><a href="#tomcat7sh">tomcat7.sh</a></li>
+<li><a href="#_6">构建镜像</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#wordpress-nginx">构建Wordpress + nginx运行环境</a></li>
+<li><a href="#ruby-on-rails">构建Ruby on Rails环境</a></li>
+<li><a href="#nginx">构建Nginx运行环境</a></li>
+<li><a href="#postgres">构建Postgres镜像</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="dockerfile">dockerfile</h1>
+<p>纯文本文件，通过其命令构建一个镜像</p>
+<h2 id="from">FROM</h2>
+<p>在Dockerfile中第一条非注释INSTRUCTION一定是<code>FROM</code>，它决定了以哪一个镜像作为基准，<code>&lt;image&gt;</code>首选本地是否存在，如果不存在则会从公共仓库下载（当然也可以使用私有仓库的格式）</p>
+<div class="hlcode"><pre><span class="nb">FROM</span>  <span class="o">&lt;</span><span class="nb">image</span><span class="o">&gt;</span>
+<span class="nx">或</span>
+<span class="nb">FROM</span> <span class="o">&lt;</span><span class="nb">image</span><span class="o">&gt;</span><span class="p">:</span><span class="o">&lt;</span><span class="kt">tag</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>The same pattern you use in <code>docker push</code> works:</p>
+<div class="hlcode"><pre><span class="n">FROM</span> <span class="mf">1234567890.</span><span class="n">dkr</span><span class="p">.</span><span class="n">ecr</span><span class="p">.</span><span class="n">us</span><span class="o">-</span><span class="n">west</span><span class="o">-</span><span class="mf">2.</span><span class="n">amazonaws</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">mycompany</span><span class="o">:</span><span class="n">latest</span>
+</pre></div>
+
+
+<h2 id="run">RUN 指令安装</h2>
+<p>在docker build 期间的构建指令，RUN可以运行任何被基础image支持的命令。如基础image选择了ubuntu，那么软件管理部分只能使用ubuntu的命令。</p>
+<ul>
+<li>RUN命令将在当前image中执行任意合法命令并提交执行结果。命令执行提交后，就会自动执行Dockerfile中的下一个指令。</li>
+<li>层级 RUN 指令和生成提交是符合Docker核心理念的做法。它允许像版本控制那样，在任意一个点，对image 镜像进行定制化构建。</li>
+<li>RUN 指令缓存不会在下个命令执行时自动失效。比如 RUN apt-get dist-upgrade -y 的缓存就可能被用于下一个指令. --no-cache 标志可以被用于强制取消缓存使用。</li>
+</ul>
+<p><code>CMD</code>与<code>RUN</code>的区别在于，<code>RUN</code>是在<code>build</code>成镜像时就运行的，先于<code>CMD</code>和<code>ENTRYPOINT</code>的，<code>CMD</code>会在每次启动容器的时候运行，而<code>RUN</code>只在创建镜像时执行一次，固化在image中。</p>
+<div class="hlcode"><pre><span class="nb">RUN</span> <span class="o">&lt;</span><span class="nx">commnad</span><span class="o">&gt;</span>
+<span class="nx">或</span>
+<span class="nb">RUN</span> <span class="err">[</span><span class="s2">&quot;executable&quot;</span><span class="p">,</span> <span class="s2">&quot;param1&quot;</span><span class="p">,</span> <span class="s2">&quot;param2&quot;</span><span class="cp">]</span>
+</pre></div>
+
+
+<h3 id="shell">shell 格式</h3>
+<p>shell格式，相当于执行<code>/bin/sh -c "&lt;command&gt;"</code> 这样意味着此进程在容器中的PID不为1，不能接收Unix信号， 当使用docker stop <container_id> 命令停止容器时，此进程接收不到SIGTERM信号</p>
+<div class="hlcode"><pre><span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">vim</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+
+
+<h3 id="exec">exec 格式</h3>
+<p>exec格式，不会触发以/bin/sh -c来发起的操作，常见的shell 操作如变量替换以及通配符等替换不会执行，所以<code>$HOME</code>这样的环境变量无法使用，不过可以在内部显式替换以生效</p>
+<div class="hlcode"><pre><span class="n">RUN</span> <span class="p">[</span><span class="s">&quot;apt-get&quot;</span><span class="p">,</span> <span class="s">&quot;install&quot;</span><span class="p">,</span> <span class="s">&quot;vim&quot;</span><span class="p">,</span> <span class="s">&quot;-y&quot;</span><span class="p">]</span>
+<span class="err">或</span>
+<span class="n">RUN</span> <span class="p">[</span><span class="s">&quot;/bin/bash&quot;</span><span class="p">,</span> <span class="s">&quot;-c&quot;</span><span class="p">,</span> <span class="s">&quot;apt-get install vim -y&quot;</span><span class="p">]</span>  <span class="err">与</span><span class="n">shell</span><span class="err">风格相同</span>
+</pre></div>
+
+
+<h2 id="copy">COPY 复制文件</h2>
+<p>复制本地主机的当前的src文件 到container的dest</p>
+<div class="hlcode"><pre><span class="nx">COPY</span> <span class="o">&lt;</span><span class="nb">src</span><span class="o">&gt;</span><span class="nx">...</span> <span class="o">&lt;</span><span class="nx">desk</span><span class="o">&gt;</span>
+<span class="nx">COPY</span> <span class="err">[</span><span class="s2">&quot;&lt;源路径1&gt;&quot;</span><span class="p">,</span><span class="nx">...</span> <span class="s2">&quot;&lt;目标路径&gt;&quot;</span><span class="cp">]</span>
+</pre></div>
+
+
+<p>src 必须是build上下文中的路径，不能是其父目录中的文件， Dockerfile所在的目录</p>
+<p>如果src是目录，其内部文件或子目录会被递归，但src目录自身不会被复制 </p>
+<div class="hlcode"><pre><span class="n">COPY</span> <span class="n">yum</span><span class="p">.</span><span class="n">repos</span><span class="p">.</span><span class="n">d</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">yum</span><span class="p">.</span><span class="n">repos</span><span class="p">.</span><span class="n">d</span><span class="o">/</span>
+</pre></div>
+
+
+<p>如果指定多个src，或在src中使用通配符，dest必须是同一个目录，必须以/结尾</p>
+<p>如果dest不存在，会被自动创建，包括父目录路径</p>
+<p>Same as ‘ADD’ but without the tar and remote url handling.</p>
+<p><code>COPY</code>的语法与功能与<code>ADD</code>相同，只是不支持上面讲到的<code>&lt;src&gt;</code>是远程URL、自动解压这两个特性，但是<a href="https://docs.docker.com/articles/dockerfile_best-practices/">Best Practices for Writing Dockerfiles</a>建议<strong>尽量使用COPY</strong>，并使用<code>RUN</code>与<code>COPY</code>的组合来代替<code>ADD</code>，这是因为虽然<code>COPY</code>只支持本地文件拷贝到container，但它的处理比<code>ADD</code>更加透明，建议只在复制tar文件时使用<code>ADD</code>，如<code>ADD trusty-core-amd64.tar.gz /</code>。</p>
+<h3 id="include-files-outside-of-dockers-build-context">include files outside of Docker's build context</h3>
+<p>目标:在于解决ADD/COPY当前Dockerfile所在目录之外的目录下的文件</p>
+<p>文件目录结构如下:</p>
+<div class="hlcode"><pre><span class="n">project</span>
+<span class="err">├──</span> <span class="n">dockerfile</span>
+<span class="err">│</span>   <span class="err">├──</span> <span class="n">docker</span><span class="o">-</span><span class="n">compose</span><span class="p">.</span><span class="n">yml</span>
+<span class="err">│</span>   <span class="err">└──</span> <span class="n">Dockerfile</span>
+<span class="err">└──</span> <span class="n">test</span>
+    <span class="err">└──</span> <span class="mf">1.</span><span class="n">txt</span>
+<span class="mi">123456</span>
+</pre></div>
+
+
+<p>常用错误思路:</p>
+<div class="hlcode"><pre><span class="n">Dockerfile</span><span class="o">:</span>
+
+    <span class="n">FROM</span> <span class="n">ubuntu</span><span class="o">:</span><span class="n">latest</span>  
+    <span class="n">COPY</span> <span class="o">../</span><span class="n">test</span><span class="sr">/1.txt  /</span>
+    <span class="n">RUN</span> <span class="n">echo</span> <span class="n">$whl</span>           
+<span class="mi">12345</span>
+</pre></div>
+
+
+<blockquote>
+<p>提示:COPY failed: Forbidden path outside the build context: …/test/1.txt ()</p>
+</blockquote>
+<p>正确处理方法</p>
+<p>1.修改Dockerfile</p>
+<div class="hlcode"><pre>    <span class="n">FROM</span> <span class="n">ubuntu</span><span class="o">:</span><span class="n">latest</span>  
+    <span class="err">#</span> <span class="n">COPY</span> <span class="p">..</span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="mf">1.</span><span class="n">txt</span>  <span class="o">/</span>
+    <span class="n">COPY</span> <span class="n">test</span><span class="o">/</span><span class="mf">1.</span><span class="n">txt</span>  <span class="o">/</span>
+    <span class="n">RUN</span> <span class="n">echo</span> <span class="err">$</span><span class="n">whl</span>     
+<span class="mi">1234</span>
+</pre></div>
+
+
+<p>2.<strong>在最外层目录</strong>下使用下面命令build</p>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">build</span> <span class="o">-</span><span class="n">f</span> <span class="n">dockerfile</span><span class="o">/</span><span class="n">Dockerfile</span> <span class="p">.</span>
+<span class="mi">1</span>
+</pre></div>
+
+
+<p>3.也可以配置docker-compose.yml使用</p>
+<div class="hlcode"><pre><span class="n">docker</span><span class="o">-</span><span class="n">compose</span><span class="p">.</span><span class="n">yml</span>
+
+    <span class="nl">version:</span> <span class="sc">&#39;3&#39;</span>
+    <span class="nl">services:</span>
+      <span class="nl">web:</span>
+        <span class="nl">build:</span>
+          <span class="nl">context:</span> <span class="p">..</span><span class="o">/</span>
+          <span class="nl">dockerfile:</span> <span class="n">dockerfile</span><span class="o">/</span><span class="n">Dockerfile</span>
+        <span class="nl">expose:</span>
+          <span class="o">-</span> <span class="s">&quot;8000&quot;</span>
+<span class="mi">12345678910</span>
+</pre></div>
+
+
+<p>在<strong>docker-compose.yml所在目录</strong>使用命令:</p>
+<div class="hlcode"><pre><span class="n">docker</span><span class="o">-</span><span class="n">compose</span> <span class="n">up</span> <span class="n">web</span>
+</pre></div>
+
+
+<h2 id="add">ADD</h2>
+<div class="hlcode"><pre><span class="nb">ADD</span> <span class="o">&lt;</span><span class="nb">src</span><span class="o">&gt;</span><span class="nx">...</span> <span class="o">&lt;</span><span class="nx">dest</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>将文件<code>&lt;src&gt;</code>拷贝到container的文件系统对应的路径<code>&lt;dest&gt;</code>下。</p>
+<p>ADD 支持TAR文件和URL路径</p>
+<p>操作同COPY指令</p>
+<p>如果src为URL且dest不以/结尾，则src指定的文件将被下载并直接被创建为dest</p>
+<p>如果dest以/结尾，则文件名URL指定的文件将被直接下载并保存为dest/filename</p>
+<p>如果src是一个本地系统上说他人文件，将被展开为一个目录，其行为类似于tar -x，然而通过URL获取的tar文件不会自动展开</p>
+<p>如果src有多个，或间接直接使用了通配符，则dest必须是一个以/结尾的目录路径，</p>
+<p>如果dest不以/结尾，则被视为一个普通文件，src的内容将被直接写入到dest</p>
+<p>构建指令，所有拷贝到container中的文件和文件夹权限为0755，uid和gid为0；如果是一个目录，那么会将该目录下的所有文件添加到container中，不包括目录</p>
+<div class="hlcode"><pre><span class="err">支持模糊匹配</span>
+<span class="n">ADD</span> <span class="n">hom</span><span class="o">*</span> <span class="o">/</span><span class="n">mydir</span><span class="o">/</span>        <span class="err">#</span> <span class="n">adds</span> <span class="n">all</span> <span class="n">files</span> <span class="n">starting</span> <span class="n">with</span> <span class="s">&quot;hom&quot;</span>
+<span class="n">ADD</span> <span class="n">hom</span><span class="o">?</span><span class="p">.</span><span class="n">txt</span> <span class="o">/</span><span class="n">mydir</span><span class="o">/</span>    <span class="err">#</span> <span class="o">?</span> <span class="n">is</span> <span class="n">replaced</span> <span class="n">with</span> <span class="n">any</span> <span class="n">single</span> <span class="n">character</span>
+
+<span class="n">ADD</span> <span class="n">requirements</span><span class="p">.</span><span class="n">txt</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span>
+<span class="n">RUN</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">requirements</span><span class="p">.</span><span class="n">txt</span>
+<span class="n">ADD</span> <span class="p">.</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span>
+</pre></div>
+
+
+<p>另外<code>ADD</code>支持远程URL获取文件，但官方认为是<code>strongly discouraged</code>，建议使用<code>wget</code>或<code>curl</code>代替。<br />
+<code>ADD</code>还支持自动解压tar文件，比如<code>ADD trusty-core-amd64.tar.gz /</code>会线自动解压内容再COPY到在容器的<code>/</code>目录下。</p>
+<p>ADD只有在build镜像的时候运行一次，后面运行container的时候不会再重新加载，也就是你不能在运行时通过这种方式向容器中传送文件，<code>-v</code>选项映射本地到容器的目录。</p>
+<h2 id="maintainer-deprecated">MAINTAINER 维护者 （deprecated ）</h2>
+<div class="hlcode"><pre><span class="nx">MAINTAINER</span> <span class="o">&lt;</span><span class="nb">name</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>构建指令，用于将image的制作者相关的信息写入到image中。当我们对该image执行docker inspect命令时，输出中有相应的字段记录该信息。</p>
+<h2 id="cmd">CMD 容器启动命令</h2>
+<p>用于container启动时指定的操作， 即docker run期间的操作。该操作可以是执行自定义脚本，也可以是执行系统命令。该指令只能在文件中存在一次，如果有多个，则只执行最后一条。</p>
+<p>CMD 可在 Dockerfile 中配置，在启动容器时会被  <code>docker run &lt;image&gt;</code> 后的参数覆盖</p>
+<p>CMD 的 exec 格式中，第一个元素是 shell 的 <code>$0</code>, 其余元素是 shell 的 <code>$@</code>。当 ENTRYPOINT 中用 shell 格式或显式的 sh(bash等)就可以引用 <code>$0</code>, <code>$@</code></p>
+<h3 id="shell_1">shell 格式</h3>
+<p>shell格式，相当于执行<code>/bin/sh -c "&lt;command&gt;"</code> 这样意味着此进程在容器中的PID不为1，不能接收Unix信号， 当使用docker stop <container_id> 命令停止容器时，此进程接收不到SIGTERM信号</p>
+<div class="hlcode"><pre><span class="n">CMD</span> <span class="n">command</span> <span class="n">param1</span> <span class="n">param2</span>  <span class="p">(</span><span class="n">shell</span><span class="err">格式</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="exec_1">exec 格式 （推荐）</h3>
+<p>推荐使用 exec 格式，这类格式在解析时会被解析为 JSON 数组</p>
+<div class="hlcode"><pre><span class="n">CMD</span> <span class="p">[</span><span class="s">&quot;executable&quot;</span><span class="p">,</span><span class="s">&quot;param1&quot;</span><span class="p">,</span><span class="s">&quot;param2&quot;</span><span class="p">]</span>  <span class="err">（数组</span><span class="o">/</span><span class="n">exec</span><span class="err">格式）</span>
+<span class="n">CMD</span> <span class="p">[</span><span class="s">&quot;param1&quot;</span><span class="p">,</span><span class="s">&quot;param2&quot;</span><span class="p">]</span>  <span class="p">(</span><span class="n">as</span> <span class="k">default</span> <span class="n">parameters</span> <span class="n">to</span> <span class="n">ENTRYPOINT</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">Dockerfile</span><span class="o">:</span>
+    <span class="n">CMD</span> <span class="o">[</span><span class="s2">&quot;echo CMD_args&quot;</span><span class="o">]</span>
+<span class="err">运行</span>
+    <span class="n">docker</span> <span class="n">run</span> <span class="o">&lt;</span><span class="n">image</span><span class="o">&gt;</span> <span class="n">echo</span> <span class="n">run_arg</span>
+<span class="err">结果</span>
+    <span class="err">输出</span> <span class="n">run_arg</span>
+</pre></div>
+
+
+<blockquote>
+<p>因为<code>echo run_arg</code>覆盖了<code>CMD</code>。如果<code>run</code>后没有<code>echo run_arg</code>，则输出<code>CMD_args</code>。</p>
+</blockquote>
+<h4 id="_1">参数列表格式</h4>
+<p>在指定了 ENTRYPOINT 指令后，用 CMD 指定具体的参数。</p>
+<p><code>CMD ["参数1", "参数2"...]</code></p>
+<h2 id="entrypoint">ENTRYPOINT 入口点</h2>
+<p>ENTRYPOINT 的目的和 CMD 一样，都是在指定容器启动程序及参数。</p>
+<p>与CMD不同的是，ENTRYPOINT启动的程序不会被docker run命令行指定的参数所覆盖，而且这些命令行参数会被当作参数传递给ENTRYPOINT指定的程序</p>
+<p>当然可以在<code>docker run</code>时使用<code>--entrypoint</code>来覆盖<code>ENTRYPOINT</code>指令。</p>
+<p>默认ENTRYPOINT 启动的就是<code>/bin/sh -c</code> ，可以强制显式指定</p>
+<div class="hlcode"><pre><span class="n">ENTRYPOINT</span> <span class="p">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p">,</span> <span class="s">&quot;-c&quot;</span><span class="p">]</span>
+</pre></div>
+
+
+<h3 id="exec_2">exec 格式</h3>
+<p>ENTRYPOINT 和 CMD 合并前需转换为 exec 格式(用 <code>docker inspect &lt;image&gt;</code> 查看)，合并后(相当于数组) 第一个元素是命令，其他都为参数</p>
+<div class="hlcode"><pre><span class="n">Dockerfile</span><span class="o">:</span>
+    <span class="n">ENTRYPOINT</span> <span class="o">[</span><span class="s2">&quot;echo&quot;</span><span class="o">,</span> <span class="s2">&quot;ENTRYPOINT_args&quot;</span><span class="o">]</span>
+<span class="err">运行</span>
+    <span class="n">docker</span> <span class="n">run</span> <span class="o">&lt;</span><span class="n">image</span><span class="o">&gt;</span> <span class="n">run_arg</span>
+<span class="err">结果</span>
+    <span class="err">输出</span> <span class="n">ENTRYPOINT_args</span> <span class="n">run_arg</span>
+</pre></div>
+
+
+<blockquote>
+<p>因为<code>echo run_arg</code>追加到<code>ENTRYPOIINT</code>的<code>echo</code>后面了。如果在<code>ENTRYPOINT</code>后再加入一行<code>CMD ["CMD_args"]</code>，则结果依旧，除非去掉run后的所有参数。<br />
+当出现<code>ENTRYPOINT</code>指令时<code>CMD</code>指令只可能(当<code>ENTRYPOINT</code>指令使用exec方式执行时)被当做<code>ENTRYPOINT</code>指令的参数使用，其他情况则会被忽略。</p>
+</blockquote>
+<h3 id="docker-run">docker run 操作</h3>
+<p>定义了 ENTRYPOINT, CMD 由 docker run 提供</p>
+<div class="hlcode"><pre><span class="n">ENTRYPOINT</span>  <span class="p">[</span><span class="s">&quot;echo&quot;</span><span class="p">,</span> <span class="s">&quot;hello&quot;</span><span class="p">]</span>
+</pre></div>
+
+
+<blockquote>
+<p>执行命令 docker run <image> rm -rf /, 实际入口是由 ["echo", "hello"] 与 ["rm", "-rf", "/"] 拼接而成的 ["echo", "hello", "rm", "-rf", "/"], 输出为 hello rm -rf /</p>
+</blockquote>
+<p>ENTRYPOINT 同样可以被覆盖，如 docker run --entrypoint ls test -l /，将会执行 ls -l / 命令。</p>
+<h4 id="shell_2">shell 格式</h4>
+<p>使用shell格式，<code>ENTRYPOINT</code>相当于执行<code>/bin/sh -c &lt;command..&gt;</code>，这种格式会忽略<code>docker run</code>和<code>CMD</code>的所有参数。</p>
+<p>另一方面 CMD 或 <code>docker run &lt;image&gt;</code> 的输入第一个元素存成了 <code>$0</code>，其他剩余元素存为 <code>$@</code>, 所以 shell 格式的 ENTRYPOINT 可以这么写</p>
+<div class="hlcode"><pre><span class="n">ENTRYPOINT</span> <span class="n">echo</span> <span class="n">hello</span> <span class="err">$</span><span class="mi">0</span> <span class="err">$@</span>
+</pre></div>
+
+
+<p>注：shell 中 <code>$0</code> 表示命令本身，<code>$@</code> 为所有参数</p>
+<p>这样执行下面 docker 命令将可获得所有的参数输入</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="n">test</span> <span class="n">world</span> <span class="n">and</span> <span class="n">China</span>
+<span class="n">hello</span> <span class="n">world</span> <span class="n">and</span> <span class="n">China</span>
+</pre></div>
+
+
+<p>如果只是按常规 shell 脚本来对待，想当然的写成</p>
+<div class="hlcode"><pre><span class="n">ENTRYPOINT</span> <span class="n">echo</span> <span class="n">hello</span> <span class="err">$@</span>
+</pre></div>
+
+
+<p>效果将是</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="n">test</span> <span class="n">world</span> <span class="n">and</span> <span class="n">China</span>
+<span class="n">hello</span> <span class="n">and</span> <span class="n">China</span>
+</pre></div>
+
+
+<p>第一个参数将被丢失，<code>docker run &lt;image&gt;</code> 后第一个输入通常是一个命令，所以是 <code>$0</code>, 而 ENTRYPOINT 又希望它是一个普通参数，因此<code>$0 $@</code> 要同时写上。</p>
+<h4 id="shopt-s-nullglob">shopt -s nullglob</h4>
+<p>在使用 Linux 中的通配符时 <code>* ?等</code> 如果没有匹配到任何文件, 不会报 <code>No such file or directory</code> 而是将命令后面的参数去掉执行</p>
+<h4 id="if-101-then">if [ “${1:0:1}” = ‘-‘ ]; then…</h4>
+<p>这是一个判断语句, 在官方文件中, 上一行已经给出了注释: <code>if command starts with an option, prepend mysqld</code></p>
+<p>这个判断语句是 <code>${1:0:1}</code> 意思是判断 $1(调用该脚本的第一个参数), 偏移量0(不偏移), 取一个字符(取字符串的长度)</p>
+<p>如果判断出来调用这个脚本后面所跟的参数第一个字符是<code>-</code>中横线的话, 就认为后面的所有字符串都是 mysqld 的启动参数</p>
+<p>上面的这个操作类似于 Python 的字符串切片</p>
+<h4 id="set-mysqld">set – mysqld “$@”</h4>
+<p>在上面判断完第一个参数是<code>-</code>开头之后, 紧接着就执行了 <code>set -- mysqld "$@"</code> 这个命令. 使用了 <code>set --</code> 的用法. <code>set —</code>会将他后面所有以空格区分的字符串, 按顺序分别存储到$1, $2, $3 变量中, 其中新的<code>$@</code> 为 <code>set —</code> 后面的全部内容</p>
+<p>举例来说: <code>bash docker-entrypoint.sh -f xxx.conf</code></p>
+<p>在这种情况下, <code>set -- mysqld "$@"</code> 中的 <code>$@</code> 的值为 <code>-f xxx.conf</code></p>
+<p>当执行完 <code>set -- mysqld "$@"</code> 这条命令后:</p>
+<ul>
+<li><code>$1=mysqld</code></li>
+<li><code>$2=-f</code></li>
+<li><code>$3=xxx.conf</code></li>
+<li><code>$@=mysqld -f xxx.conf</code></li>
+</ul>
+<p>可以看到, 当执行 <code>docker-entrypoint.sh</code>脚本的时候后面加了 <code>-x</code>形式的参数之后, $@的值发生的改变, 在原有$@值的基础之上, 在前面又预添加了 mysqld 命令</p>
+<h4 id="exec_3">exec “$@”</h4>
+<p>几乎在每个 <code>docker-entrypoint.sh</code> 脚本的最后一行, 执行的都是 <code>exec "$@"</code>命令</p>
+<p>这个命令的意义在于你已经为你的镜像预想到了应该有的调用情况, 当实际使用镜像的人执行了你没有预料到的可执行命令时, 将会走到脚本的这最后一行, 去执行用户新的可执行命令</p>
+<h4 id="_2">情况判断</h4>
+<p>上面直接说了脚本的最后一行, 在之前的脚本中, 需要充分的去考虑你自己的脚本可能会被调用的情况. 还是拿 MySQL 官方的 dockerfile 来说, 他判断以下情况:</p>
+<ul>
+<li>开头是 <code>-</code> , 认为是参数的情况</li>
+<li>开头是 <code>mysqld</code>, 且用户 id 为0 (root 用户) 的情况</li>
+<li>开头是 <code>mysqld</code> 的情况</li>
+</ul>
+<p>判断完自己应用的所有调用形态之后, 最后应该加上<code>exec "$@"</code> 命令兜底</p>
+<h4 id="mysql">${mysql[@]}</h4>
+<p>Shell 中的数组, 直接执行 <code>${mysql[@]}</code> 会把这个数组当做可执行程序来执行</p>
+<div class="hlcode"><pre>➜  /tmp mysql=( mysql --protocol=socket -uroot -hlocalhost --socket=&quot;<span class="cp">${</span><span class="n">SOCKET</span><span class="cp">}</span>&quot; )
+➜  /tmp echo <span class="cp">${</span><span class="n">mysql</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="cp">}</span>
+mysql
+➜  /tmp echo <span class="cp">${</span><span class="n">mysql</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="cp">}</span>
+--protocol=socket
+➜  /tmp echo <span class="cp">${</span><span class="n">mysql</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="cp">}</span>
+-uroot
+➜  /tmp echo <span class="cp">${</span><span class="n">mysql</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="cp">}</span>
+-hlocalhost
+➜  /tmp echo <span class="cp">${</span><span class="n">mysql</span><span class="p">[</span><span class="err">@</span><span class="p">]</span><span class="cp">}</span>
+mysql --protocol=socket -uroot -hlocalhost --socket=
+</pre></div>
+
+
+<h4 id="exec-gosu-mysql-bash_source">exec gosu mysql <code>“$BASH_SOURCE” “$@”</code></h4>
+<p>这里的 gosu 命令, 是 Linux 中 sudo 命令的轻量级”替代品”</p>
+<p>gosu 是一个 golang 语言开发的工具, 用来取代 shell 中的 sudo 命令. su 和 sudo 命令有一些缺陷, 主要是会引起不确定的 TTY, 对信号量的转发也存在问题. 如果仅仅为了使用特定的用户运行程序, 使用 su 或 sudo 显得太重了, 为此 gosu 应运而生.</p>
+<p>gosu 直接借用了 libcontainer 在容器中启动应用程序的原理, 使用 <code>/etc/passwd</code> 处理应用程序. gosu 首先找出指定的用户或用户组, 然后切换到该用户或用户组. 接下来, 使用 exec 启动应用程序. 到此为止, gosu 完成了它的工作, 不会参与到应用程序后面的声明周期中. 使用这种方式避免了 gosu 处理 TTY 和转发信号量的问题, 把这两个工作直接交给了应用程序去完成</p>
+<h2 id="env">ENV 设置环境变量</h2>
+<p>ENV设置的环境变量，可以使用docker inspect命令来查看。同时还可以使用<code>docker run --env &lt;key&gt;=&lt;value&gt;</code>来修改环境变量。</p>
+<p>用于其后的其他指令所调用，如ENV ADD COPY等</p>
+<div class="hlcode"><pre><span class="nb">ENV</span> <span class="o">&lt;</span><span class="nb">key</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nb">value</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>设置了后，后续的RUN命令都可以使用，当运行生成的镜像时这些环境变量依然有效，如果需要在运行时更改这些环境变量可以在运行<code>docker run</code>时添加<code>--env &lt;key&gt;=&lt;value&gt;</code>参数来修改。</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">e</span> <span class="n">MYVAR1</span> <span class="o">--</span><span class="n">env</span> <span class="n">MYVAR2</span><span class="o">=</span><span class="n">foo</span> <span class="o">--</span><span class="n">env</span><span class="o">-</span><span class="n">file</span> <span class="p">.</span><span class="o">/</span><span class="n">env</span><span class="p">.</span><span class="n">list</span> <span class="n">ubuntu</span> <span class="n">bash</span>
+</pre></div>
+
+
+<p>Use the <code>-e</code>, <code>--env</code>, and <code>--env-file</code> flags to set simple (non-array) environment variables in the container you’re running, or overwrite variables that are defined in the Dockerfile of the image you’re running.</p>
+<p>You can define the variable and its value when running the container:</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">env</span> <span class="n">VAR1</span><span class="o">=</span><span class="n">value1</span> <span class="o">--</span><span class="n">env</span> <span class="n">VAR2</span><span class="o">=</span><span class="n">value2</span> <span class="n">ubuntu</span> <span class="n">env</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">VAR</span>
+<span class="n">VAR1</span><span class="o">=</span><span class="n">value1</span>
+<span class="n">VAR2</span><span class="o">=</span><span class="n">value2</span>
+</pre></div>
+
+
+<p>You can also use variables that you’ve exported to your local environment:</p>
+<div class="hlcode"><pre><span class="n">export</span> <span class="n">VAR1</span><span class="o">=</span><span class="n">value1</span>
+<span class="n">export</span> <span class="n">VAR2</span><span class="o">=</span><span class="n">value2</span>
+
+<span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">env</span> <span class="n">VAR1</span> <span class="o">--</span><span class="n">env</span> <span class="n">VAR2</span> <span class="n">ubuntu</span> <span class="n">env</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">VAR</span>
+<span class="n">VAR1</span><span class="o">=</span><span class="n">value1</span>
+<span class="n">VAR2</span><span class="o">=</span><span class="n">value2</span>
+</pre></div>
+
+
+<p>When running the command, the Docker CLI client checks the value the variable has in your local environment and passes it to the container. If no <code>=</code> is provided and that variable is not exported in your local environment, the variable won’t be set in the container.</p>
+<p>You can also load the environment variables from a file. This file should use the syntax <code>&lt;variable&gt;=value</code> (which sets the variable to the given value) or <code>&lt;variable&gt;</code> (which takes the value from the local environment), and <code>#</code> for comments.</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">cat</span> <span class="n">env</span><span class="p">.</span><span class="n">list</span>
+<span class="cp"># This is a comment</span>
+<span class="n">VAR1</span><span class="o">=</span><span class="n">value1</span>
+<span class="n">VAR2</span><span class="o">=</span><span class="n">value2</span>
+<span class="n">USER</span>
+
+<span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">env</span><span class="o">-</span><span class="n">file</span> <span class="n">env</span><span class="p">.</span><span class="n">list</span> <span class="n">ubuntu</span> <span class="n">env</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">VAR</span>
+<span class="n">VAR1</span><span class="o">=</span><span class="n">value1</span>
+<span class="n">VAR2</span><span class="o">=</span><span class="n">value2</span>
+<span class="n">USER</span><span class="o">=</span><span class="n">denis</span>
+</pre></div>
+
+
+<h3 id="_3">变量替换</h3>
+<div class="hlcode"><pre><span class="err">$</span><span class="p">{</span><span class="nn">variable</span><span class="p">:</span><span class="o">-</span><span class="s-Atom">word</span><span class="p">}</span> <span class="s-Atom">变量设置，即为word，变量未设置，结果为word</span>
+<span class="err">$</span><span class="p">{</span><span class="nn">variable</span><span class="p">:</span><span class="o">+</span><span class="s-Atom">word</span><span class="p">}</span> <span class="s-Atom">变量设置，即为word，变量未设置，结果为空</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="s-Atom">rxus</span><span class="o">-</span><span class="nv">MacBook</span><span class="o">-</span><span class="nv">Pro</span><span class="s-Atom">:~</span> <span class="s-Atom">rxu$</span> <span class="s-Atom">echo</span> <span class="err">$</span><span class="p">{</span><span class="nv">NAME</span><span class="p">:-</span><span class="s-Atom">rick</span><span class="p">}</span>
+<span class="s-Atom">rick</span>
+<span class="s-Atom">rxus</span><span class="o">-</span><span class="nv">MacBook</span><span class="o">-</span><span class="nv">Pro</span><span class="s-Atom">:~</span> <span class="s-Atom">rxu$</span> <span class="nv">NAME</span><span class="o">=</span><span class="nv">Rick</span>
+<span class="s-Atom">rxus</span><span class="o">-</span><span class="nv">MacBook</span><span class="o">-</span><span class="nv">Pro</span><span class="s-Atom">:~</span> <span class="s-Atom">rxu$</span> <span class="s-Atom">echo</span> <span class="err">$</span><span class="p">{</span><span class="nv">NAME</span><span class="p">:-</span><span class="s-Atom">rick</span><span class="p">}</span>
+<span class="nv">Rick</span>
+<span class="s-Atom">rxus</span><span class="o">-</span><span class="nv">MacBook</span><span class="o">-</span><span class="nv">Pro</span><span class="s-Atom">:~</span> <span class="s-Atom">rxu$</span> <span class="s-Atom">echo</span> <span class="err">$</span><span class="p">{</span><span class="nv">NAME</span><span class="s-Atom">:+rick</span><span class="p">}</span>
+<span class="s-Atom">rick</span>
+<span class="s-Atom">rxus</span><span class="o">-</span><span class="nv">MacBook</span><span class="o">-</span><span class="nv">Pro</span><span class="s-Atom">:~</span> <span class="s-Atom">rxu$</span> <span class="s-Atom">unset</span> <span class="nv">NAME</span>
+<span class="s-Atom">rxus</span><span class="o">-</span><span class="nv">MacBook</span><span class="o">-</span><span class="nv">Pro</span><span class="s-Atom">:~</span> <span class="s-Atom">rxu$</span> <span class="s-Atom">echo</span> <span class="err">$</span><span class="p">{</span><span class="nv">NAME</span><span class="s-Atom">:+rick</span><span class="p">}</span>
+</pre></div>
+
+
+<h2 id="arg">ARG 构建参数</h2>
+<p>ARG 定义的变量只在建立 image 时有效，建立完成后变量就失效消失</p>
+<div class="hlcode"><pre><span class="nx">ARG</span> <span class="o">&lt;</span><span class="nx">参数名</span><span class="o">&gt;</span><span class="err">[</span><span class="o">=&lt;</span><span class="nx">默认值</span><span class="o">&gt;</span><span class="cp">]</span>
+</pre></div>
+
+
+<h2 id="label">LABEL 定义标签</h2>
+<p>定义一个 image 标签 Owner，并赋值，其值为变量 Name 的值。</p>
+<div class="hlcode"><pre><span class="n">LABEL</span> <span class="n">Owner</span><span class="o">=</span><span class="err">$</span><span class="n">Name</span>
+</pre></div>
+
+
+<h2 id="volume">VOLUME 挂载点</h2>
+<p>用于在image中创建一个挂在点目录，以挂在Docker host上的卷或其他容器上的卷</p>
+<p>如果挂在点目录路径下此前文件存在，docker run命令会在卷挂在完成后将此前的所有文件复制到新挂在的卷中</p>
+<div class="hlcode"><pre><span class="nx">VOLUME</span> <span class="err">[</span><span class="s2">&quot;&lt;路径1&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;路径2&gt;&quot;</span><span class="nx">...</span><span class="cp">]</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">FROM</span> <span class="n">base</span>  
+<span class="n">VOLUME</span> <span class="p">[</span><span class="s">&quot;/tmp/data&quot;</span><span class="p">]</span> 
+</pre></div>
+
+
+<p>运行通过该Dockerfile生成image的容器，/tmp/data目录中的数据在容器关闭后，里面的数据还存在。例如另一个容器也有持久化数据的需求，且想使用上面容器共享的/tmp/data目录，那么可以运行下面的命令启动一个容器：</p>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">rm</span> <span class="o">-</span><span class="n">volumes</span><span class="o">-</span><span class="n">from</span> <span class="n">container1</span> <span class="n">image2</span> <span class="n">bash</span> 
+</pre></div>
+
+
+<h2 id="expose">EXPOSE 声明端口</h2>
+<p><code>EXPOSE &lt;端口1&gt; [&lt;端口2&gt;...]</code></p>
+<p>EXPOSE 指令是声明运行时容器提供服务端口，这只是一个声明，在运行时并不会因为这个声明应用就会开启这个端口的服务。</p>
+<p><code>EXPOSE</code>指令告诉容器在运行时要监听的端口，但是这个端口是用于多个容器之间通信用的（links），外面的host是访问不到的。要把端口暴露给外面的主机，在启动容器时使用<code>-p</code>选项。</p>
+<div class="hlcode"><pre><span class="cp"># expose memcached(s) port</span>
+<span class="n">EXPOSE</span> <span class="mi">11211</span> <span class="mi">11212</span>
+</pre></div>
+
+
+<p>要将 EXPOSE 和在运行时使用 -p &lt;宿主端口&gt;:&lt;容器端口&gt; 区分开来。-p，是映射宿主端口和容器端口，换句话说，就是将容器的对应端口服务公开给外界访问，而 EXPOSE 仅仅是声明容器打算使用什么端口而已，并不会自动在宿主进行端口映射。</p>
+<div class="hlcode"><pre><span class="cp"># 映射一个端口  </span>
+<span class="n">EXPOSE</span> <span class="n">port1</span>  
+<span class="cp"># 相应的运行容器使用的命令  </span>
+<span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">p</span> <span class="n">port1</span> <span class="n">image</span>  
+
+<span class="cp"># 映射多个端口  </span>
+<span class="n">EXPOSE</span> <span class="mi">11211</span><span class="o">/</span><span class="n">udp</span> <span class="mi">11211</span><span class="o">/</span><span class="n">tcp</span>
+<span class="cp"># 相应的运行容器使用的命令  </span>
+<span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">p</span> <span class="n">port1</span> <span class="o">-</span><span class="n">p</span> <span class="n">port2</span> <span class="o">-</span><span class="n">p</span> <span class="n">port3</span> <span class="n">image</span>  
+<span class="cp"># 还可以指定需要映射到宿主机器上的某个端口号  </span>
+<span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">p</span> <span class="n">host_port1</span><span class="o">:</span><span class="n">port1</span> <span class="o">-</span><span class="n">p</span> <span class="n">host_port2</span><span class="o">:</span><span class="n">port2</span> <span class="o">-</span><span class="n">p</span> <span class="n">host_port3</span><span class="o">:</span><span class="n">port3</span> <span class="n">image</span>
+</pre></div>
+
+
+<h2 id="workdir">WORKDIR 指定工作目录</h2>
+<p>设置指令，可以多次切换(相当于cd命令)，对RUN,CMD,ENTRYPOINT生效</p>
+<div class="hlcode"><pre><span class="nx">WORKDIR</span> <span class="o">&lt;</span><span class="nx">工作目录路径</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>在 Dockerfile 中，这两行 RUN 命令的执行环境根本不同，是两个完全不同的容器。这就是对 Dokerfile 构建分层存储的概念不了解所导致的错误。</p>
+<div class="hlcode"><pre><span class="n">RUN</span> <span class="n">cd</span> <span class="o">/</span><span class="n">app</span>
+<span class="n">RUN</span> <span class="n">echo</span> <span class="s">&quot;hello&quot;</span> <span class="o">&gt;</span> <span class="n">world</span><span class="p">.</span><span class="n">txt</span>
+</pre></div>
+
+
+<p>每一个 RUN 都是启动一个容器、执行命令、然后提交存储层文件变更。第一层 RUN cd /app 的执行仅仅是当前进程的工作目录变更，一个内存上的变化而已，其结果不会造成任何文件变更。而到第二层的时候，启动的是一个全新的容器，跟第一层的容器更完全没关系，自然不可能继承前一层构建过程中的内存变化。</p>
+<p><code>WORKDIR指</code>令用于设置<code>Dockerfile</code>中的<code>RUN</code>、<code>CMD</code>和<code>ENTRYPOINT</code>指令执行命令的工作目录(默认为<code>/</code>目录)，该指令在<code>Dockerfile</code>文件中可以出现多次，如果使用相对路径则为相对于<code>WORKDIR</code>上一次的值，例如<code>WORKDIR /a</code>，<code>WORKDIR b</code>，<code>RUN pwd</code>最终输出的当前目录是<code>/a/b</code>。（<code>RUN cd /a/b</code>，<code>RUN pwd</code>是得不到<code>/a/b</code>的）</p>
+<h2 id="user">USER 指定当前用户</h2>
+<p>设置指令，设置启动容器的用户，默认是root用户</p>
+<p>USER 指令和 WORKDIR 相似，都是改变环境状态并影响以后的层。</p>
+<p>UID必须是/etc/passwd中某用户的有效UID，否则docker run命令将运行失败</p>
+<p><code>USER &lt;用户名&gt;</code></p>
+<div class="hlcode"><pre><span class="n">RUN</span> <span class="n">groupadd</span> <span class="o">-</span><span class="n">r</span> <span class="n">redis</span> <span class="o">&amp;&amp;</span> <span class="n">useradd</span> <span class="o">-</span><span class="n">r</span> <span class="o">-</span><span class="n">g</span> <span class="n">redis</span> <span class="n">redis</span>
+<span class="n">USER</span> <span class="n">redis</span>
+<span class="n">RUN</span> <span class="p">[</span> <span class="s">&quot;redis-server&quot;</span> <span class="p">]</span>
+</pre></div>
+
+
+<p>USER 只是帮助你切换到指定用户而已，这个用户必须是事先建立好的，否则无法切换。 </p>
+<p>使用 gosu 切换到其他用户执行某个服务</p>
+<div class="hlcode"><pre><span class="cp"># 建立 redis 用户，并使用 gosu 换另一个用户执行命令</span>
+<span class="n">RUN</span> <span class="n">groupadd</span> <span class="o">-</span><span class="n">r</span> <span class="n">redis</span> <span class="o">&amp;&amp;</span> <span class="n">useradd</span> <span class="o">-</span><span class="n">r</span> <span class="o">-</span><span class="n">g</span> <span class="n">redis</span> <span class="n">redis</span>
+<span class="cp"># 下载 gosu</span>
+<span class="n">RUN</span> <span class="n">wget</span> <span class="o">-</span><span class="n">O</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">gosu</span> <span class="s">&quot;https://github.com/tianon/gosu/releases/download/1.7/gosu-amd64&quot;</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">gosu</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">gosu</span> <span class="n">nobody</span> <span class="nb">true</span>
+<span class="cp"># 设置 CMD，并以另外的用户执行</span>
+<span class="n">CMD</span> <span class="p">[</span> <span class="s">&quot;exec&quot;</span><span class="p">,</span> <span class="s">&quot;gosu&quot;</span><span class="p">,</span> <span class="s">&quot;redis&quot;</span><span class="p">,</span> <span class="s">&quot;redis-server&quot;</span> <span class="p">]</span>
+</pre></div>
+
+
+<h2 id="healthcheck">HEALTHCHECK 健康检查</h2>
+<p>设置检查容器健康状况的命令</p>
+<p><code>HEALTHCHECK [选项] CMD &lt;命令&gt;</code></p>
+<p>如果基础镜像有健康检查指令，使用这行可以屏蔽掉其健康检查指令</p>
+<p><code>HEALTHCHECK NONE</code></p>
+<blockquote>
+<p>--interval=&lt;间隔&gt;：两次健康检查的间隔，默认为 30 秒；<br />
+--timeout=&lt;时长&gt;：健康检查命令运行超时时间，如果超过这个时间，本次健康检查就被视为失败，默认 30 秒；<br />
+--retries=&lt;次数&gt;：当连续失败指定次数后，则将容器状态视为 unhealthy，默认 3 次。</p>
+</blockquote>
+<ul>
+<li>
+<p>自 1.12 之后，Docker 提供了 HEALTHCHECK 指令，通过该指令指定一行命令，用这行命令来判断容器主进程的服务状态是否还正常，从而比较真实的反应容器实际状态。</p>
+</li>
+<li>
+<p>增加健康检查来判断其 Web 服务是否在正常工作</p>
+</li>
+</ul>
+<div class="hlcode"><pre><span class="n">FROM</span> <span class="n">nginx</span>
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span> <span class="o">&amp;&amp;</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">curl</span> <span class="o">&amp;&amp;</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">lists</span><span class="o">/*</span>
+<span class="n">HEALTHCHECK</span> <span class="o">--</span><span class="n">interval</span><span class="o">=</span><span class="mi">5</span><span class="n">s</span> <span class="o">--</span><span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="n">s</span> \
+  <span class="n">CMD</span> <span class="n">curl</span> <span class="o">-</span><span class="n">fs</span> <span class="n">http</span><span class="o">:</span><span class="c1">//localhost/ || exit 1</span>
+</pre></div>
+
+
+<ul>
+<li>健康检查命令的输出（包括 stdout 以及 stderr）都会被存储于健康状态里，可以用 docker inspect 来查看。</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="nx">docker</span> <span class="nx">inspect</span> <span class="o">--</span><span class="nb">format</span> <span class="s1">&#39;{{json .State.Health}}&#39;</span> <span class="nx">web</span> <span class="o">|</span> <span class="nx">python</span> <span class="na">-m</span> <span class="nx">json.tool</span>
+<span class="p">{</span>
+    <span class="s2">&quot;FailingStreak&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Log&quot;</span><span class="p">:</span> <span class="err">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="s2">&quot;2016-11-25T14:35:37.940957051Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ExitCode&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;Output&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;!DOCTYPE html&gt;</span><span class="se">\n</span><span class="s2">&lt;html&gt;</span><span class="se">\n</span><span class="s2">&lt;head&gt;</span><span class="se">\n</span><span class="s2">&lt;title&gt;Welcome to nginx!&lt;/title&gt;</span><span class="se">\n</span><span class="s2">&lt;style&gt;</span><span class="se">\n</span><span class="s2">    body {</span><span class="se">\n</span><span class="s2">        width: 35em;</span><span class="se">\n</span><span class="s2">        margin: 0 auto;</span><span class="se">\n</span><span class="s2">        font-family: Tahoma, Verdana, Arial, sans-serif;</span><span class="se">\n</span><span class="s2">    }</span><span class="se">\n</span><span class="s2">&lt;/style&gt;</span><span class="se">\n</span><span class="s2">&lt;/head&gt;</span><span class="se">\n</span><span class="s2">&lt;body&gt;</span><span class="se">\n</span><span class="s2">&lt;h1&gt;Welcome to nginx!&lt;/h1&gt;</span><span class="se">\n</span><span class="s2">&lt;p&gt;If you see this page, the nginx web server is successfully installed and</span><span class="se">\n</span><span class="s2">working. Further configuration is required.&lt;/p&gt;</span><span class="se">\n\n</span><span class="s2">&lt;p&gt;For online documentation and support please refer to</span><span class="se">\n</span><span class="s2">&lt;a href=</span><span class="se">\&quot;</span><span class="s2">http://nginx.org/</span><span class="se">\&quot;</span><span class="s2">&gt;nginx.org&lt;/a&gt;.&lt;br/&gt;</span><span class="se">\n</span><span class="s2">Commercial support is available at</span><span class="se">\n</span><span class="s2">&lt;a href=</span><span class="se">\&quot;</span><span class="s2">http://nginx.com/</span><span class="se">\&quot;</span><span class="s2">&gt;nginx.com&lt;/a&gt;.&lt;/p&gt;</span><span class="se">\n\n</span><span class="s2">&lt;p&gt;&lt;em&gt;Thank you for using nginx.&lt;/em&gt;&lt;/p&gt;</span><span class="se">\n</span><span class="s2">&lt;/body&gt;</span><span class="se">\n</span><span class="s2">&lt;/html&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Start&quot;</span><span class="p">:</span> <span class="s2">&quot;2016-11-25T14:35:37.780192565Z&quot;</span>
+        <span class="p">}</span>
+    <span class="cp">]</span>,
+    &quot;Status&quot;: &quot;healthy&quot;
+}
+</pre></div>
+
+
+<h2 id="onbuild">ONBUILD 在子镜像中执行</h2>
+<p><code>ONBUILD</code>指令用来设置一些触发的指令，用于在当该镜像被作为基础镜像来创建其他镜像时(也就是<code>Dockerfile</code>中的<code>FROM</code>为当前镜像时)执行一些操作，<code>ONBUILD中</code>定义的指令会在用于生成其他镜像的<code>Dockerfile</code>文件的<code>FROM</code>指令之后被执行，上述介绍的任何一个指令都可以用于<code>ONBUILD</code>指令，可以用来执行一些因为环境而变化的操作，使镜像更加通用</p>
+<ol>
+<li>ONBUILD中定义的指令在当前镜像的build中不会被执行。</li>
+<li>可以通过查看<code>docker inspect &lt;image&gt;</code>命令执行结果的OnBuild键来查看某个镜像ONBUILD指令定义的内容。</li>
+<li>ONBUILD中定义的指令会当做引用该镜像的Dockerfile文件的FROM指令的一部分来执行，执行顺序会按ONBUILD定义的先后顺序执行，如果ONBUILD中定义的任何一个指令运行失败，则会使FROM指令中断并导致整个build失败，当所有的ONBUILD中定义的指令成功完成后，会按正常顺序继续执行build。</li>
+<li>ONBUILD中定义的指令不会继承到当前引用的镜像中，也就是当引用ONBUILD的镜像创建完成后将会清除所有引用的ONBUILD指令。</li>
+<li>ONBUILD指令不允许嵌套，例如<code>ONBUILD ONBUILD ADD . /data</code>是不允许的。</li>
+<li>ONBUILD指令不会执行其定义的FROM或MAINTAINER指令</li>
+<li>在ONBUILD指令中使用ADD或COPY指令要小心，因为新构建过程的上下文在缺少指定的源文件时会失败</li>
+</ol>
+<p>例如，<code>Dockerfile</code>使用如下的内容创建了镜像 image-A ：</p>
+<div class="hlcode"><pre><span class="k">[...]</span>
+<span class="err">ONBUILD</span> <span class="err">ADD</span> <span class="err">.</span> <span class="err">/app/src</span>
+<span class="err">ONBUILD</span> <span class="err">RUN</span> <span class="err">/usr/local/bin/python-build</span> <span class="err">--dir</span> <span class="err">/app/src</span>
+<span class="k">[...]</span>
+</pre></div>
+
+
+<p>如果基于 image-A 创建新的镜像时，新的<code>Dockerfile</code>中使用<code>FROM image-A</code>指定基础镜像时，会自动执行<code>ONBUILD</code>指令内容，等价于在后面添加了两条指令。</p>
+<div class="hlcode"><pre><span class="n">FROM</span> <span class="n">image</span><span class="o">-</span><span class="n">A</span>
+
+<span class="cp">#Automatically run the following</span>
+<span class="n">ADD</span> <span class="p">.</span> <span class="o">/</span><span class="n">app</span><span class="o">/</span><span class="n">src</span>
+<span class="n">RUN</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">python</span><span class="o">-</span><span class="n">build</span> <span class="o">--</span><span class="n">dir</span> <span class="o">/</span><span class="n">app</span><span class="o">/</span><span class="n">src</span>
+</pre></div>
+
+
+<h2 id="dockerignore">.dockerignore 文件</h2>
+<p><code>.dockerignore</code>用来忽略上下文目录中包含的一些image用不到的文件，它们不会传送到docker daemon。规则使用go语言的匹配语法。如：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">cat</span> <span class="p">.</span><span class="n">dockerignore</span>
+<span class="p">.</span><span class="n">git</span>
+<span class="n">tmp</span><span class="o">*</span>
+</pre></div>
+
+
+<h2 id="_4">应用运行前的准备工作</h2>
+<p>准备工作是和容器 CMD 无关的，无论 CMD 为什么，都需要事先进行一个预处理的工作。这种情况下，可以写一个脚本，然后放入 ENTRYPOINT 中去执行，而这个脚本会将接到的参数（也就是 <CMD>）作为命令，在脚本最后执行。比如官方镜像 redis 中就是这么做的：</p>
+<div class="hlcode"><pre><span class="n">FROM</span> <span class="n">alpine</span><span class="o">:</span><span class="mf">3.4</span>
+<span class="p">...</span>
+<span class="n">RUN</span> <span class="n">addgroup</span> <span class="o">-</span><span class="n">S</span> <span class="n">redis</span> <span class="o">&amp;&amp;</span> <span class="n">adduser</span> <span class="o">-</span><span class="n">S</span> <span class="o">-</span><span class="n">G</span> <span class="n">redis</span> <span class="n">redis</span>
+<span class="p">...</span>
+<span class="n">ENTRYPOINT</span> <span class="p">[</span><span class="s">&quot;docker-entrypoint.sh&quot;</span><span class="p">]</span>
+
+<span class="n">EXPOSE</span> <span class="mi">6379</span>
+<span class="n">CMD</span> <span class="p">[</span> <span class="s">&quot;redis-server&quot;</span> <span class="p">]</span>
+</pre></div>
+
+
+<h1 id="example">example</h1>
+<h2 id="mysql_1">mysql 构建过程</h2>
+<p>下面的<code>Dockerfile</code>是MySQL官方镜像的构建过程。从ubuntu基础镜像开始构建，安装mysql-server、配置权限、映射目录和端口，<code>CMD</code>在从这个镜像运行到容器时启动mysql。其中<code>VOLUME</code>定义的两个可挂载点，用于在host中挂载，因为数据库保存在主机上而非容器中才是比较安全的。</p>
+<div class="hlcode"><pre><span class="cp">#</span>
+<span class="cp"># MySQL Dockerfile</span>
+<span class="cp">#</span>
+<span class="cp"># https:</span><span class="c1">//github.com/dockerfile/mysql</span>
+<span class="cp">#</span>
+
+<span class="cp"># Pull base image.</span>
+<span class="n">FROM</span> <span class="n">dockerfile</span><span class="o">/</span><span class="n">ubuntu</span>
+
+<span class="cp"># Install MySQL.</span>
+<span class="n">RUN</span> \
+  <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span> <span class="o">&amp;&amp;</span> \
+  <span class="n">DEBIAN_FRONTEND</span><span class="o">=</span><span class="n">noninteractive</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">mysql</span><span class="o">-</span><span class="n">server</span> <span class="o">&amp;&amp;</span> \
+  <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">lists</span><span class="o">/*</span> <span class="o">&amp;&amp;</span> \
+  <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="err">&#39;</span><span class="n">s</span><span class="o">/^</span><span class="err">\</span><span class="p">(</span><span class="n">bind</span><span class="o">-</span><span class="n">address</span><span class="err">\</span><span class="n">s</span><span class="p">.</span><span class="o">*</span><span class="err">\</span><span class="p">)</span><span class="o">/</span><span class="err">#</span> <span class="err">\</span><span class="mi">1</span><span class="o">/</span><span class="err">&#39;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">my</span><span class="p">.</span><span class="n">cnf</span> <span class="o">&amp;&amp;</span> \
+  <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="err">&#39;</span><span class="n">s</span><span class="o">/^</span><span class="err">\</span><span class="p">(</span><span class="n">log_error</span><span class="err">\</span><span class="n">s</span><span class="p">.</span><span class="o">*</span><span class="err">\</span><span class="p">)</span><span class="o">/</span><span class="err">#</span> <span class="err">\</span><span class="mi">1</span><span class="o">/</span><span class="err">&#39;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">my</span><span class="p">.</span><span class="n">cnf</span> <span class="o">&amp;&amp;</span> \
+  <span class="n">echo</span> <span class="s">&quot;mysqld_safe &amp;&quot;</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">config</span> <span class="o">&amp;&amp;</span> \
+  <span class="n">echo</span> <span class="s">&quot;mysqladmin --silent --wait=30 ping || exit 1&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">config</span> <span class="o">&amp;&amp;</span> \
+  <span class="n">echo</span> <span class="s">&quot;mysql -e &#39;GRANT ALL PRIVILEGES ON *.* TO </span><span class="se">\&quot;</span><span class="s">root</span><span class="se">\&quot;</span><span class="s">@</span><span class="se">\&quot;</span><span class="s">%</span><span class="se">\&quot;</span><span class="s"> WITH GRANT OPTION;&#39;&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">config</span> <span class="o">&amp;&amp;</span> \
+  <span class="n">bash</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">config</span> <span class="o">&amp;&amp;</span> \
+  <span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">config</span>
+
+<span class="cp"># Define mountable directories.</span>
+<span class="n">VOLUME</span> <span class="p">[</span><span class="s">&quot;/etc/mysql&quot;</span><span class="p">,</span> <span class="s">&quot;/var/lib/mysql&quot;</span><span class="p">]</span>
+
+<span class="cp"># Define working directory.</span>
+<span class="n">WORKDIR</span> <span class="o">/</span><span class="n">data</span>
+
+<span class="cp"># Define default command.</span>
+<span class="n">CMD</span> <span class="p">[</span><span class="s">&quot;mysqld_safe&quot;</span><span class="p">]</span>
+
+<span class="cp"># Expose ports.</span>
+<span class="n">EXPOSE</span> <span class="mi">3306</span>
+</pre></div>
+
+
+<p>使用：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">build</span> <span class="o">-</span><span class="n">t</span><span class="o">=</span><span class="s">&quot;dockerfile/mysql&quot;</span> <span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">dockerfile</span><span class="o">/</span><span class="n">mysql</span>
+
+<span class="err">或下载</span><span class="n">Dockerfile</span><span class="err">内容再当前目录：</span>
+<span class="err">$</span> <span class="n">docker</span> <span class="n">build</span> <span class="o">-</span><span class="n">t</span><span class="o">=</span><span class="s">&quot;dockerfile/mysql&quot;</span> <span class="p">.</span>
+</pre></div>
+
+
+<p>（提示，上述第一条命令，如果你的host不可以连接Docker Hub，那么需要在启动docker服务时使用<code>HTTP_PROXY=</code>——用于build的时更新下载软件，同时执行<code>docker build</code>的终端设置<code>http_proxy</code>和<code>https_proxy</code>用于下载Dockerfile）</p>
+<p>运行：</p>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> <span class="o">--</span><span class="n">name</span> <span class="n">mysql</span> <span class="o">-</span><span class="n">p</span> <span class="mi">3306</span><span class="o">:</span><span class="mi">3306</span> <span class="n">dockerfile</span><span class="o">/</span><span class="n">mysql</span>
+<span class="err">或</span>
+<span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">it</span> <span class="o">--</span><span class="n">rm</span> <span class="o">--</span><span class="n">link</span> <span class="n">mysql</span><span class="o">:</span><span class="n">mysql</span> <span class="n">dockerfile</span><span class="o">/</span><span class="n">mysql</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="err">&#39;</span><span class="n">mysql</span> <span class="o">-</span><span class="n">h</span> <span class="err">$</span><span class="n">MYSQL_PORT_3306_TCP_ADDR</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="_5">让镜像变成像命令一样使用</h2>
+<ul>
+<li>查看当前公网 IP 的镜像</li>
+</ul>
+<div class="hlcode"><pre><span class="n">FROM</span> <span class="n">ubuntu</span><span class="o">:</span><span class="mf">16.04</span>
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">curl</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">lists</span><span class="o">/*</span>
+<span class="n">CMD</span> <span class="p">[</span> <span class="s">&quot;curl&quot;</span><span class="p">,</span> <span class="s">&quot;-s&quot;</span><span class="p">,</span> <span class="s">&quot;http://ip.cn&quot;</span> <span class="p">]</span>
+</pre></div>
+
+
+<ul>
+<li>假如我们使用 docker build -t myip . 来构建镜像的话，如果我们需要查询当前公网 IP，只需要执行：</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="n">myip</span>
+<span class="err">当前</span> <span class="n">IP</span><span class="err">：</span><span class="mf">61.148.226.66</span> <span class="err">来自：北京市</span> <span class="err">联通</span>
+</pre></div>
+
+
+<ul>
+<li>如果我们希望加入 -i 这参数</li>
+</ul>
+<div class="hlcode"><pre><span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="n">myip</span> <span class="n">curl</span> <span class="o">-</span><span class="n">s</span> <span class="n">http</span><span class="o">:</span><span class="c1">//ip.cn -i</span>
+</pre></div>
+
+
+<ul>
+<li>用 ENTRYPOINT 来实现这个镜像：</li>
+</ul>
+<div class="hlcode"><pre><span class="n">FROM</span> <span class="n">ubuntu</span><span class="o">:</span><span class="mf">16.04</span>
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">curl</span> \
+    <span class="o">&amp;&amp;</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">lists</span><span class="o">/*</span>
+<span class="n">ENTRYPOINT</span> <span class="p">[</span> <span class="s">&quot;curl&quot;</span><span class="p">,</span> <span class="s">&quot;-s&quot;</span><span class="p">,</span> <span class="s">&quot;http://ip.cn&quot;</span> <span class="p">]</span>
+
+
+<span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="n">myip</span>
+<span class="err">当前</span> <span class="n">IP</span><span class="err">：</span><span class="mf">61.148.226.66</span> <span class="err">来自：北京市</span> <span class="err">联通</span>
+
+<span class="err">$</span> <span class="n">docker</span> <span class="n">run</span> <span class="n">myip</span> <span class="o">-</span><span class="n">i</span>
+<span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span> <span class="mi">200</span> <span class="n">OK</span>
+<span class="nl">Server:</span> <span class="n">nginx</span><span class="o">/</span><span class="mf">1.8.0</span>
+<span class="nl">Date:</span> <span class="n">Tue</span><span class="p">,</span> <span class="mi">22</span> <span class="n">Nov</span> <span class="mi">2016</span> <span class="mo">05</span><span class="o">:</span><span class="mi">12</span><span class="o">:</span><span class="mi">40</span> <span class="n">GMT</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="o">:</span> <span class="n">text</span><span class="o">/</span><span class="n">html</span><span class="p">;</span> <span class="n">charset</span><span class="o">=</span><span class="n">UTF</span><span class="o">-</span><span class="mi">8</span>
+<span class="nl">Vary:</span> <span class="n">Accept</span><span class="o">-</span><span class="n">Encoding</span>
+<span class="n">X</span><span class="o">-</span><span class="n">Powered</span><span class="o">-</span><span class="n">By</span><span class="o">:</span> <span class="n">PHP</span><span class="o">/</span><span class="mf">5.6.24</span><span class="o">-</span><span class="mi">1</span><span class="o">~</span><span class="n">dotdeb</span><span class="o">+</span><span class="mf">7.1</span>
+<span class="n">X</span><span class="o">-</span><span class="n">Cache</span><span class="o">:</span> <span class="n">MISS</span> <span class="n">from</span> <span class="n">cache</span><span class="o">-</span><span class="mi">2</span>
+<span class="n">X</span><span class="o">-</span><span class="n">Cache</span><span class="o">-</span><span class="n">Lookup</span><span class="o">:</span> <span class="n">MISS</span> <span class="n">from</span> <span class="n">cache</span><span class="o">-</span><span class="mi">2</span><span class="o">:</span><span class="mi">80</span>
+<span class="n">X</span><span class="o">-</span><span class="n">Cache</span><span class="o">:</span> <span class="n">MISS</span> <span class="n">from</span> <span class="n">proxy</span><span class="o">-</span><span class="mi">2</span><span class="n">_6</span>
+<span class="n">Transfer</span><span class="o">-</span><span class="n">Encoding</span><span class="o">:</span> <span class="n">chunked</span>
+<span class="nl">Via:</span> <span class="mf">1.1</span> <span class="n">cache</span><span class="o">-</span><span class="mi">2</span><span class="o">:</span><span class="mi">80</span><span class="p">,</span> <span class="mf">1.1</span> <span class="n">proxy</span><span class="o">-</span><span class="mi">2</span><span class="n">_6</span><span class="o">:</span><span class="mi">8006</span>
+<span class="nl">Connection:</span> <span class="n">keep</span><span class="o">-</span><span class="n">alive</span>
+
+<span class="err">当前</span> <span class="n">IP</span><span class="err">：</span><span class="mf">61.148.226.66</span> <span class="err">来自：北京市</span> <span class="err">联通</span>
+</pre></div>
+
+
+<h3 id="tomcat">tomcat</h3>
+<h4 id="dockerfile_1">构建Dockerfile</h4>
+<div class="hlcode"><pre><span class="cp"># 指定基于的基础镜像</span>
+<span class="n">FROM</span> <span class="n">ubuntu</span><span class="o">:</span><span class="mf">13.10</span>  
+
+<span class="cp"># 维护者信息</span>
+<span class="n">MAINTAINER</span> <span class="n">zhangjiayang</span> <span class="s">&quot;zhangjiayang@sczq.com.cn&quot;</span>  
+
+<span class="cp"># 镜像的指令操作</span>
+<span class="cp"># 获取APT更新的资源列表</span>
+<span class="n">RUN</span> <span class="n">echo</span> <span class="s">&quot;deb http://archive.ubuntu.com/ubuntu precise main universe&quot;</span><span class="o">&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">sources</span><span class="p">.</span><span class="n">list</span>
+<span class="cp"># 更新软件</span>
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>  
+
+<span class="cp"># Install curl  </span>
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">curl</span>  
+
+<span class="cp"># Install JDK 7  </span>
+<span class="n">RUN</span> <span class="n">cd</span> <span class="o">/</span><span class="n">tmp</span> <span class="o">&amp;&amp;</span>  <span class="n">curl</span> <span class="o">-</span><span class="n">L</span> <span class="err">&#39;</span><span class="n">http</span><span class="o">:</span><span class="c1">//download.oracle.com/otn-pub/java/jdk/7u65-b17/jdk-7u65-linux-x64.tar.gz&#39; -H &#39;Cookie: oraclelicense=accept-securebackup-cookie; gpw_e24=Dockerfile&#39; | tar -xz  </span>
+<span class="n">RUN</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">jvm</span>  
+<span class="n">RUN</span> <span class="n">mv</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">jdk1</span><span class="mf">.7.0</span><span class="n">_65</span><span class="o">/</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">jvm</span><span class="o">/</span><span class="n">java</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">oracle</span><span class="o">/</span>  
+
+<span class="cp"># Set Oracle JDK 7 as default Java  </span>
+<span class="n">RUN</span> <span class="n">update</span><span class="o">-</span><span class="n">alternatives</span> <span class="o">--</span><span class="n">install</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">java</span> <span class="n">java</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">jvm</span><span class="o">/</span><span class="n">java</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">oracle</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">java</span> <span class="mi">300</span>     
+<span class="n">RUN</span> <span class="n">update</span><span class="o">-</span><span class="n">alternatives</span> <span class="o">--</span><span class="n">install</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">javac</span> <span class="n">javac</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">jvm</span><span class="o">/</span><span class="n">java</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">oracle</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">javac</span> <span class="mi">300</span>     
+
+<span class="cp"># 设置系统环境</span>
+<span class="n">ENV</span> <span class="n">JAVA_HOME</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">jvm</span><span class="o">/</span><span class="n">java</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">oracle</span><span class="o">/</span>  
+
+<span class="cp"># Install tomcat7  </span>
+<span class="n">RUN</span> <span class="n">cd</span> <span class="o">/</span><span class="n">tmp</span> <span class="o">&amp;&amp;</span> <span class="n">curl</span> <span class="o">-</span><span class="n">L</span> <span class="err">&#39;</span><span class="n">http</span><span class="o">:</span><span class="c1">//archive.apache.org/dist/tomcat/tomcat-7/v7.0.8/bin/apache-tomcat-7.0.8.tar.gz&#39; | tar -xz  </span>
+<span class="n">RUN</span> <span class="n">mv</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">apache</span><span class="o">-</span><span class="n">tomcat</span><span class="o">-</span><span class="mf">7.0.8</span><span class="o">/</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">tomcat7</span><span class="o">/</span>  
+
+<span class="n">ENV</span> <span class="n">CATALINA_HOME</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">tomcat7</span>  
+<span class="n">ENV</span> <span class="n">PATH</span> <span class="err">$</span><span class="n">PATH</span><span class="o">:</span><span class="err">$</span><span class="n">CATALINA_HOME</span><span class="o">/</span><span class="n">bin</span>  
+
+<span class="cp"># 复件tomcat7.sh到容器中的目录 </span>
+<span class="n">ADD</span> <span class="n">tomcat7</span><span class="p">.</span><span class="n">sh</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">init</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">tomcat7</span>  
+<span class="n">RUN</span> <span class="n">chmod</span> <span class="mi">755</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">init</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">tomcat7</span>  
+
+<span class="cp"># Expose ports.  指定暴露的端口</span>
+<span class="n">EXPOSE</span> <span class="mi">8080</span>  
+
+<span class="cp"># Define default command.  </span>
+<span class="n">ENTRYPOINT</span> <span class="n">service</span> <span class="n">tomcat7</span> <span class="n">start</span> <span class="o">&amp;&amp;</span> <span class="n">tail</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">tomcat7</span><span class="o">/</span><span class="n">logs</span><span class="o">/</span><span class="n">catalina</span><span class="p">.</span><span class="n">out</span>
+</pre></div>
+
+
+<h4 id="tomcat7sh">tomcat7.sh</h4>
+<div class="hlcode"><pre><span class="n">export</span> <span class="n">JAVA_HOME</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">jvm</span><span class="o">/</span><span class="n">java</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">oracle</span><span class="o">/</span>  
+<span class="n">export</span> <span class="n">TOMCAT_HOME</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">tomcat7</span>  
+
+<span class="k">case</span> <span class="err">$</span><span class="mi">1</span> <span class="n">in</span>  
+<span class="n">start</span><span class="p">)</span>  
+  <span class="n">sh</span> <span class="err">$</span><span class="n">TOMCAT_HOME</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">startup</span><span class="p">.</span><span class="n">sh</span>  
+<span class="p">;;</span>  
+<span class="n">stop</span><span class="p">)</span>  
+  <span class="n">sh</span> <span class="err">$</span><span class="n">TOMCAT_HOME</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">shutdown</span><span class="p">.</span><span class="n">sh</span>  
+<span class="p">;;</span>  
+<span class="n">restart</span><span class="p">)</span>  
+  <span class="n">sh</span> <span class="err">$</span><span class="n">TOMCAT_HOME</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">shutdown</span><span class="p">.</span><span class="n">sh</span>  
+  <span class="n">sh</span> <span class="err">$</span><span class="n">TOMCAT_HOME</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">startup</span><span class="p">.</span><span class="n">sh</span>  
+<span class="p">;;</span>  
+<span class="n">esac</span>  
+<span class="n">exit</span> <span class="mi">0</span>
+</pre></div>
+
+
+<h4 id="_6">构建镜像</h4>
+<div class="hlcode"><pre><span class="n">docker</span> <span class="n">build</span> <span class="o">-</span><span class="n">t</span> <span class="n">wechat</span><span class="o">-</span><span class="n">tomcat</span>
+<span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8090</span><span class="o">:</span><span class="mi">8080</span> <span class="n">wechat</span><span class="o">-</span><span class="n">tomcat</span> 
+</pre></div>
+
+
+<h2 id="wordpress-nginx">构建Wordpress + nginx运行环境</h2>
+<div class="hlcode"><pre><span class="cp"># 指定基于的基础镜像</span>
+<span class="n">FROM</span> <span class="n">ubuntu</span><span class="o">:</span><span class="mf">14.04</span>
+
+<span class="cp"># 维护者信息</span>
+<span class="n">MAINTAINER</span> <span class="n">Eugene</span> <span class="n">Ware</span> <span class="o">&lt;</span><span class="n">eugene</span><span class="err">@</span><span class="n">noblesamurai</span><span class="p">.</span><span class="n">com</span><span class="o">&gt;</span>
+
+<span class="cp"># Keep upstart from complaining</span>
+<span class="n">RUN</span> <span class="n">dpkg</span><span class="o">-</span><span class="n">divert</span> <span class="o">--</span><span class="n">local</span> <span class="o">--</span><span class="n">rename</span> <span class="o">--</span><span class="n">add</span> <span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">initctl</span>
+<span class="n">RUN</span> <span class="n">ln</span> <span class="o">-</span><span class="n">sf</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="nb">true</span> <span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">initctl</span>
+
+<span class="cp"># Let the conatiner know that there is no tty</span>
+<span class="n">ENV</span> <span class="n">DEBIAN_FRONTEND</span> <span class="n">noninteractive</span>
+
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">y</span> <span class="n">upgrade</span>
+
+<span class="cp"># Basic Requirements</span>
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">mysql</span><span class="o">-</span><span class="n">server</span> <span class="n">mysql</span><span class="o">-</span><span class="n">client</span> <span class="n">nginx</span> <span class="n">php5</span><span class="o">-</span><span class="n">fpm</span> <span class="n">php5</span><span class="o">-</span><span class="n">mysql</span> <span class="n">php</span><span class="o">-</span><span class="n">apc</span> <span class="n">pwgen</span> <span class="n">python</span><span class="o">-</span><span class="n">setuptools</span> <span class="n">curl</span> <span class="n">git</span> <span class="n">unzip</span>
+
+<span class="cp"># Wordpress Requirements</span>
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">php5</span><span class="o">-</span><span class="n">curl</span> <span class="n">php5</span><span class="o">-</span><span class="n">gd</span> <span class="n">php5</span><span class="o">-</span><span class="n">intl</span> <span class="n">php</span><span class="o">-</span><span class="n">pear</span> <span class="n">php5</span><span class="o">-</span><span class="n">imagick</span> <span class="n">php5</span><span class="o">-</span><span class="n">imap</span> <span class="n">php5</span><span class="o">-</span><span class="n">mcrypt</span> <span class="n">php5</span><span class="o">-</span><span class="n">memcache</span> <span class="n">php5</span><span class="o">-</span><span class="n">ming</span> <span class="n">php5</span><span class="o">-</span><span class="n">ps</span> <span class="n">php5</span><span class="o">-</span><span class="n">pspell</span> <span class="n">php5</span><span class="o">-</span><span class="n">recode</span> <span class="n">php5</span><span class="o">-</span><span class="n">sqlite</span> <span class="n">php5</span><span class="o">-</span><span class="n">tidy</span> <span class="n">php5</span><span class="o">-</span><span class="n">xmlrpc</span> <span class="n">php5</span><span class="o">-</span><span class="n">xsl</span>
+
+<span class="cp"># mysql config， 配置MySQL运行参数</span>
+<span class="n">RUN</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">e</span><span class="s">&quot;s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/&quot;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">my</span><span class="p">.</span><span class="n">cnf</span>
+
+<span class="cp"># nginx config， 配置Nginx运行参数</span>
+<span class="n">RUN</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">e</span><span class="s">&quot;s/keepalive_timeout\s*65/keepalive_timeout 2/&quot;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">nginx</span><span class="p">.</span><span class="n">conf</span>
+<span class="n">RUN</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">e</span><span class="s">&quot;s/keepalive_timeout 2/keepalive_timeout 2;</span><span class="se">\n\t</span><span class="s">client_max_body_size 100m/&quot;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">nginx</span><span class="p">.</span><span class="n">conf</span>
+<span class="n">RUN</span> <span class="n">echo</span> <span class="s">&quot;daemon off;&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">nginx</span><span class="p">.</span><span class="n">conf</span>
+
+<span class="cp"># php-fpm config</span>
+<span class="n">RUN</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">e</span> <span class="s">&quot;s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g&quot;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php5</span><span class="o">/</span><span class="n">fpm</span><span class="o">/</span><span class="n">php</span><span class="p">.</span><span class="n">ini</span>
+<span class="n">RUN</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">e</span> <span class="s">&quot;s/upload_max_filesize\s*=\s*2M/upload_max_filesize = 100M/g&quot;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php5</span><span class="o">/</span><span class="n">fpm</span><span class="o">/</span><span class="n">php</span><span class="p">.</span><span class="n">ini</span>
+<span class="n">RUN</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">e</span> <span class="s">&quot;s/post_max_size\s*=\s*8M/post_max_size = 100M/g&quot;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php5</span><span class="o">/</span><span class="n">fpm</span><span class="o">/</span><span class="n">php</span><span class="p">.</span><span class="n">ini</span>
+<span class="n">RUN</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">e</span> <span class="s">&quot;s/;daemonize\s*=\s*yes/daemonize = no/g&quot;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php5</span><span class="o">/</span><span class="n">fpm</span><span class="o">/</span><span class="n">php</span><span class="o">-</span><span class="n">fpm</span><span class="p">.</span><span class="n">conf</span>
+<span class="n">RUN</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">e</span> <span class="s">&quot;s/;catch_workers_output\s*=\s*yes/catch_workers_output = yes/g&quot;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php5</span><span class="o">/</span><span class="n">fpm</span><span class="o">/</span><span class="n">pool</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">www</span><span class="p">.</span><span class="n">conf</span>
+<span class="n">RUN</span> <span class="n">find</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php5</span><span class="o">/</span><span class="n">cli</span><span class="o">/</span><span class="n">conf</span><span class="p">.</span><span class="n">d</span><span class="o">/</span> <span class="o">-</span><span class="n">name</span> <span class="s">&quot;*.ini&quot;</span> <span class="o">-</span><span class="n">exec</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">re</span> <span class="err">&#39;</span><span class="n">s</span><span class="o">/^</span><span class="p">(</span><span class="err">\</span><span class="n">s</span><span class="o">*</span><span class="p">)</span><span class="err">#</span><span class="p">(.</span><span class="o">*</span><span class="p">)</span><span class="o">/</span><span class="err">\</span><span class="mi">1</span><span class="p">;</span><span class="err">\</span><span class="mi">2</span><span class="o">/</span><span class="n">g</span><span class="err">&#39;</span> <span class="p">{}</span> <span class="err">\</span><span class="p">;</span>
+
+<span class="cp"># nginx site conf，将本地Nginx配置文件复制到容器中的目录</span>
+<span class="n">ADD</span> <span class="p">.</span><span class="o">/</span><span class="n">nginx</span><span class="o">-</span><span class="n">site</span><span class="p">.</span><span class="n">conf</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">sites</span><span class="o">-</span><span class="n">available</span><span class="o">/</span><span class="k">default</span>
+
+<span class="cp"># Supervisor Config</span>
+<span class="n">RUN</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">easy_install</span> <span class="n">supervisor</span>
+<span class="n">RUN</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">easy_install</span> <span class="n">supervisor</span><span class="o">-</span><span class="n">stdout</span>
+<span class="n">ADD</span> <span class="p">.</span><span class="o">/</span><span class="n">supervisord</span><span class="p">.</span><span class="n">conf</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">supervisord</span><span class="p">.</span><span class="n">conf</span>
+
+<span class="cp"># Install Wordpress</span>
+<span class="n">ADD</span> <span class="n">https</span><span class="o">:</span><span class="c1">//wordpress.org/latest.tar.gz /usr/share/nginx/latest.tar.gz</span>
+<span class="n">RUN</span> <span class="n">cd</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span> <span class="o">&amp;&amp;</span> <span class="n">tar</span> <span class="n">xvf</span> <span class="n">latest</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span> <span class="o">&amp;&amp;</span> <span class="n">rm</span> <span class="n">latest</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span>
+<span class="n">RUN</span> <span class="n">mv</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="mi">5</span><span class="o">*</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">wordpress</span>
+<span class="n">RUN</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">www</span>
+<span class="n">RUN</span> <span class="n">mv</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">wordpress</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">www</span>
+<span class="n">RUN</span> <span class="n">chown</span> <span class="o">-</span><span class="n">R</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="o">:</span><span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">www</span>
+
+<span class="cp"># Wordpress Initialization and Startup Script</span>
+<span class="n">ADD</span> <span class="p">.</span><span class="o">/</span><span class="n">start</span><span class="p">.</span><span class="n">sh</span> <span class="o">/</span><span class="n">start</span><span class="p">.</span><span class="n">sh</span>
+<span class="n">RUN</span> <span class="n">chmod</span> <span class="mi">755</span> <span class="o">/</span><span class="n">start</span><span class="p">.</span><span class="n">sh</span>
+
+<span class="cp"># private expose</span>
+<span class="n">EXPOSE</span> <span class="mi">3306</span>
+<span class="n">EXPOSE</span> <span class="mi">80</span>
+
+<span class="cp"># volume for mysql database and wordpress install</span>
+<span class="n">VOLUME</span> <span class="p">[</span><span class="s">&quot;/var/lib/mysql&quot;</span><span class="p">,</span> <span class="s">&quot;/usr/share/nginx/www&quot;</span><span class="p">]</span>
+
+<span class="cp"># 容器启动时执行命令</span>
+<span class="n">CMD</span> <span class="p">[</span><span class="s">&quot;/bin/bash&quot;</span><span class="p">,</span> <span class="s">&quot;/start.sh&quot;</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="ruby-on-rails">构建Ruby on Rails环境</h2>
+<div class="hlcode"><pre><span class="cp"># 指定基础镜像</span>
+<span class="n">FROM</span> <span class="n">fcat</span><span class="o">/</span><span class="n">ubuntu</span><span class="o">-</span><span class="n">universe</span><span class="o">:</span><span class="mf">12.04</span>
+
+<span class="cp"># development tools</span>
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">qy</span> <span class="n">install</span> <span class="n">git</span> <span class="n">vim</span> <span class="n">tmux</span>
+
+<span class="cp"># ruby 1.9.3 and build dependencies</span>
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">qy</span> <span class="n">install</span> <span class="n">ruby1</span><span class="mf">.9.1</span> <span class="n">ruby1</span><span class="mf">.9.1</span><span class="o">-</span><span class="n">dev</span> <span class="n">build</span><span class="o">-</span><span class="n">essential</span> <span class="n">libpq</span><span class="o">-</span><span class="n">dev</span> <span class="n">libv8</span><span class="o">-</span><span class="n">dev</span> <span class="n">libsqlite3</span><span class="o">-</span><span class="n">dev</span>
+
+<span class="cp"># bundler</span>
+<span class="n">RUN</span> <span class="n">gem</span> <span class="n">install</span> <span class="n">bundler</span>
+
+<span class="cp"># create a &quot;rails&quot; user</span>
+<span class="cp"># the Rails application will live in the /rails directory</span>
+<span class="n">RUN</span> <span class="n">adduser</span> <span class="o">--</span><span class="n">disabled</span><span class="o">-</span><span class="n">password</span> <span class="o">--</span><span class="n">home</span><span class="o">=/</span><span class="n">rails</span> <span class="o">--</span><span class="n">gecos</span> <span class="s">&quot;&quot;</span> <span class="n">rails</span>
+
+<span class="cp"># copy the Rails app</span>
+<span class="cp"># we assume we have cloned the &quot;docrails&quot; repository locally</span>
+<span class="cp">#  and it is clean; see the &quot;prepare&quot; script</span>
+<span class="n">ADD</span> <span class="n">docrails</span><span class="o">/</span><span class="n">guides</span><span class="o">/</span><span class="n">code</span><span class="o">/</span><span class="n">getting_started</span> <span class="o">/</span><span class="n">rails</span>
+
+<span class="cp"># Make sure we have rights on the rails folder</span>
+<span class="n">RUN</span> <span class="n">chown</span> <span class="n">rails</span> <span class="o">-</span><span class="n">R</span> <span class="o">/</span><span class="n">rails</span>
+
+<span class="cp"># copy and execute the setup script</span>
+<span class="cp"># this will run bundler, setup the database, etc.</span>
+<span class="n">ADD</span> <span class="n">scripts</span><span class="o">/</span><span class="n">setup</span> <span class="o">/</span><span class="n">setup</span>
+<span class="n">RUN</span> <span class="n">su</span> <span class="n">rails</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span><span class="n">setup</span>
+
+<span class="cp"># copy the start script</span>
+<span class="n">ADD</span> <span class="n">scripts</span><span class="o">/</span><span class="n">start</span> <span class="o">/</span><span class="n">start</span>
+
+<span class="n">EXPOSE</span> <span class="mi">3000</span>
+
+<span class="cp"># 创建用户</span>
+<span class="n">USER</span> <span class="n">rails</span>
+
+<span class="cp"># 设置容器启动命令</span>
+<span class="n">CMD</span> <span class="o">/</span><span class="n">start</span>
+</pre></div>
+
+
+<h2 id="nginx">构建Nginx运行环境</h2>
+<div class="hlcode"><pre># 指定基础镜像
+FROM sameersbn/ubuntu:14.04.20161014
+
+# 维护者信息
+MAINTAINER sameer@damagehead.com
+
+# 设置环境
+ENV RTMP_VERSION=1.1.10 \
+    NPS_VERSION=1.11.33.4 \
+    LIBAV_VERSION=11.8 \
+    NGINX_VERSION=1.10.1 \
+    NGINX_USER=www-data \
+    NGINX_SITECONF_DIR=/etc/nginx/sites-enabled \
+    NGINX_LOG_DIR=/var/log/nginx \
+    NGINX_TEMP_DIR=/var/lib/nginx \
+    NGINX_SETUP_DIR=/var/cache/nginx
+
+# 设置构建时变量，镜像建立完成后就失效
+ARG BUILD_LIBAV=false
+ARG WITH_DEBUG=false
+ARG WITH_PAGESPEED=true
+ARG WITH_RTMP=true
+
+# 复制本地文件到容器目录中
+COPY setup/ <span class="cp">${</span><span class="n">NGINX_SETUP_DIR</span><span class="cp">}</span>/
+RUN bash <span class="cp">${</span><span class="n">NGINX_SETUP_DIR</span><span class="cp">}</span>/install.sh
+
+# 复制本地配置文件到容器目录中
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY entrypoint.sh /sbin/entrypoint.sh
+
+# 运行指令
+RUN chmod 755 /sbin/entrypoint.sh
+
+# 允许指定的端口
+EXPOSE 80/tcp 443/tcp 1935/tcp
+
+# 指定网站目录挂载点
+VOLUME [&quot;<span class="cp">${</span><span class="n">NGINX_SITECONF_DIR</span><span class="cp">}</span>&quot;]
+
+ENTRYPOINT [&quot;/sbin/entrypoint.sh&quot;]
+CMD [&quot;/usr/sbin/nginx&quot;]
+</pre></div>
+
+
+<h2 id="postgres">构建Postgres镜像</h2>
+<div class="hlcode"><pre># 指定基础镜像
+FROM sameersbn/ubuntu:14.04.20161014
+
+# 维护者信息
+MAINTAINER sameer@damagehead.com
+
+# 设置环境变量
+ENV PG_APP_HOME=&quot;/etc/docker-postgresql&quot;\
+    PG_VERSION=9.5 \
+    PG_USER=postgres \
+    PG_HOME=/var/lib/postgresql \
+    PG_RUNDIR=/run/postgresql \
+    PG_LOGDIR=/var/log/postgresql \
+    PG_CERTDIR=/etc/postgresql/certs
+
+ENV PG_BINDIR=/usr/lib/postgresql/<span class="cp">${</span><span class="n">PG_VERSION</span><span class="cp">}</span>/bin \
+    PG_DATADIR=<span class="cp">${</span><span class="n">PG_HOME</span><span class="cp">}</span>/<span class="cp">${</span><span class="n">PG_VERSION</span><span class="cp">}</span>/main
+
+# 下载PostgreSQL
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+ <span class="err">&amp;&amp;</span> echo &#39;deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main&#39; &gt; /etc/apt/sources.list.d/pgdg.list \
+ <span class="err">&amp;&amp;</span> apt-get update \
+ <span class="err">&amp;&amp;</span> DEBIAN_FRONTEND=noninteractive apt-get install -y acl \
+      postgresql-<span class="cp">${</span><span class="n">PG_VERSION</span><span class="cp">}</span> postgresql-client-<span class="cp">${</span><span class="n">PG_VERSION</span><span class="cp">}</span> postgresql-contrib-<span class="cp">${</span><span class="n">PG_VERSION</span><span class="cp">}</span> \
+ <span class="err">&amp;&amp;</span> ln -sf <span class="cp">${</span><span class="n">PG_DATADIR</span><span class="cp">}</span>/postgresql.conf /etc/postgresql/<span class="cp">${</span><span class="n">PG_VERSION</span><span class="cp">}</span>/main/postgresql.conf \
+ <span class="err">&amp;&amp;</span> ln -sf <span class="cp">${</span><span class="n">PG_DATADIR</span><span class="cp">}</span>/pg_hba.conf /etc/postgresql/<span class="cp">${</span><span class="n">PG_VERSION</span><span class="cp">}</span>/main/pg_hba.conf \
+ <span class="err">&amp;&amp;</span> ln -sf <span class="cp">${</span><span class="n">PG_DATADIR</span><span class="cp">}</span>/pg_ident.conf /etc/postgresql/<span class="cp">${</span><span class="n">PG_VERSION</span><span class="cp">}</span>/main/pg_ident.conf \
+ <span class="err">&amp;&amp;</span> rm -rf <span class="cp">${</span><span class="n">PG_HOME</span><span class="cp">}</span> \
+ <span class="err">&amp;&amp;</span> rm -rf /var/lib/apt/lists/*
+
+COPY runtime/ <span class="cp">${</span><span class="n">PG_APP_HOME</span><span class="cp">}</span>/
+COPY entrypoint.sh /sbin/entrypoint.sh
+RUN chmod 755 /sbin/entrypoint.sh
+
+# 指定端口
+EXPOSE 5432/tcp
+
+# 指定数据挂载点
+VOLUME [&quot;<span class="cp">${</span><span class="n">PG_HOME</span><span class="cp">}</span>&quot;, &quot;<span class="cp">${</span><span class="n">PG_RUNDIR</span><span class="cp">}</span>&quot;]
+
+# 切换目录
+WORKDIR <span class="cp">${</span><span class="n">PG_HOME</span><span class="cp">}</span>
+
+# 设置容器启动时执行命令
+ENTRYPOINT [&quot;/sbin/entrypoint.sh&quot;]
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

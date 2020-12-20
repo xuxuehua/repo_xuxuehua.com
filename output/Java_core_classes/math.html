@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>math - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java_core_classes">Java_core_classes</a>&nbsp;&#187;&nbsp;math
+    <span class="updated">Page Updated&nbsp;
+      2019-10-21 21:56
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">math</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#math">Math</a><ul>
+<li><a href="#abs">abs()</a></li>
+<li><a href="#maxmin">max/min</a></li>
+<li><a href="#pow">pow()</a></li>
+<li><a href="#sqrt">sqrt()</a></li>
+<li><a href="#exp">exp</a></li>
+<li><a href="#log">log</a></li>
+<li><a href="#_1">三角函数</a></li>
+<li><a href="#pie">数学常量 PI/E</a></li>
+<li><a href="#random">random()</a></li>
+</ul>
+</li>
+<li><a href="#strictmath">StrictMath</a></li>
+</ul>
+</div>
+<h1 id="math">Math</h1>
+<p><code>Math</code>类就是用来进行数学计算的，它提供了大量的静态方法来便于我们实现数学计算</p>
+<h2 id="abs">abs()</h2>
+<p>求绝对值：</p>
+<div class="hlcode"><pre><span class="n">Math</span><span class="p">.</span><span class="n">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">);</span> <span class="c1">// 100</span>
+<span class="n">Math</span><span class="p">.</span><span class="n">abs</span><span class="p">(</span><span class="o">-</span><span class="mf">7.8</span><span class="p">);</span> <span class="c1">// 7.8</span>
+</pre></div>
+
+
+<h2 id="maxmin">max/min</h2>
+<p>取最大或最小值：</p>
+<div class="hlcode"><pre><span class="n">Math</span><span class="p">.</span><span class="n">max</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">99</span><span class="p">);</span> <span class="c1">// 100</span>
+<span class="n">Math</span><span class="p">.</span><span class="n">min</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">);</span> <span class="c1">// 1.2</span>
+</pre></div>
+
+
+<h2 id="pow">pow()</h2>
+<p>计算x^y次方：</p>
+<div class="hlcode"><pre><span class="n">Math</span><span class="p">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span> <span class="c1">// 2的10次方=1024</span>
+</pre></div>
+
+
+<h2 id="sqrt">sqrt()</h2>
+<p>计算√x：</p>
+<div class="hlcode"><pre><span class="n">Math</span><span class="p">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span> <span class="c1">// 1.414...</span>
+</pre></div>
+
+
+<h2 id="exp">exp</h2>
+<p>计算e^x次方：</p>
+<div class="hlcode"><pre><span class="n">Math</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span> <span class="c1">// 7.389...</span>
+</pre></div>
+
+
+<h2 id="log">log</h2>
+<p>计算以e为底的对数：</p>
+<div class="hlcode"><pre><span class="n">Math</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span> <span class="c1">// 1.386...</span>
+</pre></div>
+
+
+<p>计算以10为底的对数：</p>
+<div class="hlcode"><pre><span class="n">Math</span><span class="p">.</span><span class="n">log10</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span> <span class="c1">// 2</span>
+</pre></div>
+
+
+<h2 id="_1">三角函数</h2>
+<div class="hlcode"><pre><span class="n">Math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">3.14</span><span class="p">);</span> <span class="c1">// 0.00159...</span>
+<span class="n">Math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">3.14</span><span class="p">);</span> <span class="c1">// -0.9999...</span>
+<span class="n">Math</span><span class="p">.</span><span class="n">tan</span><span class="p">(</span><span class="mf">3.14</span><span class="p">);</span> <span class="c1">// -0.0015...</span>
+<span class="n">Math</span><span class="p">.</span><span class="n">asin</span><span class="p">(</span><span class="mf">1.0</span><span class="p">);</span> <span class="c1">// 1.57079...</span>
+<span class="n">Math</span><span class="p">.</span><span class="n">acos</span><span class="p">(</span><span class="mf">1.0</span><span class="p">);</span> <span class="c1">// 0.0</span>
+</pre></div>
+
+
+<h2 id="pie">数学常量 PI/E</h2>
+<div class="hlcode"><pre><span class="kt">double</span> <span class="n">pi</span> <span class="o">=</span> <span class="n">Math</span><span class="p">.</span><span class="n">PI</span><span class="p">;</span> <span class="c1">// 3.14159...</span>
+<span class="kt">double</span> <span class="n">e</span> <span class="o">=</span> <span class="n">Math</span><span class="p">.</span><span class="n">E</span><span class="p">;</span> <span class="c1">// 2.718281828459045</span>
+<span class="n">Math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">Math</span><span class="p">.</span><span class="n">PI</span> <span class="o">/</span> <span class="mi">6</span><span class="p">);</span> <span class="c1">// sin(π/6) = 0.5</span>
+</pre></div>
+
+
+<h2 id="random">random()</h2>
+<p>生成一个随机数x，x的范围是<code>0 &lt;= x &lt; 1</code>：</p>
+<div class="hlcode"><pre><span class="n">Math</span><span class="p">.</span><span class="n">random</span><span class="p">();</span> <span class="c1">// 0.53907... 每次都不一样</span>
+</pre></div>
+
+
+<h1 id="strictmath">StrictMath</h1>
+<p>Java标准库还提供了一个<code>StrictMath</code>，它提供了和<code>Math</code>几乎一模一样的方法。这两个类的区别在于，由于浮点数计算存在误差，不同的平台（例如x86和ARM）计算的结果可能不一致（指误差不同），因此，<code>StrictMath</code>保证所有平台计算结果都是完全相同的，而<code>Math</code>会尽量针对平台优化计算速度，所以，绝大多数情况下，使用<code>Math</code>就足够了</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

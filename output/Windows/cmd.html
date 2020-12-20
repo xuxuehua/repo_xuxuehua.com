@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>cmd - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Windows">Windows</a>&nbsp;&#187;&nbsp;cmd
+    <span class="updated">Page Updated&nbsp;
+      2019-03-24 15:10
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">cmd</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#cmd">CMD</a><ul>
+<li><a href="#reset-ip">reset ip</a><ul>
+<li><a href="#reset-tcpip-stack">Reset TCP/IP Stack</a></li>
+<li><a href="#flush-dns">Flush DNS</a></li>
+<li><a href="#repair-system-files">Repair system files</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#powershell">Powershell</a><ul>
+<li><a href="#host-info">host info</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="cmd">CMD</h1>
+<h2 id="reset-ip">reset ip</h2>
+<div class="hlcode"><pre><span class="n">ipconfig</span> <span class="o">-</span><span class="n">release</span>
+<span class="n">ipconfig</span> <span class="o">/</span><span class="n">release</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">ipconfig</span> <span class="o">-</span><span class="n">renew</span>
+<span class="n">ipconfig</span> <span class="o">/</span><span class="n">renew</span>
+</pre></div>
+
+
+<h3 id="reset-tcpip-stack">Reset TCP/IP Stack</h3>
+<div class="hlcode"><pre><span class="n">netsh</span> <span class="kt">int</span> <span class="n">ip</span> <span class="n">reset</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">netsh</span> <span class="kt">int</span> <span class="n">ipv4</span> <span class="n">set</span> <span class="n">address</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;Housing Static DNS&quot;</span> <span class="n">dhcp</span> 
+</pre></div>
+
+
+<h3 id="flush-dns">Flush DNS</h3>
+<div class="hlcode"><pre><span class="n">ipconfig</span> <span class="o">-</span><span class="n">flushdns</span>
+<span class="n">ipconfig</span> <span class="o">/</span><span class="n">flushdns</span>
+</pre></div>
+
+
+<h3 id="repair-system-files">Repair system files</h3>
+<div class="hlcode"><pre><span class="n">sfc</span> <span class="o">/</span><span class="n">scannow</span>
+</pre></div>
+
+
+<h1 id="powershell">Powershell</h1>
+<h2 id="host-info">host info</h2>
+<div class="hlcode"><pre><span class="n">get</span><span class="o">-</span><span class="n">wmiobject</span> <span class="n">win32_computersystem</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">Get</span><span class="o">-</span><span class="n">WMIObject</span> <span class="n">Win32_BIOS</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">Import</span><span class="o">-</span><span class="n">Module</span> <span class="n">ActiveDirectory</span>
+
+<span class="n">get</span><span class="o">-</span><span class="n">adcomputer</span> <span class="o">-</span><span class="n">Filter</span> <span class="err">&#39;</span><span class="n">Name</span> <span class="o">-</span><span class="n">like</span> <span class="s">&quot;ws-jo*&quot;</span><span class="err">&#39;</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

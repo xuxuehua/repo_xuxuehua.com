@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>error - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Solidity">Solidity</a>&nbsp;&#187;&nbsp;error
+    <span class="updated">Page Updated&nbsp;
+      2018-08-13 01:36
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">error</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">错误</a><ul>
+<li><a href="#reverting">reverting</a><ul>
+<li><a href="#assert">assert</a></li>
+<li><a href="#require">require</a></li>
+<li><a href="#revert">revert()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">错误</h1>
+<h2 id="reverting">reverting</h2>
+<p>回滚机制（reverting）是为了确保transaction的原子性，主要分为require样式和assert样式。</p>
+<h3 id="assert">assert</h3>
+<p>assert用于检查程序运行条件是否满足（例如数组访问是否越界）</p>
+<h3 id="require">require</h3>
+<p>require用于检查用户输入或外部调用返回值</p>
+<h3 id="revert">revert()</h3>
+<p>执行失败需要给出异常提示，<code>throw</code>已经deprecated，应该采用<code>revert()</code></p>
+<p>如果采用<code>throw</code>抛出异常，所有的剩余<code>gas</code>都会消耗殆尽；而采用<code>revert()</code>的话，会回滚以前所有<code>transaction</code>的状态，同时交还没有消耗完的<code>gas</code></p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

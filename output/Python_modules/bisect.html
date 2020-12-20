@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>bisect - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;bisect
+    <span class="updated">Page Updated&nbsp;
+      2020-08-09 17:00
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">bisect</div>
+
+  <p>[toc]</p>
+<h1 id="bisect">bisect 维护已排序的序列</h1>
+<p>才用二分查找的方式操作</p>
+<h2 id="insort">insort 插入方法</h2>
+<p>insort_left</p>
+<p>insort_right</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">bisect</span>
+
+<span class="n">inter_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">inter_list</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="bisect_1">bisect 查找方法</h2>
+<p>bisect_left</p>
+<p>bisect_right</p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">bisect</span>
+
+<span class="n">inter_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort_left</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">bisect</span><span class="p">.</span><span class="n">bisect</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">bisect</span><span class="p">.</span><span class="n">bisect</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">bisect</span><span class="p">.</span><span class="n">insort_left</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">bisect</span><span class="p">.</span><span class="n">bisect</span><span class="p">(</span><span class="n">inter_list</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">3</span>
+<span class="mi">5</span>
+<span class="mi">6</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

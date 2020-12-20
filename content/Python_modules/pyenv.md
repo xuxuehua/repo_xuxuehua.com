@@ -106,7 +106,7 @@ $ brew install --HEAD pyenv-virtualenv
 ```
 
 ```
-Cat ~/.bash_profile 
+cat ~/.bash_profile 
 eval "$(pyenv init -)" 
 eval "$(pyenv virtualenv-init -)" 
 ```
@@ -181,9 +181,12 @@ curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer 
 
 
 ```
-export PATH="/home/python/.pyenv/bin:$PATH"
+vim ~/.bashrc 
+export PATH="/root/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
+
+
 source ~/.bashrc
 ```
 
@@ -222,9 +225,6 @@ source ~/.bashrc
 
 
 
-
-
-#### 
 
 
 
@@ -315,5 +315,19 @@ fi
 pyenv virtualenv 3.6.0 $PROJECT_NAME
 pyenv local $PROJECT_NAME
 pip install --quiet nosexcover
+```
+
+
+
+
+
+
+
+# FAQ
+
+## ModuleNotFoundError: No module named '_ctypes'
+
+```
+yum install libffi-devel
 ```
 

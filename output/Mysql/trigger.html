@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>trigger 触发器 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Mysql">Mysql</a>&nbsp;&#187;&nbsp;trigger 触发器
+    <span class="updated">Page Updated&nbsp;
+      2018-12-23 19:47
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">trigger 触发器</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#trigger">trigger 触发器</a><ul>
+<li><a href="#_1">特点</a></li>
+<li><a href="#_2">创建触发器</a><ul>
+<li><a href="#_3">语法</a></li>
+<li><a href="#trigger_time">trigger_time</a></li>
+<li><a href="#trigger_event">trigger_event</a></li>
+</ul>
+</li>
+<li><a href="#_4">删除触发器</a></li>
+<li><a href="#_5">触发事件</a><ul>
+<li><a href="#insert">INSERT</a></li>
+<li><a href="#update">UPDATE</a></li>
+<li><a href="#delete">DELETE</a></li>
+</ul>
+</li>
+<li><a href="#begin-end">BEGIN … END 语句</a><ul>
+<li><a href="#before">BEFORE</a></li>
+</ul>
+</li>
+<li><a href="#mysql">MySQL 触发器在操作事务性和非事务性表的区别</a></li>
+</ul>
+</li>
+<li><a href="#example">example</a></li>
+</ul>
+</div>
+<h1 id="trigger">trigger 触发器</h1>
+<p>MySQL中，触发器是一种与数据表事件相关的特殊形式的存储过程，是建在表上的命名数据库对象，触发器常用于加强数据的完整性约束和复杂的业务规则等。</p>
+<h2 id="_1">特点</h2>
+<ul>
+<li>建在表上：触发器定义在特定的数据表上，这个表可叫做触发器表。触发器可以查询其他表，引用其他表的字段，可以包含复杂的SQL语句。触发器所在表必须为永久性表，不能将触发程序与TEMPORARY表或视图关联起来。</li>
+<li>由事件触发：不同于存储过程，触发器不能手动调用，也不能接收、传送参数。必须对表上INSERT、UPDATE 或 DELETE 操作定义了触发器，然后对应地执行 INSERT、UPDATE 或 DELETE 操作时，该触发器才可被激活，触发程序自动执行。</li>
+<li>可调用存储过程：为响应数据库的变化，触发器可以调用一个或多个存储过程，保证数据完整性、一致性。</li>
+</ul>
+<h2 id="_2">创建触发器</h2>
+<h3 id="_3">语法</h3>
+<div class="hlcode"><pre><span class="n">CREATE</span> <span class="n">TRIGGER</span> <span class="n">trigger_name</span> <span class="n">trigger_time</span> <span class="n">trigger_event</span>
+<span class="n">ON</span> <span class="n">tbl_name</span> <span class="n">FOR</span> <span class="n">EACH</span> <span class="n">ROW</span> <span class="n">trigger_stmt</span>
+</pre></div>
+
+
+<blockquote>
+<p>trigger_name:触发器名称，可以自己定义</p>
+<p>trigger_time:触发时机，有两个取值BEFORE|AFTER，指定触发器执行的时间。</p>
+<p>trigger_event:触发事件，取值包括INSERT UPDATE和DELETE。</p>
+<p>tbl_name:建立触发器的数据表的名称，即在哪张表上建立触发器。</p>
+<p>FOR EACH ROW：表示任何一条满足触发条件的记录上的操作都会触发触发器。</p>
+<p>trigger_stmt:触发器程序体，指触发器被触发后执行的程序，可以是一条SQL语句，也可以是BEGIN和END包含的多条语句。</p>
+</blockquote>
+<h3 id="trigger_time">trigger_time</h3>
+<p>需要注意的是不能在同一张表上建立2种同类型的触发器，一张表最多创建6个触发器(6种类型)：即BEFORE INSERT、BEFORE UPDATE、BEFORE DELETE、AFTER INSERT、AFTER UPDATE、AFTER DELETE。</p>
+<h3 id="trigger_event">trigger_event</h3>
+<p>trigger_event可以是下述值之一：</p>
+<p>INSERT：将新行插入表时激活触发程序，例如，通过INSERT、LOAD DATA和REPLACE语句。</p>
+<p>UPDATE：更改某一行时激活触发程序，例如，通过UPDATE语句。</p>
+<p>DELETE：从表中删除某一行时激活触发程序，例如，通过DELETE和REPLACE语句。</p>
+<p>请注意，trigger_event与以表操作方式激活触发程序的SQL语句并不很类似，这点很重要。</p>
+<p>对于某一表，不能有两个BEFORE UPDATE触发程序。但可以有1个BEFORE UPDATE触发程序和1个BEFOREINSERT触发程序，或1个BEFORE UPDATE触发程序和1个AFTER UPDATE触发程序。</p>
+<h2 id="_4">删除触发器</h2>
+<div class="hlcode"><pre><span class="n">DROP</span> <span class="n">TRIGGER</span> <span class="p">[</span><span class="n">IF</span> <span class="n">EXISTS</span><span class="p">]</span> <span class="p">[</span><span class="n">schema_name</span><span class="p">.]</span><span class="n">trigger_name</span>
+</pre></div>
+
+
+<h2 id="_5">触发事件</h2>
+<p>MySQL除了对insert update delete基本操作进行定义外，还定义了load data和replace语句，这两种语句也能触发以上6种类型的触发器的触发。</p>
+<p>LOAD DATA 语句将一个文件装入到一个数据表中，相当与是一系列的 INSERT 操作。</p>
+<p>replace和insert语句也很像，只是在表中有 primary key 或 unique 索引时，如果插入的数据和原来 primary key 或 unique 索引一致时，会先删除原来的数据，然后增加一条新数据，也就是说，一条 REPLACE 语句有时候等价于一条。</p>
+<h3 id="insert">INSERT</h3>
+<p>触发器插入某一行时激活触发器，可能通过 INSERT、LOAD DATA、REPLACE 语句触发；</p>
+<p>在INSERT触发程序中，仅能使用NEW.col_name，没有旧行</p>
+<h3 id="update">UPDATE</h3>
+<p>更改某一行时激活触发器，可能通过 UPDATE 语句触发；</p>
+<p>在UPDATE触发程序中，可以使用OLD.col_name来引用更新前的某一记录行的列，也可使用NEW.col_name来引用更新后的记录行中的列。</p>
+<p>用OLD命名的列是只读的。你可以引用它，但不能更改它。对于用NEW命名的列，如果具有SELECT权限，可引用它。在BEFORE触发程序中，如果你具有UPDATE权限，可使用“SET NEW.col_name = value”更改它的值。这意味着，你可以使用触发程序来更改将要插入到新行中的值，或用于更新行的值。</p>
+<h3 id="delete">DELETE</h3>
+<p>删除某一行时激活触发器，可能通过 DELETE、REPLACE 语句触发。</p>
+<p>在DELETE触发程序中，仅能使用OLD.col_name，没有新行。</p>
+<h2 id="begin-end">BEGIN … END 语句</h2>
+<p>语句格式</p>
+<div class="hlcode"><pre><span class="n">BEGIN</span>   <span class="n">statement</span><span class="p">...</span><span class="n">list</span>   <span class="n">END</span>
+</pre></div>
+
+
+<p>statement_list 代表一个或多个语句的列表，列表内的每条语句都必须用分号（;）来结尾。</p>
+<p>在BEGIN…END块中，还能使用存储过程的其他语法，如条件判断和循环语句。此时，需要重新定义SQL语句分隔符，以便能够在触发程序中使用SQL结束符“;”。</p>
+<div class="hlcode"><pre><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">delimiter</span> <span class="err">$$</span><span class="p">;</span>
+</pre></div>
+
+
+<blockquote>
+<p>定义$$ 为结束符号</p>
+</blockquote>
+<div class="hlcode"><pre><span class="n">create</span> <span class="n">trigger</span> <span class="n">tr_insertEmp</span> <span class="n">after</span> <span class="n">insert</span>
+<span class="n">on</span> <span class="n">employees</span> <span class="k">for</span> <span class="n">each</span> <span class="n">row</span>
+<span class="n">begin</span>
+    <span class="n">insert</span> <span class="n">salaries</span> <span class="nf">values</span><span class="p">(</span><span class="n">new</span><span class="p">.</span><span class="n">emp_no</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="err">&#39;</span><span class="mi">2018</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">23</span><span class="sc">&#39;,&#39;</span><span class="mi">2018</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">23</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">end</span><span class="p">;</span>
+<span class="err">$$</span><span class="p">;</span>
+</pre></div>
+
+
+<h3 id="before">BEFORE</h3>
+<p>在BEFORE触发程序中，AUTO_INCREMENT列的NEW值为0，不是实际插入新记录时将自动生成的序列号。</p>
+<h2 id="mysql">MySQL 触发器在操作事务性和非事务性表的区别</h2>
+<p>对于事务性表，触发器在执行过程中若有一个触发程序执行失败，那么整个触发程序将回滚。对于非事务性表，如果后面部分语句执行失败，但在这之前执行的语句依然有效，无法撤销。</p>
+<p>在触发器执行过程中，MySQL的错误处理机制如下：</p>
+<ol>
+<li>如果BEFORE型触发器执行失败，相应行的操作也不会被执行。</li>
+<li>BEFORE型触发器是有对行的插入或修改行为激活，无论后续的插入或修改是否成功。</li>
+<li>只有当所有的BEFORE型触发器和所有的行操作全部执行成功，AFTER型触发器才被执行。</li>
+<li>如果BEFORE或AFTER触发器在执行过程中出现错误，将导致调用触发器的整个SQL语句执行失败。</li>
+<li>对于事务性表，触发器SQL语句如果执行失败，那么由此执行引起的所有改变都将回滚。</li>
+</ol>
+<p>MySQL数据库引擎默认为MyISAM，不支持事务和外键，InnoDB可支持事务和外键。</p>
+<h1 id="example">example</h1>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

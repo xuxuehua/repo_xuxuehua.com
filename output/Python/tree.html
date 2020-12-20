@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>tree - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python">Python</a>&nbsp;&#187;&nbsp;tree
+    <span class="updated">Page Updated&nbsp;
+      2019-01-30 18:15
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">tree</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">树</a><ul>
+<li><a href="#_2">概念</a><ul>
+<li><a href="#_3">结点</a></li>
+<li><a href="#degree">degree 度</a></li>
+<li><a href="#leaf">叶子结点 leaf</a></li>
+<li><a href="#_4">分支结点</a></li>
+<li><a href="#_5">分支</a></li>
+<li><a href="#_6">内部结点</a></li>
+<li><a href="#child-node">子结点 Child Node</a></li>
+<li><a href="#parent-node">双亲结点 Parent Node</a></li>
+<li><a href="#sibling-node">兄弟结点 Sibling Node</a></li>
+<li><a href="#_7">祖先结点</a></li>
+<li><a href="#_8">子孙结点</a></li>
+<li><a href="#level">结点层次 Level</a></li>
+<li><a href="#depth">树的深度 Depth</a></li>
+<li><a href="#_9">有序树</a></li>
+<li><a href="#_10">无序树</a></li>
+<li><a href="#_11">路径</a></li>
+<li><a href="#_12">森林</a></li>
+</ul>
+</li>
+<li><a href="#_13">树的特点</a></li>
+</ul>
+</li>
+<li><a href="#binary-tree">二叉树 Binary Tree</a><ul>
+<li><a href="#_14">定义</a></li>
+<li><a href="#_15">形态</a><ul>
+<li><a href="#_16">空二叉树</a></li>
+<li><a href="#_17">只有一个根结点</a></li>
+<li><a href="#_18">根结点只有左子树</a></li>
+<li><a href="#_19">根结点只有右子树</a></li>
+<li><a href="#_20">根结点有左子树和右子树</a></li>
+</ul>
+</li>
+<li><a href="#_21">二叉树性质</a></li>
+<li><a href="#_22">左斜树</a></li>
+<li><a href="#_23">右斜树</a></li>
+<li><a href="#_24">满二叉树</a><ul>
+<li><a href="#_25">定义</a></li>
+<li><a href="#_26">特点</a></li>
+</ul>
+</li>
+<li><a href="#_27">完全二叉树</a><ul>
+<li><a href="#_28">定义</a></li>
+<li><a href="#_29">特点</a></li>
+</ul>
+</li>
+<li><a href="#_30">二叉树遍历</a><ul>
+<li><a href="#_31">层序遍历</a></li>
+<li><a href="#_32">前序遍历</a></li>
+<li><a href="#_33">中序遍历</a></li>
+<li><a href="#_34">后序遍历</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">树</h1>
+<h2 id="_2">概念</h2>
+<p>非线形结构，每个元素可以有多个前驱和后继</p>
+<h3 id="_3">结点</h3>
+<p>树中的数据元素</p>
+<h3 id="degree">degree 度</h3>
+<p>结点拥有的子树的数目，记作d </p>
+<h3 id="leaf">叶子结点 leaf</h3>
+<p>结点的度为0， 称为叶子结点leaf， 终端结点，末端结点</p>
+<h3 id="_4">分支结点</h3>
+<p>结点的度部位0，称为非终端结点或分支结点</p>
+<h3 id="_5">分支</h3>
+<p>结点之间的关系</p>
+<h3 id="_6">内部结点</h3>
+<p>除根结点外的分支结点，当然也不包括叶子结点</p>
+<p>树的度是树内个结点的度的最大值</p>
+<h3 id="child-node">子结点 Child Node</h3>
+<p>结点的子树的根结点成为该结点的孩子</p>
+<h3 id="parent-node">双亲结点 Parent Node</h3>
+<p>一个接的是他各子树的根结点的双亲</p>
+<h3 id="sibling-node">兄弟结点 Sibling Node</h3>
+<p>具有相同双亲结点的结点</p>
+<h3 id="_7">祖先结点</h3>
+<p>从根结点到该结点锁经分支上所有的结点</p>
+<h3 id="_8">子孙结点</h3>
+<p>结点的所有子树上的结点</p>
+<h3 id="level">结点层次 Level</h3>
+<p>根结点为第一层</p>
+<p>根结点的孩子为第二层</p>
+<p>以此类推</p>
+<h3 id="depth">树的深度 Depth</h3>
+<p>树的层次的最大值</p>
+<h3 id="_9">有序树</h3>
+<p>结点的子树是有顺序的，不能交换</p>
+<h3 id="_10">无序树</h3>
+<p>结点的子树是无序的，可以交换</p>
+<h3 id="_11">路径</h3>
+<p>树中的k个结点n1，n2   …… nk 满足nx是n(x+1) 的双亲，成为n1到nk的一条路径，一条线串下来，前一个都是后一个父结点</p>
+<h3 id="_12">森林</h3>
+<p>m(m&gt;=0) 棵不相交的树的集合</p>
+<p>对于结点而言，子树的集合就是森林</p>
+<h2 id="_13">树的特点</h2>
+<p>唯一的根</p>
+<p>子树不相交</p>
+<p>除了根以外，每个元素只能有一个前驱，可以有零个或者多个后继</p>
+<p>根结点没有双亲结点，叶子结点没有孩子结点</p>
+<h1 id="binary-tree">二叉树 Binary Tree</h1>
+<h2 id="_14">定义</h2>
+<p>每个结点最多2棵子树</p>
+<p>二叉树不存在度数大于2的结点</p>
+<h2 id="_15">形态</h2>
+<h3 id="_16">空二叉树</h3>
+<h3 id="_17">只有一个根结点</h3>
+<h3 id="_18">根结点只有左子树</h3>
+<h3 id="_19">根结点只有右子树</h3>
+<h3 id="_20">根结点有左子树和右子树</h3>
+<h2 id="_21">二叉树性质</h2>
+<p>在二叉树的第i层上至多有2^(i-1)个结点(i&gt;=1)</p>
+<p>深度为k的二叉树，至多有(2^k)-1个结点(k&gt;=1)</p>
+<p>任何的二叉树，如果其终端结点数为n0，度数为2的结点为n2，则n0=n2+1</p>
+<p>高度为k的二叉树，至少有k个结点</p>
+<h2 id="_22">左斜树</h2>
+<p>所有结点只有左子树</p>
+<h2 id="_23">右斜树</h2>
+<p>所有结点只有右子树</p>
+<h2 id="_24">满二叉树</h2>
+<p>深度为3的7结点满二叉树</p>
+<div class="hlcode"><pre>      <span class="n">a</span>
+    <span class="o">/</span>   \
+   <span class="n">b</span>     <span class="n">c</span>
+  <span class="o">/</span><span class="err">\</span>     <span class="o">/</span>\
+<span class="n">d</span>   <span class="n">e</span>   <span class="n">f</span>   <span class="n">g</span>
+</pre></div>
+
+
+<h3 id="_25">定义</h3>
+<p>一颗二叉树的所有分支结点都存在左子树和右子树，并且所有叶子结点只存在在最下面一层</p>
+<h3 id="_26">特点</h3>
+<p>同样深度二叉树中，满二叉树结点最多</p>
+<h2 id="_27">完全二叉树</h2>
+<h3 id="_28">定义</h3>
+<p>若二叉树的深度为k，二叉树的层数从1到k-1层的结点数都达到了最大个树，并且在第k层的所有结点都集中在最左边</p>
+<div class="hlcode"><pre>        <span class="n">a</span>
+      <span class="o">/</span>   \
+     <span class="n">b</span>     <span class="n">c</span>
+    <span class="o">/</span><span class="err">\</span>     <span class="o">/</span>\
+  <span class="n">d</span>   <span class="n">e</span>   <span class="n">f</span>   <span class="n">g</span>
+ <span class="o">/</span>
+<span class="n">h</span>
+</pre></div>
+
+
+<div class="hlcode"><pre>        <span class="n">a</span>
+      <span class="o">/</span>   \
+     <span class="n">b</span>     <span class="n">c</span>
+    <span class="o">/</span><span class="err">\</span>     <span class="o">/</span>\
+  <span class="n">d</span>   <span class="n">e</span>   <span class="n">f</span>   <span class="n">g</span>
+ <span class="o">/</span>\
+<span class="n">h</span>   <span class="n">i</span>
+</pre></div>
+
+
+<div class="hlcode"><pre>        <span class="n">a</span>
+      <span class="o">/</span>   \
+     <span class="n">b</span>     <span class="n">c</span>
+    <span class="o">/</span><span class="err">\</span>     <span class="o">/</span>\
+  <span class="n">d</span>   <span class="n">e</span>   <span class="n">f</span>   <span class="n">g</span>
+ <span class="o">/</span><span class="err">\</span>   <span class="o">/</span><span class="err">\</span>  <span class="o">/</span>
+<span class="n">h</span>  <span class="n">i</span> <span class="n">j</span>  <span class="n">k</span> <span class="n">l</span>
+</pre></div>
+
+
+<h3 id="_29">特点</h3>
+<p>完全二叉树由满二叉树引出</p>
+<p>满二叉树一定是完全二叉树，但完全二叉树不一定是满二叉树</p>
+<p>具有n个结点的完全二叉树的深度为math.ceil(log2(n+1))</p>
+<h2 id="_30">二叉树遍历</h2>
+<p>对树中所有的元素不重复地访问一遍，也称扫描</p>
+<h3 id="_31">层序遍历</h3>
+<p>按照层次，从第一层开始，自左向右遍历元素</p>
+<p><img alt="img" src="https://cdn.pbrd.co/images/HZ12SGU.png" /></p>
+<h3 id="_32">前序遍历</h3>
+<p>从根结点开始，自左子树，后右子树</p>
+<p><img alt="img" src="https://cdn.pbrd.co/images/HZ13QzO.png" /></p>
+<h3 id="_33">中序遍历</h3>
+<p>从根结点的左子树开始遍历，然后是根结点，再右子树</p>
+<p><img alt="img" src="https://cdn.pbrd.co/images/HZ14zt5.png" /></p>
+<h3 id="_34">后序遍历</h3>
+<p>先左子树，然后右子树，再根结点</p>
+<p><img alt="img" src="https://cdn.pbrd.co/images/HZ14YMn.png" /></p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

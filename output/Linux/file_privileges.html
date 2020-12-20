@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>file_privileges - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux">Linux</a>&nbsp;&#187;&nbsp;file_privileges
+    <span class="updated">Page Updated&nbsp;
+      2018-12-22 16:02
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">file_privileges</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">文件权限</a><ul>
+<li><a href="#r">r</a></li>
+<li><a href="#w">w</a></li>
+<li><a href="#x">x</a></li>
+<li><a href="#_2">特殊权限</a><ul>
+<li><a href="#set-uid">Set UID</a><ul>
+<li><a href="#suid">设置SUID</a></li>
+</ul>
+</li>
+<li><a href="#set-gid">Set GID</a><ul>
+<li><a href="#sgid">设置SGID</a></li>
+</ul>
+</li>
+<li><a href="#set-sticky-bit">Set Sticky bit</a><ul>
+<li><a href="#sbit">设置SBIT</a></li>
+</ul>
+</li>
+<li><a href="#_3">设置不含执行权限的特殊权限</a></li>
+</ul>
+</li>
+<li><a href="#_4">文件隐藏属性</a><ul>
+<li><a href="#chattr">chattr</a></li>
+<li><a href="#lsattr">lsattr</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_5">目录权限</a><ul>
+<li><a href="#r_1">r</a></li>
+<li><a href="#w_1">w</a></li>
+<li><a href="#x_1">x</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">文件权限</h1>
+<h2 id="r">r</h2>
+<p>可读取查看</p>
+<h2 id="w">w</h2>
+<p>可以修改，但不可以删除，除非该文件所在的目录有写权限</p>
+<h2 id="x">x</h2>
+<p>可以被系统执行</p>
+<h2 id="_2">特殊权限</h2>
+<h3 id="set-uid">Set UID</h3>
+<p>SUID对目录是无效的</p>
+<p>会创建s与t权限，是为了让一般用户在执行某些程序的时候，能够暂时具有该程序拥有者的权限。</p>
+<p>举例来说，我们知道，账号与密码的存放文件其实是 /etc/passwd与 /etc/shadow。而 /etc/shadow文件的权限是“-r--------”。它的拥有者是root。在这个权限中，仅有root可以“强制”存储，其他人是连看都不行的。 </p>
+<p>但是，偏偏笔者使用dmtsai这个一般身份用户去更新自己的密码时，使用的就是 /usr/bin/passwd程序，却可以更新自己的密码。也就是说，dmtsai这个一般身份用户可以存取 /etc/shadow密码文件。这怎么可能？明明 /etc/shadow就是没有dmtsai可存取的权限。这就是因为有s权限的帮助。当s权限在user的x时，也就是类似 -r-s--x--x，称为Set UID，简称为SUID，这个UID表示User的ID，而User表示这个程序（/usr/bin/passwd）的拥有者（root）。那么，我们就可以知道，当dmtsai用户执行 /usr/bin/passwd时，它就会“暂时”得到文件拥有者root的权限。 </p>
+<p>SUID仅可用在“二进制文件（binary file）”，SUID因为是程序在执行过程中拥有文件拥有者的权限，因此，它仅可用于二进制文件，不能用在批处理文件（shell脚本）上。这是因为shell脚本只是将很多二进制执行文件调进来执行而已。所以SUID的权限部分，还是要看shell脚本调用进来的程序设置，而不是shell脚本本身。</p>
+<h4 id="suid">设置SUID</h4>
+<p>假设要将一个文件属性改为“-rwsr-xr-x”，由于s在用户权限中，所以是SUID，因此，在原先的755之前还要加上4，也就是使用“chmod 4755 filename”来设置。</p>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">linuxtmp</span><span class="p">]</span><span class="err">#</span> <span class="n">chmod</span> <span class="mi">4755</span> <span class="n">test</span><span class="p">;</span> <span class="n">ls</span> <span class="o">-</span><span class="n">l</span> <span class="n">test</span>
+<span class="o">-</span><span class="n">rwsr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">0</span> <span class="n">Jul</span> <span class="mi">20</span> <span class="mi">11</span><span class="o">:</span><span class="mi">27</span> <span class="n">test</span>
+</pre></div>
+
+
+<h3 id="set-gid">Set GID</h3>
+<p>如果s的权限是在用户组，那么就是Set GID，简称为SGID</p>
+<p>SGID可以用在两个方面。 </p>
+<p>文件：如果SGID设置在二进制文件上，则不论用户是谁，在执行该程序的时候，它的有效用户组（effective group）将会变成该程序的用户组所有者（group id）。 </p>
+<p>目录：如果SGID是设置在A目录上，则在该A目录内所建立的文件或目录的用户组，将会是此A目录的用户组。 </p>
+<p>一般来说，SGID多用在特定的多人团队的项目开发上，在系统中用得较少。 </p>
+<h4 id="sgid">设置SGID</h4>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">linuxtmp</span><span class="p">]</span><span class="err">#</span> <span class="n">chmod</span> <span class="mi">6755</span> <span class="n">test</span><span class="p">;</span> <span class="n">ls</span> <span class="o">-</span><span class="n">l</span> <span class="n">test</span>
+<span class="o">-</span><span class="n">rwsr</span><span class="o">-</span><span class="n">sr</span><span class="o">-</span><span class="n">x</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">0</span> <span class="n">Jul</span> <span class="mi">20</span> <span class="mi">11</span><span class="o">:</span><span class="mi">27</span> <span class="n">test</span>
+</pre></div>
+
+
+<h3 id="set-sticky-bit">Set Sticky bit</h3>
+<p>这个Sticky Bit当前只针对目录有效，对文件没有效果。</p>
+<p>SBit对目录的作用是：“在具有SBit的目录下，用户若在该目录下具有w及x权限，则当用户在该目录下建立文件或目录时，只有文件拥有者与root才有权力删除”。换句话说：当甲用户在A目录下拥有group或other的项目，且拥有w权限，这表示甲用户对该目录内任何人建立的目录或文件均可进行“删除/重命名/移动”等操作。不过，如果将A目录加上了Sticky bit的权限，则甲只能够针对自己建立的文件或目录进行删除/重命名/移动等操作。 </p>
+<p>举例来说，/tmp本身的权限是“drwxrwxrwt”，在这样的权限内容下，任何人都可以在 /tmp内新增、修改文件，但仅有该文件/目录的建立者与root能够删除自己的目录或文件。这个特性也很重要。 </p>
+<h4 id="sbit">设置SBIT</h4>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">linuxtmp</span><span class="p">]</span><span class="err">#</span> <span class="n">chmod</span> <span class="mi">1755</span> <span class="n">test</span><span class="p">;</span> <span class="n">ls</span> <span class="o">-</span><span class="n">l</span> <span class="n">test</span>
+<span class="o">-</span><span class="n">rwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">t</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">0</span> <span class="n">Jul</span> <span class="mi">20</span> <span class="mi">11</span><span class="o">:</span><span class="mi">27</span> <span class="n">test</span>
+</pre></div>
+
+
+<h3 id="_3">设置不含执行权限的特殊权限</h3>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">linuxtmp</span><span class="p">]</span><span class="err">#</span> <span class="n">chmod</span> <span class="mi">7666</span> <span class="n">test</span><span class="p">;</span> <span class="n">ls</span> <span class="o">-</span><span class="n">l</span> <span class="n">test</span>
+<span class="o">-</span><span class="n">rwSrwSrwT</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">0</span> <span class="n">Jul</span> <span class="mi">20</span> <span class="mi">11</span><span class="o">:</span><span class="mi">27</span> <span class="n">test</span>
+</pre></div>
+
+
+<h2 id="_4">文件隐藏属性</h2>
+<p>文件有隐藏属性，隐藏属性对系统有很大的帮助。尤其是在系统安全（Security）方面，非常重要。</p>
+<h3 id="chattr">chattr</h3>
+<div class="hlcode"><pre><span class="n">chattr</span> <span class="p">[</span><span class="o">+-=</span><span class="p">][</span><span class="n">ASacdistu</span><span class="p">]</span> <span class="err">文件或目录名</span> 
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">linux</span><span class="o">~</span><span class="p">]</span><span class="err">#</span> <span class="n">cd</span> <span class="o">/</span><span class="n">tmp</span> 
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">linuxtmp</span><span class="p">]</span><span class="err">#</span> <span class="n">touch</span> <span class="n">attrtest</span> 
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">linuxtmp</span><span class="p">]</span><span class="err">#</span> <span class="n">chattr</span> <span class="o">+</span><span class="n">i</span> <span class="n">attrtest</span> 
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">linuxtmp</span><span class="p">]</span><span class="err">#</span> <span class="n">rm</span> <span class="n">attrtest</span> 
+<span class="nl">rm:</span> <span class="n">remove</span> <span class="n">write</span><span class="o">-</span><span class="n">protected</span> <span class="n">regular</span> <span class="n">empty</span> <span class="n">file</span> <span class="err">`</span><span class="n">attrtest</span><span class="err">&#39;</span><span class="o">?</span> <span class="n">y</span> 
+<span class="nl">rm:</span> <span class="n">cannot</span> <span class="n">remove</span> <span class="err">`</span><span class="n">attrtest</span><span class="err">&#39;</span><span class="o">:</span> <span class="n">Operation</span> <span class="n">not</span> <span class="n">permitted</span> 
+</pre></div>
+
+
+<blockquote>
+<p>看到了吗？连root也没有办法删除这个文件。赶紧解除设置。 </p>
+</blockquote>
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">linuxtmp</span><span class="p">]</span><span class="err">#</span> <span class="n">chattr</span> <span class="o">-</span><span class="n">i</span> <span class="n">attrtest</span> 
+</pre></div>
+
+
+<p>这个命令很重要，尤其是在系统的安全性方面。由于这些属性是隐藏的，所以需要用lsattr才能看到。</p>
+<p>笔者认为，最重要的是 +i属性，因为它可以让一个文件无法被更改，对于需要很高系统安全性的人来说，相当重要。还有相当多的属性是需要root才能设置的。此外，如果是登录文件，就更需要 +a参数，使之可以增加但不能修改与删除原有的数据。将来提到登录文件时，我们再来介绍如何设置它。 </p>
+<h3 id="lsattr">lsattr</h3>
+<div class="hlcode"><pre><span class="n">lsattr</span> <span class="p">[</span><span class="o">-</span><span class="n">aR</span><span class="p">]</span> <span class="err">文件或目录</span> 
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="o">-</span><span class="n">a</span> <span class="o">:</span> <span class="err">将隐藏文件的属性也显示出来。</span> 
+
+<span class="o">-</span><span class="n">R</span> <span class="o">:</span> <span class="err">连同子目录的数据也一并列出来。</span> 
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">linuxtmp</span><span class="p">]</span><span class="err">#</span> <span class="n">chattr</span> <span class="o">+</span><span class="n">aij</span> <span class="n">attrtest</span> 
+<span class="p">[</span><span class="n">root</span><span class="err">@</span><span class="n">linuxtmp</span><span class="p">]</span><span class="err">#</span> <span class="n">lsattr</span> 
+<span class="o">----</span><span class="n">ia</span><span class="o">---</span><span class="n">j</span><span class="o">---</span> <span class="p">.</span><span class="o">/</span><span class="n">attrtest</span> 
+</pre></div>
+
+
+<p>使用chattr设置后，可以利用lsattr来查看隐藏属性。不过，这两个命令在使用上必须要特别小心，否则会造成很大的困扰。例如，某天你心情好，突然将 /etc/shadow这个重要的密码记录文件设置为具有i属性，那么，过了若干天之后，突然要新增用户，却一直无法新增。怎么办？将i的属性去掉即可。 </p>
+<h1 id="_5">目录权限</h1>
+<h2 id="r_1">r</h2>
+<p>可以读取，ls查看目录内容</p>
+<h2 id="w_1">w</h2>
+<p>可以修改，目录内创建+删除+重命名目录</p>
+<h2 id="x_1">x</h2>
+<p>可以进入该目录</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

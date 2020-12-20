@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>smtplib - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;smtplib
+    <span class="updated">Page Updated&nbsp;
+      2020-07-13 14:43
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">smtplib</div>
+
+  <p>[toc]</p>
+<h1 id="smtplib">smtplib</h1>
+<p>buildin class for Python3</p>
+<h2 id="send-mail">send mail</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">smtplib</span>
+<span class="n">from</span> <span class="n">email</span> <span class="n">import</span> <span class="n">encoders</span>
+<span class="n">from</span> <span class="n">email</span><span class="p">.</span><span class="n">mime</span><span class="p">.</span><span class="n">base</span> <span class="n">import</span> <span class="n">MIMEBase</span>
+<span class="n">from</span> <span class="n">email</span><span class="p">.</span><span class="n">mime</span><span class="p">.</span><span class="n">multipart</span> <span class="n">import</span> <span class="n">MIMEMultipart</span>
+<span class="n">from</span> <span class="n">email</span><span class="p">.</span><span class="n">mime</span><span class="p">.</span><span class="n">text</span> <span class="n">import</span> <span class="n">MIMEText</span>
+<span class="n">SENDER</span> <span class="o">=</span> <span class="s">&quot;me@xurick.com&quot;</span>
+<span class="n">MAIL_SERVER</span> <span class="o">=</span> <span class="s">&quot;i.elb.amazonaws.com&quot;</span>
+<span class="n">MAIL_PORT</span> <span class="o">=</span> <span class="mi">587</span>
+<span class="n">EMAIL_TEMPLATE</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="n">Hi</span> <span class="n">all</span><span class="p">,</span>
+<span class="p">{</span><span class="n">mail_msg</span><span class="p">}</span>
+<span class="n">Thanks</span> <span class="o">&amp;</span> <span class="n">Regards</span>
+<span class="s">&quot;&quot;&quot;</span>
+<span class="n">def</span> <span class="n">send_email</span><span class="p">(</span><span class="n">tmp_filepath_list</span><span class="p">,</span> <span class="n">receiver_list</span><span class="p">,</span> <span class="n">mail_subject</span><span class="p">,</span> <span class="n">mail_msg</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+    <span class="n">message</span><span class="p">[</span><span class="err">&#39;</span><span class="n">From</span><span class="err">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SENDER</span>
+    <span class="n">receivers</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s">&quot;,&quot;</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">receiver_list</span><span class="p">)</span> <span class="k">if</span> <span class="n">isinstance</span><span class="p">(</span><span class="n">receiver_list</span><span class="p">,</span> <span class="n">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">receiver_list</span>
+    <span class="p">)</span>
+    <span class="n">message</span><span class="p">[</span><span class="err">&#39;</span><span class="n">To</span><span class="err">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">receivers</span>
+    <span class="n">message</span><span class="p">[</span><span class="err">&#39;</span><span class="n">Subject</span><span class="err">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mail_subject</span>
+    <span class="n">mail_content</span> <span class="o">=</span> <span class="n">EMAIL_TEMPLATE</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="n">mail_msg</span><span class="o">=</span><span class="n">mail_msg</span><span class="p">)</span>
+    <span class="n">message</span><span class="p">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">mail_content</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">plain</span><span class="err">&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">not</span> <span class="n">isinstance</span><span class="p">(</span><span class="n">tmp_filepath_list</span><span class="p">,</span> <span class="p">(</span><span class="n">tuple</span><span class="p">,</span> <span class="n">list</span><span class="p">))</span><span class="o">:</span>
+        <span class="n">tmp_filepath_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">tmp_filepath_list</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">tmp_filepath</span> <span class="n">in</span> <span class="n">tmp_filepath_list</span><span class="o">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">tmp_filepath</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="sc">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">MIMEBase</span><span class="p">(</span><span class="err">&#39;</span><span class="n">application</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">octate</span><span class="o">-</span><span class="n">stream</span><span class="err">&#39;</span><span class="p">)</span>
+        <span class="n">payload</span><span class="p">.</span><span class="n">set_payload</span><span class="p">(</span><span class="n">open</span><span class="p">(</span><span class="n">tmp_filepath</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">rb</span><span class="err">&#39;</span><span class="p">).</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">encoders</span><span class="p">.</span><span class="n">encode_base64</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="n">payload</span><span class="p">.</span><span class="n">add_header</span><span class="p">(</span><span class="err">&#39;</span><span class="n">content</span><span class="o">-</span><span class="n">disposition</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">attachment</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">message</span><span class="p">.</span><span class="n">attach</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">smtpObj</span> <span class="o">=</span> <span class="n">smtplib</span><span class="p">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">MAIL_SERVER</span><span class="p">,</span> <span class="n">MAIL_PORT</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="p">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">SENDER</span><span class="p">,</span> <span class="n">receiver_list</span><span class="p">,</span> <span class="n">message</span><span class="p">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="n">smtpObj</span><span class="p">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

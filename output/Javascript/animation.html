@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>animation动画 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Javascript">Javascript</a>&nbsp;&#187;&nbsp;animation动画
+    <span class="updated">Page Updated&nbsp;
+      2018-06-29 02:02
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">animation动画</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#animation">Animation 动画</a><ul>
+<li><a href="#_1">原理</a></li>
+<li><a href="#jquery">jQuery内置的几种动画样式</a><ul>
+<li><a href="#show-hide">show / hide</a></li>
+<li><a href="#slideup-slidedown">slideUp / slideDown</a><ul>
+<li><a href="#_2">动画</a></li>
+</ul>
+</li>
+<li><a href="#show-hide_1">show / hide</a></li>
+<li><a href="#slideup-slidedown_1">slideUp / slideDown</a></li>
+<li><a href="#fadein-fadeout">fadeIn / fadeOut</a></li>
+<li><a href="#_3">自定义动画</a></li>
+<li><a href="#_4">串行动画</a></li>
+<li><a href="#_5">为什么有的动画没有效果</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="animation">Animation 动画</h1>
+<h2 id="_1">原理</h2>
+<p>用JavaScript实现动画，原理非常简单：我们只需要以固定的时间间隔（例如，0.1秒），每次把DOM元素的CSS样式修改一点（例如，高宽各增加10%），看起来就像动画了。</p>
+<h2 id="jquery">jQuery内置的几种动画样式</h2>
+<h3 id="show-hide">show / hide</h3>
+<p>直接以无参数形式调用<code>show()</code>和<code>hide()</code>，会显示和隐藏DOM元素。但是，只要传递一个时间参数进去，就变成了动画：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">div</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="err">&#39;#</span><span class="n">test</span><span class="o">-</span><span class="n">show</span><span class="o">-</span><span class="n">hide</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">div</span><span class="p">.</span><span class="n">hide</span><span class="p">(</span><span class="mi">3000</span><span class="p">);</span> <span class="c1">// 在3秒钟内逐渐消失</span>
+</pre></div>
+
+
+<p>时间以毫秒为单位，但也可以是<code>'slow'</code>，<code>'fast'</code>这些字符串：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">div</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="err">&#39;#</span><span class="n">test</span><span class="o">-</span><span class="n">show</span><span class="o">-</span><span class="n">hide</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">div</span><span class="p">.</span><span class="n">show</span><span class="p">(</span><span class="err">&#39;</span><span class="n">slow</span><span class="err">&#39;</span><span class="p">);</span> <span class="c1">// 在0.6秒钟内逐渐显示</span>
+</pre></div>
+
+
+<p><code>toggle()</code>方法则根据当前状态决定是<code>show()</code>还是<code>hide()</code>。</p>
+<h3 id="slideup-slidedown">slideUp / slideDown</h3>
+<p>你可能已经看出来了，<code>show()</code>和<code>hide()</code>是从左上角逐渐展开或收缩的，而<code>slideUp()</code>和<code>slideDown()</code>则是在垂直方向逐渐展开或收缩的。</p>
+<p><code>slideUp()</code>把一个可见的DOM元素收起来，效果跟拉上窗帘似的，<code>slideDown()</code>相反，而<code>slideToggle()</code>则根据元素是否可见来决定下一步动作：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">div</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="err">&#39;#</span><span class="n">test</span><span class="o">-</span><span class="n">slide</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">div</span><span class="p">.</span><span class="n">slideUp</span><span class="p">(</span><span class="mi">3000</span><span class="p">);</span> <span class="c1">// 在3秒钟内逐渐向上消失</span>
+</pre></div>
+
+
+<h4 id="_2">动画</h4>
+<p>阅读: 26261</p>
+<hr />
+<p>用JavaScript实现动画，原理非常简单：我们只需要以固定的时间间隔（例如，0.1秒），每次把DOM元素的CSS样式修改一点（例如，高宽各增加10%），看起来就像动画了。</p>
+<p>但是要用JavaScript手动实现动画效果，需要编写非常复杂的代码。如果想要把动画效果用函数封装起来便于复用，那考虑的事情就更多了。</p>
+<p>使用jQuery实现动画，代码已经简单得不能再简化了：只需要一行代码！</p>
+<p>让我们先来看看jQuery内置的几种动画样式：</p>
+<h3 id="show-hide_1">show / hide</h3>
+<p>直接以无参数形式调用<code>show()</code>和<code>hide()</code>，会显示和隐藏DOM元素。但是，只要传递一个时间参数进去，就变成了动画：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">div</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="err">&#39;#</span><span class="n">test</span><span class="o">-</span><span class="n">show</span><span class="o">-</span><span class="n">hide</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">div</span><span class="p">.</span><span class="n">hide</span><span class="p">(</span><span class="mi">3000</span><span class="p">);</span> <span class="c1">// 在3秒钟内逐渐消失</span>
+</pre></div>
+
+
+<p>时间以毫秒为单位，但也可以是<code>'slow'</code>，<code>'fast'</code>这些字符串：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">div</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="err">&#39;#</span><span class="n">test</span><span class="o">-</span><span class="n">show</span><span class="o">-</span><span class="n">hide</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">div</span><span class="p">.</span><span class="n">show</span><span class="p">(</span><span class="err">&#39;</span><span class="n">slow</span><span class="err">&#39;</span><span class="p">);</span> <span class="c1">// 在0.6秒钟内逐渐显示</span>
+</pre></div>
+
+
+<p><code>toggle()</code>方法则根据当前状态决定是<code>show()</code>还是<code>hide()</code>。</p>
+<p>效果实测：</p>
+<p>hide('slow') show('slow') toggle('slow')</p>
+<h3 id="slideup-slidedown_1">slideUp / slideDown</h3>
+<p>你可能已经看出来了，<code>show()</code>和<code>hide()</code>是从左上角逐渐展开或收缩的，而<code>slideUp()</code>和<code>slideDown()</code>则是在垂直方向逐渐展开或收缩的。</p>
+<p><code>slideUp()</code>把一个可见的DOM元素收起来，效果跟拉上窗帘似的，<code>slideDown()</code>相反，而<code>slideToggle()</code>则根据元素是否可见来决定下一步动作：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">div</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="err">&#39;#</span><span class="n">test</span><span class="o">-</span><span class="n">slide</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">div</span><span class="p">.</span><span class="n">slideUp</span><span class="p">(</span><span class="mi">3000</span><span class="p">);</span> <span class="c1">// 在3秒钟内逐渐向上消失</span>
+</pre></div>
+
+
+<p>效果实测：</p>
+<p>slideUp('slow') slideDown('slow') slideToggle('slow')</p>
+<h3 id="fadein-fadeout">fadeIn / fadeOut</h3>
+<p><code>fadeIn()</code>和<code>fadeOut()</code>的动画效果是淡入淡出，也就是通过不断设置DOM元素的<code>opacity</code>属性来实现，而<code>fadeToggle()</code>则根据元素是否可见来决定下一步动作：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">div</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="err">&#39;#</span><span class="n">test</span><span class="o">-</span><span class="n">fade</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">div</span><span class="p">.</span><span class="n">fadeOut</span><span class="p">(</span><span class="err">&#39;</span><span class="n">slow</span><span class="err">&#39;</span><span class="p">);</span> <span class="c1">// 在0.6秒内淡出</span>
+</pre></div>
+
+
+<h3 id="_3">自定义动画</h3>
+<p>如果上述动画效果还不能满足你的要求，那就祭出最后大招：<code>animate()</code>，它可以实现任意动画效果，我们需要传入的参数就是DOM元素最终的CSS状态和时间，jQuery在时间段内不断调整CSS直到达到我们设定的值：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">div</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="err">&#39;#</span><span class="n">test</span><span class="o">-</span><span class="n">animate</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="n">div</span><span class="p">.</span><span class="n">animate</span><span class="p">({</span>
+    <span class="nl">opacity:</span> <span class="mf">0.25</span><span class="p">,</span>
+    <span class="nl">width:</span> <span class="err">&#39;</span><span class="mi">256</span><span class="n">px</span><span class="err">&#39;</span><span class="p">,</span>
+    <span class="nl">height:</span> <span class="err">&#39;</span><span class="mi">256</span><span class="n">px</span><span class="err">&#39;</span>
+<span class="p">},</span> <span class="mi">3000</span><span class="p">);</span> <span class="c1">// 在3秒钟内CSS过渡到设定值</span>
+</pre></div>
+
+
+<p><code>animate()</code>还可以再传入一个函数，当动画结束时，该函数将被调用：</p>
+<div class="hlcode"><pre><span class="kd">var</span> <span class="nx">div</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#test-animate&#39;</span><span class="p">);</span>
+<span class="nx">div</span><span class="p">.</span><span class="nx">animate</span><span class="p">({</span>
+    <span class="nx">opacity</span><span class="o">:</span> <span class="mf">0.25</span><span class="p">,</span>
+    <span class="nx">width</span><span class="o">:</span> <span class="s1">&#39;256px&#39;</span><span class="p">,</span>
+    <span class="nx">height</span><span class="o">:</span> <span class="s1">&#39;256px&#39;</span>
+<span class="p">},</span> <span class="mi">3000</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;动画已结束&#39;</span><span class="p">);</span>
+    <span class="c1">// 恢复至初始状态:</span>
+    <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;opacity&#39;</span><span class="p">,</span> <span class="s1">&#39;1.0&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="s1">&#39;128px&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;128px&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>实际上这个回调函数参数对于基本动画也是适用的。</p>
+<h3 id="_4">串行动画</h3>
+<p>jQuery的动画效果还可以串行执行，通过<code>delay()</code>方法还可以实现暂停，这样，我们可以实现更复杂的动画效果，而代码却相当简单：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">div</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="err">&#39;#</span><span class="n">test</span><span class="o">-</span><span class="n">animates</span><span class="err">&#39;</span><span class="p">);</span>
+<span class="c1">// 动画效果：slideDown - 暂停 - 放大 - 暂停 - 缩小</span>
+<span class="n">div</span><span class="p">.</span><span class="n">slideDown</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span>
+   <span class="p">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+   <span class="p">.</span><span class="n">animate</span><span class="p">({</span>
+       <span class="nl">width:</span> <span class="err">&#39;</span><span class="mi">256</span><span class="n">px</span><span class="err">&#39;</span><span class="p">,</span>
+       <span class="nl">height:</span> <span class="err">&#39;</span><span class="mi">256</span><span class="n">px</span><span class="err">&#39;</span>
+   <span class="p">},</span> <span class="mi">2000</span><span class="p">)</span>
+   <span class="p">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+   <span class="p">.</span><span class="n">animate</span><span class="p">({</span>
+       <span class="nl">width:</span> <span class="err">&#39;</span><span class="mi">128</span><span class="n">px</span><span class="err">&#39;</span><span class="p">,</span>
+       <span class="nl">height:</span> <span class="err">&#39;</span><span class="mi">128</span><span class="n">px</span><span class="err">&#39;</span>
+   <span class="p">},</span> <span class="mi">2000</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>因为动画需要执行一段时间，所以jQuery必须不断返回新的Promise对象才能后续执行操作。简单地把动画封装在函数中是不够的</p>
+<h3 id="_5">为什么有的动画没有效果</h3>
+<p>你可能会遇到，有的动画如<code>slideUp()</code>根本没有效果。这是因为jQuery动画的原理是逐渐改变CSS的值，如<code>height</code>从<code>100px</code>逐渐变为<code>0</code>。但是很多不是block性质的DOM元素，对它们设置<code>height</code>根本就不起作用，所以动画也就没有效果。</p>
+<p>此外，jQuery也没有实现对<code>background-color</code>的动画效果，用<code>animate()</code>设置<code>background-color</code>也没有效果。这种情况下可以使用CSS3的<code>transition</code>实现动画效果</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>axel - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;axel
+    <span class="updated">Page Updated&nbsp;
+      2018-11-16 10:42
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">axel</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#axel">axel</a><ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#synopsis">SYNOPSIS</a></li>
+<li><a href="#options">options</a></li>
+<li><a href="#example">example</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="axel">axel</h1>
+<p>A light download accelerator for Linux</p>
+<h2 id="installation">Installation</h2>
+<div class="hlcode"><pre><span class="n">wget</span> <span class="o">-</span><span class="n">c</span> <span class="n">http</span><span class="o">:</span><span class="c1">//pkgs.repoforge.org/axel/axel-2.4-1.el5.rf.x86_64.rpm</span>
+<span class="n">rpm</span> <span class="o">-</span><span class="n">ivh</span> <span class="n">axel</span><span class="o">-</span><span class="mf">2.4</span><span class="o">-</span><span class="mf">1.</span><span class="n">el5</span><span class="p">.</span><span class="n">rf</span><span class="p">.</span><span class="n">x86_64</span><span class="p">.</span><span class="n">rpm</span>
+</pre></div>
+
+
+<h2 id="synopsis">SYNOPSIS</h2>
+<div class="hlcode"><pre><span class="n">axel</span> <span class="p">[</span><span class="n">OPTIONS</span><span class="p">]</span> <span class="n">url1</span> <span class="p">[</span><span class="n">url2</span><span class="p">][</span><span class="n">url</span><span class="p">...]</span>
+</pre></div>
+
+
+<h2 id="options">options</h2>
+<div class="hlcode"><pre><span class="o">--</span><span class="n">max</span><span class="o">-</span><span class="n">speed</span><span class="o">=</span><span class="n">x</span> <span class="p">,</span> <span class="o">-</span><span class="n">s</span> <span class="n">x</span>         <span class="err">最高速度</span><span class="n">x</span>
+<span class="o">--</span><span class="n">num</span><span class="o">-</span><span class="n">connections</span><span class="o">=</span><span class="n">x</span> <span class="p">,</span> <span class="o">-</span><span class="n">n</span> <span class="n">x</span>   <span class="err">连接数</span><span class="n">x</span>
+<span class="o">--</span><span class="n">output</span><span class="o">=</span><span class="n">f</span> <span class="p">,</span> <span class="o">-</span><span class="n">o</span> <span class="n">f</span>            <span class="err">下载为本地文件</span><span class="n">f</span>
+<span class="o">--</span><span class="n">search</span><span class="p">[</span><span class="o">=</span><span class="n">x</span><span class="p">]</span> <span class="p">,</span> <span class="o">-</span><span class="n">S</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>        <span class="err">搜索镜像</span>
+<span class="o">--</span><span class="n">header</span><span class="o">=</span><span class="n">x</span> <span class="p">,</span> <span class="o">-</span><span class="n">H</span> <span class="n">x</span>            <span class="err">添加头文件字符串</span><span class="n">x</span><span class="err">（指定</span> <span class="n">HTTP</span> <span class="n">header</span><span class="err">）</span>
+<span class="o">--</span><span class="n">user</span><span class="o">-</span><span class="n">agent</span><span class="o">=</span><span class="n">x</span> <span class="p">,</span> <span class="o">-</span><span class="n">U</span> <span class="n">x</span>        <span class="err">设置用户代理（指定</span> <span class="n">HTTP</span> <span class="n">user</span> <span class="n">agent</span><span class="err">）</span>
+<span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">proxy</span> <span class="err">，</span> <span class="o">-</span><span class="n">N</span>             <span class="err">不使用代理服务器</span>
+<span class="o">--</span><span class="n">quiet</span> <span class="err">，</span> <span class="o">-</span><span class="n">q</span>                <span class="err">静默模式</span>
+<span class="o">--</span><span class="n">verbose</span> <span class="err">，</span><span class="o">-</span><span class="n">v</span>               <span class="err">更多状态信息</span>
+<span class="o">--</span><span class="n">alternate</span> <span class="err">，</span> <span class="o">-</span><span class="n">a</span>            <span class="n">Alternate</span> <span class="n">progress</span> <span class="n">indicator</span>
+<span class="o">--</span><span class="n">help</span> <span class="err">，</span><span class="o">-</span><span class="n">h</span>                  <span class="err">帮助</span>
+<span class="o">--</span><span class="n">version</span> <span class="err">，</span><span class="o">-</span><span class="n">V</span>               <span class="err">版本信息</span>
+</pre></div>
+
+
+<h2 id="example">example</h2>
+<p>如下载lnmp安装包指定10个线程，存到/tmp/：</p>
+<div class="hlcode"><pre><span class="n">axel</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10</span> <span class="o">-</span><span class="n">o</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span> <span class="n">http</span><span class="o">:</span><span class="c1">//www.xuxuehua.com/lnmp.tar.gz</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

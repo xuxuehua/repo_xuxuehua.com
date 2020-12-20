@@ -1,0 +1,404 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>wtforms - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Flask">Flask</a>&nbsp;&#187;&nbsp;wtforms
+    <span class="updated">Page Updated&nbsp;
+      2019-08-23 07:58
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">wtforms</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#wtforms">WTForms</a><ul>
+<li><a href="#_1">字段属性</a><ul>
+<li><a href="#_2">添加表单属性</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_3">实例化字段类</a><ul>
+<li><a href="#label">label</a></li>
+<li><a href="#render_kw">render_kw</a></li>
+<li><a href="#validators">validators 验证器</a><ul>
+<li><a href="#_4">文件上传</a><ul>
+<li><a href="#_5">多文件上传</a></li>
+<li><a href="#secure_filename">secure_filename</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#default">default</a></li>
+<li><a href="#_6">表单提交</a><ul>
+<li><a href="#_7">多表单提交</a></li>
+</ul>
+</li>
+<li><a href="#_8">表单验证</a><ul>
+<li><a href="#_9">客户端验证</a></li>
+<li><a href="#_10">服务器端验证</a></li>
+</ul>
+</li>
+<li><a href="#_11">表单方法</a></li>
+</ul>
+</li>
+<li><a href="#_12">自定义验证器</a><ul>
+<li><a href="#_13">行内验证器</a></li>
+<li><a href="#_14">全局验证器</a></li>
+</ul>
+</li>
+<li><a href="#flask-wtf">Flask-WTF</a><ul>
+<li><a href="#csrf">CSRF</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="wtforms">WTForms</h1>
+<p>对表单的定义，验证(服务器端)，处理等操作</p>
+<h2 id="_1">字段属性</h2>
+<p>字段属性的名称会作为对应HTML input元素的name 属性以及ID属性值</p>
+<p>WTForms会在表单提交后根据表单类中字段的类型对数据进行处理，转换成对应的Python类型</p>
+<p>WTForms 输出的字段HTML代码只会包含id和name属性，属性值均为表单类中对应的字段属性名称</p>
+<h3 id="_2">添加表单属性</h3>
+<ul>
+<li>render_kw 方法</li>
+</ul>
+<div class="hlcode"><pre><span class="n">username</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Username</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">render_kw</span><span class="o">=</span><span class="p">{</span><span class="err">&#39;</span><span class="n">placeholder</span><span class="err">&#39;</span><span class="o">:</span> <span class="err">&#39;</span><span class="n">Your</span> <span class="n">Username</span><span class="err">&#39;</span><span class="p">})</span>
+</pre></div>
+
+
+<p>通过render_kw 设置了placeholder HTMl属性</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="n">id</span><span class="o">=</span><span class="s">&quot;username&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;username&quot;</span> <span class="n">placeholder</span><span class="o">=</span><span class="s">&quot;Your Username&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>调用字段时传入</p>
+<p>class由于是保留字段，使用class_替代</p>
+<div class="hlcode"><pre><span class="n">form</span><span class="p">.</span><span class="n">username</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="err">&#39;</span><span class="n">width</span><span class="o">:</span> <span class="mi">200</span><span class="n">px</span><span class="p">;</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="err">&#39;</span><span class="n">bar</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>通过添加括号使用关键字参数的形式传入字段</p>
+<div class="hlcode"><pre><span class="n">u</span><span class="err">&#39;</span><span class="o">&lt;</span><span class="n">input</span> <span class="n">class</span><span class="o">=</span><span class="s">&quot;bar&quot;</span> <span class="n">id</span><span class="o">=</span><span class="s">&quot;username&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;username&quot;</span> <span class="n">style</span><span class="o">=</span><span class="s">&quot;width: 200px; &quot;</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="o">&gt;</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<p>BooleanField</p>
+<p>复选框，值会被处理为True 或者False</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;checkbox&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>DataField</p>
+<p>文本字段，值会被处理为datetime.date对象</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>DateTimeField</p>
+<p>文本字段，值会被处理为datetime.datetime对象</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>FileField</p>
+<p>文件上传字段</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;file&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>FloatField</p>
+<p>浮点数字段，值会被处理为浮点类型</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>IntegerField</p>
+<p>整数字段，值会被处理为整型</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>RadioField</p>
+<p>一组单选按钮</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;radio&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>SelectField</p>
+<p>下拉列表</p>
+<div class="hlcode"><pre><span class="nt">&lt;select&gt;&lt;option&gt;&lt;/option&gt;&lt;/select&gt;</span>
+</pre></div>
+
+
+<p>SelectMultipleField</p>
+<p>多选下拉列表</p>
+<div class="hlcode"><pre><span class="nt">&lt;select</span> <span class="err">multiple</span><span class="nt">&gt;&lt;option&gt;&lt;/option&gt;&lt;/select&gt;</span>
+</pre></div>
+
+
+<p>SubmitField</p>
+<p>提交按钮</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>StringField</p>
+<p>文本字段</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>HiddenField</p>
+<p>隐藏文本字段</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;hidden&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>PasswordField</p>
+<p>密码文本字段</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;password&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>TextAreaField</p>
+<p>多行文本字段</p>
+<div class="hlcode"><pre><span class="nt">&lt;textarea&gt;&lt;/textarea&gt;</span>
+</pre></div>
+
+
+<h1 id="_3">实例化字段类</h1>
+<h2 id="label">label</h2>
+<p>字段标签<label>的值，也就是渲染后显示在输入字段前的文字</p>
+<h2 id="render_kw">render_kw</h2>
+<p>一个字典，用来设置对应的HTML <input> 标签属性，比如传入<code>{'placeholder': 'Your name'}</code> ， 渲染后的HTML代码会将<input> 标签的placeholder属性设置为Your name</p>
+<h2 id="validators">validators 验证器</h2>
+<p>一个列表，包含一系列验证器，会在表单提交后被逐一调用验证表单数据</p>
+<p>message 参数用来传入自定义错误消息，乳沟没有设置则使用内置的英文错误消息</p>
+<p><img alt="img" src="https://snipboard.io/KXSlk5.jpg" /></p>
+<div class="hlcode"><pre><span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Your</span> <span class="n">Name</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">u</span><span class="err">&#39;名字不能空&#39;</span><span class="p">)])</span>
+</pre></div>
+
+
+<h3 id="_4">文件上传</h3>
+<p>input 标签中的type 方法设置为file，会在浏览器中渲染成一个文件上传字段</p>
+<p><img alt="img" src="https://snipboard.io/OrdwBJ.jpg" /></p>
+<p>HTML5 中的accept属性也可以实现类型过滤</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;file&quot;</span> <span class="n">id</span><span class="o">=</span><span class="s">&quot;profile_pic&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;profile_pic&quot;</span> <span class="n">accept</span><span class="o">=</span><span class="s">&quot;.jpg, .jpeg, .png, .gif&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h4 id="_5">多文件上传</h4>
+<p>在input 标签中添加multiple 属性可以开启多选</p>
+<p>创建表单时，直接使用Multiple File Field实现</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">wtforms</span> <span class="n">import</span> <span class="n">MultipleFileField</span>
+
+<span class="n">class</span> <span class="n">MultiUploadForm</span><span class="p">(</span><span class="n">FlaskForm</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">photo</span> <span class="o">=</span> <span class="n">MultipleFileField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Upload</span> <span class="n">Image</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">{</span><span class="n">DataRequired</span><span class="p">()})</span>
+</pre></div>
+
+
+<h4 id="secure_filename">secure_filename</h4>
+<p>secure_filename 函数会对文件名进行过滤，传递文件名作为参数，会过滤掉所有危险的字符</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">werkzeug</span> <span class="n">import</span> <span class="n">secure_filename</span>
+<span class="n">secure_filename</span><span class="p">(</span><span class="err">&#39;</span><span class="n">avatar</span><span class="o">!</span> <span class="err">@#</span><span class="c1">//#\\%$^&amp;.jpg&#39;)</span>
+</pre></div>
+
+
+<p>默认会过滤掉文件名中非ASCII字符，如果由非ASCII字符组成，会得到空文件名，为避免通常是使用统一的处理方式对上传的文件重新命名</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">random_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">new_filename</span> <span class="o">=</span> <span class="n">uuid</span><span class="p">.</span><span class="n">uuid4</span><span class="p">().</span><span class="n">hex</span> <span class="o">+</span> <span class="n">ext</span>
+        <span class="k">return</span> <span class="n">new_filename</span>
+</pre></div>
+
+
+<h2 id="default">default</h2>
+<p>字符串或者可调用对象，用来为表单字段设置默认值</p>
+<h2 id="_6">表单提交</h2>
+<p>form标签声明中类型为submit的提交字段被单击时，会创建一个提交表单的HTTP请求，请求中包含表单各个字段的数据</p>
+<p><img alt="img" src="https://snipboard.io/ni4w5d.jpg" /></p>
+<blockquote>
+<p>使用POST方法提交表单，按照默认的编码类型，表单数据会被存储在请求主体</p>
+<p><code>POST /basic HTTP/1.0
+...
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 30</code></p>
+</blockquote>
+<p>避免页面刷新和重载发送请求， 尽量不要让提交表单的POST请求作为最后一个请求，一般是在处理表单后返回一个重定向响应，这样会让浏览器重新发送一个新的GET请求到重定向的目标URL，最终，最后一个请求就变成了GET请求。</p>
+<h3 id="_7">多表单提交</h3>
+<p>为区分表单， 需要设置不同的提交字段名称</p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">SigninForm</span><span class="p">(</span><span class="n">FlaskForm</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Username</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">(),</span> <span class="n">Length</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">)])</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">PasswordField</span><span class="p">(</span><span class="s">&quot;Password&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">(),</span> <span class="n">Length</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">128</span><span class="p">)])</span>
+        <span class="n">submit1</span> <span class="o">=</span> <span class="n">SubmitField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Sign</span> <span class="n">in</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">RegisterForm</span><span class="p">(</span><span class="n">FlaskForm</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Username</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">(),</span> <span class="n">Length</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">)])</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Email</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">(),</span> <span class="n">Email</span><span class="p">(),</span> <span class="n">Length</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">254</span><span class="p">)])</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">PasswordField</span><span class="p">(</span><span class="s">&quot;Password&quot;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">(),</span> <span class="n">Length</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">128</span><span class="p">)])</span>
+        <span class="n">submit2</span> <span class="o">=</span> <span class="n">SubmitField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Register</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="err">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">multi</span><span class="o">-</span><span class="n">form</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="err">&#39;</span><span class="n">GET</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">POST</span><span class="err">&#39;</span><span class="p">])</span>
+<span class="n">def</span> <span class="n">multi_form</span><span class="p">()</span><span class="o">:</span>
+        <span class="n">signin_form</span> <span class="o">=</span> <span class="n">SigninForm</span><span class="p">()</span>
+        <span class="n">register_form</span> <span class="o">=</span> <span class="n">RegisterForm</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">signin_form</span><span class="p">.</span><span class="n">submit1</span><span class="p">.</span><span class="n">data</span> <span class="n">and</span> <span class="n">signin_form</span><span class="p">.</span><span class="n">validate</span><span class="p">()</span><span class="o">:</span>
+                <span class="n">username</span> <span class="o">=</span> <span class="n">signin_form</span><span class="p">.</span><span class="n">username</span><span class="p">.</span><span class="n">data</span>
+                <span class="n">flash</span><span class="p">(</span><span class="err">&#39;</span><span class="o">%</span><span class="n">s</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">you</span> <span class="n">just</span> <span class="n">submit</span> <span class="n">the</span> <span class="n">Signin</span> <span class="n">From</span><span class="p">.</span> <span class="o">%</span> <span class="n">username</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="err">&#39;</span><span class="n">index</span><span class="err">&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">register_form</span><span class="p">.</span><span class="n">submit2</span><span class="p">.</span><span class="n">data</span> <span class="n">and</span> <span class="n">register_form</span><span class="p">.</span><span class="n">validate</span><span class="p">()</span><span class="o">:</span>
+                <span class="n">username</span> <span class="o">=</span> <span class="n">register_form</span><span class="p">.</span><span class="n">username</span><span class="p">.</span><span class="n">data</span>
+                <span class="n">flash</span><span class="p">(</span><span class="err">&#39;</span><span class="o">%</span><span class="n">s</span><span class="p">,</span> <span class="n">you</span> <span class="n">just</span> <span class="n">submit</span> <span class="n">the</span> <span class="n">Register</span> <span class="n">Form</span><span class="p">.</span><span class="err">&#39;</span> <span class="o">%</span> <span class="n">username</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="err">&#39;</span><span class="n">index</span><span class="err">&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="err">&#39;</span><span class="mf">2f</span><span class="n">orm</span><span class="p">.</span><span class="n">html</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">signin_form</span><span class="o">=</span><span class="n">sigin_form</span><span class="p">,</span> <span class="n">register_form</span><span class="o">=</span><span class="n">register_form</span><span class="p">)</span>
+</pre></div>
+
+
+<p>然后表单实例通过不同的变量名传入到模板中</p>
+<div class="hlcode"><pre><span class="nx">...</span>
+<span class="o">&lt;</span><span class="nb">form</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;post&quot;</span><span class="o">&gt;</span>
+        <span class="p">{{</span> <span class="nx">signin_form.csrf_token</span> <span class="p">}}</span>
+        <span class="p">{{</span> <span class="nx">form_field</span><span class="p">(</span><span class="nx">sigin_form.username</span><span class="p">)</span> <span class="p">}}</span>
+        <span class="p">{{</span> <span class="nx">form_field</span><span class="p">(</span><span class="nx">sigin_form.password</span><span class="p">)</span> <span class="p">}}</span>
+        <span class="p">{{</span> <span class="nx">sigin_form.submit1</span> <span class="p">}}</span>
+<span class="o">&lt;/</span><span class="nb">form</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="nb">Register</span> <span class="nb">Form</span><span class="o">&lt;/</span><span class="nx">h2</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nb">form</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;post&quot;</span><span class="o">&gt;</span>
+        <span class="p">{{</span> <span class="nx">register_form.csrf_token</span> <span class="p">}}</span>
+        <span class="p">{{</span> <span class="nx">form_field</span><span class="p">(</span><span class="nx">register_form.username</span><span class="p">)</span> <span class="p">}}</span>
+        <span class="p">{{</span> <span class="nx">form_field</span><span class="p">(</span><span class="nx">register_form.email</span><span class="p">)</span> <span class="p">}}</span>
+        <span class="p">{{</span> <span class="nx">form_field</span><span class="p">(</span><span class="nx">register_form.password</span><span class="p">)</span> <span class="p">}}</span>
+        <span class="p">{{</span> <span class="nx">register_form.submit2</span> <span class="p">}}</span>
+<span class="o">&lt;/</span><span class="nb">form</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<h2 id="_8">表单验证</h2>
+<h3 id="_9">客户端验证</h3>
+<p>使用HTML5 内置验证属性</p>
+<p>type, required, min, max, accept</p>
+<div class="hlcode"><pre><span class="o">&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;username&quot;</span> <span class="n">required</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>可以在定义表单的时候通过render_kw 传入，或是在表单渲染的时候传入</p>
+<div class="hlcode"><pre><span class="p">{{</span> <span class="n">form</span><span class="p">.</span><span class="n">username</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="err">&#39;&#39;</span><span class="p">)</span> <span class="p">}}</span>
+</pre></div>
+
+
+<p>也可以使用JavaScript实现表单验证</p>
+<h3 id="_10">服务器端验证</h3>
+<p>调用validate()方法，对字段逐个验证，若错误会存储到errors属性对应的字段中</p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">LoginForm</span><span class="p">(</span><span class="n">Form</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Username</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">()])</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">PasswordField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Password</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">(),</span> <span class="n">Length</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">128</span><span class="p">)])</span>
+
+
+<span class="n">form</span> <span class="o">=</span> <span class="n">LoginForm</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="err">&#39;&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="err">&#39;</span><span class="mi">123</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">form</span><span class="p">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="n">form</span><span class="p">.</span><span class="n">errors</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nb">false</span>
+<span class="p">{</span><span class="err">&#39;</span><span class="n">username</span><span class="err">&#39;</span><span class="o">:</span> <span class="p">[</span><span class="n">u</span><span class="err">&#39;</span><span class="n">This</span> <span class="n">field</span> <span class="n">is</span> <span class="n">required</span><span class="p">.</span><span class="err">&#39;</span><span class="p">],</span> <span class="err">&#39;</span><span class="n">password</span><span class="err">&#39;</span><span class="o">:</span> <span class="p">[</span><span class="n">u</span><span class="err">&#39;</span><span class="n">Field</span> <span class="n">must</span> <span class="n">be</span> <span class="n">at</span> <span class="n">least</span> <span class="mi">6</span> <span class="n">characters</span> <span class="kt">long</span><span class="p">.</span><span class="err">&#39;</span><span class="p">]}</span>
+</pre></div>
+
+
+<h2 id="_11">表单方法</h2>
+<p>通过调用request.method 获取</p>
+<div class="hlcode"><pre><span class="k">if</span> <span class="n">request</span><span class="p">.</span><span class="n">method</span> <span class="o">==</span> <span class="err">&#39;</span><span class="n">POST</span><span class="err">&#39;</span> <span class="n">and</span> <span class="n">form</span><span class="p">.</span><span class="n">validate</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">pass</span>
+</pre></div>
+
+
+<p>使用POST方法提交的表单，其数据会被Flask解析为一个字典，可以通过请求对象的form属性获取(request.form)</p>
+<p>使用GET方法提交的表单的数据同样会被解析为字典，不过要通过请求对象的args属性获取(request.args)</p>
+<h1 id="_12">自定义验证器</h1>
+<h2 id="_13">行内验证器</h2>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">wtforms</span> <span class="n">import</span> <span class="n">IntegerField</span><span class="p">,</span> <span class="n">SubmitField</span>
+<span class="n">from</span> <span class="n">wtforms</span><span class="p">.</span><span class="n">validators</span> <span class="n">import</span> <span class="n">ValidationError</span>
+
+<span class="n">class</span> <span class="n">FortyTwoForm</span><span class="p">(</span><span class="n">FlaskForm</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">The</span> <span class="n">Number</span><span class="err">&#39;</span><span class="p">)</span>
+        <span class="n">submit</span> <span class="o">=</span> <span class="n">SubmitField</span><span class="p">()</span>
+        <span class="n">def</span> <span class="n">validate_answer</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span><span class="o">:</span>
+              <span class="k">if</span> <span class="n">field</span><span class="p">.</span><span class="n">data</span> <span class="o">!=</span> <span class="mi">42</span><span class="o">:</span>
+                    <span class="n">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Must</span> <span class="n">be</span> <span class="mf">42.</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>这里的validate_answer 用来验证对应字段</p>
+</blockquote>
+<h2 id="_14">全局验证器</h2>
+<p>定义一个可以通用的验证器</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">wtforms</span><span class="p">.</span><span class="n">validators</span> <span class="n">import</span> <span class="n">ValidationError</span>
+<span class="n">def</span> <span class="n">is_42</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">if</span> <span class="n">field</span><span class="p">.</span><span class="n">data</span> <span class="o">!=</span> <span class="mi">42</span><span class="o">:</span>
+                <span class="n">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Must</span> <span class="n">be</span> <span class="mi">42</span><span class="err">&#39;</span><span class="p">)</span>
+
+
+<span class="n">class</span> <span class="n">FortyTwoForm</span><span class="p">(</span><span class="n">FlaskForm</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">IntegerField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">The</span> <span class="n">Number</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">is_42</span><span class="p">])</span>
+    <span class="n">submit</span> <span class="o">=</span> <span class="n">SubmitField</span><span class="p">()</span>
+</pre></div>
+
+
+<h1 id="flask-wtf">Flask-WTF</h1>
+<p>集成了WTForms，可以在Flask中更方便的使用WTForms，附加了reCAPTHCA 支持</p>
+<div class="hlcode"><pre><span class="n">pipenv</span> <span class="n">install</span> <span class="n">flask</span><span class="o">-</span><span class="n">wtf</span>
+</pre></div>
+
+
+<p>Flask-WTF定义表单时，仍然使用WTForms提供的字段类和验证器，创建方式是完全相同的，只不过表单类要集成Flask-WTF提供的Flask Form类, Flask Form 类继承自Form类，进行一些设置，并附加了类，并附加了一些辅助方法，以便与Flask集成</p>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">flask_wtf</span> <span class="n">import</span> <span class="n">FlaskForm</span>
+<span class="n">from</span> <span class="n">wtforms</span> <span class="n">import</span> <span class="n">StringField</span><span class="p">,</span> <span class="n">PasswordField</span><span class="p">,</span> <span class="n">BooleanField</span><span class="p">,</span> <span class="n">SubmitField</span>
+<span class="n">from</span> <span class="n">wtforms</span><span class="p">.</span><span class="n">validators</span> <span class="n">import</span> <span class="n">DataRequired</span><span class="p">,</span> <span class="n">Length</span>
+
+<span class="n">class</span> <span class="n">LoginForm</span><span class="p">(</span><span class="n">FlaskForm</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Username</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">()])</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">PasswordField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Password</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">DataRequired</span><span class="p">(),</span> <span class="n">Length</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">128</span><span class="p">)])</span>
+        <span class="n">remember</span> <span class="o">=</span> <span class="n">BooleanField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Remember</span> <span class="n">me</span><span class="err">&#39;</span><span class="p">)</span>
+        <span class="n">submit</span> <span class="o">=</span> <span class="n">SubmitField</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Login</span><span class="err">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>配置键WTF_CSRF_ENABLED用来设置是否开启CSRF保护，默认为True，Flask-WTF会自动在实例化表单类时添加一个包含CSRF令牌值的隐藏字段，字段名为csrf_token</p>
+</blockquote>
+<h2 id="csrf">CSRF</h2>
+<p>Flask-WTF 默认为每个表单启用了CSRF保护， 自动生成和验证CSRF令牌，需要程序密钥来进行签名</p>
+<div class="hlcode"><pre><span class="n">app</span><span class="p">.</span><span class="n">secret_key</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">secret</span> <span class="n">string</span><span class="err">&#39;</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

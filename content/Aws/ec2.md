@@ -73,6 +73,32 @@ http://169.254.169.254/latest/meta-data/iam/security-credentials/rolename
 
 
 
+![image-20201203110837226](ec2.assets/image-20201203110837226.png)
+
+
+
+![image-20201203111246961](ec2.assets/image-20201203111246961.png)
+
+
+
+### Habana instances
+
+![image-20201203111139909](ec2.assets/image-20201203111139909.png)
+
+
+
+## AMD instance 
+
+![image-20201203112227765](ec2.assets/image-20201203112227765.png)
+
+
+
+
+
+## Extending the cloud
+
+![image-20201203114817948](ec2.assets/image-20201203114817948.png)
+
 ## Reboot vs Stop vs Terminate 
 
 ![image-20200313170029266](ec2.assets/image-20200313170029266.png)

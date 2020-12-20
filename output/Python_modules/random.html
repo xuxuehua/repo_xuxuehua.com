@@ -1,0 +1,364 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>random - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python_modules">Python_modules</a>&nbsp;&#187;&nbsp;random
+    <span class="updated">Page Updated&nbsp;
+      2018-08-25 22:49
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">random</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#random">random</a><ul>
+<li><a href="#random_1">random()</a></li>
+<li><a href="#randint">randint()</a></li>
+<li><a href="#randrange">randrange()</a></li>
+<li><a href="#choice">choice()</a></li>
+<li><a href="#sample">sample()</a></li>
+<li><a href="#uniform">uniform()</a></li>
+<li><a href="#shuffle">shuffle()</a></li>
+<li><a href="#_1">验证码生成</a></li>
+<li><a href="#seed">seed()</a></li>
+<li><a href="#gauss">gauss()</a></li>
+<li><a href="#expovariatelambd">expovariate(lambd)</a></li>
+</ul>
+</li>
+<li><a href="#example">example</a><ul>
+<li><a href="#random-string-of-fixed-length">random string of fixed length</a></li>
+<li><a href="#random-string-of-lower-case-and-upper-case-letters">random string of lower case and upper case letters</a></li>
+<li><a href="#random-string-of-specific-letters-only">random string of specific letters only</a></li>
+<li><a href="#random-string-without-repeating-characters">random string without repeating characters</a></li>
+<li><a href="#random-alphanumeric-string-of-letters-and-digits">random alphanumeric string of letters and digits</a></li>
+<li><a href="#random-alphanumeric-string-with-a-fixed-count-of-letters-and-digits">random alphanumeric string with a fixed count of letters and digits</a></li>
+<li><a href="#random-password-string-with-special-characters-letters-and-digits">random password string with Special characters, letters, and digits</a></li>
+<li><a href="#secure-random-string-and-password">secure random string and password</a><ul>
+<li><a href="#use-the-secrets-module-to-generate-a-secure-random-string">Use the secrets module to generate a secure random string</a></li>
+<li><a href="#secrets-module-to-generate-a-secure-token-string">secrets module to generate a secure token string</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="random">random</h1>
+<p>取随机值</p>
+<h2 id="random_1">random()</h2>
+<p>随机生成下一个实数，在[0, 1]范围内</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">random</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="mf">0.5265427803029777</span>
+</pre></div>
+
+
+<p>随机生成下一个实数，在[a, b]范围内<br />
+random.random(a, b)</p>
+<h2 id="randint">randint()</h2>
+<p>1-3之间</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="mi">3</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="mi">2</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="mi">1</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="mi">2</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="mi">2</span>
+</pre></div>
+
+
+<h2 id="randrange">randrange()</h2>
+<p>randrange([start], stop, [step])</p>
+<p>基数缺省值为1</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">18</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span><span class="o">:</span> <span class="mi">1</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">:</span> <span class="mi">1</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="o">:</span> <span class="mi">2</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">21</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span><span class="o">:</span> <span class="mi">1</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="o">:</span> <span class="mi">3</span>
+</pre></div>
+
+
+<h2 id="choice">choice()</h2>
+<p>random.choice(seq)</p>
+<p>从非空序列的元素中随机挑选一个元素</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">22</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="err">&#39;</span><span class="n">hello</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">22</span><span class="p">]</span><span class="o">:</span> <span class="sc">&#39;e&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">23</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="err">&#39;</span><span class="n">hello</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">23</span><span class="p">]</span><span class="o">:</span> <span class="sc">&#39;l&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">24</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="err">&#39;</span><span class="n">hello</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">24</span><span class="p">]</span><span class="o">:</span> <span class="sc">&#39;o&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">25</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">25</span><span class="p">]</span><span class="o">:</span> <span class="mi">1</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">26</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">26</span><span class="p">]</span><span class="o">:</span> <span class="mi">1</span>
+</pre></div>
+
+
+<h2 id="sample">sample()</h2>
+<p>random.sample(seq, k)</p>
+<p>从样本序列中随机挑选k个元素，返回新的列表</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">27</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">sample</span><span class="p">(</span><span class="err">&#39;</span><span class="n">hello</span><span class="err">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span><span class="o">:</span> <span class="p">[</span><span class="sc">&#39;l&#39;</span><span class="p">,</span> <span class="sc">&#39;l&#39;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">28</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">sample</span><span class="p">(</span><span class="err">&#39;</span><span class="n">hello</span><span class="err">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">28</span><span class="p">]</span><span class="o">:</span> <span class="p">[</span><span class="sc">&#39;l&#39;</span><span class="p">,</span> <span class="sc">&#39;h&#39;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">29</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">sample</span><span class="p">(</span><span class="err">&#39;</span><span class="n">hello</span><span class="err">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">29</span><span class="p">]</span><span class="o">:</span> <span class="p">[</span><span class="sc">&#39;h&#39;</span><span class="p">,</span> <span class="sc">&#39;e&#39;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">30</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">sample</span><span class="p">(</span><span class="err">&#39;</span><span class="n">hello</span><span class="err">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">30</span><span class="p">]</span><span class="o">:</span> <span class="p">[</span><span class="sc">&#39;e&#39;</span><span class="p">,</span> <span class="sc">&#39;h&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="uniform">uniform()</h2>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">31</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">31</span><span class="p">]</span><span class="o">:</span> <span class="mf">2.039522432404592</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">32</span><span class="p">]</span><span class="o">:</span> <span class="mf">2.0421261888899847</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">33</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">33</span><span class="p">]</span><span class="o">:</span> <span class="mf">1.0705082811151863</span>
+</pre></div>
+
+
+<h2 id="shuffle">shuffle()</h2>
+<p>将序列的所有元素随机排序<br />
+random.shuffle(seq)</p>
+<p>洗牌功能</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">34</span><span class="p">]</span><span class="o">:</span> <span class="n">L</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">35</span><span class="p">]</span><span class="o">:</span> <span class="n">random</span><span class="p">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">36</span><span class="p">]</span><span class="o">:</span> <span class="n">L</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">36</span><span class="p">]</span><span class="o">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="_1">验证码生成</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">random</span>
+
+<span class="n">checkcode</span> <span class="o">=</span> <span class="err">&#39;&#39;</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="n">random</span><span class="p">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">current</span> <span class="o">==</span> <span class="n">i</span><span class="o">:</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">chr</span><span class="p">(</span><span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">65</span><span class="p">,</span> <span class="mi">90</span><span class="p">))</span>
+    <span class="nl">else:</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="n">checkcode</span> <span class="o">+=</span> <span class="n">str</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+
+<span class="n">print</span><span class="p">(</span><span class="n">checkcode</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="seed">seed()</h2>
+<p>random.seed(x) 通过改变随机数生成器的种子.</p>
+<h2 id="gauss">gauss()</h2>
+<p>随机生成符合高斯分布的随机数，mu， sigma为高斯分布的两个参数<br />
+random.gauss(mu, sigma)</p>
+<h2 id="expovariatelambd">expovariate(lambd)</h2>
+<p>随机生成符合指数分布的随机数，lambd为指数分布的参数<br />
+random.expovariate(lambd)</p>
+<h1 id="example">example</h1>
+<h2 id="random-string-of-fixed-length">random string of fixed length</h2>
+<p>Use the string constant <strong><code>string.ascii_lowercase</code></strong> to get all the lowercase letters. </p>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">random</span>
+<span class="n">import</span> <span class="n">string</span>
+
+<span class="n">def</span> <span class="n">get_random_string</span><span class="p">(</span><span class="n">length</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">letters</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">ascii_lowercase</span>
+    <span class="n">result_str</span> <span class="o">=</span> <span class="err">&#39;&#39;</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="n">letters</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
+    <span class="n">print</span><span class="p">(</span><span class="s">&quot;Random string of length&quot;</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="s">&quot;is:&quot;</span><span class="p">,</span> <span class="n">result_str</span><span class="p">)</span>
+
+<span class="n">get_random_string</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">get_random_string</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">get_random_string</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="random-string-of-lower-case-and-upper-case-letters">random string of lower case and upper case letters</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">random</span>
+<span class="n">import</span> <span class="n">string</span>
+
+<span class="n">def</span> <span class="n">get_random_string</span><span class="p">(</span><span class="n">length</span><span class="p">)</span><span class="o">:</span>
+    <span class="err">#</span> <span class="n">Random</span> <span class="n">string</span> <span class="n">with</span> <span class="n">the</span> <span class="n">combination</span> <span class="n">of</span> <span class="n">lower</span> <span class="n">and</span> <span class="n">upper</span> <span class="k">case</span>
+    <span class="n">letters</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">ascii_letters</span>
+    <span class="n">result_str</span> <span class="o">=</span> <span class="err">&#39;&#39;</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="n">letters</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
+    <span class="n">print</span><span class="p">(</span><span class="s">&quot;Random string is:&quot;</span><span class="p">,</span> <span class="n">result_str</span><span class="p">)</span>
+
+<span class="n">get_random_string</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">get_random_string</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="random-string-of-specific-letters-only">random string of specific letters only</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">random</span>
+
+<span class="n">def</span> <span class="n">get_random_string</span><span class="p">(</span><span class="n">length</span><span class="p">)</span><span class="o">:</span>
+    <span class="err">#</span> <span class="n">put</span> <span class="n">your</span> <span class="n">letters</span> <span class="n">in</span> <span class="n">the</span> <span class="n">following</span> <span class="n">string</span>
+    <span class="n">sample_letters</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">abcdefghi</span><span class="err">&#39;</span>
+    <span class="n">result_str</span> <span class="o">=</span> <span class="err">&#39;&#39;</span><span class="p">.</span><span class="n">join</span><span class="p">((</span><span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sample_letters</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="n">length</span><span class="p">)))</span>
+    <span class="n">print</span><span class="p">(</span><span class="s">&quot;Random string is:&quot;</span><span class="p">,</span> <span class="n">result_str</span><span class="p">)</span>
+
+<span class="n">get_random_string</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">get_random_string</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">Random</span> <span class="n">string</span> <span class="n">is</span><span class="o">:</span> <span class="n">ediec</span>
+<span class="n">Random</span> <span class="n">string</span> <span class="n">is</span><span class="o">:</span> <span class="n">iedch</span>
+</pre></div>
+
+
+<h2 id="random-string-without-repeating-characters">random string without repeating characters</h2>
+<p>As I mentioned earlier, the <code>random.choice</code> function might pick the same character again. When you don’t want repeated characters in a random string use <a href="https://pynative.com/python-random-sample/">random.sample()</a> function. Let see the demo.</p>
+<div class="hlcode"><pre><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="c"># get random string without repeating letters</span>
+<span class="k">def</span> <span class="nf">get_random_string</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+    <span class="n">letters</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span>
+    <span class="n">result_str</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">letters</span><span class="p">,</span> <span class="n">length</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Random String is:&quot;</span><span class="p">,</span> <span class="n">result_str</span><span class="p">)</span>
+
+<span class="n">get_random_string</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">get_random_string</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="random-alphanumeric-string-of-letters-and-digits">random alphanumeric string of letters and digits</h2>
+<p>Many times we want to create a random string that contains both letters and digit. For example, you want a random string like <em>ab23cd</em>, <em>jkml98</em>, <em>87thki</em>. We can use the <code>**string.ascii_letters**</code> and <strong><code>string.digits</code></strong> constants to get the combinations of letters and digits in our random string.</p>
+<p>Now, let’s see the example to generate a random string with letters and digits in Python. In this example, we are creating a random string with the combination of a letter from <strong>A-Z, a-z, and digits 0-9</strong>.</p>
+<div class="hlcode"><pre><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="k">def</span> <span class="nf">get_random_alphanumeric_string</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+    <span class="n">letters_and_digits</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span>
+    <span class="n">result_str</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">letters_and_digits</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">)))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Random alphanumeric String is:&quot;</span><span class="p">,</span> <span class="n">result_str</span><span class="p">)</span>
+
+<span class="n">get_random_alphanumeric_string</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">get_random_alphanumeric_string</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="random-alphanumeric-string-with-a-fixed-count-of-letters-and-digits">random alphanumeric string with a fixed count of letters and digits</h2>
+<p>For example, I want to create a random alpha-numeric string that contains 5 letters and 3 numbers.</p>
+<div class="hlcode"><pre><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="k">def</span> <span class="nf">get_random_alphanumeric_string</span><span class="p">(</span><span class="n">letters_count</span><span class="p">,</span> <span class="n">digits_count</span><span class="p">):</span>
+    <span class="n">sample_str</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">letters_count</span><span class="p">)))</span>
+    <span class="n">sample_str</span> <span class="o">+=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">digits</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">digits_count</span><span class="p">)))</span>
+
+    <span class="c"># Convert string to list and shuffle it to mix letters and digits</span>
+    <span class="n">sample_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sample_str</span><span class="p">)</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">sample_list</span><span class="p">)</span>
+    <span class="n">final_string</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sample_list</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">final_string</span>
+
+<span class="c"># 5 letters and 3 digits</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;First random alphanumeric string is:&quot;</span><span class="p">,</span> <span class="n">get_random_alphanumeric_string</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+<span class="c"># 6 letters and 2 digits</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Second random alphanumeric string is:&quot;</span><span class="p">,</span> <span class="n">get_random_alphanumeric_string</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+</pre></div>
+
+
+<h2 id="random-password-string-with-special-characters-letters-and-digits">random password string with Special characters, letters, and digits</h2>
+<div class="hlcode"><pre><span class="n">import</span> <span class="n">random</span>
+<span class="n">import</span> <span class="n">string</span>
+
+<span class="cp"># get random string password with letters, digits, and symbols</span>
+<span class="n">def</span> <span class="n">get_random_password_string</span><span class="p">(</span><span class="n">length</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">password_characters</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">string</span><span class="p">.</span><span class="n">digits</span> <span class="o">+</span> <span class="n">string</span><span class="p">.</span><span class="n">punctuation</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="err">&#39;&#39;</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="n">password_characters</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
+    <span class="n">print</span><span class="p">(</span><span class="s">&quot;Random string password is:&quot;</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+
+<span class="n">get_random_password_string</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">get_random_password_string</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="secure-random-string-and-password">secure random string and password</h2>
+<p><strong>Above all examples are not cryptographically secure</strong>. The cryptographically secure random generator generates random data using synchronization methods to ensure that no two processes can obtain the same data at the same time.</p>
+<p>If you are using Python version less than 3.6, and want to generate cryptographically secure random string then use the <code>random.SystemRandom().choice()</code> function instead of <code>random.choice()</code>. Refer to <a href="https://pynative.com/cryptographically-secure-random-data-in-python/">How to secure random data in python</a>.</p>
+<p>If you are using Python version higher than 3.6 you can use the <a href="https://pynative.com/python-secrets-module/">secrets module</a> to generate a secure random string.</p>
+<h3 id="use-the-secrets-module-to-generate-a-secure-random-string">Use the secrets module to generate a secure random string</h3>
+<p>Use <code>secrets.choice()</code> function instead of <code>random.choice()</code></p>
+<div class="hlcode"><pre><span class="kn">import</span> <span class="nn">secrets</span>
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="k">def</span> <span class="nf">get_secure_random_string</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+    <span class="n">secure_str</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">secrets</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">secure_str</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;First secure random String is:&quot;</span><span class="p">,</span> <span class="n">get_secure_random_string</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Second secure random String is:&quot;</span><span class="p">,</span> <span class="n">get_secure_random_string</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">First</span> <span class="n">secure</span> <span class="n">random</span> <span class="n">String</span> <span class="n">is</span><span class="o">:</span> <span class="n">PGLQbLLk</span>
+<span class="n">Second</span> <span class="n">secure</span> <span class="n">random</span> <span class="n">String</span> <span class="n">is</span><span class="o">:</span> <span class="n">oNwmymUW</span>
+</pre></div>
+
+
+<p>Above all combinations are depends on String constants and random module functions. There are also other ways available to generate a random string in Python let see those now.</p>
+<h3 id="secrets-module-to-generate-a-secure-token-string">secrets module to generate a secure token string</h3>
+<p>We can use <code>secrets.token_hex()</code> to get a secure random text string in hexadecimal format.</p>
+<div class="hlcode"><pre><span class="kn">import</span> <span class="nn">secrets</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Secure hexadecimal string token&quot;</span><span class="p">,</span> <span class="n">secrets</span><span class="o">.</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">Secure</span> <span class="n">hexadecimal</span> <span class="n">string</span> <span class="n">token</span> <span class="mi">25</span><span class="n">cd4dd7bedd7dfb1261e2dc1489bc2f046c70f986841d3cb3d59a9626e0d802</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

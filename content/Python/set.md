@@ -1,7 +1,8 @@
+---
 title: "set 集合"
 date: 2018-08-19 10:51
 collection: 基本变量类型
-
+---
 
 
 [TOC]

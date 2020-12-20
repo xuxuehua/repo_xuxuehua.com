@@ -1,0 +1,593 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>generator 生成器 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python">Python</a>&nbsp;&#187;&nbsp;generator 生成器
+    <span class="updated">Page Updated&nbsp;
+      2018-08-22 11:18
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">generator 生成器</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">迭代</a><ul>
+<li><a href="#_2">迭代器和可迭代对象</a></li>
+</ul>
+</li>
+<li><a href="#_3">生成器</a><ul>
+<li><a href="#_4">生成器对象</a></li>
+<li><a href="#_5">生成器调用</a><ul>
+<li><a href="#next">next</a></li>
+<li><a href="#send">send 传入值到生成器内部</a></li>
+<li><a href="#close">close 方法</a></li>
+<li><a href="#throw">throw 方法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_6">生成器应用</a><ul>
+<li><a href="#_7">斐波那契数列</a></li>
+<li><a href="#yield-from">yield from</a><ul>
+<li><a href="#_8">协程核心</a></li>
+<li><a href="#yield-from_1">yield from 原理</a></li>
+<li><a href="#log">读取log</a></li>
+</ul>
+</li>
+<li><a href="#_9">读取大文件</a><ul>
+<li><a href="#_10">其他读取大文件</a></li>
+<li><a href="#_11">解藕的生成器方法</a></li>
+</ul>
+</li>
+<li><a href="#coroutine">协程 coroutine</a></li>
+</ul>
+</li>
+<li><a href="#_12">生成器表达式</a><ul>
+<li><a href="#_13">字符串连接</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">迭代</h1>
+<p>即访问集合内元素的一种方式，可以遍历数据</p>
+<p>迭代器不能return，但提供了一种惰性的方式访问数据的方式</p>
+<p>内部实现的迭代协议，通过<code>__iter__</code> 实现</p>
+<h2 id="_2">迭代器和可迭代对象</h2>
+<div class="hlcode"><pre><span class="n">from</span> <span class="n">collections</span><span class="p">.</span><span class="n">abc</span> <span class="n">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">print</span><span class="p">(</span><span class="n">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">True</span>
+<span class="n">False</span>
+</pre></div>
+
+
+<h1 id="_3">生成器</h1>
+<p>生成器(generator)的编写方法和函数定义类似。只是在return的地方改成yield。并且可以有多个yield。</p>
+<p>当生成器遇到一个yield的时候，会暂停运行生成器，返回yield的后面的值, 该值一般被next()函数调用。</p>
+<p>再次调用的时候，会从刚刚暂停的地方继续运行，直到下一个yield。</p>
+<h2 id="_4">生成器对象</h2>
+<p>return 为生成器对象</p>
+<p>生成器对象是一个可迭代对象，是一个迭代器</p>
+<h2 id="_5">生成器调用</h2>
+<p>生成器只有在调用的时候才会生成相应的数据</p>
+<h3 id="next">next</h3>
+<div class="hlcode"><pre><span class="k">In</span> <span class="err">[</span><span class="mi">18</span><span class="cp">]</span>: g = ((i*2 for i in range(2)))
+
+In <span class="cp">[</span><span class="mi">19</span><span class="cp">]</span>: g.__next__()
+Out<span class="cp">[</span><span class="mi">19</span><span class="cp">]</span>: 0
+
+In <span class="cp">[</span><span class="mi">20</span><span class="cp">]</span>: g.__next__()
+Out<span class="cp">[</span><span class="mi">20</span><span class="cp">]</span>: 2
+
+In <span class="cp">[</span><span class="mi">21</span><span class="cp">]</span>: g.__next__()
+---------------------------------------------------------------------------
+StopIteration                             Traceback (most recent call last)
+<span class="nt">&lt;ipython</span><span class="na">-input-21-42e506b10868</span><span class="nt">&gt;</span> in <span class="nt">&lt;module&gt;</span>()
+----&gt; 1 g.__next__()
+
+StopIteration:
+</pre></div>
+
+
+<h3 id="send">send 传入值到生成器内部</h3>
+<p>可以传入值到生成器内部，同时还可以重启生成器执行到下一个yield位置</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">get_func</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">yield</span> <span class="s">&quot;https://xuxuehua.com&quot;</span>
+    <span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">get_func</span> <span class="n">html</span><span class="o">:</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">html</span><span class="p">)</span>
+    <span class="n">yield</span> <span class="mi">2</span>
+    <span class="n">yield</span> <span class="mi">3</span>
+    <span class="k">return</span> <span class="s">&quot;Rick&quot;</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="err">&#39;</span><span class="n">__main__</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="n">gen</span> <span class="o">=</span> <span class="n">get_func</span><span class="p">()</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">gen</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">None</span><span class="p">)</span>
+    <span class="err">#</span> <span class="n">url</span> <span class="o">=</span> <span class="n">next</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">Xu</span><span class="err">&#39;</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">gen</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">html</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">get_func</span> <span class="n">html</span><span class="o">:</span> <span class="n">Xu</span>
+<span class="mi">2</span>
+</pre></div>
+
+
+<blockquote>
+<p>需要通过send 发送一个None激活生成器，或者通过next方法 调用激活生成器</p>
+</blockquote>
+<h3 id="close">close 方法</h3>
+<div class="hlcode"><pre><span class="nx">def</span> <span class="nx">get_func</span><span class="p">():</span>
+    <span class="nx">try</span><span class="p">:</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="k">yield</span> <span class="s2">&quot;https://xuxuehua.com&quot;</span>
+        <span class="nx">print</span><span class="p">(</span><span class="s1">&#39;get_func html:&#39;</span><span class="p">,</span> <span class="nx">html</span><span class="p">)</span>
+    <span class="nx">except</span> <span class="nx">Exception</span><span class="p">:</span>
+        <span class="nb">pass</span>
+    <span class="k">yield</span> <span class="mi">2</span>
+    <span class="k">yield</span> <span class="mi">3</span>
+    <span class="k">return</span> <span class="s2">&quot;Rick&quot;</span>
+
+
+<span class="k">if</span> <span class="nx">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">gen</span> <span class="o">=</span> <span class="nx">get_func</span><span class="p">()</span>
+    <span class="nx">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">gen</span><span class="p">))</span>
+    <span class="nx">gen.close</span><span class="p">()</span>
+    <span class="nb">next</span><span class="p">(</span><span class="nb">gen</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nx">https</span><span class="p">:</span><span class="c1">//xuxuehua.com</span>
+<span class="nx">Traceback</span> <span class="p">(</span><span class="nx">most</span> <span class="nx">recent</span> <span class="nb">call</span> <span class="nb">last</span><span class="p">):</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/test_purpose/socket_client.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">16</span><span class="p">,</span> <span class="k">in</span> <span class="o">&lt;</span><span class="nx">module</span><span class="o">&gt;</span>
+    <span class="nb">next</span><span class="p">(</span><span class="nb">gen</span><span class="p">)</span>
+<span class="nx">StopIteration</span>  
+</pre></div>
+
+
+<blockquote>
+<p>这里的异常是最后一个next(gen) 抛出的</p>
+</blockquote>
+<h3 id="throw">throw 方法</h3>
+<div class="hlcode"><pre><span class="nx">def</span> <span class="nx">get_func</span><span class="p">():</span>
+    <span class="k">yield</span> <span class="s2">&quot;https://xuxuehua.com&quot;</span>
+    <span class="k">yield</span> <span class="mi">2</span>
+    <span class="k">yield</span> <span class="mi">3</span>
+    <span class="k">return</span> <span class="s2">&quot;Rick&quot;</span>
+
+
+<span class="k">if</span> <span class="nx">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">gen</span> <span class="o">=</span> <span class="nx">get_func</span><span class="p">()</span>
+    <span class="nx">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">gen</span><span class="p">))</span>
+    <span class="nx">gen.throw</span><span class="p">(</span><span class="nx">Exception</span><span class="p">,</span> <span class="s1">&#39;url value&#39;</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nx">https</span><span class="p">:</span><span class="c1">//xuxuehua.com</span>
+<span class="nx">Traceback</span> <span class="p">(</span><span class="nx">most</span> <span class="nx">recent</span> <span class="nb">call</span> <span class="nb">last</span><span class="p">):</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/test_purpose/socket_client.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">11</span><span class="p">,</span> <span class="k">in</span> <span class="o">&lt;</span><span class="nx">module</span><span class="o">&gt;</span>
+    <span class="nx">gen.throw</span><span class="p">(</span><span class="nx">Exception</span><span class="p">,</span> <span class="s1">&#39;url value&#39;</span><span class="p">)</span>
+  <span class="nb">File</span> <span class="s2">&quot;/Users/rxu/test_purpose/socket_client.py&quot;</span><span class="p">,</span> <span class="nb">line</span> <span class="mi">2</span><span class="p">,</span> <span class="k">in</span> <span class="nx">get_func</span>
+    <span class="k">yield</span> <span class="s2">&quot;https://xuxuehua.com&quot;</span>
+<span class="nx">Exception</span><span class="p">:</span> <span class="nb">url</span> <span class="nb">value</span>
+</pre></div>
+
+
+<h1 id="_6">生成器应用</h1>
+<h2 id="_7">斐波那契数列</h2>
+<p>函数生成方法</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">fib</span><span class="p">(</span><span class="n">max</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">max</span><span class="o">:</span>
+        <span class="n">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="n">fib</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">1</span>
+<span class="mi">1</span>
+<span class="mi">2</span>
+<span class="mi">3</span>
+<span class="mi">5</span>
+<span class="mi">8</span>
+<span class="mi">13</span>
+<span class="mi">21</span>
+<span class="mi">34</span>
+<span class="mi">55</span>
+</pre></div>
+
+
+<p>生成器方法</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">fib</span><span class="p">(</span><span class="n">max</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">max</span><span class="o">:</span>
+        <span class="n">yield</span> <span class="n">b</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">fib</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">__next__</span><span class="p">())</span>
+<span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">__next__</span><span class="p">())</span>
+<span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">__next__</span><span class="p">())</span>
+<span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">__next__</span><span class="p">())</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mi">1</span>
+<span class="mi">1</span>
+<span class="mi">2</span>
+<span class="mi">3</span>
+</pre></div>
+
+
+<h2 id="yield-from">yield from</h2>
+<p>yield from 后面是一个iterable 对象</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">g1</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">yield</span> <span class="n">iterable</span>
+
+
+<span class="n">def</span> <span class="n">g2</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">yield</span> <span class="n">from</span> <span class="n">iterable</span>
+
+
+<span class="k">for</span> <span class="n">value</span> <span class="n">in</span> <span class="n">g1</span><span class="p">(</span><span class="n">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">g1</span><span class="o">:</span> <span class="err">&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">value</span> <span class="n">in</span> <span class="n">g2</span><span class="p">(</span><span class="n">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span><span class="o">:</span>
+    <span class="n">print</span><span class="p">(</span><span class="err">&#39;</span><span class="n">g2</span><span class="o">:</span> <span class="err">&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="nl">g1:</span>  <span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="nl">g2:</span>  <span class="mi">0</span>
+<span class="nl">g2:</span>  <span class="mi">1</span>
+<span class="nl">g2:</span>  <span class="mi">2</span>
+<span class="nl">g2:</span>  <span class="mi">3</span>
+<span class="nl">g2:</span>  <span class="mi">4</span>
+<span class="nl">g2:</span>  <span class="mi">5</span>
+<span class="nl">g2:</span>  <span class="mi">6</span>
+<span class="nl">g2:</span>  <span class="mi">7</span>
+<span class="nl">g2:</span>  <span class="mi">8</span>
+<span class="nl">g2:</span>  <span class="mi">9</span>
+</pre></div>
+
+
+<p>yield from后面加上可迭代对象，他可以把可迭代对象里的每个元素一个一个的yield出来，对比yield来说代码更加简洁，结构更加清晰。</p>
+<div class="hlcode"><pre><span class="n">a_str</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">ABC</span><span class="err">&#39;</span>
+<span class="n">a_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">a_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;name&quot;</span><span class="o">:</span> <span class="s">&quot;rick&quot;</span><span class="p">,</span> <span class="s">&quot;age&quot;</span><span class="o">:</span> <span class="mi">18</span><span class="p">}</span>
+<span class="n">gen</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+
+<span class="n">def</span> <span class="n">gen_by_yield_from</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="n">in</span> <span class="n">args</span><span class="o">:</span>
+        <span class="n">yield</span> <span class="n">from</span> <span class="n">item</span>
+
+
+<span class="n">def</span> <span class="n">gen_by_yield</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">:</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="n">in</span> <span class="n">args</span><span class="o">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">item</span><span class="o">:</span>
+            <span class="n">yield</span> <span class="n">i</span>
+
+
+<span class="n">yield_from_result</span> <span class="o">=</span> <span class="n">gen_by_yield_from</span><span class="p">(</span><span class="n">a_str</span><span class="p">,</span> <span class="n">a_list</span><span class="p">,</span> <span class="n">a_dict</span><span class="p">,</span> <span class="n">gen</span><span class="p">)</span>
+<span class="n">yield_result</span> <span class="o">=</span> <span class="n">gen_by_yield</span><span class="p">(</span><span class="n">a_str</span><span class="p">,</span> <span class="n">a_list</span><span class="p">,</span> <span class="n">a_dict</span><span class="p">,</span> <span class="n">gen</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="n">yield_from_result</span><span class="p">))</span>
+<span class="n">print</span><span class="p">(</span><span class="n">list</span><span class="p">(</span><span class="n">yield_result</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">name</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">age</span><span class="err">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="p">,</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span> <span class="sc">&#39;C&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">name</span><span class="err">&#39;</span><span class="p">,</span> <span class="err">&#39;</span><span class="n">age</span><span class="err">&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<h3 id="_8">协程核心</h3>
+<p>yield from（委托生成器）将调用方和子生成器之间建立了一个双向通道， 即调用方可以通过<code>send()</code>直接发送消息给子生成器，而子生成器yield的值，也是直接返回给调用方。</p>
+<div class="hlcode"><pre><span class="cp"># 子生成器</span>
+<span class="n">def</span> <span class="n">average_gen</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">average</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+        <span class="n">new_num</span> <span class="o">=</span> <span class="n">yield</span> <span class="n">average</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">total</span> <span class="o">+=</span> <span class="n">new_num</span>
+        <span class="n">average</span> <span class="o">=</span> <span class="n">total</span><span class="o">/</span><span class="n">count</span>
+
+<span class="cp"># 委托生成器</span>
+<span class="n">def</span> <span class="n">proxy_gen</span><span class="p">()</span><span class="o">:</span>
+    <span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+        <span class="n">yield</span> <span class="n">from</span> <span class="n">average_gen</span><span class="p">()</span>
+
+<span class="cp"># 调用方</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="err">&#39;</span><span class="n">__main__</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="n">calculate_average</span> <span class="o">=</span> <span class="n">proxy_gen</span><span class="p">()</span>
+    <span class="n">next</span><span class="p">(</span><span class="n">calculate_average</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">calculate_average</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">calculate_average</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">calculate_average</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="mi">30</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mf">10.0</span>
+<span class="mf">15.0</span>
+<span class="mf">20.0</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="cp"># 子生成器</span>
+<span class="n">def</span> <span class="n">average_gen</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">average</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+        <span class="n">new_num</span> <span class="o">=</span> <span class="n">yield</span> <span class="n">average</span>
+        <span class="k">if</span> <span class="n">new_num</span> <span class="n">is</span> <span class="n">None</span><span class="o">:</span>
+            <span class="k">break</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">total</span> <span class="o">+=</span> <span class="n">new_num</span>
+        <span class="n">average</span> <span class="o">=</span> <span class="n">total</span><span class="o">/</span><span class="n">count</span>
+
+    <span class="err">#</span> <span class="err">每一次</span><span class="k">return</span><span class="err">，都意味着当前协程结束。</span>
+    <span class="k">return</span> <span class="n">total</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">average</span>
+
+
+<span class="cp"># 委托生成器</span>
+<span class="n">def</span> <span class="n">proxy_gen</span><span class="p">()</span><span class="o">:</span>
+    <span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+        <span class="err">#</span> <span class="err">只有子生成器要结束（</span><span class="k">return</span><span class="err">）了，</span><span class="n">yield</span> <span class="n">from</span><span class="err">左边的变量才会被赋值，后面的代码才会执行。</span>
+        <span class="n">total</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">average</span> <span class="o">=</span> <span class="n">yield</span> <span class="n">from</span> <span class="n">average_gen</span><span class="p">()</span>
+        <span class="n">print</span><span class="p">(</span><span class="s">&quot;count=%s, total=%s, average=%s&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">average</span><span class="p">))</span>
+
+
+<span class="cp"># 调用方</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="err">&#39;</span><span class="n">__main__</span><span class="err">&#39;</span><span class="o">:</span>
+    <span class="n">calc_average</span> <span class="o">=</span> <span class="n">proxy_gen</span><span class="p">()</span>
+    <span class="n">next</span><span class="p">(</span><span class="n">calc_average</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">calc_average</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">calc_average</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">calc_average</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="mi">30</span><span class="p">))</span>
+    <span class="err">#</span> <span class="err">结束协程</span>
+    <span class="n">calc_average</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">None</span><span class="p">)</span>
+    <span class="err">#</span> <span class="err">如果此处再调用</span><span class="n">calc_average</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="err">，由于上一协程已经结束，将重开一协程</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="mf">10.0</span>
+<span class="mf">15.0</span>
+<span class="mf">20.0</span>
+<span class="n">count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="mf">20.0</span>
+</pre></div>
+
+
+<h3 id="yield-from_1">yield from 原理</h3>
+<div class="hlcode"><pre><span class="s">&quot;&quot;&quot;</span>
+<span class="n">_i</span><span class="err">：子生成器，同时也是一个迭代器</span>
+<span class="n">_y</span><span class="err">：子生成器生产的值</span>
+<span class="n">_r</span><span class="err">：</span><span class="n">yield</span> <span class="n">from</span> <span class="err">表达式最终的值</span>
+<span class="n">_s</span><span class="err">：调用方通过</span><span class="n">send</span><span class="p">()</span><span class="err">发送的值</span>
+<span class="n">_e</span><span class="err">：异常对象</span>
+<span class="s">&quot;&quot;&quot;</span>
+
+<span class="n">_i</span> <span class="o">=</span> <span class="n">iter</span><span class="p">(</span><span class="n">EXPR</span><span class="p">)</span>
+
+<span class="nl">try:</span>
+    <span class="n">_y</span> <span class="o">=</span> <span class="n">next</span><span class="p">(</span><span class="n">_i</span><span class="p">)</span>
+<span class="n">except</span> <span class="n">StopIteration</span> <span class="n">as</span> <span class="n">_e</span><span class="o">:</span>
+    <span class="n">_r</span> <span class="o">=</span> <span class="n">_e</span><span class="p">.</span><span class="n">value</span>
+
+<span class="nl">else:</span>
+    <span class="k">while</span> <span class="mi">1</span><span class="o">:</span>
+        <span class="nl">try:</span>
+            <span class="n">_s</span> <span class="o">=</span> <span class="n">yield</span> <span class="n">_y</span>
+        <span class="n">except</span> <span class="n">GeneratorExit</span> <span class="n">as</span> <span class="n">_e</span><span class="o">:</span>
+            <span class="nl">try:</span>
+                <span class="n">_m</span> <span class="o">=</span> <span class="n">_i</span><span class="p">.</span><span class="n">close</span>
+            <span class="n">except</span> <span class="n">AttributeError</span><span class="o">:</span>
+                <span class="n">pass</span>
+            <span class="nl">else:</span>
+                <span class="n">_m</span><span class="p">()</span>
+            <span class="n">raise</span> <span class="n">_e</span>
+        <span class="n">except</span> <span class="n">BaseException</span> <span class="n">as</span> <span class="n">_e</span><span class="o">:</span>
+            <span class="n">_x</span> <span class="o">=</span> <span class="n">sys</span><span class="p">.</span><span class="n">exc_info</span><span class="p">()</span>
+            <span class="nl">try:</span>
+                <span class="n">_m</span> <span class="o">=</span> <span class="n">_i</span><span class="p">.</span><span class="n">throw</span>
+            <span class="n">except</span> <span class="n">AttributeError</span><span class="o">:</span>
+                <span class="n">raise</span> <span class="n">_e</span>
+            <span class="nl">else:</span>
+                <span class="nl">try:</span>
+                    <span class="n">_y</span> <span class="o">=</span> <span class="n">_m</span><span class="p">(</span><span class="o">*</span><span class="n">_x</span><span class="p">)</span>
+                <span class="n">except</span> <span class="n">StopIteration</span> <span class="n">as</span> <span class="n">_e</span><span class="o">:</span>
+                    <span class="n">_r</span> <span class="o">=</span> <span class="n">_e</span><span class="p">.</span><span class="n">value</span>
+                    <span class="k">break</span>
+        <span class="nl">else:</span>
+            <span class="nl">try:</span>
+                <span class="k">if</span> <span class="n">_s</span> <span class="n">is</span> <span class="n">None</span><span class="o">:</span>
+                    <span class="n">_y</span> <span class="o">=</span> <span class="n">next</span><span class="p">(</span><span class="n">_i</span><span class="p">)</span>
+                <span class="nl">else:</span>
+                    <span class="n">_y</span> <span class="o">=</span> <span class="n">_i</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">_s</span><span class="p">)</span>
+            <span class="n">except</span> <span class="n">StopIteration</span> <span class="n">as</span> <span class="n">_e</span><span class="o">:</span>
+                <span class="n">_r</span> <span class="o">=</span> <span class="n">_e</span><span class="p">.</span><span class="n">value</span>
+                <span class="k">break</span>
+<span class="n">RESULT</span> <span class="o">=</span> <span class="n">_r</span>
+</pre></div>
+
+
+<h3 id="log">读取log</h3>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">read</span><span class="p">(</span><span class="n">log</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">with</span> <span class="n">open</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span> <span class="n">as</span> <span class="n">f</span><span class="o">:</span>
+                <span class="n">yield</span> <span class="n">from</span> <span class="n">f</span>
+
+
+<span class="n">def</span> <span class="n">generate_result</span><span class="p">(</span><span class="n">log</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="n">in</span> <span class="n">read</span><span class="p">(</span><span class="n">log</span><span class="p">)</span><span class="o">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">8</span><span class="o">:</span>
+                        <span class="n">key</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">result</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                        <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+
+
+<h2 id="_9">读取大文件</h2>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">myreadlines</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">newline</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">buf</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+    <span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+        <span class="k">while</span> <span class="n">newline</span> <span class="n">in</span> <span class="n">buf</span><span class="o">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">buf</span><span class="p">.</span><span class="n">index</span><span class="p">(</span><span class="n">newline</span><span class="p">)</span>
+            <span class="n">yield</span> <span class="n">buf</span><span class="p">[</span><span class="o">:</span><span class="n">pos</span><span class="p">]</span>
+            <span class="n">buf</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">pos</span><span class="o">+</span><span class="n">len</span><span class="p">(</span><span class="n">newline</span><span class="p">)</span><span class="o">:</span><span class="p">]</span>
+        <span class="n">chunk</span> <span class="o">=</span><span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4096</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">not</span> <span class="n">chunk</span><span class="o">:</span>
+            <span class="err">#</span> <span class="err">说明已经读到了文件结尾</span>
+            <span class="n">yield</span> <span class="n">buf</span>
+            <span class="k">break</span>
+        <span class="n">buf</span> <span class="o">+=</span> <span class="n">chunk</span>
+
+<span class="n">with</span> <span class="n">open</span><span class="p">(</span><span class="s">&quot;input.txt&quot;</span><span class="p">)</span> <span class="n">as</span> <span class="n">f</span><span class="o">:</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="n">in</span> <span class="n">myreadlines</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&quot;{|}&quot;</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</pre></div>
+
+
+<blockquote>
+<p>若文件里面没有任何换行符，并会不是一个很好的solution</p>
+</blockquote>
+<h3 id="_10">其他读取大文件</h3>
+<div class="hlcode"><pre><span class="k">def</span> <span class="nf">retrun_count</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;计算文件有多少行</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">as</span> <span class="nb">file</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">count</span>
+</pre></div>
+
+
+<blockquote>
+<p>如果被读取的文件里，根本就没有任何换行符，那么上面的第二个好处就不成立了。当代码执行到 for line in file 时，line 将会变成一个非常巨大的字符串对象，消耗掉非常可观的内存。</p>
+</blockquote>
+<p>若文本都在同一行</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">return_count_v2</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">:</span>
+
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">block_size</span> <span class="o">=</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">8</span>
+    <span class="n">with</span> <span class="n">open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="n">as</span> <span class="n">fp</span><span class="o">:</span>
+        <span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">fp</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span>
+            <span class="err">#</span> <span class="err">当文件没有更多内容时，</span><span class="n">read</span> <span class="err">调用将会返回空字符串</span> <span class="err">&#39;&#39;</span>
+            <span class="k">if</span> <span class="n">not</span> <span class="n">chunk</span><span class="o">:</span>
+                <span class="k">break</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">count</span>
+</pre></div>
+
+
+<blockquote>
+<p>与直接循环迭代文件对象不同，每次调用 file.read(chunk_size) 会直接返回从当前位置往后读取 chunk_size 大小的文件内容，不必等待任何换行符出现。</p>
+<p>如果你认真分析一下 return_count_v2 函数，你会发现在循环体内部，存在着两个独立的逻辑：数据生成（read 调用与 chunk 判断） 与 数据消费。而这两个独立逻辑被耦合在了一起。</p>
+</blockquote>
+<h3 id="_11">解藕的生成器方法</h3>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">chunked_file_reader</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span><span class="o">:</span>
+    <span class="s">&quot;&quot;&quot;生成器函数：分块读取文件内容</span>
+    <span class="s">&quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="n">True</span><span class="o">:</span>
+        <span class="n">chunk</span> <span class="o">=</span> <span class="n">fp</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span>
+        <span class="err">#</span> <span class="err">当文件没有更多内容时，</span><span class="n">read</span> <span class="err">调用将会返回空字符串</span> <span class="err">&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">not</span> <span class="n">chunk</span><span class="o">:</span>
+            <span class="k">break</span>
+        <span class="n">yield</span> <span class="n">chunk</span>
+
+
+<span class="n">def</span> <span class="n">return_count_v3</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">with</span> <span class="n">open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="n">as</span> <span class="n">fp</span><span class="o">:</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="n">in</span> <span class="n">chunked_file_reader</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span><span class="o">:</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">count</span>
+</pre></div>
+
+
+<p>进行到这一步，代码似乎已经没有优化的空间了，但其实不然。iter(iterable) 是一个用来构造迭代器的内建函数，但它还有一个更少人知道的用法。当我们使用 iter(callable, sentinel) 的方式调用它时，会返回一个特殊的对象，迭代它将不断产生可调用对象 callable 的调用结果，直到结果为 setinel 时，迭代终止。</p>
+<div class="hlcode"><pre><span class="n">def</span> <span class="n">chunked_file_reader</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span><span class="o">:</span>
+    <span class="s">&quot;&quot;&quot;生成器函数：分块读取文件内容，使用 iter 函数</span>
+    <span class="s">&quot;&quot;&quot;</span>
+    <span class="err">#</span> <span class="err">首先使用</span> <span class="n">partial</span><span class="p">(</span><span class="n">fp</span><span class="p">.</span><span class="n">read</span><span class="p">,</span> <span class="n">block_size</span><span class="p">)</span> <span class="err">构造一个新的无需参数的函数</span>
+    <span class="err">#</span> <span class="err">循环将不断返回</span> <span class="n">fp</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span> <span class="err">调用结果，直到其为</span> <span class="err">&#39;&#39;</span> <span class="err">时终止</span>
+    <span class="k">for</span> <span class="n">chunk</span> <span class="n">in</span> <span class="n">iter</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">file</span><span class="p">.</span><span class="n">read</span><span class="p">,</span> <span class="n">block_size</span><span class="p">),</span> <span class="err">&#39;&#39;</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">yield</span> <span class="n">chunk</span>
+</pre></div>
+
+
+<h2 id="coroutine">协程 coroutine</h2>
+<p>比进程，线程轻量级</p>
+<p>是在用户空间调度函数的一种实现</p>
+<p>asyncio是协程的实现</p>
+<p>生成器在 Python 2 的版本上，是协程的一种重要实现方式；而 Python 3.7 引入 async await 语法糖后，生成器实现协程的方式就已经落后了</p>
+<h1 id="_12">生成器表达式</h1>
+<p>生成器本身并没有返回任何值，只是返回了一个生成器对象</p>
+<p>其返回一个生成器，为惰性求值，需要的时候才计算值</p>
+<div class="hlcode"><pre><span class="p">(</span><span class="err">返回值</span> <span class="k">for</span> <span class="err">元素</span> <span class="n">in</span> <span class="err">可迭代对象</span> <span class="k">if</span> <span class="err">条件</span><span class="p">)</span>
+</pre></div>
+
+
+<p>将列表生成式的中括号变成小括号即是生成器</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="n">type</span><span class="p">([</span><span class="n">i</span><span class="o">*</span><span class="mi">2</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="n">list</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">:</span> <span class="n">type</span><span class="p">((</span><span class="n">i</span><span class="o">*</span><span class="mi">2</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)))</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">:</span> <span class="n">generator</span>
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">143</span><span class="p">]</span><span class="o">:</span> <span class="n">g</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;{:04}&quot;</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">144</span><span class="p">]</span><span class="o">:</span> <span class="n">next</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">144</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mo">0001</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">145</span><span class="p">]</span><span class="o">:</span> <span class="n">next</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">145</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mo">0002</span><span class="err">&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">146</span><span class="p">]</span><span class="o">:</span> <span class="n">next</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">146</span><span class="p">]</span><span class="o">:</span> <span class="err">&#39;</span><span class="mo">0003</span><span class="err">&#39;</span>
+</pre></div>
+
+
+<h2 id="_13">字符串连接</h2>
+<div class="hlcode"><pre><span class="k">In</span> <span class="err">[</span><span class="mi">83</span><span class="cp">]</span>: l = <span class="cp">[</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="s1">&#39;xyz&#39;</span><span class="cp">]</span>
+
+In <span class="cp">[</span><span class="mi">84</span><span class="cp">]</span>: (str(x) for x in l)
+Out<span class="cp">[</span><span class="mi">84</span><span class="cp">]</span>: <span class="nt">&lt;generator</span> <span class="na">object</span> <span class="err">&lt;</span><span class="na">genexpr</span><span class="nt">&gt;</span> at 0x104a62de0&gt;
+
+In <span class="cp">[</span><span class="mi">85</span><span class="cp">]</span>: &#39;&#39;.join(str(x) for x in l)
+Out<span class="cp">[</span><span class="mi">85</span><span class="cp">]</span>: &#39;abc12345xyz&#39;
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

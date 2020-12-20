@@ -1,0 +1,127 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>container_class 容器类 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java">Java</a>&nbsp;&#187;&nbsp;container_class 容器类
+    <span class="updated">Page Updated&nbsp;
+      2020-01-27 13:22
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">container_class 容器类</div>
+
+  <p>[toc]</p>
+<h1 id="_1">容器类</h1>
+<p>容器类有两个类型</p>
+<p>容器的类型</p>
+<p>元素的类型</p>
+<h2 id="arraylist">ArrayList</h2>
+<div class="hlcode"><pre><span class="k">import</span> <span class="nx">java.util.ArrayList</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="nf">class</span> <span class="nx">Hello</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="nf">static</span> <span class="bp">void</span> <span class="nx">main</span><span class="p">(</span><span class="kt">String</span><span class="err">[</span><span class="cp">]</span> args) {
+        ArrayList<span class="nt">&lt;String&gt;</span> a = new ArrayList<span class="nt">&lt;String&gt;</span>();
+        a.add(&quot;first&quot;);
+        a.add(&quot;second&quot;);
+        a.add(&quot;third&quot;);
+        for (String i : a) {
+            System.out.println(i);
+        }
+    }
+}
+
+&gt;&gt;&gt;
+first
+second
+third
+</pre></div>
+
+
+<h2 id="hashset">HashSet</h2>
+<p>集合内的元素不会重复</p>
+<div class="hlcode"><pre><span class="k">import</span> <span class="nx">java.util.HashSet</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="nf">class</span> <span class="nx">Hello</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="nf">static</span> <span class="bp">void</span> <span class="nx">main</span><span class="p">(</span><span class="kt">String</span><span class="err">[</span><span class="cp">]</span> args) {
+        HashSet<span class="nt">&lt;String&gt;</span> s = new HashSet<span class="nt">&lt;String&gt;</span>();
+        s.add(&quot;first&quot;);
+        s.add(&quot;second&quot;);
+        s.add(&quot;first&quot;);
+        for (String k: s) {
+            System.out.println(k);
+        }
+    }
+}
+
+&gt;&gt;&gt;
+first
+second
+</pre></div>
+
+
+<h2 id="hashmap">HashMap</h2>
+<p>一个键对应一对值, 键是唯一的</p>
+<div class="hlcode"><pre><span class="n">package</span> <span class="n">coins</span><span class="p">;</span>
+
+<span class="n">import</span> <span class="n">java</span><span class="p">.</span><span class="n">util</span><span class="p">.</span><span class="n">HashMap</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">Coin</span> <span class="p">{</span>
+    <span class="n">private</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">coinnames</span> <span class="o">=</span> <span class="n">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="o">&gt;</span><span class="p">();</span>
+
+    <span class="n">public</span> <span class="nf">Coin</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">coinnames</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;penny&quot;</span><span class="p">);</span>
+        <span class="n">coinnames</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s">&quot;dime&quot;</span><span class="p">);</span>
+        <span class="n">coinnames</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="s">&quot;quarter&quot;</span><span class="p">);</span>
+        <span class="n">coinnames</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s">&quot;half-dollar&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="p">(</span><span class="kt">int</span> <span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">coinnames</span><span class="p">.</span><span class="n">containsKey</span><span class="p">(</span><span class="n">amount</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">coinnames</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">amount</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s">&quot;Not Found&quot;</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Coin</span> <span class="n">coin</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Coin</span><span class="p">();</span>
+        <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="n">coin</span><span class="p">.</span><span class="n">getName</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+        <span class="n">String</span> <span class="n">name1</span> <span class="o">=</span> <span class="n">coin</span><span class="p">.</span><span class="n">getName</span><span class="p">(</span><span class="mi">11</span><span class="p">);</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">name1</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">dime</span>
+<span class="n">Not</span> <span class="n">Found</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

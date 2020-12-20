@@ -1,0 +1,259 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>calculation - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Python">Python</a>&nbsp;&#187;&nbsp;calculation
+    <span class="updated">Page Updated&nbsp;
+      2019-01-26 11:31
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">calculation</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">运算符</a><ul>
+<li><a href="#_2">运算符优先级</a></li>
+<li><a href="#_3">算数运算</a><ul>
+<li><a href="#43">+</a></li>
+<li><a href="#45">-</a></li>
+<li><a href="#42">*</a></li>
+<li><a href="#_4">/</a></li>
+<li><a href="#_5">% 模</a></li>
+<li><a href="#42_1">** 指数</a></li>
+<li><a href="#_6">// 整除</a></li>
+</ul>
+</li>
+<li><a href="#_7">位运算</a><ul>
+<li><a href="#_8">\&amp;</a></li>
+<li><a href="#124">|</a></li>
+<li><a href="#_9">\~</a></li>
+<li><a href="#_10">^</a></li>
+<li><a href="#_11">\&lt;&lt; 左移</a></li>
+<li><a href="#62">>&gt; 右移</a></li>
+<li><a href="#_12">~ 按位取反</a></li>
+</ul>
+</li>
+<li><a href="#_13">比较运算符</a><ul>
+<li><a href="#_14">==</a></li>
+<li><a href="#33">!=</a></li>
+<li><a href="#62_1">></a></li>
+<li><a href="#_15">\&lt;</a></li>
+<li><a href="#62_2">>=</a></li>
+<li><a href="#_16">\&lt;=</a></li>
+<li><a href="#_17">链式比较</a></li>
+</ul>
+</li>
+<li><a href="#_18">逻辑运算符</a><ul>
+<li><a href="#_19">优先级</a></li>
+<li><a href="#and">and</a></li>
+<li><a href="#or">or</a></li>
+<li><a href="#not">not</a></li>
+</ul>
+</li>
+<li><a href="#_20">赋值运算符</a><ul>
+<li><a href="#_21">=</a></li>
+</ul>
+</li>
+<li><a href="#_22">成员运算符</a><ul>
+<li><a href="#in">in</a></li>
+<li><a href="#not-in">not in</a></li>
+</ul>
+</li>
+<li><a href="#_23">身份运算符</a><ul>
+<li><a href="#is">is</a></li>
+<li><a href="#is-not">is not</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#is_1">==  比较 is</a><ul>
+<li><a href="#_24">元组</a></li>
+</ul>
+</li>
+<li><a href="#_25">进制</a><ul>
+<li><a href="#_26">二进制</a></li>
+<li><a href="#_27">八进制</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">运算符</h1>
+<h2 id="_2">运算符优先级</h2>
+<div class="hlcode"><pre><span class="err">算数</span> <span class="o">&gt;</span> <span class="err">位</span> <span class="o">&gt;</span> <span class="err">身份</span> <span class="o">&gt;</span> <span class="err">成员</span> <span class="o">&gt;</span> <span class="err">逻辑</span>
+</pre></div>
+
+
+<h2 id="_3">算数运算</h2>
+<h3 id="43">+</h3>
+<h3 id="45">-</h3>
+<h3 id="42">*</h3>
+<h3 id="_4">/</h3>
+<h3 id="_5">% 模</h3>
+<h3 id="42_1">** 指数</h3>
+<h3 id="_6">// 整除</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="mi">1</span><span class="c1">//2                                                                                            </span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="mi">0</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="mi">2</span><span class="c1">//1                                                                                            </span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="mi">2</span>
+</pre></div>
+
+
+<h2 id="_7">位运算</h2>
+<h3 id="_8">\&amp;</h3>
+<h3 id="124">|</h3>
+<h3 id="_9">\~</h3>
+<h3 id="_10">^</h3>
+<h3 id="_11">\&lt;&lt; 左移</h3>
+<h3 id="62">>&gt; 右移</h3>
+<p>除以2的整数倍</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="mi">32</span> <span class="c1">// 4</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="mi">8</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="mi">32</span> <span class="o">&gt;&gt;</span> <span class="mi">2</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="mi">8</span>
+</pre></div>
+
+
+<h3 id="_12">~ 按位取反</h3>
+<h2 id="_13">比较运算符</h2>
+<h3 id="_14">==</h3>
+<p>比较变量的取值是否相等，不是内存地址</p>
+<h3 id="33">!=</h3>
+<h3 id="62_1">></h3>
+<h3 id="_15">\&lt;</h3>
+<h3 id="62_2">>=</h3>
+<h3 id="_16">\&lt;=</h3>
+<h3 id="_17">链式比较</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="mi">4</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="o">&gt;</span> <span class="mi">2</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="mi">4</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="o">&gt;</span> <span class="mi">2</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+</pre></div>
+
+
+<h2 id="_18">逻辑运算符</h2>
+<h3 id="_19">优先级</h3>
+<div class="hlcode"><pre><span class="n">not</span> <span class="o">&gt;</span> <span class="n">and</span> <span class="o">&gt;</span> <span class="n">or</span> 
+</pre></div>
+
+
+<h3 id="and">and</h3>
+<h3 id="or">or</h3>
+<h3 id="not">not</h3>
+<h2 id="_20">赋值运算符</h2>
+<h3 id="_21">=</h3>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="n">a</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="n">a</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">:</span> <span class="mi">3</span>
+</pre></div>
+
+
+<h2 id="_22">成员运算符</h2>
+<h3 id="in">in</h3>
+<h3 id="not-in">not in</h3>
+<h2 id="_23">身份运算符</h2>
+<h3 id="is">is</h3>
+<p>is 比较的是两个变量的身份是否相等，即是否为同一个对象，内存地址是否相等</p>
+<p>如果是数字比较，使用<code>==</code></p>
+<p>与None比较时，使用<code>is</code></p>
+<p>对于整型数字来说， a is b 为true的结论，只适用于-5到256范围内的数字</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="n">a1</span> <span class="o">=</span> <span class="mi">256</span>                                                                                      
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="n">a2</span> <span class="o">=</span> <span class="mi">256</span>                                                                                      
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="n">b1</span> <span class="o">=</span> <span class="mi">257</span>                                                                                      
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">:</span> <span class="n">b2</span> <span class="o">=</span> <span class="mi">257</span>                                                                                      
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="n">id</span><span class="p">(</span><span class="n">a1</span><span class="p">)</span>                                                                                        
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="mi">4327773952</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">:</span> <span class="n">id</span><span class="p">(</span><span class="n">a2</span><span class="p">)</span>                                                                                        
+<span class="n">Out</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">:</span> <span class="mi">4327773952</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="n">id</span><span class="p">(</span><span class="n">b1</span><span class="p">)</span>                                                                                        
+<span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="mi">4359476880</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="n">id</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span>                                                                                        
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="mi">4360330800</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">a1</span> <span class="n">is</span> <span class="n">a2</span>                                                                                      
+<span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">:</span> <span class="n">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="n">b1</span> <span class="n">is</span> <span class="n">b2</span>                                                                                     
+<span class="n">Out</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span> <span class="n">False</span>
+</pre></div>
+
+
+<blockquote>
+<p>出于对性能优化的考虑，Python内部会对-5到256的整型维持一个数组，起到一个缓存的作用。这<br />
+样，每次你试图创建一个-5到256范围内的整型数字时，Python都会从这个数组中返回相对应的引用，而不<br />
+是重新开辟一块新的内存空间。</p>
+<p>上述例子中的257，Python则会为两个257开辟两块内存区域</p>
+</blockquote>
+<h3 id="is-not">is not</h3>
+<h1 id="is_1"><code>==</code>  比较 is</h1>
+<p>比较操作符'is'的速度效率，通常要优于'=='。因为'is'操作符不能被重载，这样，Python就不需要去寻找，程序中是否有其他地方重载了比较操作符，并去调用。执行比较操作符'is'，就仅仅是比较两个变量的ID而已。</p>
+<p>但是'=='操作符却不同，执行a == b相当于是去执行<code>a.__eq__(b)</code>，而Python大部分的数据类型都会去重载<code>__eq__</code>这个函数，其内部的处理通常会复杂一些。比如，对于列表，<code>__eq__</code>函数会去遍历列表中的元素，比较它们的顺序和值是否相等。</p>
+<h2 id="_24">元组</h2>
+<p>元组是不可变的，但元组可以嵌套，它里面的元素可以是列表类型，列表是可变的，所以如果我们修改了元组中的某个可变元素，那么元组本身也就改变了，之前用'is'或者'=='操作符取得的结果，可能就不适用了。</p>
+<h1 id="_25">进制</h1>
+<h2 id="_26">二进制</h2>
+<p>前缀加0b</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="mi">0</span><span class="n">b10</span>                                                                                          
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">:</span> <span class="mi">2</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">:</span> <span class="mi">0</span><span class="n">b11</span>                                                                                          
+<span class="n">Out</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">:</span> <span class="mi">3</span>
+</pre></div>
+
+
+<h2 id="_27">八进制</h2>
+<p>前缀加0o</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="mi">0</span><span class="n">o10</span>                                                                                          
+<span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">:</span> <span class="mi">8</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="mi">0</span><span class="n">o11</span>                                                                                          
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">:</span> <span class="mi">9</span>
+</pre></div>
+
+
+<p>十六进制</p>
+<p>前缀加0x</p>
+<div class="hlcode"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">:</span> <span class="mh">0x10</span>                                                                                         
+<span class="n">Out</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">:</span> <span class="mi">16</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="mh">0x1F</span>                                                                                         
+<span class="n">Out</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">:</span> <span class="mi">31</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>ssh-add - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;ssh-add
+    <span class="updated">Page Updated&nbsp;
+      2019-01-21 15:04
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">ssh-add</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#ssh-add">ssh-add</a><ul>
+<li><a href="#usage">usage</a></li>
+<li><a href="#options">Options</a><ul>
+<li><a href="#-l">-l  列出指纹</a></li>
+<li><a href="#-e-hash">-E 指定hash算法</a></li>
+<li><a href="#-l_1">-L 列出公钥参数</a></li>
+<li><a href="#-k-keys">-k 只载入keys</a></li>
+<li><a href="#-c">-c</a></li>
+<li><a href="#-t">-t 设置超时时间</a></li>
+<li><a href="#-d">-d 删除单个身份</a></li>
+<li><a href="#-d_1">-D 删除所有身份</a></li>
+<li><a href="#-x">-x 锁定代理</a></li>
+<li><a href="#-x_1">-X 解锁代理</a></li>
+<li><a href="#-s">-s</a></li>
+<li><a href="#-e">-e</a></li>
+<li><a href="#-q">-q</a></li>
+<li><a href="#-a">-A</a></li>
+<li><a href="#-k">-K</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="ssh-add">ssh-add</h1>
+<h2 id="usage">usage</h2>
+<div class="hlcode"><pre><span class="n">ssh</span><span class="o">-</span><span class="n">add</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="p">[</span><span class="n">file</span> <span class="p">...]</span>
+</pre></div>
+
+
+<h2 id="options">Options</h2>
+<h3 id="-l">-l  列出指纹</h3>
+<p>List fingerprints of all identities.</p>
+<h3 id="-e-hash">-E 指定hash算法</h3>
+<p>Specify hash algorithm used for fingerprints.</p>
+<h3 id="-l_1">-L 列出公钥参数</h3>
+<p>List public key parameters of all identities.</p>
+<h3 id="-k-keys">-k 只载入keys</h3>
+<p>Load only keys and not certificates.</p>
+<h3 id="-c">-c</h3>
+<p>Require confirmation to sign using identities</p>
+<h3 id="-t">-t 设置超时时间</h3>
+<p>Set lifetime (in seconds) when adding identities.</p>
+<h3 id="-d">-d 删除单个身份</h3>
+<p>Delete identity.</p>
+<h3 id="-d_1">-D 删除所有身份</h3>
+<p>Delete all identities.</p>
+<div class="hlcode"><pre><span class="n">eval</span> <span class="n">ssh</span><span class="o">-</span><span class="n">agent</span> <span class="o">-</span><span class="n">s</span> <span class="o">&amp;&amp;</span> <span class="n">ssh</span><span class="o">-</span><span class="n">add</span> <span class="o">-</span><span class="n">D</span> <span class="o">&amp;&amp;</span> <span class="n">ssh</span><span class="o">-</span><span class="n">add</span> <span class="o">~/</span><span class="p">.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa</span> <span class="o">&amp;&amp;</span> <span class="n">ssh</span><span class="o">-</span><span class="n">add</span> <span class="o">-</span><span class="n">l</span> <span class="o">&amp;&amp;</span> <span class="n">git</span> <span class="n">add</span> <span class="p">.</span>
+</pre></div>
+
+
+<h3 id="-x">-x 锁定代理</h3>
+<p>Lock agent.</p>
+<h3 id="-x_1">-X 解锁代理</h3>
+<p>Unlock agent.</p>
+<h3 id="-s">-s</h3>
+<p>pkcs11   Add keys from PKCS#11 provider.</p>
+<h3 id="-e">-e</h3>
+<p>pkcs11   Remove keys provided by PKCS#11 provider.</p>
+<h3 id="-q">-q</h3>
+<p>Be quiet after a successful operation.</p>
+<h3 id="-a">-A</h3>
+<p>Add all identities stored in your keychain.</p>
+<h3 id="-k">-K</h3>
+<p>Store passphrases in your keychain.</p>
+<p>With -d, remove passphrases from your keychain.</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

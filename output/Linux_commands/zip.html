@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>zip - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;zip
+    <span class="updated">Page Updated&nbsp;
+      2020-09-15 00:03
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">zip</div>
+
+  <p>[toc]</p>
+<h1 id="zip">zip</h1>
+<h2 id="-g-append-to">-g append to</h2>
+<p>Grow  (append  to)  the  specified zip archive, instead of creating a new one. If this operation fails, zip attempts to restore the archive to its</p>
+<h2 id="-r-recursive">-r recursive</h2>
+<h2 id="-q-quiet">-q quiet</h2>
+<h2 id="-x-exclude">-x/--exclude</h2>
+<p>Explicitly exclude the specified files, as in:                                                                                                                                                                                                                                                                                  </p>
+<div class="hlcode"><pre><span class="n">zip</span> <span class="o">-</span><span class="n">r</span> <span class="n">foo</span> <span class="n">foo</span> <span class="o">-</span><span class="n">x</span> <span class="err">\</span><span class="o">*</span><span class="p">.</span><span class="n">o</span>         
+</pre></div>
+
+
+<p>which  will  include  the contents of <strong>foo</strong> in <strong>foo.zip</strong> while excluding all the files that end in <strong>.o</strong>.  The backslash avoids the shell filename                  substitution, so that the name matching is performed by zip at all directory levels. Also possible:                                                                                                                                               </p>
+<div class="hlcode"><pre><span class="n">zip</span> <span class="o">-</span><span class="n">r</span> <span class="n">foo</span> <span class="n">foo</span> <span class="o">-</span><span class="n">x</span><span class="err">@</span><span class="n">exclude</span><span class="p">.</span><span class="n">lst</span>  
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="n">zip</span> <span class="o">-</span><span class="n">qr</span> <span class="n">rxu_test</span><span class="p">.</span><span class="n">zip</span> <span class="o">*</span> <span class="o">-</span><span class="n">x</span> <span class="s">&quot;*.js&quot;</span> <span class="o">-</span><span class="n">x</span> <span class="s">&quot;*dill&quot;</span> <span class="o">-</span><span class="n">x</span> <span class="s">&quot;*.mmdb&quot;</span> <span class="o">-</span><span class="n">x</span> <span class="s">&quot;*csv&quot;</span> <span class="o">-</span><span class="n">x</span> <span class="s">&quot;*Cities*gz&quot;</span> <span class="o">-</span><span class="n">x</span> <span class="s">&quot;*geojson&quot;</span> <span class="o">-</span><span class="n">x</span> <span class="s">&quot;*ropeproject*&quot;</span> <span class="o">-</span><span class="n">x</span> <span class="s">&quot;*numbers*&quot;</span> <span class="o">-</span><span class="n">x</span> <span class="s">&quot;*pyc*&quot;</span>  <span class="o">-</span><span class="n">x</span> <span class="s">&quot;*swp&quot;</span> <span class="o">-</span><span class="n">x</span> <span class="s">&quot;bdp*.zip&quot;</span> <span class="o">-</span><span class="n">x</span> <span class="s">&quot;common*&quot;</span> 
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

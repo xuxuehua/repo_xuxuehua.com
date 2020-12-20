@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>basic_knowledge - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Spring">Spring</a>&nbsp;&#187;&nbsp;basic_knowledge
+    <span class="updated">Page Updated&nbsp;
+      2020-02-09 00:42
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">basic_knowledge</div>
+
+  <p>[toc]</p>
+<h1 id="spring">Spring</h1>
+<p>轻量级，一站式，开发框架</p>
+<p>Spring自身也提供了表述层的SpringMVC和持久层的Spring JDBC</p>
+<h2 id="_1">核心技术</h2>
+<p>IoC 控制反转 Inversion of Control</p>
+<p>AOP 面向切面编程 Aspect-Oriented Programming </p>
+<h3 id="ioc">IoC  反转控制</h3>
+<p>Inversion of Control 容器框架 </p>
+<p>颠覆了应用程序组件获取资源的传统方式，即由容器主动的向资源推送给需要的组件，而不是组件去容器中获取。</p>
+<p>开发人员只需要提供接受资源的方式即可，也称为查找的被动形式</p>
+<p><img alt="image-20200209110558992" src="basic_knowledge.assets/image-20200209110558992.png" /></p>
+<h4 id="di">DI 依赖注入</h4>
+<p>IoC 的另一种表达方式，即组件以一些预先定义好的方式接受来自容器的资源注入</p>
+<p>DI是对IoC思想的具体实现</p>
+<h4 id="bean">Bean</h4>
+<p>让IoC容器管理一个具体对象</p>
+<p>需要用id作为唯一标示</p>
+<p>class 类通过反射方式创建对象</p>
+<div class="hlcode"><pre><span class="n">Class</span> <span class="n">cls</span> <span class="o">=</span> <span class="n">Class</span><span class="p">.</span><span class="n">forName</span><span class="p">(</span><span class="s">&quot;com.xurick.spring.helloworld.Person&quot;</span><span class="p">);</span>
+<span class="n">Object</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">cls</span><span class="p">.</span><span class="n">newInstance</span><span class="p">();</span> <span class="c1">//无参数构造器</span>
+</pre></div>
+
+
+<p>property gei对象的属性赋值</p>
+<p>获取Bean，除了可以通过id，还可以通过类型，即同一个类型的bean再XML中配置多个，会抛出异常，同一个类型的bean在容器中必须唯一</p>
+<div class="hlcode"><pre><span class="n">HelloWorld</span> <span class="n">helloworld</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">.</span><span class="n">getBean</span><span class="p">(</span><span class="n">HelloWorld</span><span class="p">.</span><span class="n">class</span><span class="p">);</span>
+</pre></div>
+
+
+<p>另一种方式是重载方法，同时指向bean的id值和类型</p>
+<div class="hlcode"><pre><span class="n">HelloWorld</span> <span class="n">helloworld</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">.</span><span class="n">getBean</span><span class="p">(</span><span class="s">&quot;helloWorld&quot;</span><span class="p">,</span> <span class="n">HelloWorld</span><span class="p">.</span><span class="n">class</span><span class="p">);</span>
+</pre></div>
+
+
+<h3 id="aop">AOP</h3>
+<p>业务逻辑与非业务逻辑分离</p>
+<h2 id="spring_1">Spring模块</h2>
+<p>Core Container 下是核心模块</p>
+<p><img alt="image-20200209112028677" src="basic_knowledge.assets/image-20200209112028677.png" /></p>
+<h1 id="springcloud">SpringCloud</h1>
+<p>意在简化分布式，是功能的集合，风格的统一    </p>
+<p><img alt="image-20200212010121159" src="basic_knowledge.assets/image-20200212010121159.png" /></p>
+<h2 id="euerka">Euerka</h2>
+<p><img alt="image-20200212010204067" src="basic_knowledge.assets/image-20200212010204067.png" /></p>
+<h2 id="ribbon">Ribbon</h2>
+<p><img alt="image-20200212012058879" src="basic_knowledge.assets/image-20200212012058879.png" /></p>
+<h2 id="hystrix">Hystrix</h2>
+<p><img alt="image-20200212012929494" src="basic_knowledge.assets/image-20200212012929494.png" /></p>
+<h2 id="zuul">Zuul</h2>
+<p><img alt="image-20200212014333134" src="basic_knowledge.assets/image-20200212014333134.png" /></p>
+<h1 id="springboot">SpringBoot</h1>
+<p>意在简化，是一种开发，配置风格</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

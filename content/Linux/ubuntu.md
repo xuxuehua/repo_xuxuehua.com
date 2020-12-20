@@ -15,6 +15,8 @@ date: 2018-08-27 18:18
 sudo apt-get install -y build-essential && \
 sudo apt install -y libpcre3* && \ 
 sudo apt install -y libzip4* && \ 
+sudo apt install -y python3-dev && \
+sudo apt install -y libpython3.7-dev && \
 sudo apt install -y git vim curl wget screen proxychains
 ```
 

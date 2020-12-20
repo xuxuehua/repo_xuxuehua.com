@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>item - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Zabbix">Zabbix</a>&nbsp;&#187;&nbsp;item
+    <span class="updated">Page Updated&nbsp;
+      2019-03-02 20:27
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">item</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#item">item</a><ul>
+<li><a href="#_1">类型</a><ul>
+<li><a href="#zabbix-agent">zabbix-agent</a></li>
+<li><a href="#_2">网卡相关</a></li>
+<li><a href="#_3">端口相关</a></li>
+<li><a href="#_4">进程相关</a></li>
+<li><a href="#cpu">CPU相关</a></li>
+<li><a href="#io">磁盘IO及系统相关</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="item">item</h1>
+<h2 id="_1">类型</h2>
+<h3 id="zabbix-agent">zabbix-agent</h3>
+<p>以agent为视角，分passive 和active 工作模式</p>
+<h3 id="_2">网卡相关</h3>
+<div class="hlcode"><pre><span class="nx">net.if.in</span><span class="err">[</span><span class="k">if</span><span class="p">,</span><span class="o">&lt;</span><span class="nb">mode</span><span class="o">&gt;</span><span class="cp">]</span>
+</pre></div>
+
+
+<blockquote>
+<p>If: 接口， eth0</p>
+<p>mode: bytes, packets, errors, dropped</p>
+</blockquote>
+<div class="hlcode"><pre><span class="nx">net.if.out</span><span class="err">[</span><span class="k">if</span><span class="p">,</span><span class="o">&lt;</span><span class="nb">mode</span><span class="o">&gt;</span><span class="cp">]</span>
+net.if.total<span class="cp">[</span><span class="k">if</span><span class="p">,</span><span class="o">&lt;</span><span class="nb">mode</span><span class="o">&gt;</span><span class="cp">]</span>
+</pre></div>
+
+
+<h3 id="_3">端口相关</h3>
+<div class="hlcode"><pre><span class="nx">net.tcp.listen</span><span class="err">[</span><span class="nb">port</span><span class="cp">]</span>
+net.tcp.port<span class="cp">[</span><span class="o">&lt;</span><span class="nx">ip</span><span class="o">&gt;</span><span class="p">,</span><span class="nb">port</span><span class="cp">]</span>
+net.tcp.service<span class="cp">[</span><span class="nx">service</span><span class="p">,</span><span class="o">&lt;</span><span class="nx">ip</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="nb">port</span><span class="o">&gt;</span><span class="cp">]</span>
+net.udp.listen<span class="cp">[</span><span class="nb">port</span><span class="cp">]</span>
+</pre></div>
+
+
+<h3 id="_4">进程相关</h3>
+<div class="hlcode"><pre><span class="n">kernel</span><span class="p">.</span><span class="n">maxfiles</span>
+<span class="n">kernel</span><span class="p">.</span><span class="n">maxproc</span>
+</pre></div>
+
+
+<h3 id="cpu">CPU相关</h3>
+<div class="hlcode"><pre><span class="nx">system.cpu.intr</span>
+<span class="nx">system.cpu.load</span><span class="err">[</span><span class="o">&lt;</span><span class="nx">cpu</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="nb">mode</span><span class="o">&gt;</span><span class="cp">]</span>
+system.cpu.num<span class="cp">[</span><span class="o">&lt;</span><span class="k">type</span><span class="o">&gt;</span><span class="cp">]</span>
+system.cpu.switches
+system.cpu.util<span class="cp">[</span><span class="o">&lt;</span><span class="nx">cpu</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="k">type</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="nb">mode</span><span class="o">&gt;</span><span class="cp">]</span>
+</pre></div>
+
+
+<h3 id="io">磁盘IO及系统相关</h3>
+<div class="hlcode"><pre><span class="nx">vfs.dev.read</span><span class="err">[</span><span class="o">&lt;</span><span class="nx">device</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="k">type</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="nb">mode</span><span class="o">&gt;</span><span class="cp">]</span>
+vfs.dev.write<span class="cp">[</span><span class="o">&lt;</span><span class="nx">device</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="k">type</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;</span><span class="nb">mode</span><span class="o">&gt;</span><span class="cp">]</span>
+vfs.fs.inode<span class="cp">[</span><span class="nx">fs</span><span class="p">,</span><span class="o">&lt;</span><span class="nb">mode</span><span class="o">&gt;</span><span class="cp">]</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

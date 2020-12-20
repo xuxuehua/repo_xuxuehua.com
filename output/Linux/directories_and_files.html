@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>directories_and_files 目录和文件 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux">Linux</a>&nbsp;&#187;&nbsp;directories_and_files 目录和文件
+    <span class="updated">Page Updated&nbsp;
+      2018-10-22 03:20
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">directories_and_files 目录和文件</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">目录</a><ul>
+<li><a href="#etc">/etc</a><ul>
+<li><a href="#etcsysconfig">/etc/sysconfig</a></li>
+</ul>
+</li>
+<li><a href="#boot">/boot</a></li>
+<li><a href="#dev">/dev</a></li>
+<li><a href="#bin">/bin</a></li>
+<li><a href="#sbin">/sbin</a></li>
+<li><a href="#lib">/lib</a></li>
+<li><a href="#usr">/usr</a><ul>
+<li><a href="#usrbin">/usr/bin</a></li>
+<li><a href="#usrsbin">/usr/sbin</a></li>
+<li><a href="#usrx11r6bin">/usr/X11R6/bin</a></li>
+<li><a href="#usrx11r6sbin">/usr/X11R6/sbin</a></li>
+</ul>
+</li>
+<li><a href="#proc">/proc</a><ul>
+<li><a href="#_2">目录结构</a></li>
+<li><a href="#_3">进程目录</a></li>
+<li><a href="#procsys">/proc/sys 内核参数</a><ul>
+<li><a href="#procsyskernel">/proc/sys/kernel</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sys">/sys</a></li>
+<li><a href="#srv">/srv</a></li>
+<li><a href="#var">/var</a><ul>
+<li><a href="#varlog">/var/log/</a></li>
+</ul>
+</li>
+<li><a href="#mnt">/mnt</a></li>
+<li><a href="#tmp">/tmp</a></li>
+</ul>
+</li>
+<li><a href="#_4">文件</a><ul>
+<li><a href="#libcso6">libc.so.6</a></li>
+<li><a href="#varlogauthlog">/var/log/auth.log</a></li>
+<li><a href="#varlogbootlog">/var/log/boot.log</a></li>
+<li><a href="#varlogcronlog">/var/log/cron.log</a></li>
+<li><a href="#varlogkernellog">/var/log/kernel.log</a></li>
+<li><a href="#varlogmaillog">/var/log/maillog</a></li>
+<li><a href="#varlogmessage">/var/log/message</a></li>
+<li><a href="#varloglastlog">/var/log/lastlog</a></li>
+<li><a href="#varlogsecure">/var/log/secure</a></li>
+<li><a href="#varlogutmp">/var/log/utmp</a></li>
+<li><a href="#varlogwtmp">/var/log/wtmp</a></li>
+<li><a href="#varlogyumlog">/var/log/yum.log</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">目录</h1>
+<h2 id="etc">/etc</h2>
+<p>系统所需要的配置文件和子目录</p>
+<h3 id="etcsysconfig">/etc/sysconfig</h3>
+<p>修改hostname</p>
+<div class="hlcode"><pre><span class="err">修改</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">sysconfig</span><span class="o">/</span><span class="n">network</span><span class="err">中的：</span>
+
+<span class="n">HOSTNAME</span>
+
+<span class="err">比如改成机器的</span><span class="n">IP</span><span class="err">：</span>
+<span class="n">NETWORKING</span><span class="o">=</span><span class="n">yes</span>
+<span class="n">HOSTNAME</span><span class="o">=</span><span class="mf">10.20.150.92</span>
+
+<span class="n">GATEWAY</span><span class="o">=</span><span class="mf">10.20.150.254</span>
+
+
+
+<span class="err">改完后运行</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">rc</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">rc</span><span class="p">.</span><span class="n">sysinit</span>
+<span class="err">最后输入密码退出，不会重启，这个时候</span><span class="n">hostname</span> <span class="err">就修改完毕了</span>
+</pre></div>
+
+
+<h2 id="boot">/boot</h2>
+<p>启动Linux 的核心文件</p>
+<h2 id="dev">/dev</h2>
+<p>设备文件</p>
+<h2 id="bin">/bin</h2>
+<p>commands in this dir are all system installed user commands </p>
+<p>bin为binary的简写主要放置一些系统的必备执行档例如:cat、cp、chmod df、dmesg、gzip、kill、ls、mkdir、more、mount、rm、su、tar等</p>
+<h2 id="sbin">/sbin</h2>
+<p>commands in this dir are all system installed super user commands </p>
+<p>主要放置一些系统管理的必备程式例如:cfdisk、dhcpcd、dump、e2fsck、fdisk、halt、ifconfig、ifup、 ifdown、init、insmod、lilo、lsmod、mke2fs、modprobe、quotacheck、reboot、rmmod、 runlevel、shutdown等。    </p>
+<h2 id="lib">/lib</h2>
+<p>系统开机所需要最基本的动态链接库，即程序所需要的共享库</p>
+<h2 id="usr">/usr</h2>
+<p>用户的应用程序和文件</p>
+<h3 id="usrbin">/usr/bin</h3>
+<p>user commands for applications </p>
+<p>是你在后期安装的一些软件的运行脚本。主要放置一些应用软体工具的必备执行档例如c++、g++、gcc、chdrv、diff、dig、du、eject、elm、free、gnome、 gzip、htpasswd、kfm、ktop、last、less、locale、m4、make、man、mcopy、ncftp、 newaliases、nslookup passwd、quota、smb、wget等。</p>
+<h3 id="usrsbin">/usr/sbin</h3>
+<p>super user commands for applications </p>
+<p>放置一些用户安装的系统管理的必备程式例如:dhcpd、httpd、imap、in.*d、inetd、lpd、named、netconfig、nmbd、samba、sendmail、squid、swap、tcpd、tcpdump等</p>
+<h3 id="usrx11r6bin">/usr/X11R6/bin</h3>
+<p>X application user commands </p>
+<h3 id="usrx11r6sbin">/usr/X11R6/sbin</h3>
+<p>X application super user commands </p>
+<h2 id="proc">/proc</h2>
+<p>proc文件系统是一个伪文件系统，它只存在内存当中，而不占用外存空间。</p>
+<p>它以文件系统的方式为访问系统内核数据的操作提供接口。用户和应用程序可以通过proc得到系统的信息，并可以改变内核的某些参数。由于系统的信息，如进程，是动态改变的，所以用户或应用程序读取proc文件时，proc文件系统是动态从系统内核读出所需信息并提交的。</p>
+<p>随机字符串</p>
+<div class="hlcode"><pre><span class="n">cat</span> <span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">random</span><span class="o">/</span><span class="n">uuid</span>  <span class="o">|</span> <span class="n">cut</span> <span class="o">-</span><span class="n">c</span> <span class="mi">1</span><span class="o">-</span><span class="mi">8</span>
+<span class="mf">1f</span><span class="mi">842195</span>
+</pre></div>
+
+
+<h3 id="_2">目录结构</h3>
+<p>并不是所有这些目录在你的系统中都有，这取决于你的内核配置和装载的模块。</p>
+<p>另外，在/proc下还有三个很重要的目录：net，scsi和sys。Sys目录是可写的，可以通过它来访问或修改内核的参数（见下一部分），而net和scsi则依赖于内核配置。例如，如果系统不支持scsi，则scsi目录不存在。</p>
+<div class="hlcode"><pre><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="mi">1</span> 
+<span class="err">关于进程</span><span class="mi">1</span><span class="err">的信息目录。每个进程在</span><span class="o">/</span><span class="n">proc</span> <span class="err">下有一个名为其进程号的目录。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">cpuinfo</span> 
+<span class="err">处理器信息，如类型、制造商、型号和性能。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">devices</span> 
+<span class="err">当前运行的核心配置的设备驱动的列表。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">dma</span> 
+<span class="err">显示当前使用的</span><span class="n">DMA</span><span class="err">通道。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">filesystems</span> 
+<span class="err">核心配置的文件系统。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">interrupts</span> 
+<span class="err">显示使用的中断，</span><span class="n">and</span> <span class="n">how</span> <span class="n">many</span> <span class="n">of</span> <span class="n">each</span> <span class="n">there</span> <span class="n">have</span> <span class="n">been</span><span class="p">.</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">ioports</span> 
+<span class="err">当前使用的</span><span class="n">I</span><span class="o">/</span><span class="n">O</span><span class="err">端口。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">kcore</span> 
+<span class="err">系统物理内存映象。与物理内存大小完全一样，但不实际占用这么多内存；</span><span class="n">it</span> <span class="n">is</span> <span class="n">generated</span> <span class="n">on</span> <span class="n">the</span> <span class="n">fly</span> <span class="n">as</span> <span class="n">programs</span> <span class="n">access</span> <span class="n">it</span><span class="p">.</span> <span class="p">(</span><span class="err">记住：除非你把它拷贝到什么地方，</span><span class="o">/</span><span class="n">proc</span> <span class="err">下没有任何东西占用任何磁盘空间。</span><span class="p">)</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">kmsg</span> 
+<span class="err">核心输出的消息。也被送到</span><span class="n">syslog</span> <span class="err">。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">ksyms</span> 
+<span class="err">核心符号表。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">loadavg</span> 
+<span class="err">系统</span><span class="s">&quot;平均负载&quot;</span><span class="err">；</span><span class="mi">3</span><span class="err">个没有意义的指示器指出系统当前的工作量。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">meminfo</span> 
+<span class="err">存储器使用信息，包括物理内存和</span><span class="n">swap</span><span class="err">。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">modules</span> 
+<span class="err">当前加载了哪些核心模块。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">net</span> 
+<span class="err">网络协议状态信息。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">self</span> 
+<span class="err">到查看</span><span class="o">/</span><span class="n">proc</span> <span class="err">的程序的进程目录的符号连接。当</span><span class="mi">2</span><span class="err">个进程查看</span><span class="o">/</span><span class="n">proc</span> <span class="err">时，是不同的连接。这主要便于程序得到它自己的进程目录。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">stat</span> 
+<span class="err">系统的不同状态，</span><span class="n">such</span> <span class="n">as</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">page</span> <span class="n">faults</span> <span class="n">since</span> <span class="n">the</span> <span class="n">system</span> <span class="n">was</span> <span class="n">booted</span><span class="p">.</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">uptime</span> 
+<span class="err">系统启动的时间长度。</span> 
+
+<span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">version</span> 
+<span class="err">内核版本</span>
+</pre></div>
+
+
+<h3 id="_3">进程目录</h3>
+<p>还有的是一些以数字命名的目录，它们是进程目录。系统中当前运行的每一个进程都有对应的一个目录在/proc下，以进程的PID号为目录名，它们是读取进程信息的接口。而self目录则是读取进程本身的信息接口，是一个link。Proc文件系统的名字就是由之而起。</p>
+<div class="hlcode"><pre><span class="n">Cmdline</span>　<span class="err">命令行参数</span>
+<span class="n">Environ</span>　<span class="err">环境变量值</span>
+<span class="n">Fd</span>　<span class="err">一个包含所有文件描述符的目录</span>
+<span class="n">Mem</span>　<span class="err">进程的内存被利用情况</span>
+<span class="n">Stat</span>　<span class="err">进程状态</span>
+<span class="n">Status</span>　<span class="n">Process</span> <span class="n">status</span> <span class="n">in</span> <span class="n">human</span> <span class="n">readable</span> <span class="n">form</span>
+<span class="n">Cwd</span>　<span class="err">当前工作目录的链接</span>
+<span class="n">Exe</span>　<span class="n">Link</span> <span class="n">to</span> <span class="n">the</span> <span class="n">executable</span> <span class="n">of</span> <span class="n">this</span> <span class="n">process</span>
+<span class="n">Maps</span>　<span class="err">内存印象</span>
+<span class="n">Statm</span>　<span class="err">进程内存状态信息</span>
+<span class="n">Root</span>　<span class="err">链接此进程的</span><span class="n">root</span><span class="err">目录</span>
+</pre></div>
+
+
+<h3 id="procsys">/proc/sys 内核参数</h3>
+<p>在/proc文件系统中有一个有趣的目录：/proc/sys。它不仅提供了内核信息，而且可以通过它修改内核参数，来优化你的系统。但是你必须很小心，因为可能会造成系统崩溃。</p>
+<p>改变内核的参数，只要用vi编辑或echo参数重定向到文件 中即可。</p>
+<div class="hlcode"><pre><span class="cp"># cat /proc/sys/fs/file-max</span>
+<span class="mi">4096</span>
+<span class="cp"># echo 8192&gt;; /proc/sys/fs/file-max</span>
+<span class="cp"># cat /proc/sys/fs/file-max</span>
+<span class="mi">8192</span>
+</pre></div>
+
+
+<h4 id="procsyskernel">/proc/sys/kernel</h4>
+<p>修改hostname</p>
+<div class="hlcode"><pre><span class="n">sudo</span> <span class="n">echo</span> <span class="p">[</span><span class="n">my_host_name</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">hostname</span>
+</pre></div>
+
+
+<h2 id="sys">/sys</h2>
+<h2 id="srv">/srv</h2>
+<p>service缩写，存放服务启动之后所需要提取的数据</p>
+<h2 id="var">/var</h2>
+<p>存放扩充的文件，经常被修改的文件，如日志等</p>
+<h3 id="varlog">/var/log/</h3>
+<p>日志相关信息</p>
+<h2 id="mnt">/mnt</h2>
+<p>临时挂载的文件</p>
+<h2 id="tmp">/tmp</h2>
+<p>临时文件处</p>
+<h1 id="_4">文件</h1>
+<h2 id="libcso6">libc.so.6</h2>
+<p>/lib64/libc.so.6 是重要依赖的库文件，删除后很多命令无法使用，包括关机都无法执行。</p>
+<p>重启会卡在登录界面。</p>
+<p>需要进入救援模式来恢复</p>
+<h2 id="varlogauthlog">/var/log/auth.log</h2>
+<p>身份认证日志</p>
+<h2 id="varlogbootlog">/var/log/boot.log</h2>
+<p>系统启动日志</p>
+<h2 id="varlogcronlog">/var/log/cron.log</h2>
+<p>Cron 日志信息</p>
+<h2 id="varlogkernellog">/var/log/kernel.log</h2>
+<p>内核日志</p>
+<h2 id="varlogmaillog">/var/log/maillog</h2>
+<p>邮件服务器日志</p>
+<h2 id="varlogmessage">/var/log/message</h2>
+<p>记录系统日志或当前活动日志</p>
+<div class="hlcode"><pre><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">messages</span> <span class="err">在</span><span class="n">ubuntu</span><span class="err">中被</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">syslog</span> <span class="err">替代</span>
+</pre></div>
+
+
+<h2 id="varloglastlog">/var/log/lastlog</h2>
+<p>最近登录成功事件</p>
+<h2 id="varlogsecure">/var/log/secure</h2>
+<p>认证日志</p>
+<h2 id="varlogutmp">/var/log/utmp</h2>
+<p>当前机器登录的全部用户的日志</p>
+<h2 id="varlogwtmp">/var/log/wtmp</h2>
+<p>系统创建以来登录过的用户</p>
+<h2 id="varlogyumlog">/var/log/yum.log</h2>
+<p>yum</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>inheritance 原型继承 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Javascript">Javascript</a>&nbsp;&#187;&nbsp;inheritance 原型继承
+    <span class="updated">Page Updated&nbsp;
+      2018-06-22 02:27
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">inheritance 原型继承</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#inheritance">inheritance 继承</a><ul>
+<li><a href="#_1">原型继承</a></li>
+<li><a href="#class">class 继承</a><ul>
+<li><a href="#_2">定义</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="inheritance">inheritance 继承</h1>
+<h2 id="_1">原型继承</h2>
+<p>在传统的基于Class的语言如Java、C++中，继承的本质是扩展一个已有的Class，并生成新的Subclass。</p>
+<p>由于这类语言严格区分类和实例，继承实际上是类型的扩展。但是，JavaScript由于采用原型继承，我们无法直接扩展一个Class，因为根本不存在Class这种类型。</p>
+<p>但是办法还是有的。我们先回顾<code>Student</code>构造函数：</p>
+<div class="hlcode"><pre><span class="kd">function</span> <span class="nx">Student</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;Unnamed&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">Student</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hello</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hello, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;!&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>现在，我们要基于<code>Student</code>扩展出<code>PrimaryStudent</code>，可以先定义出<code>PrimaryStudent</code>：</p>
+<div class="hlcode"><pre><span class="kd">function</span> <span class="nx">PrimaryStudent</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 调用Student构造函数，绑定this变量:</span>
+    <span class="nx">Student</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">props</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">grade</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">grade</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>但是，调用了<code>Student</code>构造函数不等于继承了<code>Student</code>，<code>PrimaryStudent</code>创建的对象的原型是：</p>
+<div class="hlcode"><pre><span class="n">new</span> <span class="n">PrimaryStudent</span><span class="p">()</span> <span class="o">----&gt;</span> <span class="n">PrimaryStudent</span><span class="p">.</span><span class="n">prototype</span> <span class="o">----&gt;</span> <span class="n">Object</span><span class="p">.</span><span class="n">prototype</span> <span class="o">----&gt;</span> <span class="n">null</span>
+</pre></div>
+
+
+<p>必须想办法把原型链修改为：</p>
+<div class="hlcode"><pre><span class="n">new</span> <span class="n">PrimaryStudent</span><span class="p">()</span> <span class="o">----&gt;</span> <span class="n">PrimaryStudent</span><span class="p">.</span><span class="n">prototype</span> <span class="o">----&gt;</span> <span class="n">Student</span><span class="p">.</span><span class="n">prototype</span> <span class="o">----&gt;</span> <span class="n">Object</span><span class="p">.</span><span class="n">prototype</span> <span class="o">----&gt;</span> <span class="n">null</span>
+</pre></div>
+
+
+<p>这样，原型链对了，继承关系就对了。新的基于<code>PrimaryStudent</code>创建的对象不但能调用<code>PrimaryStudent.prototype</code>定义的方法，也可以调用<code>Student.prototype</code>定义的方法。</p>
+<p>如果你想用最简单粗暴的方法这么干：</p>
+<div class="hlcode"><pre><span class="n">PrimaryStudent</span><span class="p">.</span><span class="n">prototype</span> <span class="o">=</span> <span class="n">Student</span><span class="p">.</span><span class="n">prototype</span><span class="p">;</span>
+</pre></div>
+
+
+<p>是不行的！如果这样的话，<code>PrimaryStudent</code>和<code>Student</code>共享一个原型对象，那还要定义<code>PrimaryStudent</code>干啥？</p>
+<p>我们必须借助一个中间对象来实现正确的原型链，这个中间对象的原型要指向<code>Student.prototype</code>。为了实现这一点，参考道爷（就是发明JSON的那个道格拉斯）的代码，中间对象可以用一个空函数<code>F</code>来实现：</p>
+<div class="hlcode"><pre><span class="c1">// PrimaryStudent构造函数:</span>
+<span class="k">function</span> <span class="n">PrimaryStudent</span><span class="p">(</span><span class="n">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">Student</span><span class="p">.</span><span class="n">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">props</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="n">grade</span> <span class="o">=</span> <span class="n">props</span><span class="p">.</span><span class="n">grade</span> <span class="o">||</span> <span class="mh">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 空函数F:</span>
+<span class="k">function</span> <span class="no">F</span><span class="p">()</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="c1">// 把F的原型指向Student.prototype:</span>
+<span class="no">F</span><span class="p">.</span><span class="n">prototype</span> <span class="o">=</span> <span class="n">Student</span><span class="p">.</span><span class="n">prototype</span><span class="p">;</span>
+
+<span class="c1">// 把PrimaryStudent的原型指向一个新的F对象，F对象的原型正好指向Student.prototype:</span>
+<span class="n">PrimaryStudent</span><span class="p">.</span><span class="n">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="no">F</span><span class="p">();</span>
+
+<span class="c1">// 把PrimaryStudent原型的构造函数修复为PrimaryStudent:</span>
+<span class="n">PrimaryStudent</span><span class="p">.</span><span class="n">prototype</span><span class="p">.</span><span class="n">constructor</span> <span class="o">=</span> <span class="n">PrimaryStudent</span><span class="p">;</span>
+
+<span class="c1">// 继续在PrimaryStudent原型（就是new F()对象）上定义方法：</span>
+<span class="n">PrimaryStudent</span><span class="p">.</span><span class="n">prototype</span><span class="p">.</span><span class="n">getGrade</span> <span class="o">=</span> <span class="k">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="n">grade</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// 创建xiaoming:</span>
+<span class="k">var</span> <span class="n">xiaoming</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PrimaryStudent</span><span class="p">({</span>
+    <span class="nl">name:</span> <span class="p">&#39;</span><span class="err">小明</span><span class="p">&#39;,</span>
+    <span class="nl">grade:</span> <span class="mh">2</span>
+<span class="p">});</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">name</span><span class="p">;</span> <span class="c1">// &#39;小明&#39;</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">grade</span><span class="p">;</span> <span class="c1">// 2</span>
+
+<span class="c1">// 验证原型:</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">__proto__</span> <span class="o">===</span> <span class="n">PrimaryStudent</span><span class="p">.</span><span class="n">prototype</span><span class="p">;</span> <span class="c1">// true</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">__proto__</span><span class="p">.</span><span class="n">__proto__</span> <span class="o">===</span> <span class="n">Student</span><span class="p">.</span><span class="n">prototype</span><span class="p">;</span> <span class="c1">// true</span>
+
+<span class="c1">// 验证继承关系:</span>
+<span class="n">xiaoming</span> <span class="n">instanceof</span> <span class="n">PrimaryStudent</span><span class="p">;</span> <span class="c1">// true</span>
+<span class="n">xiaoming</span> <span class="n">instanceof</span> <span class="n">Student</span><span class="p">;</span> <span class="c1">// true</span>
+</pre></div>
+
+
+<p>如果把继承这个动作用一个<code>inherits()</code>函数封装起来，还可以隐藏<code>F</code>的定义，并简化代码：</p>
+<div class="hlcode"><pre><span class="kd">function</span> <span class="nx">inherits</span><span class="p">(</span><span class="nx">Child</span><span class="p">,</span> <span class="nx">Parent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">F</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+    <span class="nx">F</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">Parent</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
+    <span class="nx">Child</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">F</span><span class="p">();</span>
+    <span class="nx">Child</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Child</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>这个<code>inherits()</code>函数可以复用：</p>
+<div class="hlcode"><pre><span class="kd">function</span> <span class="nx">Student</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="s1">&#39;Unnamed&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">Student</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hello</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hello, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;!&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">PrimaryStudent</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Student</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">props</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">grade</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">grade</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 实现原型继承链:</span>
+<span class="nx">inherits</span><span class="p">(</span><span class="nx">PrimaryStudent</span><span class="p">,</span> <span class="nx">Student</span><span class="p">);</span>
+
+<span class="c1">// 绑定其他方法到PrimaryStudent原型:</span>
+<span class="nx">PrimaryStudent</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getGrade</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">grade</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>JavaScript的原型继承实现方式就是：</p>
+<ol>
+<li>定义新的构造函数，并在内部用<code>call()</code>调用希望“继承”的构造函数，并绑定<code>this</code>；</li>
+<li>借助中间函数<code>F</code>实现原型链继承，最好通过封装的<code>inherits</code>函数完成；</li>
+<li>继续在新的构造函数的原型上定义新方法。</li>
+</ol>
+<h2 id="class">class 继承</h2>
+<p>JavaScript的对象模型是基于原型实现的，特点是简单，缺点是理解起来比传统的类－实例模型要困难，最大的缺点是继承的实现需要编写大量代码，并且需要正确实现原型链。</p>
+<p>有没有更简单的写法？有！</p>
+<p>新的关键字<code>class</code>从ES6开始正式被引入到JavaScript中。<code>class</code>的目的就是让定义类更简单</p>
+<h3 id="_2">定义</h3>
+<p>函数实现<code>Student</code>的方法：</p>
+<div class="hlcode"><pre><span class="kd">function</span> <span class="nx">Student</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">Student</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hello</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hello, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;!&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>如果用新的<code>class</code>关键字来编写<code>Student</code>，可以这样写：</p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">Student</span> <span class="p">{</span>
+    <span class="n">constructor</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">this</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">hello</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">alert</span><span class="p">(</span><span class="err">&#39;</span><span class="n">Hello</span><span class="p">,</span> <span class="err">&#39;</span> <span class="o">+</span> <span class="n">this</span><span class="p">.</span><span class="n">name</span> <span class="o">+</span> <span class="sc">&#39;!&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>创建一个<code>Student</code>对象代码和前面章节完全一样：</p>
+<div class="hlcode"><pre><span class="n">var</span> <span class="n">xiaoming</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Student</span><span class="p">(</span><span class="err">&#39;小明&#39;</span><span class="p">);</span>
+<span class="n">xiaoming</span><span class="p">.</span><span class="n">hello</span><span class="p">();</span>
+</pre></div>
+
+
+<ul>
+<li>用<code>class</code>定义对象的另一个巨大的好处是继承更方便了</li>
+</ul>
+<p><code>Student</code>派生一个<code>PrimaryStudent</code></p>
+<div class="hlcode"><pre><span class="kr">class</span> <span class="nx">Student</span> <span class="p">{</span>
+    <span class="nx">constructor</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">hello</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hello, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;!&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">PrimaryStudent</span> <span class="kr">extends</span> <span class="nx">Student</span> <span class="p">{</span>
+    <span class="nx">constructor</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">grade</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kr">super</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span> <span class="c1">// 记得用super调用父类的构造方法!</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">grade</span> <span class="o">=</span> <span class="nx">grade</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">myGrade</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;I am at grade &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">grade</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p><code>PrimaryStudent</code>的定义也是class关键字实现的，而<code>extends</code>则表示原型链对象来自<code>Student</code>。子类的构造函数可能会与父类不太相同，例如，<code>PrimaryStudent</code>需要<code>name</code>和<code>grade</code>两个参数，并且需要通过<code>super(name)</code>来调用父类的构造函数，否则父类的<code>name</code>属性无法正常初始化。</p>
+</blockquote>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

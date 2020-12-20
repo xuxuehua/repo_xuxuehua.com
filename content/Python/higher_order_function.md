@@ -169,6 +169,10 @@ for num in result:
 27
 ```
 
+
+
+
+
 ### map结合lambda
 
 ```
@@ -281,7 +285,7 @@ positive_num = list(filter(lambda x: x>0, num))
 average = reduce(lambda x,y: x+y, positive_num) / len(positive_num)
 
 >>>
-5.0ø
+5.0
 ```
 
 

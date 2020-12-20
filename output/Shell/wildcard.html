@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>wildcard 通配符 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Shell">Shell</a>&nbsp;&#187;&nbsp;wildcard 通配符
+    <span class="updated">Page Updated&nbsp;
+      2018-10-22 11:52
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">wildcard 通配符</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#wildcard">wildcard</a><ul>
+<li><a href="#_1">常见通配符</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="wildcard">wildcard</h1>
+<p>通配符是由shell处理的, 它只会出现在 命令的“参数”里</p>
+<p>当shell在“参数”中遇到了通配符时，shell会将其当作路径或文件名去在磁盘上搜寻可能的匹配：若符合要求的匹配存在，则进行代换(路径扩展)；否则就将该通配符作为一个普通字符传递给“命令”，然后再由命令进行处理。</p>
+<h2 id="_1">常见通配符</h2>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>含义</th>
+<th>语法</th>
+<th>解释</th>
+<th>实例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>*</td>
+<td>匹配0个或多个字符</td>
+<td>a*b</td>
+<td>ab之间可以有任意长度的任意字符，也可以没有</td>
+<td>Aback, axyb, ab</td>
+</tr>
+<tr>
+<td>?</td>
+<td>匹配任意一个字符</td>
+<td>a?b</td>
+<td>ab之间有且只有一个任意字符</td>
+<td>aab, abb, a0b</td>
+</tr>
+<tr>
+<td>[list]</td>
+<td>匹配list中任意单一字符</td>
+<td>a[xyz]b</td>
+<td>ab之间只能有一个字符，在xyz中选取</td>
+<td>axb,ayb,  azb</td>
+</tr>
+<tr>
+<td>[!list]</td>
+<td>匹配除了list中的任意单个字符</td>
+<td>a[!0-9]b</td>
+<td>ab之间必须有且只有一个字符，不能是数字</td>
+<td>axb,</td>
+</tr>
+<tr>
+<td>[c1-c2]</td>
+<td>匹配c1-c2中的任意单一字符</td>
+<td>a[0-9]b</td>
+<td>必须有0-9之间的一个字符</td>
+<td>a0b, a9b</td>
+</tr>
+<tr>
+<td string1_="string1," string2="string2"></td>
+<td>匹配string1或者string2或更多(中间不能有空格)</td>
+<td 1_2_3="1,2,3"></td>
+<td>ab之间只能 是abc或者123</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

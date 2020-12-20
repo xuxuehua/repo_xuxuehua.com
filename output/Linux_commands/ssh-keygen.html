@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>ssh-keygen - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Linux_commands">Linux_commands</a>&nbsp;&#187;&nbsp;ssh-keygen
+    <span class="updated">Page Updated&nbsp;
+      2018-09-05 15:44
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">ssh-keygen</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#ssh-keygen">ssh-keygen</a><ul>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#options">options</a><ul>
+<li><a href="#-t">-t 类型</a></li>
+<li><a href="#-b">-b</a></li>
+<li><a href="#-e-hash">-E 指纹hash</a><ul>
+<li><a href="#sha">SHA</a></li>
+<li><a href="#md5">MD5</a></li>
+<li><a href="#sha1">SHA1</a></li>
+</ul>
+</li>
+<li><a href="#-y-public-key">-y public key</a></li>
+<li><a href="#-n-passphrase">-N 新建 passphrase</a></li>
+<li><a href="#-p-passphrase">-p 修改passphrase</a></li>
+<li><a href="#-f-key">-f 指定key 文件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="ssh-keygen">ssh-keygen</h1>
+<p>这个问题 Enter file in which to save the key 路径要写绝对路径Á</p>
+<h2 id="usage">Usage</h2>
+<div class="hlcode"><pre><span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span> <span class="p">[</span><span class="o">-</span><span class="n">q</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">b</span> <span class="n">bits</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="n">dsa</span> <span class="o">|</span> <span class="n">ecdsa</span> <span class="o">|</span> <span class="n">ed25519</span> <span class="o">|</span> <span class="n">rsa</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">N</span> <span class="n">new_passphrase</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">C</span> <span class="n">comment</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">output_keyfile</span><span class="p">]</span>
+</pre></div>
+
+
+<h2 id="options">options</h2>
+<h3 id="-t">-t 类型</h3>
+<p>类型 dsa | ecdsa | ed25519 | rsa</p>
+<h3 id="-b">-b</h3>
+<p>bit 位长度</p>
+<h3 id="-e-hash">-E 指纹hash</h3>
+<p>默认为SHA256</p>
+<h4 id="sha">SHA</h4>
+<div class="hlcode"><pre><span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span>  <span class="o">-</span><span class="n">lf</span> <span class="o">~/</span><span class="p">.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa_xuxuehua</span><span class="p">.</span><span class="n">pub</span>
+<span class="mi">2048</span> <span class="n">SHA256</span><span class="o">:</span><span class="mi">1</span><span class="n">kM5dwYyZccRGl7LtIfUq7lgdqb43YyW2hZqsf8sO0w</span>  <span class="p">(</span><span class="n">RSA</span><span class="p">)</span>
+</pre></div>
+
+
+<h4 id="md5">MD5</h4>
+<div class="hlcode"><pre><span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span>  <span class="o">-</span><span class="n">E</span> <span class="n">md5</span> <span class="o">-</span><span class="n">lf</span> <span class="o">~/</span><span class="p">.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa_xuxuehua</span><span class="p">.</span><span class="n">pub</span>
+<span class="mi">2048</span> <span class="n">MD5</span><span class="o">:</span><span class="n">d2</span><span class="o">:</span><span class="mi">56</span><span class="o">:</span><span class="mi">1</span><span class="n">b</span><span class="o">:</span><span class="n">d6</span><span class="o">:</span><span class="mi">0</span><span class="n">d</span><span class="o">:</span><span class="mi">68</span><span class="o">:</span><span class="mi">9</span><span class="n">c</span><span class="o">:</span><span class="mi">55</span><span class="o">:</span><span class="n">f6</span><span class="o">:</span><span class="mi">65</span><span class="o">:</span><span class="mi">1</span><span class="n">b</span><span class="o">:</span><span class="mi">26</span><span class="o">:</span><span class="mi">6</span><span class="n">d</span><span class="o">:</span><span class="mi">30</span><span class="o">:</span><span class="mo">02</span><span class="o">:</span><span class="mo">01</span>  <span class="p">(</span><span class="n">RSA</span><span class="p">)</span>
+</pre></div>
+
+
+<h4 id="sha1">SHA1</h4>
+<div class="hlcode"><pre><span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span>  <span class="o">-</span><span class="n">E</span> <span class="n">sha1</span> <span class="o">-</span><span class="n">lf</span> <span class="o">~/</span><span class="p">.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa_xuxuehua</span><span class="p">.</span><span class="n">pub</span>
+<span class="mi">2048</span> <span class="n">SHA1</span><span class="o">:</span><span class="n">O3p96Tu0ZPzB</span><span class="c1">//LPwrTM1YyW6fc  (RSA)</span>
+</pre></div>
+
+
+<h3 id="-y-public-key">-y public key</h3>
+<p><code>-y</code> outputs the public key:</p>
+<div class="hlcode"><pre><span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">y</span> <span class="o">-</span><span class="n">f</span> <span class="o">~/</span><span class="p">.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa</span> <span class="o">&gt;</span> <span class="o">~/</span><span class="p">.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa</span><span class="p">.</span><span class="n">pub</span>
+</pre></div>
+
+
+<h3 id="-n-passphrase">-N 新建 passphrase</h3>
+<p>清空passphrase</p>
+<div class="hlcode"><pre><span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">t</span> <span class="n">rsa</span> <span class="o">-</span><span class="n">N</span> <span class="err">&#39;&#39;</span> <span class="o">-</span><span class="n">f</span> <span class="n">test_rsa_key</span>
+</pre></div>
+
+
+<h3 id="-p-passphrase">-p 修改passphrase</h3>
+<div class="hlcode"><pre><span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">p</span> <span class="o">-</span><span class="n">f</span> <span class="n">keyfile</span>
+</pre></div>
+
+
+<h3 id="-f-key">-f 指定key 文件</h3>
+<div class="hlcode"><pre><span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">p</span> <span class="o">-</span><span class="n">f</span> <span class="n">keyfile</span>
+</pre></div>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

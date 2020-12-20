@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>function 函数 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java">Java</a>&nbsp;&#187;&nbsp;function 函数
+    <span class="updated">Page Updated&nbsp;
+      2020-01-24 02:49
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">function 函数</div>
+
+  <p>[toc]</p>
+<h1 id="_1">函数</h1>
+<div class="hlcode"><pre>    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="nf">sum</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">a</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;=</span><span class="n">b</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">sum</span> <span class="o">+=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;sum=&quot;</span><span class="o">+</span><span class="n">sum</span><span class="p">);</span>
+    <span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_2">本地变量</h2>
+<p>需要定义在块内，即函数内，或语句块内</p>
+<p>程序在运行在块之前，变量不存在，离开块之后，变量就消失</p>
+<h2 id="return">return</h2>
+<p>函数可以没有return</p>
+<div class="hlcode"><pre>    <span class="n">public</span> <span class="k">static</span> <span class="kt">int</span> <span class="nf">max</span> <span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">ret</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="o">&gt;</span><span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">b</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">ret</span><span class="p">;</span>
+    <span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_3">参数类型不匹配</h2>
+<h3 id="_4">预期大于调用时</h3>
+<p>编译器可以自动降类型转换好</p>
+<h3 id="_5">预期小于调用时</h3>
+<p>需要进行强制类型转换</p>
+<div class="hlcode"><pre><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="mf">5.0</span>
+</pre></div>
+
+
+<h3 id="_6">预期不同于调用时</h3>
+<p>无法继续执行</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

@@ -75,5 +75,17 @@ a.py:2:3: E711 comparison to None should be 'if cond is None:'
 
 
 
+# C901 too complex
+
+disable 
+
+```
+# flake8: noqa: C901
+```
+
+
+
+
+
 
 

@@ -1,0 +1,210 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>judgement 判断 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java">Java</a>&nbsp;&#187;&nbsp;judgement 判断
+    <span class="updated">Page Updated&nbsp;
+      2019-10-07 00:45
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">judgement 判断</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#if">If 判断</a><ul>
+<li><a href="#else">else</a></li>
+</ul>
+</li>
+<li><a href="#equals">引用判断 equals</a></li>
+<li><a href="#switch">switch多重选择</a><ul>
+<li><a href="#case">case标签</a></li>
+<li><a href="#switch-idea">switch 语法检查 （IDEA配置）</a></li>
+<li><a href="#switch_1">switch表达式</a></li>
+<li><a href="#yield">yield</a></li>
+<li><a href="#switch_2">switch 预览特性</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="if">If 判断</h1>
+<p>根据<code>if</code>的计算结果（<code>true</code>还是<code>false</code>），JVM决定是否执行<code>if</code>语句块（即花括号{}包含的所有语句）</p>
+<div class="hlcode"><pre><span class="k">if</span> <span class="p">(</span><span class="err">条件</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 条件满足时执行</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="else">else</h2>
+<p><code>if</code>语句还可以编写一个<code>else { ... }</code>，当条件判断为<code>false</code>时，将执行<code>else</code>的语句块</p>
+<h1 id="equals">引用判断 equals</h1>
+<p>在Java中，判断值类型的变量是否相等，可以使用<code>==</code>运算符。但是，判断引用类型的变量是否相等，<code>==</code>表示“引用是否相等”，或者说，是否指向同一个对象。例如，下面的两个String类型，它们的内容是相同的，但是，分别指向不同的对象，用<code>==</code>判断，结果为<code>false</code></p>
+<p>要判断引用类型的变量内容是否相等，必须使用<code>equals()</code>方法</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">String</span> <span class="n">s1</span> <span class="o">=</span> <span class="s">&quot;hello&quot;</span><span class="p">;</span>
+        <span class="n">String</span> <span class="n">s2</span> <span class="o">=</span> <span class="s">&quot;HELLO&quot;</span><span class="p">.</span><span class="n">toLowerCase</span><span class="p">();</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">s1</span><span class="p">);</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">s2</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s1</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">s2</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;s1 equals s2&quot;</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;s1 not equals s2&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="n">hello</span>
+<span class="n">hello</span>
+<span class="n">s1</span> <span class="n">equals</span> <span class="n">s2</span>
+</pre></div>
+
+
+<p>执行语句<code>s1.equals(s2)</code>时，如果变量<code>s1</code>为<code>null</code>, 会报<code>NullPointerException</code>, 要避免<code>NullPointerException</code>错误，可以利用短路运算符<code>&amp;&amp;</code></p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">String</span> <span class="n">s1</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s1</span> <span class="o">!=</span> <span class="n">null</span> <span class="o">&amp;&amp;</span> <span class="n">s1</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h1 id="switch">switch多重选择</h1>
+<p><code>switch</code>语句根据<code>switch (表达式)</code>计算的结果，跳转到匹配的<code>case</code>结果，然后继续执行后续语句，直到遇到<code>break</code>结束执行</p>
+<p>如果<code>option</code>的值没有匹配到任何<code>case</code>，例如<code>option = 99</code>，那么，<code>switch</code>语句不会执行任何语句。这时，可以给<code>switch</code>语句加一个<code>default</code>，当没有匹配到任何<code>case</code>时，执行<code>default</code></p>
+<p>任何时候都不要忘记写<code>break</code>, 否则后续语句将全部执行</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="mi">99</span><span class="p">;</span>
+        <span class="k">switch</span> <span class="p">(</span><span class="n">option</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="mi">1</span>:
+                <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Select 1&quot;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">2</span>:
+                <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Select 2&quot;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">3</span>:
+                <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Select 3&quot;</span><span class="p">);</span>
+            <span class="nl">default:</span>
+                <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Not selected&quot;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">Not</span> <span class="n">selected</span>
+</pre></div>
+
+
+<h2 id="case">case标签</h2>
+<p>case标签可以是</p>
+<p>类型为char，byte，short， int的常量表达式</p>
+<p>枚举常量</p>
+<div class="hlcode"><pre><span class="n">Size</span> <span class="n">sz</span> <span class="o">=</span> <span class="p">...;</span>
+<span class="k">switch</span> <span class="p">(</span><span class="n">sz</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="n">SMALL</span>: <span class="c1">// no need to use Size.SMALL</span>
+                <span class="p">...</span>
+                <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>从Java7SE开始，可以是字符串字面量</p>
+<div class="hlcode"><pre><span class="n">String</span> <span class="n">input</span> <span class="o">=</span> <span class="p">...;</span>
+<span class="k">switch</span> <span class="p">(</span><span class="n">input</span><span class="p">.</span><span class="n">toLowerCase</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="s">&quot;yes&quot;</span>: <span class="c1">// since Java SE 7</span>
+                <span class="p">...</span>
+                <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="switch-idea">switch 语法检查 （IDEA配置）</h2>
+<p>在Idea中，选择<code>Preferences</code> - <code>Editor</code> - <code>Inspections</code> - <code>Java</code> - <code>Control flow issues</code>，将以下检查标记为Warning：</p>
+<ul>
+<li>Fallthrough in 'switch' statement</li>
+<li>'switch' statement without 'default' branch</li>
+</ul>
+<p>当<code>switch</code>语句存在问题时，即可在IDE中获得警告提示</p>
+<h2 id="switch_1">switch表达式</h2>
+<p>从Java 12开始，<code>switch</code>语句升级为更简洁的表达式语法，使用类似模式匹配（Pattern Matching）的方法，保证只有一种路径会被执行，并且不需要<code>break</code>语句</p>
+<p>注意新语法使用<code>-&gt;</code>，如果有多条语句，需要用<code>{}</code>括起来。不要写<code>break</code>语句，因为新语法只会执行匹配的语句，没有穿透效应</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">String</span> <span class="n">fruit</span> <span class="o">=</span> <span class="s">&quot;orange&quot;</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">opt</span> <span class="o">=</span> <span class="k">switch</span> <span class="p">(</span><span class="n">fruit</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="s">&quot;apple&quot;</span> <span class="o">-&gt;</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s">&quot;pear&quot;</span><span class="p">,</span> <span class="s">&quot;orange&quot;</span> <span class="o">-&gt;</span> <span class="mi">2</span><span class="p">;</span>
+            <span class="k">default</span> <span class="o">-&gt;</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">};</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;opt = &quot;</span> <span class="o">+</span> <span class="n">opt</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+
+
+<h2 id="yield">yield</h2>
+<p>大多数时候，在<code>switch</code>表达式内部，我们会返回简单的值。</p>
+<p>但是，如果需要复杂的语句，我们也可以写很多语句，放到<code>{...}</code>里，然后，用<code>yield</code>返回一个值作为<code>switch</code>语句的返回值</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">String</span> <span class="n">fruit</span> <span class="o">=</span> <span class="s">&quot;blueberry&quot;</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">opt</span> <span class="o">=</span> <span class="k">switch</span> <span class="p">(</span><span class="n">fruit</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="s">&quot;apple&quot;</span> <span class="o">-&gt;</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s">&quot;pear&quot;</span><span class="p">,</span> <span class="s">&quot;orange&quot;</span> <span class="o">-&gt;</span> <span class="mi">2</span><span class="p">;</span>
+            <span class="k">default</span> <span class="o">-&gt;</span> <span class="p">{</span>
+                <span class="kt">int</span> <span class="n">code</span> <span class="o">=</span> <span class="n">fruit</span><span class="p">.</span><span class="n">hashCode</span><span class="p">();</span>
+                <span class="n">yield</span> <span class="n">code</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;opt = &quot;</span> <span class="o">+</span> <span class="n">opt</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="mi">1951963900</span>
+</pre></div>
+
+
+<h2 id="switch_2">switch 预览特性</h2>
+<p>IDEA 开启preview 模式</p>
+<p>由于<code>switch</code>表达式是作为Java 13的预览特性（Preview Language Features）实现的，编译的时候，我们还需要给编译器加上参数：</p>
+<div class="hlcode"><pre><span class="n">javac</span> <span class="o">--</span><span class="n">source</span> <span class="mi">13</span> <span class="o">--</span><span class="n">enable</span><span class="o">-</span><span class="n">preview</span> <span class="n">Main</span><span class="p">.</span><span class="n">java</span>
+</pre></div>
+
+
+<p>这样才能正常编译。</p>
+<p><img alt="img" src="judgement.assets/Switchexpr-IDEsettings.gif" /></p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>

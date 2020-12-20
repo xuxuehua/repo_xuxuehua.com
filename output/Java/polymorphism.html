@@ -1,0 +1,490 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="Stylesheet" type="text/css" href="/static/css/tango.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>polymorphism 多态 - Xu XueHua</title>
+    <meta name="keywords" content="Xu XueHua"/>
+    <meta name="description" content="Xu XueHua's public notes"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+
+  <body>
+    <div id="container">
+      
+<div id="header">
+  <div class="post-nav"><a href="/">Home</a>&nbsp;&#187;&nbsp;<a href="/#Java">Java</a>&nbsp;&#187;&nbsp;polymorphism 多态
+    <span class="updated">Page Updated&nbsp;
+      2019-10-15 08:56
+    </span></div>
+</div>
+<div class="clearfix"></div>
+
+<div class="page_title">polymorphism 多态</div>
+
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">多态</a><ul>
+<li><a href="#override">override</a><ul>
+<li><a href="#override_1">@Override 错误检测</a></li>
+</ul>
+</li>
+<li><a href="#overload">overload</a></li>
+<li><a href="#object">覆写Object方法</a></li>
+<li><a href="#super">super 调用</a></li>
+<li><a href="#final">final 禁止覆写</a></li>
+</ul>
+</li>
+<li><a href="#_2">抽象类</a><ul>
+<li><a href="#abstract">abstract</a></li>
+<li><a href="#interface">interface 接口</a><ul>
+<li><a href="#implements-interface">implements 实现interface</a></li>
+<li><a href="#_3">多接口</a></li>
+<li><a href="#_4">接口继承</a></li>
+<li><a href="#default">default方法</a></li>
+<li><a href="#_5">接口的静态字段</a></li>
+</ul>
+</li>
+<li><a href="#vs">抽象类 vs 接口</a></li>
+<li><a href="#_6">继承关系</a></li>
+</ul>
+</li>
+<li><a href="#_7">面向抽象编程</a><ul>
+<li><a href="#_8">本质</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="_1">多态</h1>
+<p>即多种形态的，运行期才能动态决定调用的子类方法。对某个类型调用某个方法，执行的实际方法可能是某个子类的覆写方法</p>
+<p>Java的对象变量是多态的，它们能保存不止一种类型的对象，可以保存的是声明类型的对象，或声明类型的子类的对象</p>
+<h2 id="override">override</h2>
+<p>在继承关系中，子类和父类中存在名称和参数完全相同的方法，被称为覆写（Override）</p>
+<p>在<code>Person</code>类中，我们定义了<code>run()</code>方法：</p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="n">run</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Person.run&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>在子类<code>Student</code>中，覆写这个<code>run()</code>方法：</p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">Student</span> <span class="n">extends</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="err">@</span><span class="n">Override</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="n">run</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Student.run&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="override_1">@Override 错误检测</h3>
+<p>加上<code>@Override</code>可以让编译器帮助检查是否进行了正确的覆写。希望进行覆写，但是不小心写错了方法签名，编译器会报错。</p>
+<p>但<code>@Override</code>不是必需的</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="n">run</span><span class="p">()</span> <span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="n">public</span> <span class="n">class</span> <span class="n">Student</span> <span class="n">extends</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="err">@</span><span class="n">Override</span> <span class="c1">// Compile error!</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="n">run</span><span class="p">(</span><span class="n">String</span> <span class="n">s</span><span class="p">)</span> <span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Java的实例方法调用是基于运行时的实际类型的动态调用，而非变量的声明类型</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Student</span><span class="p">();</span>
+        <span class="n">p</span><span class="p">.</span><span class="n">run</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="n">run</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Person.run&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">class</span> <span class="n">Student</span> <span class="n">extends</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="err">@</span><span class="n">Override</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="n">run</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Student.run&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">Student</span><span class="p">.</span><span class="n">run</span>
+</pre></div>
+
+
+<h2 id="overload">overload</h2>
+<p>Override和Overload不同的是，如果方法签名如果不同，就是Overload，Overload方法是一个新方法；如果方法签名相同，并且返回值也相同，就是<code>Override</code></p>
+<h2 id="object">覆写Object方法</h2>
+<p>因为所有的<code>class</code>最终都继承自<code>Object</code>，而<code>Object</code>定义了几个重要的方法：</p>
+<ul>
+<li><code>toString()</code>：把instance输出为<code>String</code>；</li>
+<li><code>equals()</code>：判断两个instance是否逻辑相等；</li>
+<li><code>hashCode()</code>：计算一个instance的哈希值。</li>
+</ul>
+<p>在必要的情况下，我们可以覆写<code>Object</code>的这几个方法</p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="p">...</span>
+    <span class="c1">// 显示更有意义的字符串:</span>
+    <span class="err">@</span><span class="n">Override</span>
+    <span class="n">public</span> <span class="n">String</span> <span class="n">toString</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s">&quot;Person:name=&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 比较是否相等:</span>
+    <span class="err">@</span><span class="n">Override</span>
+    <span class="n">public</span> <span class="n">boolean</span> <span class="n">equals</span><span class="p">(</span><span class="n">Object</span> <span class="n">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 当且仅当o为Person类型:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">o</span> <span class="n">instanceof</span> <span class="n">Person</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="n">Person</span><span class="p">)</span> <span class="n">o</span><span class="p">;</span>
+            <span class="c1">// 并且name字段相同时，返回true:</span>
+            <span class="k">return</span> <span class="n">this</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">name</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 计算hash:</span>
+    <span class="err">@</span><span class="n">Override</span>
+    <span class="n">public</span> <span class="kt">int</span> <span class="n">hashCode</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">this</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">hashCode</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="super">super 调用</h2>
+<p>在子类的覆写方法中，如果要调用父类的被覆写的方法，可以通过<code>super</code>来调用</p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">protected</span> <span class="n">String</span> <span class="n">name</span><span class="p">;</span>
+    <span class="n">public</span> <span class="n">String</span> <span class="nf">hello</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s">&quot;Hello, &quot;</span> <span class="o">+</span> <span class="n">name</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">Student</span> <span class="n">extends</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="err">@</span><span class="n">Override</span>
+    <span class="n">public</span> <span class="n">String</span> <span class="n">hello</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 调用父类的hello()方法:</span>
+        <span class="k">return</span> <span class="n">super</span><span class="p">.</span><span class="n">hello</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;!&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="final">final 禁止覆写</h2>
+<p>继承可以允许子类覆写父类的方法。如果一个父类不允许子类对它的某个方法进行覆写，可以把该方法标记为<code>final</code>。用<code>final</code>修饰的方法不能被<code>Override</code></p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">protected</span> <span class="n">String</span> <span class="n">name</span><span class="p">;</span>
+    <span class="n">public</span> <span class="n">final</span> <span class="n">String</span> <span class="nf">hello</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s">&quot;Hello, &quot;</span> <span class="o">+</span> <span class="n">name</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">Student</span> <span class="n">extends</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="c1">// compile error: 不允许覆写</span>
+    <span class="err">@</span><span class="n">Override</span>
+    <span class="n">public</span> <span class="n">String</span> <span class="n">hello</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>如果一个类不希望任何其他类继承自它，那么可以把这个类本身标记为<code>final</code>。用<code>final</code>修饰的类不能被继承：</p>
+<div class="hlcode"><pre><span class="n">final</span> <span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">protected</span> <span class="n">String</span> <span class="n">name</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// compile error: 不允许继承自Person</span>
+<span class="n">Student</span> <span class="n">extends</span> <span class="n">Person</span> <span class="p">{</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>对于一个类的实例字段，同样可以用<code>final</code>修饰。用<code>final</code>修饰的字段在初始化后不能被修改。</p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+        <span class="n">public</span> <span class="n">final</span> <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Unamed&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>对<code>final</code>字段重新赋值会报错：</p>
+<div class="hlcode"><pre><span class="n">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Person</span><span class="p">();</span>
+<span class="n">p</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;New Name&quot;</span><span class="p">;</span> <span class="c1">// compile error!</span>
+</pre></div>
+
+
+<p>可以在构造方法中初始化final字段：</p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+        <span class="n">public</span> <span class="n">final</span> <span class="n">String</span> <span class="n">name</span><span class="p">;</span>
+        <span class="n">public</span> <span class="nf">Person</span><span class="p">(</span><span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">this</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">;</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>这种方法更为常用，因为可以保证实例一旦创建，其<code>final</code>字段就不可修改</p>
+<h1 id="_2">抽象类</h1>
+<p>表达概念而无法构造出实体的类</p>
+<p>因为无法执行抽象方法，因此这个类也必须申明为抽象类（abstract class）</p>
+<p>使用<code>abstract</code>修饰的类就是抽象类 </p>
+<h2 id="abstract">abstract</h2>
+<p>表达概念而无法实现具体代码的函数，抽象方法用<code>abstract</code>修饰</p>
+<p>如果父类的方法本身不需要实现任何功能，仅仅是为了定义方法签名，目的是让子类去覆写它，那么，可以把父类的方法声明为抽象方法</p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+        <span class="n">public</span> <span class="n">abstract</span> <span class="kt">void</span> <span class="n">run</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>因为抽象类本身被设计成只能用于被继承，因此，抽象类可以强迫子类实现其定义的抽象方法，否则编译会报错。因此，抽象方法实际上相当于定义了“规范”</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Student</span><span class="p">();</span>
+        <span class="n">p</span><span class="p">.</span><span class="n">run</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">abstract</span> <span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="n">abstract</span> <span class="kt">void</span> <span class="n">run</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="n">class</span> <span class="n">Student</span> <span class="n">extends</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="err">@</span><span class="n">Override</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="n">run</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Student.run&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">Student</span><span class="p">.</span><span class="n">run</span>
+</pre></div>
+
+
+<blockquote>
+<p><code>Person</code>类定义了抽象方法<code>run()</code>，那么，在实现子类<code>Student</code>的时候，就必须覆写<code>run()</code>方法</p>
+</blockquote>
+<h2 id="interface">interface 接口</h2>
+<p>接口是纯抽象类</p>
+<p>所有的成员函数都是抽象函数，所有的成员变量都是public static final</p>
+<p>在抽象类中，抽象方法本质上是定义接口规范：即规定高层类的接口，从而保证所有子类都有相同的接口实现，这样，多态就能发挥出威力。</p>
+<div class="hlcode"><pre><span class="n">abstract</span> <span class="n">class</span> <span class="n">Person</span> <span class="p">{</span>
+        <span class="n">public</span> <span class="n">abstract</span> <span class="kt">void</span> <span class="n">run</span><span class="p">();</span>
+        <span class="n">public</span> <span class="n">abstract</span> <span class="n">String</span> <span class="nf">getName</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>如果一个抽象类没有字段，所有方法全部都是抽象方法, 就可以把该抽象类改写为接口：<code>interface</code></p>
+<p>interface 就是比抽象类还要抽象的纯抽象接口，因为它连字段都不能有。因为接口定义的所有方法默认都是<code>public abstract</code>的，所以这两个修饰符不需要写出来（写不写效果都一样）</p>
+<div class="hlcode"><pre><span class="n">interface</span> <span class="n">Person</span> <span class="p">{</span>
+        <span class="kt">void</span> <span class="n">run</span><span class="p">();</span>
+        <span class="n">String</span> <span class="nf">getName</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="implements-interface">implements 实现interface</h3>
+<p>类似于extends，即接口可以继承接口，但不能继承类，不能实现接口</p>
+<p>当一个具体的<code>class</code>去实现一个<code>interface</code>时，需要使用<code>implements</code>关键字</p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">Student</span> <span class="n">implements</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">private</span> <span class="n">String</span> <span class="n">name</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="nf">Student</span><span class="p">(</span><span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">this</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="err">@</span><span class="n">Override</span>
+    <span class="n">public</span> <span class="kt">void</span> <span class="n">run</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">this</span><span class="p">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; run&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="err">@</span><span class="n">Override</span>
+    <span class="n">public</span> <span class="n">String</span> <span class="n">getName</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">this</span><span class="p">.</span><span class="n">name</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="_3">多接口</h3>
+<p>在Java中，一个类只能继承自另一个类，不能从多个类继承。但是，一个类可以实现多个<code>interface</code></p>
+<div class="hlcode"><pre><span class="n">class</span> <span class="n">Student</span> <span class="n">implements</span> <span class="n">Person</span><span class="p">,</span> <span class="n">Hello</span> <span class="p">{</span> <span class="c1">// 实现了两个interface</span>
+        <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="_4">接口继承</h3>
+<p>一个<code>interface</code>可以继承自另一个<code>interface</code>。<code>interface</code>继承自<code>interface</code>使用<code>extends</code>，它相当于扩展了接口的方法</p>
+<div class="hlcode"><pre><span class="n">interface</span> <span class="n">Hello</span> <span class="p">{</span>
+    <span class="kt">void</span> <span class="n">hello</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="n">interface</span> <span class="n">Person</span> <span class="n">extends</span> <span class="n">Hello</span> <span class="p">{</span>
+    <span class="kt">void</span> <span class="n">run</span><span class="p">();</span>
+    <span class="n">String</span> <span class="nf">getName</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p><code>Person</code>接口继承自<code>Hello</code>接口，因此，<code>Person</code>接口现在实际上有3个抽象方法签名，其中一个来自继承的<code>Hello</code>接口</p>
+</blockquote>
+<h3 id="default">default方法</h3>
+<p><code>default</code>方法的目的是，当我们需要给接口新增一个方法时，会涉及到修改全部子类。如果新增的是<code>default</code>方法，那么子类就不必全部修改，只需要在需要覆写的地方去覆写新增方法。</p>
+<p><code>default</code>方法和抽象类的普通方法是有所不同的。因为<code>interface</code>没有字段，<code>default</code>方法无法访问字段，而抽象类的普通方法可以访问实例字段</p>
+<p>在接口中，可以定义<code>default</code>方法。例如，把<code>Person</code>接口的<code>run()</code>方法改为<code>default</code>方法</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">class</span> <span class="n">Main</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Student</span><span class="p">(</span><span class="s">&quot;Rick Xu&quot;</span><span class="p">);</span>
+        <span class="n">p</span><span class="p">.</span><span class="n">run</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">interface</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">String</span> <span class="n">getName</span><span class="p">();</span>
+    <span class="k">default</span> <span class="kt">void</span> <span class="nf">run</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">out</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">getName</span><span class="p">()</span><span class="o">+</span> <span class="s">&quot; run&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">class</span> <span class="n">Student</span> <span class="n">implements</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">private</span> <span class="n">String</span> <span class="n">name</span><span class="p">;</span>
+
+    <span class="n">public</span> <span class="nf">Student</span><span class="p">(</span><span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">this</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">this</span><span class="p">.</span><span class="n">name</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">Rick</span> <span class="n">Xu</span> <span class="n">run</span>
+</pre></div>
+
+
+<h3 id="_5">接口的静态字段</h3>
+<p>因为<code>interface</code>是一个纯抽象类，所以它不能定义实例字段。但是，<code>interface</code>是可以有静态字段的，并且静态字段必须为<code>final</code>类型</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">interface</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="n">final</span> <span class="kt">int</span> <span class="n">MALE</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">public</span> <span class="k">static</span> <span class="n">final</span> <span class="kt">int</span> <span class="n">FEMALE</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>实际上，因为<code>interface</code>的字段只能是<code>public static final</code>类型，所以我们可以把这些修饰符都去掉，上述代码可以简写为</p>
+<div class="hlcode"><pre><span class="n">public</span> <span class="n">interface</span> <span class="n">Person</span> <span class="p">{</span>
+    <span class="c1">// 编译器会自动加上public statc final:</span>
+    <span class="kt">int</span> <span class="n">MALE</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">FEMALE</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<blockquote>
+<p>编译器会自动把该字段变为<code>public static final</code>类型</p>
+</blockquote>
+<h2 id="vs">抽象类 vs 接口</h2>
+<p>Java的接口特指<code>interface</code>的定义，表示一个接口类型和一组方法签名，而编程接口泛指接口规范，如方法签名，数据格式，网络协议</p>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">abstract class</th>
+<th>interface</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">继承</td>
+<td align="left">只能extends一个class</td>
+<td>可以implements多个interface</td>
+</tr>
+<tr>
+<td align="left">字段</td>
+<td align="left">可以定义实例字段</td>
+<td>不能定义实例字段</td>
+</tr>
+<tr>
+<td align="left">抽象方法</td>
+<td align="left">可以定义抽象方法</td>
+<td>可以定义抽象方法</td>
+</tr>
+<tr>
+<td align="left">非抽象方法</td>
+<td align="left">可以定义非抽象方法</td>
+<td>可以定义default方法</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_6">继承关系</h2>
+<p>合理设计<code>interface</code>和<code>abstract class</code>的继承关系，可以充分复用代码。一般来说，公共逻辑适合放在<code>abstract class</code>中，具体逻辑放到各个子类，而接口层次代表抽象程度。可以参考Java的集合类定义的一组接口、抽象类以及具体子类的继承关系：</p>
+<div class="hlcode"><pre><span class="err">┌───────────────┐</span>
+<span class="err">│</span>   <span class="n">Iterable</span>    <span class="err">│</span>
+<span class="err">└───────────────┘</span>
+        <span class="err">▲</span>                <span class="err">┌───────────────────┐</span>
+        <span class="err">│</span>                <span class="err">│</span>      <span class="n">Object</span>       <span class="err">│</span>
+<span class="err">┌───────────────┐</span>        <span class="err">└───────────────────┘</span>
+<span class="err">│</span>  <span class="n">Collection</span>   <span class="err">│</span>                  <span class="err">▲</span>
+<span class="err">└───────────────┘</span>                  <span class="err">│</span>
+        <span class="err">▲</span>     <span class="err">▲</span>          <span class="err">┌───────────────────┐</span>
+        <span class="err">│</span>     <span class="err">└──────────│</span><span class="n">AbstractCollection</span> <span class="err">│</span>
+<span class="err">┌───────────────┐</span>        <span class="err">└───────────────────┘</span>
+<span class="err">│</span>     <span class="n">List</span>      <span class="err">│</span>                  <span class="err">▲</span>
+<span class="err">└───────────────┘</span>                  <span class="err">│</span>
+              <span class="err">▲</span>          <span class="err">┌───────────────────┐</span>
+              <span class="err">└──────────│</span>   <span class="n">AbstractList</span>    <span class="err">│</span>
+                         <span class="err">└───────────────────┘</span>
+                                <span class="err">▲</span>     <span class="err">▲</span>
+                                <span class="err">│</span>     <span class="err">│</span>
+                                <span class="err">│</span>     <span class="err">│</span>
+                     <span class="err">┌────────────┐</span> <span class="err">┌────────────┐</span>
+                     <span class="err">│</span> <span class="n">ArrayList</span>  <span class="err">│</span> <span class="err">│</span> <span class="n">LinkedList</span> <span class="err">│</span>
+                     <span class="err">└────────────┘</span> <span class="err">└────────────┘</span>
+</pre></div>
+
+
+<p>在使用的时候，实例化的对象永远只能是某个具体的子类，但总是通过接口去引用它，因为接口比抽象类更抽象</p>
+<div class="hlcode"><pre><span class="n">List</span> <span class="n">list</span> <span class="o">=</span> <span class="n">new</span> <span class="n">ArrayList</span><span class="p">();</span> <span class="c1">// 用List接口引用具体子类的实例</span>
+<span class="n">Collection</span> <span class="n">coll</span> <span class="o">=</span> <span class="n">list</span><span class="p">;</span> <span class="c1">// 向上转型为Collection接口</span>
+<span class="n">Iterable</span> <span class="n">it</span> <span class="o">=</span> <span class="n">coll</span><span class="p">;</span> <span class="c1">// 向上转型为Iterable接口</span>
+</pre></div>
+
+
+<h1 id="_7">面向抽象编程</h1>
+<p>设计程序时先定义接口，再实现类</p>
+<p>任何需要再函数间传入传出的一定是接口，而不是具体的类</p>
+<p>尽量引用高层类型，避免引用实际子类型的方式，称之为面向抽象编程</p>
+<h2 id="_8">本质</h2>
+<p>上层代码只定义规范（例如：<code>abstract class Person</code>）；</p>
+<p>不需要子类就可以实现业务逻辑（正常编译）；</p>
+<p>具体的业务逻辑由不同的子类实现，调用者并不关心。</p>
+    </div>
+    <div id="footer">
+      <span>
+        <p>Copyright © 2020 Xu XueHua.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.</p>
+        <p>Site Generated 2020-12-12 14:54:32</p>
+      </span>
+    </div>
+
+    
+    
+  </body>
+</html>
