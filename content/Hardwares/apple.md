@@ -63,7 +63,7 @@ https://buyersguide.macrumors.com/
 
 ## 快捷键
 
-![img](https://pic3.zhimg.com/80/v2-40629bfa6d17612d1d756104e16f029a_hd.jpg)
+![img](apple.assets/v2-40629bfa6d17612d1d756104e16f029a_hd.jpg)
 
 ```
 https://mp.weixin.qq.com/s?__biz=MzAxNzcwMTA4Ng==&mid=100000103&idx=1&sn=462bdefe3b0054dd3b5c3d8e23189c81&chksm=1be0c0d62c9749c000a6b2667a7b585210f46fe08e3457f02a4819f0c7c938b5764514066d00&scene=20&key=399a205ce674169cddd368a413f6d8c792bfb8f69ab6c53524fdc820c082cfd5033a0c0abd73f1fb239c58b5349c492e5d0e3212806bdf6dbe0faa0543b7854bc13fc5aea034da9c98dba1f21ca441e5&ascene=0&uin=MjExMDA4MDk2Mg%3D%3D&devicetype=iMac+MacBookAir6%2C2+OSX+OSX+10.12.5+build(16F60a)&version=12020510&nettype=WIFI&fontScale=100&pass_ticket=mO5t8QhThwJHz79L6sgHzQVbgkVpHYs1EiXsa5dk0IE%2FDH7jtOhG%2FCCa3n5scP6G

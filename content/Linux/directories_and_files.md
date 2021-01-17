@@ -41,11 +41,7 @@ GATEWAY=10.20.150.254
 
 启动Linux 的核心文件
 
-
-
-## /dev
-
-设备文件
+系统启动相关文件，如内核，initrd( RHEL6 initramfs )，以及grub(bootloader)
 
 
 
@@ -55,15 +51,41 @@ GATEWAY=10.20.150.254
 
 commands in this dir are all system installed user commands 
 
+可执行文件，用户命令，不能单独分区
+
 bin为binary的简写主要放置一些系统的必备执行档例如:cat、cp、chmod df、dmesg、gzip、kill、ls、mkdir、more、mount、rm、su、tar等
 
 
+
+## /dev
+
+设备文件，没有大小，包含的主设备号major和次设备号minor［包含块设备－随机访问－如磁盘］，［字符设备－线性访问，如键盘，鼠标，显示器］），不能单独分区
+
+
+
+## /etc
+
+配置文件，不能单独分区
+
+
+
+## /home
+
+用户家目录；每个用户都有一个家目录
+
+
+
+## /root    
+
+管理员家目录，不能单独分区
 
 
 
 ## /sbin
 
 commands in this dir are all system installed super user commands 
+
+管理命令，不能单独分区
 
 主要放置一些系统管理的必备程式例如:cfdisk、dhcpcd、dump、e2fsck、fdisk、halt、ifconfig、ifup、 ifdown、init、insmod、lilo、lsmod、mke2fs、modprobe、quotacheck、reboot、rmmod、 runlevel、shutdown等。	
 
@@ -73,13 +95,35 @@ commands in this dir are all system installed super user commands
 
 系统开机所需要最基本的动态链接库，即程序所需要的共享库
 
+不能单独分区
 
+
+
+### /lib/modules
+
+内核模块文件;
+
+静态库  .a
+
+动态库 .dll   .so (shared object)
+
+
+
+## /media   
+
+挂载点目录  移动设备
+
+
+
+## /mnt     
+
+挂载点目录  额外点临时文件系统
 
 
 
 ## /usr
 
-用户的应用程序和文件
+universal shared read-only  只读文件，是操作系统核心功能，可以单独分区
 
 
 
@@ -88,6 +132,12 @@ commands in this dir are all system installed super user commands
 user commands for applications 
 
 是你在后期安装的一些软件的运行脚本。主要放置一些应用软体工具的必备执行档例如c++、g++、gcc、chdrv、diff、dig、du、eject、elm、free、gnome、 gzip、htpasswd、kfm、ktop、last、less、locale、m4、make、man、mcopy、ncftp、 newaliases、nslookup passwd、quota、smb、wget等。
+
+
+
+### /usr/local
+
+第三方软件的目录，独立的王国
 
 
 
@@ -117,9 +167,17 @@ X application super user commands
 
 
 
+## /opt  
+
+optional 可选目录， 第三方程序点安装目录，可以单独分区
+
+
+
 ## /proc
 
 proc文件系统是一个伪文件系统，它只存在内存当中，而不占用外存空间。
+
+伪文件系统，启动之后才有文件，其为内核映射文件，不能单独分区
 
 它以文件系统的方式为访问系统内核数据的操作提供接口。用户和应用程序可以通过proc得到系统的信息，并可以改变内核的某些参数。由于系统的信息，如进程，是动态改变的，所以用户或应用程序读取proc文件时，proc文件系统是动态从系统内核读出所需信息并提交的。
 
@@ -250,6 +308,8 @@ sudo echo [my_host_name] > /proc/sys/kernel/hostname
 
 ## /sys
 
+伪文件系统，启动之后才有文件，跟硬件设备相关点属性映射，不能单独分区
+
 
 
 ## /srv
@@ -262,13 +322,19 @@ service缩写，存放服务启动之后所需要提取的数据
 
 存放扩充的文件，经常被修改的文件，如日志等
 
-
+外围的文件夹，运行过程，日志等文件的区域，建议单独分区
 
 
 
 ### /var/log/
 
 日志相关信息
+
+
+
+### /var/tmp
+
+临时文件 
 
 
 

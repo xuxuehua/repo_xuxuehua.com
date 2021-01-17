@@ -32,11 +32,37 @@ Proxy setup
 
 ## xcode
 
+Not full version
+
 ```
 xcode-select --install
 ```
 
 
+
+
+
+```
+xcode-select: error: command line tools are already installed, use “Software Update” to install updates
+```
+
+This means you'll need to go to the developer website instead.
+
+
+
+release info
+
+https://xcodereleases.com/
+
+
+
+
+
+## Proxifier 
+
+浏览器都是默认支持socks5. 对于不支持socks5的，可以使用Privoxy或者Proxifier或者surge for mac或者polipo
+
+http://www.proxifier.com/download/
 
 
 
@@ -66,6 +92,8 @@ echo 'listen-address 0.0.0.0:8118\nforward-socks5 / localhost:1080 .' >> config
 ```
 netstat -na | grep 8118
 ```
+
+
 
 
 

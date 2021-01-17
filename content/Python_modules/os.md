@@ -131,7 +131,7 @@ os.mkdir('mydir')
 
 
 
-## os.makedirs
+## os.makedirs 多级目录
 
 创建多级目录
 
@@ -334,8 +334,8 @@ Out[17]: ('/etc/sysconfig', 'network')
 文件路径分隔符
 
 ```
-In [43]: os.pathsep
-Out[43]: ':'
+In [2]: os.path.sep
+Out[2]: '/'
 ```
 
 
@@ -462,15 +462,17 @@ os.walk(top, topdown = True, onerror = None, followlinks = False)
 
 以自顶向下遍历目录树或者以自底向上遍历目录树，对每一个目录都返回一个三元组(dirpath, dirnames, filenames)。
 
-三元组(dirpath，dirnames，filenames)：
-
+```
 dirpath - 遍历所在目录树的位置，是一个字符串对象
 
 dirnames - 目录树中的子目录组成的列表，不包括("."和"..")
 
 filenames - 目录树中的文件组成的列表
+```
 
-如果可选参数topdown = True或者没有指定，则其实目录的三元组先于其子目录的三元组生成(自顶向下生成三元组)，如果topdown = False，则起始目录的三元组在其子目录的三元组生成后才生成(自底向上生成三元组)。
+如果可选参数topdown = True或者没有指定，则其实目录的三元组先于其子目录的三元组生成(自顶向下生成三元组)，
+
+如果topdown = False，则起始目录的三元组在其子目录的三元组生成后才生成(自底向上生成三元组)。
 
 当topdown = True，os.walk()函数会就地修改三元组中的*dirnames*列表(可能是使用del或者进行切片），然后再使用os.walk()递归地处理剩余在*dirnames*列表中的目录。这种方式有助于加快搜索效率，可以指定特殊的遍历顺序。当topdown = False的时候修改*dirnames*是无效的，因为在使用自底向上进行遍历的时候子目录的三元组是先于上一级目录的三元组创建的。
 
@@ -481,25 +483,15 @@ filenames - 目录树中的文件组成的列表
 
 注意：如果传递过去的路径名是一个相对路径，则不会修改当前的工作路径。
 
-使用os.walk遍历目录真的很方便：
+
 
 ```
-#-*- coding:utf-8 -*-
-
-import os
-
-if __name__ == '__main__':
-    try:
-    '''traval and list all files and all dirs''' 
-    for root, dirs, files in os.walk('D:' + os.sep + 'Python27'):
-        print '-------------------directory < ' + root + ' > --------------------------'
-
-        for d in dirs:
-        print d
-        for f in files:
-        print f
-    except OSError, e:
-    print os.strerror(e.errno)
+In [30]: for dirpath, dirnames, filenames in os.walk('/Users/rxu/coding/github/smn/md_contents/'):
+    ...:     print(f'dirpath={dirpath}, dirnames={dirnames}, filenames={filenames}')
+    ...: 
+    ...: 
+dirpath=/Users/rxu/coding/github/smn/contents/, dirnames=['Myinfo'], filenames=[]
+dirpath=/Users/rxu/coding/github/smn/contents/Myinfo, dirnames=[], filenames=['rickxu.md']
 ```
 
 

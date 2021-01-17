@@ -192,6 +192,28 @@ done < $input_file
 
 
 
+### retry
+
+```
+#!/bin/bash
+
+retry=1
+
+while [ $retry -le 5 ]; do
+    ls -l
+    if [ $? -eq 0 ]; then
+        ls 
+    break
+    else
+        retry=$[ $retry + 1 ]
+        sleep $[ $RANDOM %% 6 +1  ]
+    fi
+done
+echo 'all have done'
+```
+
+
+
 ## break 
 
 跳出所有循环

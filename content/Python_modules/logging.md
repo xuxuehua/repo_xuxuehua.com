@@ -24,23 +24,42 @@ Handler --> Formatter
 
 
 
-## 流程
 
-1. 判断 Logger 对象对于设置的级别是否可用，如果可用，则往下执行，否则，流程结束。
 
-2. 创建 LogRecord 对象，如果注册到 Logger 对象中的 Filter 对象过滤后返回 False，则不记录日志，流程结束，否则，则向下执行。
+## 配置方式
 
-3. LogRecord 对象将 Handler 对象传入当前的 Logger 对象，（图中的子流程）如果 Handler 对象的日志级别大于设置的日志级别，再判断注册到 Handler 对象中的 Filter 对象过滤后是否返回 True 而放行输出日志信息，否则不放行，流程结束。
-
-4. 如果传入的 Handler 大于 Logger 中设置的级别，也即 Handler 有效，则往下执行，否则，流程结束。
-
-5. 判断这个 Logger 对象是否还有父 Logger 对象，如果没有（代表当前 Logger 对象是最顶层的 Logger 对象 root Logger），流程结束。否则将 Logger 对象设置为它的父 Logger 对象，重复上面的 3、4 两步，输出父类 Logger 对象中的日志输出，直到是 root Logger 为止。
+- 显式创建记录器Logger、处理器Handler和格式化器Formatter，并进行相关设置；
+- 通过简单方式进行配置，使用[basicConfig()](https://links.jianshu.com/go?to=http%3A%2F%2Fpython.usyiyi.cn%2Fpython_278%2Flibrary%2Flogging.html%23logging.basicConfig)函数直接进行配置；
+- 通过配置文件进行配置，使用[fileConfig()](https://links.jianshu.com/go?to=http%3A%2F%2Fpython.usyiyi.cn%2Fpython_278%2Flibrary%2Flogging.config.html%23logging.config.fileConfig)函数读取配置文件；
+- 通过配置字典进行配置，使用[dictConfig()](https://links.jianshu.com/go?to=http%3A%2F%2Fpython.usyiyi.cn%2Fpython_278%2Flibrary%2Flogging.config.html%23logging.config.dictConfig)函数读取配置信息；
+- 通过网络进行配置，使用[listen()](https://links.jianshu.com/go?to=http%3A%2F%2Fpython.usyiyi.cn%2Fpython_278%2Flibrary%2Flogging.config.html%23logging.config.listen)函数进行网络配置。
 
 
 
+### basicConfig 
+
+可以对root logger进行一次性配置
+
+| 关键字   | 描述                                                         |
+| -------- | :----------------------------------------------------------- |
+| filename | 创建一个FileHandler，使用指定的文件名，而不是使用StreamHandler。 |
+| filemode | 如果指明了文件名，指明打开文件的模式（如果没有指明filemode，默认为'a'） r[+], w[+], a[+] 该选项要在filename指定时才有效 |
+| format   | handler使用指明的格式化字符串。                              |
+| datefmt  | 使用指明的日期／时间格式。该选项要在format中包含时间字段%(asctime)s时才有效 |
+| style    | 格式占位符，可取值为'%'、'{'和'$'，默认为'%'                 |
+| level    | 指明根logger的级别。                                         |
+| stream   | 使用指明的流来初始化StreamHandler。stream和filename不能同时提供，否则会引发 `ValueError`异常 |
+| handles  | 定义处理器，该选项如果被指定，它应该是一个创建了多个Handler的可迭代对象，这些handler将会被添加到root logger。需要说明的是：filename、stream和handlers这三个配置项只能有一个存在，不能同时出现2个或3个，否则会引发ValueError异常。 |
 
 
-## example
+
+`logging.basicConfig()`函数是一个一次性的简单配置工具使，也就是说只有在第一次调用该函数时会起作用，后续再次调用该函数时完全不会产生任何操作的，多次调用的设置并不是累加操作
+
+
+
+
+
+# example
 
 默认情况下，logging模块将日志打印到屏幕上(stdout)，日志级别为WARNING(即只有日志级别高于WARNING的日志信息才会输出
 
@@ -63,87 +82,6 @@ CRITICAL:root:critical message
 
 
 
-## 配置方式
-
-- 显式创建记录器Logger、处理器Handler和格式化器Formatter，并进行相关设置；
-- 通过简单方式进行配置，使用[basicConfig()](https://links.jianshu.com/go?to=http%3A%2F%2Fpython.usyiyi.cn%2Fpython_278%2Flibrary%2Flogging.html%23logging.basicConfig)函数直接进行配置；
-- 通过配置文件进行配置，使用[fileConfig()](https://links.jianshu.com/go?to=http%3A%2F%2Fpython.usyiyi.cn%2Fpython_278%2Flibrary%2Flogging.config.html%23logging.config.fileConfig)函数读取配置文件；
-- 通过配置字典进行配置，使用[dictConfig()](https://links.jianshu.com/go?to=http%3A%2F%2Fpython.usyiyi.cn%2Fpython_278%2Flibrary%2Flogging.config.html%23logging.config.dictConfig)函数读取配置信息；
-- 通过网络进行配置，使用[listen()](https://links.jianshu.com/go?to=http%3A%2F%2Fpython.usyiyi.cn%2Fpython_278%2Flibrary%2Flogging.config.html%23logging.config.listen)函数进行网络配置。
-
-
-
-### basicConfig关键字参数
-
-| 关键字   | 描述                                                         |
-| -------- | :----------------------------------------------------------- |
-| filename | 创建一个FileHandler，使用指定的文件名，而不是使用StreamHandler。 |
-| filemode | 如果指明了文件名，指明打开文件的模式（如果没有指明filemode，默认为'a'） r[+], w[+], a[+] |
-| format   | handler使用指明的格式化字符串。                              |
-| datefmt  | 使用指明的日期／时间格式。                                   |
-| style    | 格式占位符，默认为 "%" 和 “{}”                               |
-| level    | 指明根logger的级别。                                         |
-| stream   | 使用指明的流来初始化StreamHandler。该参数与'filename'不兼容，如果两个都有，'stream'被忽略。 |
-| handles  | 定义处理器，用来创建 Handler 对象，不能和 filename 、stream 参数一起使用，否则也会抛出 ValueError 异常 |
-
-
-
-
-
-## 日志格式
-
-```
-WARNING :  root        : warn message
-日志级别 : Logger实例名称 : 日志消息内容
-```
-
-
-
-## 输出成文件
-
-```
-import logging
-
-logging.basicConfig(filename="test.log", filemode="w", format="%(asctime)s %(name)s:%(levelname)s:%(message)s", datefmt="%d-%M-%Y %H:%M:%S", level=logging.DEBUG)
-logging.debug('This is a debug message')
-logging.info('This is an info message')
-logging.warning('This is a warning message')
-logging.error('This is an error message')
-logging.critical('This is a critical message')
-
->>>
-13-10-18 21:10:32 root:DEBUG:This is a debug message
-13-10-18 21:10:32 root:INFO:This is an info message
-13-10-18 21:10:32 root:WARNING:This is a warning message
-13-10-18 21:10:32 root:ERROR:This is an error message
-13-10-18 21:10:32 root:CRITICAL:This is a critical message
-```
-
-
-
-## 异常处理
-
-当发生异常时，直接使用无参数的 debug()、info()、warning()、error()、critical() 方法并不能记录异常信息，需要设置 exc_info 参数为 True 才可以，或者使用 exception() 方法，还可以使用 log() 方法，但还要设置日志级别和 exc_info 参数。
-
-```
-import logging
-
-logging.basicConfig(filename="test.log", filemode="w", format="%(asctime)s %(name)s:%(levelname)s:%(message)s", datefmt="%d-%M-%Y %H:%M:%S", level=logging.DEBUG)
-a = 5
-b = 0
-try:
-    c = a / b
-except Exception as e:
-    # 下面三种方式三选一，推荐使用第一种
-    logging.exception("Exception occurred")
-    logging.error("Exception occurred", exc_info=True)
-    logging.log(level=logging.DEBUG, msg="Exception occurred", exc_info=True)
-```
-
-
-
-
-
 ## 自定义logger
 
 上面的基本使用可以让我们快速上手 logging 模块，但一般并不能满足实际使用，我们还需要自定义 Logger。
@@ -154,29 +92,173 @@ except Exception as e:
 
 我们可以创造多个 Logger 对象，但是真正输出日志的是根 Logger 对象。每个 Logger 对象都可以设置一个名字，如果设置`logger = logging.getLogger(__name__)`，__name__ 是 Python 中的一个特殊内置变量，他代表当前模块的名称（默认为 __main__）。则 Logger 对象的 name 为建议使用使用以点号作为分隔符的命名空间等级制度。
 
-Logger 对象可以设置多个 Handler 对象和 Filter 对象，Handler 对象又可以设置 Formatter 对象。Formatter 对象用来设置具体的输出格式，常用变量格式如下表
 
-| 变量        | 格式            | 变量描述                                                     |
-| ----------- | --------------- | :----------------------------------------------------------- |
-| asctime     | %(asctime)s     | 将日志的时间构造成可读的形式，默认情况下是精确到毫秒，如 2018-10-13 23:24:57,832，可以额外指定 datefmt 参数来指定该变量的格式 |
-| name        | %(name)         | 日志对象的名称                                               |
-| filename    | %(filename)s    | 不包含路径的文件名                                           |
-| pathname    | %(pathname)s    | 包含路径的文件名                                             |
-| funcName    | %(funcName)s    | 日志记录所在的函数名                                         |
-| levelname   | %(levelname)s   | 日志的级别名称                                               |
-| message     | %(message)s     | 具体的日志信息                                               |
-| lineno      | %(lineno)d      | 日志记录所在的行号                                           |
-| pathname    | %(pathname)s    | 完整路径                                                     |
-| process     | %(process)d     | 当前进程ID                                                   |
-| processName | %(processName)s | 当前进程名称                                                 |
-| thread      | %(thread)d      | 当前线程ID                                                   |
-| threadName  | %threadName)s   | 当前线程名称                                                 |
+
+- 日志器（Logger）是有层级关系的，上面调用的logging模块级别的函数所使用的日志器是`RootLogger`类的实例，其名称为'root'，它是处于日志器层级关系最顶层的日志器，且该实例是以单例模式存在的。
+- 如果要记录的日志中包含变量数据，可使用一个格式字符串作为这个事件的描述消息（logging.debug、logging.info等函数的第一个参数），然后将变量数据作为第二个参数*args的值进行传递，如:`logging.warning('%s is %d years old.', 'Tom', 10)`，输出内容为`WARNING:root:Tom is 10 years old.`
+- logging.debug(), logging.info()等方法的定义中，除了msg和args参数外，还有一个**kwargs参数。它们支持3个关键字参数: `exc_info, stack_info, extra`，下面对这几个关键字参数作个说明。
 
 
 
-### logger 级别
+关于exc_info, stack_info, extra关键词参数的说明
 
-Logger 对象和 Handler 对象都可以设置级别，而默认 Logger 对象级别为 30 ，也即 WARNING，默认 Handler 对象级别为 0，也即 NOTSET。logging 模块这样设计是为了更好的灵活性，比如有时候我们既想在控制台中输出DEBUG 级别的日志，又想在文件中输出WARNING级别的日志。可以只设置一个最低级别的 Logger 对象，两个不同级别的 Handler 对象
+- ***exc_info：*** 其值为布尔值，如果该参数的值设置为True，则会将异常异常信息添加到日志消息中。如果没有异常信息则添加None到日志信息中。
+- ***stack_info：*** 其值也为布尔值，默认值为False。如果该参数的值设置为True，栈信息将会被添加到日志信息中。
+- ***extra：*** 这是一个字典（dict）参数，它可以用来自定义消息格式中所包含的字段，但是它的key不能与logging模块定义的字段冲突。
+
+
+
+### get_logger
+
+```
+import logging
+
+# DEFAULT_LOG_FORMAT = "[%(asctime)s]-%(levelname)s: [%(process)d:%(thread)d at %(module)s.%(funcName)s:%(lineno)d] %(request_id)s - %(message)s"
+DEFAULT_LOG_FORMAT = "[%(asctime)s]-%(levelname)s: [%(process)d:%(thread)d at %(module)s.%(funcName)s:%(lineno)d] - %(message)s"
+DEFAULT_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+
+def get_logger(
+        logger_name,
+        log_level=logging.INFO,
+        log_format=DEFAULT_LOG_FORMAT
+):
+    _logger = logging.getLogger(logger_name)
+    _logger.propagate = 0
+    _logger.setLevel(log_level)
+    ch = logging.StreamHandler()
+    formatter = logging.Formatter(fmt=log_format, datefmt=DEFAULT_DATETIME_FORMAT)
+    ch.setFormatter(formatter)
+    if not _logger.handlers:
+        _logger.addHandler(ch)
+    return _logger
+
+
+logger = get_logger(__name__)
+
+if __name__ == '__main__':
+    logger.debug('debug')
+    logger.info('info')
+    logger.warning('warning')
+    logger.error('error')
+    logger.exception('exception')
+
+>>>
+[2021-01-01 23:49:55]-INFO: [37306:4605795776 at flask_app.<module>:30] - info
+[2021-01-01 23:49:55]-WARNING: [37306:4605795776 at flask_app.<module>:31] - warning
+[2021-01-01 23:49:55]-ERROR: [37306:4605795776 at flask_app.<module>:32] - error
+[2021-01-01 23:49:55]-ERROR: [37306:4605795776 at flask_app.<module>:33] - exception
+NoneType: None
+[2021-01-01 23:49:55]-CRITICAL: [37306:4605795776 at flask_app.<module>:34] - critical
+```
+
+
+
+#### logger.exception()
+
+Exception info is always added to the logging message. **This method should only be called from an exception handler.**
+
+```
+import logging
+
+# DEFAULT_LOG_FORMAT = "[%(asctime)s]-%(levelname)s: [%(process)d:%(thread)d at %(module)s.%(funcName)s:%(lineno)d] %(request_id)s - %(message)s"
+import traceback
+
+DEFAULT_LOG_FORMAT = "[%(asctime)s]-%(levelname)s: [%(process)d:%(thread)d at %(module)s.%(funcName)s:%(lineno)d] - %(message)s"
+DEFAULT_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+
+def get_logger(
+        logger_name,
+        log_level=logging.INFO,
+        log_format=DEFAULT_LOG_FORMAT
+):
+    _logger = logging.getLogger(logger_name)
+    _logger.propagate = 0
+    _logger.setLevel(log_level)
+    ch = logging.StreamHandler()
+    formatter = logging.Formatter(fmt=log_format, datefmt=DEFAULT_DATETIME_FORMAT)
+    ch.setFormatter(formatter)
+    if not _logger.handlers:
+        _logger.addHandler(ch)
+    return _logger
+
+
+logger = get_logger(__name__)
+
+if __name__ == '__main__':
+    try:
+        1/0
+    except Exception:
+        logger.exception('expected exception')
+
+>>>
+[2021-01-01 23:51:24]-ERROR: [37391:4637515200 at flask_app.<module>:32] - expected exception
+Traceback (most recent call last):
+  File "/Users/rxu/test_purpose/flask_app.py", line 30, in <module>
+    1/0
+ZeroDivisionError: division by zero
+```
+
+
+
+
+
+## logger.exception 异常处理
+
+当发生异常时，直接使用无参数的 debug()、info()、warning()、error()、critical() 方法并不能记录异常信息，需要设置 exc_info 参数为 True 才可以，或者使用 exception() 方法，还可以使用 log() 方法，但还要设置日志级别和 exc_info 参数。
+
+```
+import logging
+
+logging.basicConfig(format="%(asctime)s %(name)s:%(levelname)s:%(message)s", datefmt="%d-%M-%Y %H:%M:%S", level=logging.DEBUG)
+try:
+    1/0
+except Exception:
+    # 下面三种方式三选一，推荐使用第一种
+    logging.exception("Exception occurred")
+    logging.error("Exception occurred", exc_info=True)
+    logging.log(level=logging.DEBUG, msg="Exception occurred", exc_info=True)
+    
+>>>
+01-55-2021 23:55:44 root:ERROR:Exception occurred
+Traceback (most recent call last):
+  File "/Users/rxu/test_purpose/flask_app.py", line 5, in <module>
+    1/0
+ZeroDivisionError: division by zero
+01-55-2021 23:55:44 root:ERROR:Exception occurred
+Traceback (most recent call last):
+  File "/Users/rxu/test_purpose/flask_app.py", line 5, in <module>
+    1/0
+ZeroDivisionError: division by zero
+01-55-2021 23:55:44 root:DEBUG:Exception occurred
+Traceback (most recent call last):
+  File "/Users/rxu/test_purpose/flask_app.py", line 5, in <module>
+    1/0
+ZeroDivisionError: division by zero
+
+Process finished with exit code 0
+```
+
+
+
+
+
+#日志级别
+
+| 日志等级（level） | 描述                                                         |
+| ----------------- | ------------------------------------------------------------ |
+| DEBUG             | 最详细的日志信息，典型应用场景是 问题诊断                    |
+| INFO              | 信息详细程度仅次于DEBUG，通常只记录关键节点信息，用于确认一切都是按照我们预期的那样进行工作 |
+| WARNING           | 当某些不期望的事情发生时记录的信息（如，磁盘可用空间较低），但是此时应用程序还是正常运行的 |
+| ERROR             | 由于一个更严重的问题导致某些功能不能正常运行时记录的信息     |
+| CRITICAL          | 当发生严重错误，导致应用程序不能继续运行时记录的信息         |
+
+
+
+Logger 对象和 Handler 对象都可以设置级别，而默认 Logger 对象级别为 30 ，也即 WARNING，默认 Handler 对象级别为 0，也即 NOTSET
+
+logging 模块这样设计是为了更好的灵活性，比如有时候我们既想在控制台中输出DEBUG 级别的日志，又想在文件中输出WARNING级别的日志。可以只设置一个最低级别的 Logger 对象，两个不同级别的 Handler 对象
 
 ```
 import logging
@@ -233,7 +315,11 @@ logger.critical('This is a customer critical message')
 
 记录器，暴露了应用程序代码能直接使用的接口。
 
-即创建一个记录器，如果没有显式的进行创建，则默认创建一个root logger，并应用默认的日志级别(WARN)，处理器Handler(StreamHandler，即将日志信息打印输出在标准输出上)，和格式化器Formatter(默认的格式即为第一个简单使用程序中输出的格式)。
+即创建一个记录器，如果没有显式的进行创建，则默认创建一个root logger，并应用默认的日志级别(WARN)，
+
+处理器Handler(StreamHandler，即将日志信息打印输出在标准输出上)
+
+格式化器Formatter(默认的格式即为第一个简单使用程序中输出的格式)
 
 ```
 logger = logging.getLogger(logger_name)
@@ -241,6 +327,14 @@ logger.setLevel(logging.ERROR) # 设置日志级别为ERROR，即只有日志级
 logger.addHandler(handler_name) # 为Logger实例增加一个处理器
 logger.removeHandler(handler_name) # 为Logger实例删除一个处理器
 ```
+
+
+
+那么，怎样得到一个Logger对象呢？一种方式是通过Logger类的实例化方法创建一个Logger类的实例，但是我们通常都是用第二种方式--logging.getLogger()方法。
+
+logging.getLogger()方法有一个可选参数name，该参数表示将要返回的日志器的名称标识，如果不提供该参数，则其值为'root'。若以相同的name参数值多次调用getLogger()方法，将会返回指向同一个logger对象的引用。
+
+
 
 
 
@@ -408,6 +502,28 @@ ch.addFilter(filter_name) # 增加一个过滤器，可以增加多个
 ch.removeFilter(filter_name) # 删除一个过滤器
 ```
 
+Handler是一个基类，它只定义了素有handlers都应该有的接口，同时提供了一些子类可以直接使用或覆盖的默认行为。下面是一些常用的Handler
+
+| Handler                                   | 描述                                                         |
+| ----------------------------------------- | ------------------------------------------------------------ |
+| logging.StreamHandler                     | 将日志消息发送到输出到Stream，如std.out, std.err或任何file-like对象。 |
+| logging.FileHandler                       | 将日志消息发送到磁盘文件，默认情况下文件大小会无限增长       |
+| logging.handlers.WatchedFileHandler       |                                                              |
+| logging.handlers.BaseRotatingHandler      |                                                              |
+| logging.handlers.RotatingFileHandler      | 将日志消息发送到磁盘文件，并支持日志文件按大小切割           |
+| logging.hanlders.TimedRotatingFileHandler | 将日志消息发送到磁盘文件，并支持日志文件按时间切割           |
+| logging.handlers.SocketHandler            |                                                              |
+| logging.handlers.DatagramHandler          |                                                              |
+| logging.handlers.SysLogHandler            |                                                              |
+| logging.handlers.NTEventLogHandler        |                                                              |
+| logging.handlers.BufferingHandler         |                                                              |
+| logging.handlers.MemoryHandler            | supports buffering of logging records in memory, periodically flushing them to a *target* handler. Flushing occurs whenever the buffer is full, or when an event of a certain severity or greater is seen. |
+| logging.handlers.QueueHandler             |                                                              |
+| logging.handlers.QueueListener            |                                                              |
+| logging.handlers.HTTPHandler              | 将日志消息以GET或POST的方式发送给一个HTTP服务器              |
+| logging.handlers.SMTPHandler              | 将日志消息发送给一个指定的email地址                          |
+| logging.NullHandler                       | 该Handler实例会忽略error messages，通常被想使用logging的library开发者使用来避免'No handlers could be found for logger XXX'信息的出现。 |
+
 
 
 ### StreamHandler
@@ -423,6 +539,30 @@ sh = logging.StreamHandler(stream=None)
 ```
 fh = logging.FileHandler(filename, mode='a', encoding=None, delay=False)
 ```
+
+
+
+* 输出成文件
+
+```
+import logging
+
+logging.basicConfig(filename="test.log", filemode="w", format="%(asctime)s %(name)s:%(levelname)s:%(message)s", datefmt="%d-%M-%Y %H:%M:%S", level=logging.DEBUG)
+logging.debug('This is a debug message')
+logging.info('This is an info message')
+logging.warning('This is a warning message')
+logging.error('This is an error message')
+logging.critical('This is a critical message')
+
+>>>
+13-10-18 21:10:32 root:DEBUG:This is a debug message
+13-10-18 21:10:32 root:INFO:This is an info message
+13-10-18 21:10:32 root:WARNING:This is a warning message
+13-10-18 21:10:32 root:ERROR:This is an error message
+13-10-18 21:10:32 root:CRITICAL:This is a critical message
+```
+
+
 
 
 
@@ -458,34 +598,42 @@ filter = logging.Filter(name='')
 使用Formatter对象设置日志信息最后的规则、结构和内容，默认的时间格式为%Y-%m-%d %H:%M:%S。
 
 ```
-formatter = logging.Formatter(fmt=None, datefmt=None)
+formatter = logging.Formatter(fmt=None, datefmt=None, style=None)
 ```
 
->  fmt是消息的格式化字符串，datefmt是日期字符串。如果不指明fmt，将使用'%(message)s'。如果不指明datefmt，将使用ISO8601日期格式
+>  fmt是消息的格式化字符串，如果不指明fmt，将使用'%(message)s'。
+>
+>  datefmt是日期字符串, 如果不指明datefmt，将使用ISO8601日期格式
+>
+>  Python 3.2新增的参数，可取值为 '%', '{'和 '$'，如果不指定该参数则默认使用'%'
 
 
 
 ### format格式
 
-| 格式           |          描述          |
-| -------------- | :--------------------: |
-| %(levelno)s    |   打印日志级别的数值   |
-| %(levelname)s  |    打印日志级别名称    |
-| %(pathname)s   | 打印当前执行程序的路径 |
-| %(filename)s   |  打印当前执行程序名称  |
-| %(funcName)s   |   打印日志的当前函数   |
-| %(lineno)d     |   打印日志的当前行号   |
-| %(asctime)s    |     打印日志的时间     |
-| %(thread)d     |       打印线程id       |
-| %(threadName)s |      打印线程名称      |
-| %(process)d    |       打印进程ID       |
-| %(message)s    |      打印日志信息      |
+| 字段/属性名称   | 使用格式            | 描述                                                         |
+| --------------- | ------------------- | ------------------------------------------------------------ |
+| asctime         | %(asctime)s         | 日志事件发生的时间--人类可读时间，如：2003-07-08 16:49:45,896 |
+| created         | %(created)f         | 日志事件发生的时间--时间戳，就是当时调用time.time()函数返回的值 |
+| relativeCreated | %(relativeCreated)d | 日志事件发生的时间相对于logging模块加载时间的相对毫秒数（目前还不知道干嘛用的） |
+| msecs           | %(msecs)d           | 日志事件发生事件的毫秒部分                                   |
+| levelname       | %(levelname)s       | 该日志记录的文字形式的日志级别（'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'） |
+| levelno         | %(levelno)s         | 该日志记录的数字形式的日志级别（10, 20, 30, 40, 50）         |
+| name            | %(name)s            | 所使用的日志器名称，默认是'root'，因为默认使用的是 rootLogger |
+| message         | %(message)s         | 日志记录的文本内容，通过 `msg % args`计算得到的              |
+| pathname        | %(pathname)s        | 调用日志记录函数的源码文件的全路径                           |
+| filename        | %(filename)s        | pathname的文件名部分，包含文件后缀                           |
+| module          | %(module)s          | filename的名称部分，不包含后缀                               |
+| lineno          | %(lineno)d          | 调用日志记录函数的源代码所在的行号                           |
+| funcName        | %(funcName)s        | 调用日志记录函数的函数名                                     |
+| process         | %(process)d         | 进程ID                                                       |
+| processName     | %(processName)s     | 进程名称，Python 3.1新增                                     |
+| thread          | %(thread)d          | 线程ID                                                       |
+| threadName      | %(thread)s          | 线程名称                                                     |
 
 
 
-
-
-# 实际处理
+# example
 
 ## 中文乱码
 
@@ -836,13 +984,11 @@ qualname=gunicorn.access
 
 
 
-ecs command
+## ecs command
 
 ```
 gunicorn,-w,6,-b:6000,-k,gevent,-t,3600,--access-logfile,-,--access-logformat,%({X-Forwarded-For}i)s %(t)s %(u)s %(U)s %(a)s %(h)s %(m)s %(q)s %(s)s %(b)s,--graceful-timeout,3600,--log-config,gunicorn_logging.conf,service_repo.api.app:app
 ```
-
-
 
 
 

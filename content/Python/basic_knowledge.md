@@ -573,6 +573,14 @@ $ python -i script.py
 - 值得学习的内建包 https://pymotw.com/3/
 - 值得了解的第三方包 https://github.com/vinta/awesome-python
 
+
+
+## unofficial windows binaries
+
+https://www.lfd.uci.edu/~gohlke/pythonlibs/
+
+
+
 # 编码规范
 
 

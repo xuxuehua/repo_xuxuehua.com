@@ -283,6 +283,37 @@ concurrent.futures.process.BrokenProcessPool: A process in the process pool was 
 
 
 
+#### asyncio
+
+利用多核的协程
+
+```
+from asyncio import sleep, get_event_loop, ensure_future
+from concurrent.futures import as_completed, ProcessPoolExecutor
+
+
+async def coroutine_demo():
+    await sleep(1)
+
+
+def runner():
+    loop = get_event_loop()
+    future = ensure_future(coroutine_demo())
+    loop.run_until_complete(future)
+
+
+def main():
+    executor = ProcessPoolExecutor(max_workers=3)
+    for future in as_completed([executor.submit(runner) for _ in range(3)]):
+        result = future.result()
+        print(result)
+
+
+if __name__ == '__main__':
+    main()
+
+```
+
 
 
 

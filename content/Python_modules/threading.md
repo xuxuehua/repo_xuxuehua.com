@@ -693,6 +693,7 @@ monitor = {'tick':10, 'lock': threading.Lock()}
 for k in range(10):
     new_thread = BoothThread(k, monitor)
     new_thread.start()
+    
 >>>
 0 :now left: 9
 1 :now left: 8

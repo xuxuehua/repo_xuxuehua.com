@@ -10,6 +10,30 @@ date: 2019-05-24 00:55
 
 
 
+# 文件类型
+
+c    Character 字符设备文件   /dev
+
+l    Symbolic Link File 符号链接文件
+
+p    Pipe 命令管道文件
+
+s    Socket 套接字文件  /tmp
+
+
+
+ls －l 后面的数字，表示文件被硬链接的次数
+
+文件大小的默认是字节
+
+每个文件有三个时间戳，这里显示的时间是文件最近一次被修改的时间戳
+
+access 访问
+
+modify  修改  文件内容发生改变
+
+change 改变  metadata(元数据)
+
 # PID
 
 每一个进程都是由父进程创建，如果没有父进程，那就是进程为1的init。当所有进程关闭之后，init才
@@ -127,6 +151,28 @@ If you have a UPS and running a daemon to monitor power and shutdown you should 
 
 
 
+
+# 命令光标跳转
+
+ctl +a 跳行首
+
+ctl +e 跳行尾
+
+ctl +u 删除到行首
+
+ctl +k 删除到行尾
+
+
+
+# 快捷命令
+
+! + number,    执行该编号的命令
+
+!- + number    执行倒数编号的命令
+
+!!            执行上一条命令
+
+!$           引用前一个命令的最后一个参数 ＝esc +.
 
 # 教程
 

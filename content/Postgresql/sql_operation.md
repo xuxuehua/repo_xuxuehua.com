@@ -102,6 +102,19 @@ SELECT task_id, attempt, COUNT(attempt) FROM  prod_usage.task_attempts GROUP BY 
 
 
 
+
+
+# update
+
+## set multi line
+
+```
+user_data=> update datapipeline.arm_clusters set instance_groups=$$[{'block_devices': [{'ec2_vol_size': 100, 'ec2_vol_type': 'gp2'}], 'group_name': 'master', 'instance_lifecycle': 'spot', 'instances': [{'instance_type': 'm5.xlarge', 'instance_weighted_capacity': 1}], 'target_capacity': 1}, {'block_devices': [{'ec2_vol_size': 100, 'ec2_vol_type': 'gp2'}], 'group_name': 'slave-0', 'instance_lifecycle': 'spot', 'instances': [{'instance_type': 'r5.2xlarge', 'instance_weighted_capacity': 1}], 'target_capacity': 2}]$$ where cluster_name='dump_routine';
+UPDATE 1
+```
+
+
+
 # FAQ
 
 

@@ -114,15 +114,103 @@ iptables -t nat -A POSTROUTING -s 10.8.0.0/255.255.255.0 -o eth0 -j MASQUERADE
 
 
 
+#### AWS SNAT
+
+https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html
+
+disable Source/Destination Check
+
+```
+# cat /etc/sysctl.d/10-nat-settings.conf 
+#
+# NAT AMI settings
+#
+
+net.ipv4.ip_forward = 1
+net.ipv4.conf.eth0.send_redirects = 0
+```
+
+
+
+```
+#!/bin/bash
+# Configure the instance to run as a Port Address Translator (PAT) to provide
+# Internet connectivity to private instances.
+
+function log { logger -s -t "vpc" -- $1; }
+
+function die {
+    [ -n "$1" ] && log "$1"
+    log "Configuration of PAT failed!"
+    exit 1
+}
+
+# Sanitize PATH
+export PATH="/usr/sbin:/sbin:/usr/bin:/bin"
+
+log "Determining the MAC address on eth0..."
+ETH0_MAC=$(cat /sys/class/net/eth0/address) ||
+    die "Unable to determine MAC address on eth0."
+log "Found MAC ${ETH0_MAC} for eth0."
+
+# This script is intended to run only on a NAT instance for a VPC
+# Check if the instance is a VPC instance by trying to retrieve vpc id
+VPC_ID_URI="http://169.254.169.254/latest/meta-data/network/interfaces/macs/${ETH0_MAC}/vpc-id"
+
+VPC_ID=$(curl --retry 3 --silent --fail ${VPC_ID_URI})
+if [ $? -ne 0 ]; then
+   log "The script is not running on a VPC instance. PAT may masquerade traffic for Internet hosts!"
+fi
+
+log "Enabling PAT..."
+sysctl -q -w net.ipv4.ip_forward=1 net.ipv4.conf.eth0.send_redirects=0 &&
+(
+    iptables -t nat -C POSTROUTING -o eth0 -j MASQUERADE 2> /dev/null ||
+    iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE ) ||
+die
+
+sysctl net.ipv4.ip_forward net.ipv4.conf.eth0.send_redirects | log
+iptables -n -t nat -L POSTROUTING | log
+
+log "Configuration of PAT complete."
+exit 0
+```
 
 
 
 
-## FULLNAT
+
+## FULL_NAT
 
 全地址转换
 
+```
+echo 1 > /proc/sys/net/ipv4/ip_forward
+echo "net.ipv4.ip_forward = 1" > /etc/sysctl.conf
+sysctl -p
+```
 
+
+
+安装iptables，并添加规则
+
+```
+yum install -y iptables-services
+```
+
+开启端口的UDP转发
+
+```
+iptables -t nat -A PREROUTING -p udp --dport 中转端口 -j DNAT --to-destination 目的ip:目的端口
+iptables -t nat -A POSTROUTING -p udp -d 目的ip --dport 目的端口 -j SNAT --to-source NAT内网ip
+```
+
+开启端口的TCP转发
+
+```
+iptables -t nat -A PREROUTING -p tcp --dport 中转端口 -j DNAT --to-destination 目的ip:目的端口
+iptables -t nat -A POSTROUTING -p tcp -d 目的ip --dport 目的端口 -j SNAT --to-source NAT内网ip
+```
 
 
 
@@ -186,9 +274,9 @@ state: 状态扩展
 
 
 
-## example 
+# example 
 
-### ss relay
+## ss relay
 
 If you want your client connected to a Japan VPS, but you want a US IP.
 
@@ -198,13 +286,14 @@ Client <--> Japan VPS <--> US VPS
 
 Easy version:
 
-1. Setup Shadowsocks server as usual on US VPS.
+1. Setup ss server as usual on US VPS.
 
 2. On Japan VPS, enable forwarding. Replace `US_VPS_IP` and `JAPAN_VPS_IP` with actual IP:
 
    ```
-    sudo su
+    sudo su - 
     echo 1 > /proc/sys/net/ipv4/ip_forward
+    
     iptables -t nat -A PREROUTING -p tcp --dport 8388 -j DNAT --to-destination US_VPS_IP:8388
     iptables -t nat -A POSTROUTING -p tcp -d US_VPS_IP --dport 8388 -j SNAT --to-source JAPAN_VPS_IP
    ```
@@ -213,7 +302,7 @@ Easy version:
 
 
 
-### Azure relay
+## Azure relay
 
 ```
 iptables -t nat -A PREROUTING -p tcp --dport 8388 -j DNAT --to-destination SS_VPS_IP:8388

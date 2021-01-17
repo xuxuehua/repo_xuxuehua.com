@@ -192,6 +192,16 @@ source ~/.bashrc
 
 
 
+#### amazon linux 
+
+```
+yum -y install gcc make patch gdbm-devel openssl-devel sqlite-devel readline-devel zlib-devel bzip2-devel
+
+curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+```
+
+
+
 #### ubuntu
 
 ```

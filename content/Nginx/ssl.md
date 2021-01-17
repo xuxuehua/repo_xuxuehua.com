@@ -133,3 +133,11 @@ server {
 certbot --nginx --nginx-server-root=/usr/local/openresty/nginx/conf/ -d us3.domain .com
 ```
 
+
+
+
+
+# ssl certificate checker
+
+https://www.digicert.com/help/
+

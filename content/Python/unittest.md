@@ -620,11 +620,32 @@ OK
 
 
 
+### return_value
+
+```
+from unittest.mock import MagicMock
+
+c = MagicMock(return_value=2)
+print(c)
+
+print(c())
+
+# 任意调用c的属性或方法，都会默认返回一个 Mock 对象
+print(c.a)
+
+>>>
+<MagicMock id='4478105824'>
+2
+<MagicMock name='mock.a' id='4486349632'>
+```
 
 
-## Mock Side Effect
 
-通过side_effect指定它的副作用，这个副作用就是当你调用这个mock对象是会调用的函数,也可以选择抛出一个异常，来对程序的错误状态进行测试。
+### side_effect
+
+`side_effect` 会覆盖 `return_value` 方法，它会在指定的方法被调用的时候被触发。
+
+和 `return_value` 的区别在于 `side_effect` 可以接收参数，适用于需要有传入参数的情况。
 
 ```
 from unittest.mock import MagicMock
@@ -650,6 +671,96 @@ print(mock(1))
 
 
 
+### spec
+
+spec 的适用条件稍微复杂一点，当我们使用 mock 实例的时候，没法指定该实例有哪些方法和属性是可以调用的， mock 会自动的对调用的每一个方法或属性创建返回一个 mock 实例。
+
+但是如果我们希望只对指定的属性或方法使用 mock，就需要 spec 来满足这一需求。
+
+```
+from unittest.mock import MagicMock
+
+
+class SpecClass:
+    attribute1 = None
+    attribute2 = None
+
+
+mock = MagicMock(spec=SpecClass)
+print(mock.attribute1)
+
+# 尝试调用未指定的属性时就会抛出 AttributeError
+mock.attribute3
+
+>>>
+<MagicMock name='mock.attribute1' id='4399529744'>
+Traceback (most recent call last):
+  File "/Users/rxu/test_purpose/lambda_rds.py", line 12, in <module>
+    mock.attribute3
+  File "/Users/rxu/.pyenv/versions/3.8.3/lib/python3.8/unittest/mock.py", line 637, in __getattr__
+    raise AttributeError("Mock object has no attribute %r" % name)
+AttributeError: Mock object has no attribute 'attribute3'
+
+```
+
+
+
+#### spec_set
+
+`spec_set`，和 `spec` 不同的一点在于 `spec_set` 传入的是一个实例而不是对象：
+
+```py
+mock = MagicMock(spec=SpecClass)
+
+# 等效于
+mock = MagicMock(spec_set=SpecClass())
+```
+
+如果你只是简单希望只能调用显式 mock 过的方法和属性，又懒得去重复写一遍 spec，可以直接指定 `spec=True`。
+
+
+
+
+
+### PropertyMock
+
+我们已经会模仿接口的方法调用了，既可以用 `return_value` 直接返回一些值， 也可以用 `side_effect` 随心所欲的放上自己的函数，也可以用 spec 来指定允许调用的方法。
+
+但是…你可能注意到了一个问题，我们现在会模仿方法接口了，但是万一接口是一个属性（property）的话，该怎么办？
+
+很好的问题，光靠 mock 是很难实现直接返回属性值的， 虽然你可以通过对 **getattribute** 或 **getitem** 声明 side_effect 来实现一些需求， 但是你还是很难完成一些基础的属性接口，比如下面这个例子：
+
+```py
+c = MagicMock()
+c.a = MagicMock(return_value=2)
+
+# 方法调用是可以返回值的
+c.a()
+# 2
+
+# 但是如果我们只是想要模拟一个属性呢？
+c.a
+# <MagicMock name='mock.a' id='4589679056'>
+```
+
+我就是希望当我调用 c.a 的时候就能直接给我返回值怎么办？
+
+这时候你就需要 PropertyMock 了:
+
+```py
+from unittest.mock import MagicMock, PropertyMock
+
+mock = MagicMock()
+type(mock).attr = PropertyMock(return_value=2)
+
+print(mock.attr)
+
+>>>
+2
+```
+
+
+
 ### Multiple calls
 
 ```
@@ -664,13 +775,7 @@ False
 
 
 
-### return_value 
 
-```
->>> mock_obj.foo.return_value = 'val'
->>> mock_obj.foo('bar')
-'val'
-```
 
 
 
@@ -795,6 +900,126 @@ call('file2')
 >>> f.read.assert_called_once_with()
 >>> # Write checks
 >>> m.assert_any_call('/some/path', 'w')
+```
+
+
+
+## patch
+
+patch 用来将指定（target）的实例替换为 mock 实例，主要用法有三种
+
+- 作为 decorator 修饰函数或类
+- 作为 context 上下文管理器
+- 作为 patch object，通过 start 和 stop 来管理 mock
+
+
+
+标准的 spec 函数如下：
+
+```
+unittest.mock.patch(target, new=DEFAULT, spec=None, create=False, spec_set=None, autospec=None, new_callable=None, **kwargs)
+```
+
+
+
+> `new`：返回一个新的 mock 对象替换 target，作为 decorator 时会作为一个额外的参数传入
+>
+> `spec/spec_set`：指定 spec 对象/实例
+>
+> `new_callable`：创建 mock 对象，默认为 `MagicMock`。
+
+
+
+### decorator 形式
+
+```
+from unittest.mock import patch, MagicMock
+
+
+class OriginalClass:
+    attribute = 99
+
+
+def native_method():
+    assert OriginalClass.attribute == 99
+
+
+@patch('__main__.OriginalClass', attribute=1, spec=True)
+def mock_method(args, mock_thing):
+    assert OriginalClass is mock_thing
+    assert isinstance(OriginalClass, MagicMock)
+    assert OriginalClass.attribute == 1
+    print(OriginalClass.attribute)
+
+
+mock_method(1)
+
+>>>
+1
+```
+
+
+
+
+
+### Context 形式
+
+```
+from unittest.mock import patch, MagicMock
+
+
+class OriginalClass:
+    attribute = 99
+
+
+def native_method():
+    assert OriginalClass.attribute == 99
+
+
+def mock_method(mock_thing):
+    with patch('__main__.OriginalClass', attribute=1) as mock_thing:
+        assert OriginalClass is mock_thing
+        assert isinstance(OriginalClass, MagicMock)
+        assert OriginalClass.attribute == 1
+        print(OriginalClass.attribute)
+
+
+mock_method(1)
+
+>>>
+1
+```
+
+
+
+
+
+### 手动控制
+
+```
+from unittest.mock import patch, MagicMock
+
+
+class OriginalClass:
+    attribute = 99
+
+
+def native_method():
+    assert OriginalClass.attribute == 99
+
+
+patcher = patch('__main__.OriginalClass', attribute=2)
+patcher.start()
+assert OriginalClass.attribute == 2
+print(OriginalClass.attribute)
+
+patcher.stop()
+assert OriginalClass.attribute == 99
+print(OriginalClass.attribute)
+
+>>>
+2
+99
 ```
 
 
@@ -1429,8 +1654,6 @@ from unittest.mock import patch
       self.assertTrue(mock_sort.called)
       self.assertTrue(mock_preprocess.called)
 ```
-
-
 
 
 
