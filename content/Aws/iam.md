@@ -62,3 +62,31 @@ AWS resource can be launched into roles
 
 https://awspolicygen.s3.amazonaws.com/policygen.html
 
+
+
+
+
+# example
+
+## Non-office ip
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": {
+        "Effect": "Deny",
+        "Action": "*",
+        "Resource": "*",
+        "Condition": {
+            "NotIpAddress": {
+                "aws:SourceIp": [
+                    "192.0.2.0/24",
+                    "203.0.113.0/24"
+                ]
+            },
+            "Bool": {"aws:ViaAWSService": "false"}
+        }
+    }
+}
+```
+

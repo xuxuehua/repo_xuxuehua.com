@@ -309,3 +309,21 @@ give users the best price/performance of any database-as-a-service offering on t
 
 allow all major operators (join, group by, sort) to spill to disk and recurse when main memory is exhausted. We found that a pure main-memory engine, while leaner and perhaps faster, is too restrictive to handle all interesting workloads. Analytic workloads can feature extremely large joins or aggregations.
 
+
+
+# FAQ
+
+
+
+## Lower performance
+
+更新数据会导致在Snowflake的部分数据重组，出现明显性能降级
+
+整表sort之后更新数据
+
+
+
+# Appendix
+
+http://pages.cs.wisc.edu/~yxy/cs839-s20/papers/snowflake.pdf
+

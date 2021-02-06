@@ -61,6 +61,8 @@ CREATE TABLE new_table_name ( like old_table_name including all)
 
 
 
+
+
 ## ALTER
 
 组件同CREATE
@@ -74,6 +76,106 @@ CREATE TABLE new_table_name ( like old_table_name including all)
 组件同CREATE
 
 
+
+
+
+## SHOW
+
+### Check table schema
+
+```
+show create table TABEL_NAME\G;
+```
+
+
+
+
+
+#### 去除反引号
+
+* 利用Session设置参数
+
+```
+set sql_quote_show_create=0;
+```
+
+
+
+sql_quote_show_create，有两个值（1，0），默认是1，表示表名和列名会用``包着的。
+这个服务器参数只可以在session级别设置，不支持global设置的(不支持my.cnf设置)。
+设置后，可见下面的没有重音符了。
+
+```
+mysql> set sql_quote_show_create=0;
+Query OK, 0 rows affected (0.00 sec)
+mysql> show create table test \G
+*************************** 1. row ***************************
+Table: test
+Create Table: CREATE TABLE test (
+id int(11) NOT NULL,
+PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+```
+
+
+
+* 使用pager来处理输出
+
+```
+mysql> pager tr -d '`'
+PAGER set to 'tr -d '`''
+mysql> show create table test;
++-------+------------------------------------------------------------------------------------------------------------+
+| Table | Create Table |
++-------+------------------------------------------------------------------------------------------------------------+
+| test | CREATE TABLE test (
+id int(11) NOT NULL,
+PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 |
+```
+
+
+
+
+
+* 命令行的使用
+
+偷懒是一回事，如果在写shell, python等工具的时候，可能会根据show create table来处理一些事情，即“命令行处理”
+用'SET SQL_QUOTE_SHOW_CREATE=0
+
+```
+-bash-3.2$ mysql -uroot -e 'SET SQL_QUOTE_SHOW_CREATE=0; use test; show create table test';
++-------+------------------------------------------------------------------------------------------------------+
+| Table | Create Table |
++-------+------------------------------------------------------------------------------------------------------+
+| test | CREATE TABLE test (
+id int(11) NOT NULL,
+PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 |
++-------+------------------------------------------------------------------------------------------------------+
+```
+
+```
+-bash-3.2$ mysql -e 'use test; show create table test \G' | tr -d '`';
+*************************** 1. row ***************************
+Table: test
+Create Table: CREATE TABLE test (
+id int(11) NOT NULL,
+PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+```
+
+也可以使用sed来解决
+
+```
+-bash-3.2$ mysql -e 'use test; show create table test \G' | sed -e 's/`//g';
+*************************** 1. row ***************************
+Table: test
+Create Table: CREATE TABLE test (
+id int(11) NOT NULL,
+PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+```
 
 
 

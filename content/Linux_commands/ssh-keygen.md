@@ -66,7 +66,7 @@ ssh-keygen  -E sha1 -lf ~/.ssh/id_rsa_xuxuehua.pub
 
 
 
-### -y public key 
+### -y 生成 public key 
 
 `-y` outputs the public key:
 

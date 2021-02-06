@@ -185,32 +185,6 @@ $ mysqladmin password
 
 
 
-#### 方法一
-
-启动mysqld进程时，为其使用 (在启动配置文件里面添加)
-
-```
---skip-grant-tables --skip-networking
-```
-
-```
-$bindir/mysqld_safe --skip-grant-tables --skip-networking --datadir="$datadir" --pid-file="$mysqld_pid_file_path" $other_args > /dev/null 2>&1 & wait_for_ready return_value=$?
-```
-
-使用update命令修改管理员密码
-
-```
-UPDATE mysql.user SET password=PASSWORD("mynewpassword") WHERE user='root';
-
-flush privileges;
-```
-
-关闭mysqld进程，移除上面两个选项，重启mysqld
-
-
-
-#### 方法二
-
 ```
 vim /etc/my.cnf
 
@@ -230,8 +204,46 @@ systemctl restart mysqld
 $ mysql
 
 mysql> use mysql;
-mysql> update user set password=password("myPassword") where user="root";
+mysql> update user set password=PASSWORD("myPassword") where user="root";
 mysql> flush privileges;
+```
+
+after accessing then execute below
+
+```
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass';
+```
+
+
+
+if there is an error of "Your password does not satisfy the current policy requirements."
+
+```sql
+SHOW VARIABLES LIKE 'validate_password%';
+```
+
+The output should be something like that :
+
+```sql
++--------------------------------------+-------+
+| Variable_name                        | Value |
++--------------------------------------+-------+
+| validate_password.check_user_name    | ON    |
+| validate_password.dictionary_file    |       |
+| validate_password.length             | 6     |
+| validate_password.mixed_case_count   | 1     |
+| validate_password.number_count       | 1     |
+| validate_password.policy             | LOW   |
+| validate_password.special_char_count | 1     |
++--------------------------------------+-------+
+```
+
+then you can set the password policy level lower, for example:
+
+```sql
+SET GLOBAL validate_password.length = 6;
+SET GLOBAL validate_password.number_count = 0;
+SET GLOBAL validate_password.policy = 'LOW';
 ```
 
 

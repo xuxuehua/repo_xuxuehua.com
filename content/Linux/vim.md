@@ -476,7 +476,33 @@ vim
 
 
 
-## vimrc
+### set
+
+To turn off autoindent when you paste code, there's a special "paste" mode.
+
+Type
+
+```
+:set paste
+```
+
+Then paste your code. Note that the text in the tooltip now says `-- INSERT (paste) --`.
+
+After you pasted your code, turn off the paste-mode, so that auto-indenting when you type works correctly again.
+
+```
+:set nopaste
+```
+
+However, I always found that cumbersome. That's why I map `<F3>` such that it can switch between paste and nopaste modes *while editing the text!* I add this to `.vimrc`
+
+```
+set pastetoggle=<F3>
+```
+
+
+
+# vimrc
 
 用户目录下的.vimrc文件就是Vim针对当前用户的主配置文件，该文件不是必备的，没有的话就创建它。文件位于当前用户的主目录下，可以用 ~/.vimrc 找到，Vim启动时会自动运行文件中的每条命令。
 

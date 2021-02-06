@@ -37,7 +37,7 @@ date: 2018-08-07 11:50
 使用本机指定地址作为对应连接的源ip地址
 
 
-## -C 
+## -C 请求压缩所有数据
 请求压缩所有数据
 
 
@@ -56,6 +56,10 @@ ssh -D 50000 user@host1
 
 
 
+```
+ssh -i /Users/rxu/.ssh/rxuTestingKeyPair.pem -f -ND 8157 ec2-user@3.3.3.3
+```
+
 
 
 
@@ -63,7 +67,7 @@ ssh -D 50000 user@host1
 指定ssh指令的配置文件
 
 
-## -f 
+## -f 后台执行
 后台执行ssh指令
 
 
@@ -93,7 +97,7 @@ ssh -L 0.0.0.0:50000:host2:80 user@host1
 
 
 
-## -N 
+## -N 不执行远程指令
 不执行远程指令
 
 
@@ -274,3 +278,16 @@ Host *
 `Host *` #表示需要启用该规则的服务端（域名或ip）
 `ServerAliveInterval 60` #表示没60秒去给服务端发起一次请求消息（这个设置好就行了）
 `ServerAliveCountMax 3` #表示最大连续尝试连接次数（这个基本不用设置）
+
+
+
+
+
+# example
+
+## ssh 转发
+
+```
+ssh -i ~/.ssh/id_rsa -p $PORT  -CfNg -D 127.0.0.1:1083 3.3.3.3
+```
+

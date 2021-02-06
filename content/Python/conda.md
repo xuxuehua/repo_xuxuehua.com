@@ -20,13 +20,18 @@ conda config --set auto_activate_base false
 
 
 
+### 国内镜像
+
+```
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+conda config --set show_channel_urls yes
+conda create --name python3 python=3.7.4
+```
 
 
-## env
 
-
-
-### create 
+## create 
 
 ```
 conda create --name ENV_NAME python=3.7 -y 
@@ -34,11 +39,19 @@ conda create --name ENV_NAME python=3.7 -y
 
 
 
-### remove 
+```
+conda create --name python3 python=3.7.4
+```
+
+
+
+## remove 
 
 ```
-conda env remove -n ENV_NAME
+conda remove -n ENV_NAME
 ```
+
+
 
 
 
@@ -66,5 +79,25 @@ deactivate current env
 
 ```py
  source deactivate
+```
+
+
+
+## info
+
+```
+conda info --envs
+```
+
+
+
+# FAQ
+
+
+
+## disable auto_activate_base
+
+```
+conda config --set auto_activate_base false
 ```
 

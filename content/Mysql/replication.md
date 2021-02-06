@@ -402,190 +402,6 @@ percona-tools
 
 
 
-# 基于二进制日志的主从复制
-
-**2.1 配置要求**
-
-1）主库开启二进制日志
-
-2）主库和各个从库配置唯一的server_id
-
-**2.2 主库创建复制用户**
-
-从库需要使用一个用户来连接主库，可以使用添加复制权限的生产应用用户。为了减少对应用用户的影响，建议单独创建一个仅有复制权限的用户。
-
-CREATE USER 'repl'@'%' IDENTIFIED BY 'password';
-
-GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
-
-**2.3 获取主库的二进制日志位置**
-
-1）在主库打开一个连接，执行下列命令清除所有表并阻止写入语句：
-
-mysql> FLUSH TABLES WITH READ LOCK;
-
-2）重新打开一个连接，执行下列命令获取二进制日志的位置：
-
-mysql > SHOW MASTER STATUS;
-
-+--------------------+----------+--------------+------------------+-------------------+|
-
-File | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
-
-+--------------------+----------+--------------+------------------+-------------------+|
-
-mysql_bin.000003 | 154 | | | |
-
-+--------------------+----------+--------------+------------------+-------------------+
-
-3）对于配置一个新的主从复制环境，主库没有初始数据需要同步到从库，则在第一个连接中释放锁：
-
-mysql> UNLOCK TABLES;
-
-**2.4 配置从库**
-
-配置前先需要确认是否为从库设置了唯一的server_id。然后在从库上执行下面语句，请将参数值替换为实际值：
-
-mysql> CHANGE MASTER TO MASTER_HOST='master_host_name', MASTER_USER='replication_user_name', MASTER_PASSWORD='replication_password', MASTER_LOG_FILE='recorded_log_file_name', MASTER_LOG_POS=recorded_log_position;
-
-如果需要配置多源的复制，需要为每一个主库指定一个通道:
-
-mysql> CHANGE MASTER TO MASTER_HOST='master_host_name', MASTER_USER='replication_user_name', MASTER_PASSWORD='replication_password', MASTER_LOG_FILE='recorded_log_file_name', MASTER_LOG_POS=recorded_log_position FOR CHANNEL 'master-1';
-
-**2.5 启动主从复制**
-
-在从库上执行：
-
-mysql> START SLAVE;
-
-**2.6 查看复制状态**
-
-在从库上执行：
-
-mysql> SHOW SLAVE STATUSG;
-
-当Slave_IO_Running和Slave_SQL_Running都为YES的时候就表示主从同步设置成功了。接下来就可以进行一些验证了，比如在主master数据库的test数据库的一张表中插入一条数据，在slave的test库的相同数据表中查看是否有新增的数据即可验证主从复制功能是否有效，还可以关闭slave（mysql>stop slave;）,然后再修改master，看slave是否也相应修改（停止slave后，master的修改不会同步到slave），就可以完成主从复制功能的验证了。
-
-
-
-
-
-
-
-**2.基于二进制日志的主从复制**
-
-**2.1 配置要求**
-
-1）主库开启二进制日志
-
-2）主库和各个从库配置唯一的server_id
-
-**2.2 主库创建复制用户**
-
-从库需要使用一个用户来连接主库，可以使用添加复制权限的生产应用用户。为了减少对应用用户的影响，建议单独创建一个仅有复制权限的用户。
-
-CREATE USER 'repl'@'%' IDENTIFIED BY 'password';
-
-GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
-
-**2.3 获取主库的二进制日志位置**
-
-1）在主库打开一个连接，执行下列命令清除所有表并阻止写入语句：
-
-mysql> FLUSH TABLES WITH READ LOCK;
-
-2）重新打开一个连接，执行下列命令获取二进制日志的位置：
-
-mysql > SHOW MASTER STATUS;
-
-+--------------------+----------+--------------+------------------+-------------------+|
-
-File | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
-
-+--------------------+----------+--------------+------------------+-------------------+|
-
-mysql_bin.000003 | 154 | | | |
-
-+--------------------+----------+--------------+------------------+-------------------+
-
-3）对于配置一个新的主从复制环境，主库没有初始数据需要同步到从库，则在第一个连接中释放锁：
-
-mysql> UNLOCK TABLES;
-
-**2.4 配置从库**
-
-配置前先需要确认是否为从库设置了唯一的server_id。然后在从库上执行下面语句，请将参数值替换为实际值：
-
-mysql> CHANGE MASTER TO MASTER_HOST='master_host_name', MASTER_USER='replication_user_name', MASTER_PASSWORD='replication_password', MASTER_LOG_FILE='recorded_log_file_name', MASTER_LOG_POS=recorded_log_position;
-
-如果需要配置多源的复制，需要为每一个主库指定一个通道:
-
-mysql> CHANGE MASTER TO MASTER_HOST='master_host_name', MASTER_USER='replication_user_name', MASTER_PASSWORD='replication_password', MASTER_LOG_FILE='recorded_log_file_name', MASTER_LOG_POS=recorded_log_position FOR CHANNEL 'master-1';
-
-**2.5 启动主从复制**
-
-在从库上执行：
-
-mysql> START SLAVE;
-
-**2.6 查看复制状态**
-
-在从库上执行：
-
-mysql> SHOW SLAVE STATUSG;
-
-当Slave_IO_Running和Slave_SQL_Running都为YES的时候就表示主从同步设置成功了。接下来就可以进行一些验证了，比如在主master数据库的test数据库的一张表中插入一条数据，在slave的test库的相同数据表中查看是否有新增的数据即可验证主从复制功能是否有效，还可以关闭slave（mysql>stop slave;）,然后再修改master，看slave是否也相应修改（停止slave后，master的修改不会同步到slave），就可以完成主从复制功能的验证了。
-
-
-
-
-
-# 基于GTID的主从复制
-
-**3.1 配置要求**
-
-1. 主库开启二进制日志
-
-2. 主库和各个从库配置唯一的server_id
-
-**3.2 主库创建复制用户**
-
-从库需要使用一个用户来连接主库，可以使用添加复制权限的生产应用用户。为了减少对应用用户的影响，建议单独创建一个仅有复制权限的用户。
-
-CREATE USER 'repl'@'%' IDENTIFIED BY 'password';
-
-GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
-
-**3.3 在主库和从库的/etc/my.cnf文件中[mysqld]添加启用GTID的变量：**
-
-gtid_mode=ON
-
-enforce-gtid-consistency=true
-
-配置完成后重启mysql。
-
-systemctl restart mysqld
-
-**3.4 配置从库**
-
-配置前先需要确认是否为从库设置了唯一的server_id。然后在从库上执行下面语句，请将参数值替换为实际值：
-
-mysql>CHANGE MASTER TO MASTER_HOST = '128.*.*.*',MASTER_PORT = 3306,MASTER_USER = 'repl',MASTER_PASSWORD = 'password',MASTER_AUTO_POSITION = 1;
-
-如果需要配置多源的复制，需要为每一个主库指定一个通道:
-
-mysql>CHANGE MASTER TO MASTER_HOST = '128.*.*.*',MASTER_PORT = 3306,MASTER_USER = 'repl',MASTER_PASSWORD = 'password',MASTER_AUTO_POSITION = 1 FOR CHANNEL 'master-1';
-
-**3.5 启动主从复制**
-
-在从库上执行：
-
-mysql> START SLAVE;
-
-
-
-
-
 # 半同步复制
 
 **安装插件**
@@ -906,6 +722,28 @@ mysql> mysql> show binlog events in 'mysql-bin.000001';
 
 
 ## 从节点
+
+如果是PXB备份的话，会在xtrabackup_binlog_info文件中记录备份完成时的binlog文件和pos点的；
+
+如果是mysqldump备份，若未在master执行锁表导出操作，需要带上--master-data=2这个参数才会记录备份开始时的binlog文件和pos点。
+
+```
+mysqldump -uroot -p --master-data=2 --single-transaction  --all-databases > master_backup.sql
+
+mysqldump: [Warning] Using a password on the command line interface can be insecure.
+
+grep -i "CHANGE MASTER" master_backup.sql
+4-- CHANGE MASTER TO MASTER_LOG_FILE='mysql5729-bin.000001', MASTER_LOG_POS=1405;
+
+```
+
+
+
+```
+mysql -uroot < master_backup.sql -p
+```
+
+
 
 启动中继日志
 

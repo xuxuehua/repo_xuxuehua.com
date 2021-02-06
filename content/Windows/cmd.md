@@ -81,3 +81,18 @@ Import-Module ActiveDirectory
 get-adcomputer -Filter 'Name -like "ws-jo*"'
 ```
 
+
+
+
+
+
+
+# startup
+
+Windows + R
+
+```
+shell:startup
+```
+
+Copy the shortcuts at here

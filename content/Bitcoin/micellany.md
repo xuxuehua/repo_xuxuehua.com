@@ -13,7 +13,7 @@ date: 2018-08-03 10:34
 
 ### 计算机存储
 
-![img](https://cdn.pbrd.co/images/HyNozgO.png)
+![image-20210131115813667](micellany.assets/image-20210131115813667.png)
 
 
 

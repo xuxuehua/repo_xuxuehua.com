@@ -543,3 +543,7 @@ sudo apt install snap
 sudo snap install snap-store
 ```
 
+
+
+# FAQ
+

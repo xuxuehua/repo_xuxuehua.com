@@ -154,5 +154,27 @@ To short(write/wrote) a put  去卖一个看跌期权
 
 
 
+# M0-M3
+
+![image-20210119125457754](basic_knowledge.assets/image-20210119125457754.png)
+
+
+
+![image-20210119125443299](basic_knowledge.assets/image-20210119125443299.png)
+
+
+
+
+
+
+
+
+
+# ACV
+
+
+
+# ARR
+
 
 

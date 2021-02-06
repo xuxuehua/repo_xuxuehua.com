@@ -28,6 +28,111 @@ sudo apt-get install postgresql-client
 
 
 
+### Postgresql 12
+
+Next we need to add the PostgreSQL repository to our Amazon Linux 2 machine for us to be able to install packages. Also note that PostgreSQL 11 and PostgreSQL 10 packages are available in Amazon Linux extras repository.
+
+```
+$ sudo  amazon-linux-extras | grep postgre
+  5  postgresql9.6            available    \
+  6  postgresql10             available    [ =10  =stable ]
+ 41  postgresql11             available    [ =11  =stable ]
+```
+
+To add official PostgreSQL repository to Amazon Linux 2 server, run the following commands as root or user account with sudo privileges.
+
+```
+sudo tee /etc/yum.repos.d/pgdg.repo<<EOF
+[pgdg12]
+name=PostgreSQL 12 for RHEL/CentOS 7 - x86_64
+baseurl=https://download.postgresql.org/pub/repos/yum/12/redhat/rhel-7-x86_64
+enabled=1
+gpgcheck=0
+EOF
+```
+
+Update your packages index file.
+
+```
+sudo yum makecache
+
+yum -y install postgresql12.x86_64 postgresql12-server.x86_64 
+```
+
+
+
+
+
+We need to initialize the database server for configuration files to be generated. This is done by calling the setup script.
+
+```
+$ sudo /usr/pgsql-12/bin/postgresql-12-setup initdb
+Initializing database ... OK
+```
+
+
+
+PostgreSQL 12 server uses configuration file in */var/lib/pgsql/12/data/postgresql.conf* . You can review all default values and tune to your liking before using the database server for your Production workloads.
+
+To start and enable the service to start at OS boot, run the following command:
+
+```
+systemctl enable --now postgresql-12
+systemctl status postgresql-12
+```
+
+
+
+Set PostgreSQL admin user password that you’ll use to escalate privilege for DB operations.
+
+```
+$ sudo su - postgres 
+-bash-4.2$ /usr/pgsql-12/bin/psql 
+psql (12.5)
+Type "help" for help.
+
+postgres=# \password
+Enter new password: 
+Enter it again: 
+
+
+postgres=# alter user postgres password 'postgres';
+ALTER ROLE
+postgres=# \q
+```
+
+
+
+```
+vim /var/lib/pgsql/12/data/pg_hba.conf
+# "local" is for Unix domain socket connections only
+local all all peer(change to trust)
+# IPv4 local connections:
+host all all 127.0.0.1/32 ident(change to md5)
+# IPv6 local connections:
+host all all ::1/128 ident (change to md5)
+# Allow replication connections from localhost, by a user with the
+# replication privilege.
+
+systemctl restart postgresql-12
+```
+
+
+
+
+
+create new user if you need
+
+```
+-bash-4.2$ createuser --interactive rick
+Shall the new role be a superuser? (y/n) y
+
+```
+
+
+
+
+
 ### psql
 
 ```

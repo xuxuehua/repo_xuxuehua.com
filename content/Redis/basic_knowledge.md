@@ -28,12 +28,6 @@ redis采取单线程+多路IO复用的机制
 
 
 
-## 安装
-
-```
-yum -y install epel-release && yum -y install redis
-```
-
 
 
 ## 组件
@@ -77,6 +71,79 @@ PONG
 ```
 
 
+
+
+
+# installation
+
+## centos
+
+```
+yum -y install epel-release && yum -y install redis
+```
+
+
+
+## Amazon linux
+
+compiled 
+
+```
+sudo yum -y install gcc make 
+cd /tmp
+sudo wget http://download.redis.io/redis-stable.tar.gz
+sudo tar xvzf redis-stable.tar.gz
+sudo rm -f redis-stable.tar.gz
+cd redis-stable
+sudo yum groupinstall "Development Tools"
+sudo make distclean
+sudo make
+sudo yum install -y tcl
+sudo make test
+sudo cp src/redis-server /usr/local/bin/
+sudo cp src/redis-cli /usr/local/bin/
+
+sudo mkdir /etc/redis
+sudo cp /tmp/redis-stable/redis.conf /etc/redis
+```
+
+```
+vim /etc/redis/redis.conf
+# change to systemd
+supervised systemd
+
+# find the dir directory. This option specifies the directory that Redis will use to dump persistent data. We need to pick a location that Redis will have write permission and that isn’t viewable by normal users.
+dir /var/lib/redis
+```
+
+
+
+```
+groupadd redis && useradd redis -g redis
+sudo mkdir /var/lib/redis
+sudo chown redis:redis /var/lib/redis
+sudo chmod 770 /var/lib/redis
+```
+
+
+
+```
+cat > /etc/systemd/system/redis.service <<EOF
+[Unit]
+Description=Redis In-Memory Data Store
+After=network.target
+
+[Service]
+User=redis
+Group=redis
+ExecStart=/usr/local/bin/redis-server /etc/redis/redis.conf
+ExecStop=/usr/local/bin/redis-cli shutdown
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
 
 
 

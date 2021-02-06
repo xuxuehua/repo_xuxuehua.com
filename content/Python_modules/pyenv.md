@@ -195,7 +195,7 @@ source ~/.bashrc
 #### amazon linux 
 
 ```
-yum -y install gcc make patch gdbm-devel openssl-devel sqlite-devel readline-devel zlib-devel bzip2-devel
+yum -y install git vim gcc make patch gdbm-devel openssl-devel sqlite-devel readline-devel zlib-devel bzip2-devel
 
 curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
 ```
@@ -205,7 +205,7 @@ curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer 
 #### ubuntu
 
 ```
-apt-get update && sudo apt-get upgrade
+apt-get update && sudo apt-get upgrade -y
 apt install build-essential checkinstall zlib1g-dev libssl-dev -y
 
 
@@ -223,9 +223,11 @@ curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer 
 
 
 ```
+vim ~/.bashrc
 export PATH="/root/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
+
 source ~/.bashrc
 ```
 
@@ -338,6 +340,7 @@ pip install --quiet nosexcover
 ## ModuleNotFoundError: No module named '_ctypes'
 
 ```
-yum install libffi-devel
+yum -y install libffi-devel
 ```
 
+需要重新编译python版本

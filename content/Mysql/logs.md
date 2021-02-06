@@ -246,9 +246,7 @@ log_warnings=1|0  # 是否记录警报信息至错误日志中
 
 ## 二进制日志 binary log (重要)
 
-非常重要，以二进制格式存储，不能使用cat等方式查看日志
-
-记录导致数据改变或者潜在导致数据改变的SQL语句
+MySQL的二进制日志（binary log）是一个二进制文件，主要记录了对MySQL数据库执行更改的所有操作，并且记录了语句发生时间、执行时长、操作数据等其它额外信息，但是它不记录SELECT、SHOW等那些不修改数据的SQL语句。二进制日志（binary log）主要用于数据库恢复和主从复制，以及审计（audit）操作
 
 
 
@@ -422,6 +420,8 @@ sync_binlog=0|1
 
 #### mysqlbinlog
 
+mysqlbinlog工具用于解析binlog日志，**包含在MySQL软件包中**。
+
 ```
 mysqlbinlog [OPTIONS] log_file
 	--start-position
@@ -429,8 +429,26 @@ mysqlbinlog [OPTIONS] log_file
 	--start-datetime=
 	--stop-datetime=
 		YYYY-MM-DD hh:mm:ss
+```
+
+
+
+参数
 
 ```
+-d：指定特定数据库的binlog
+-r：相当于重定向到指定文件，与>、<作用相同
+--start-position和--stop-position：按照指定位置解析binlog日志（精确），如不接--stop-positiion则一直到binlog日志结尾
+--start-datetime和--stop-datetime：按照指定时间解析binlog日志（模糊，不准确），如不接--stop-datetime则一直到binlog日志结尾
+-D  --disable-log-bin：禁止恢复过程产生日志。指定-D时使用mysqlbinlog解析binlog时，会看到sql_log_bin=0。也可以再把binlog解析到普通SQL文件，在mysql命令行下执行SQL文件前，手工设定set sql_log_bin=0,执行恢复SQL的过程就不会产生日志，恢复后再恢复set sql_log_bin=1。sql_log_bin 是一个动态变量，修改该变量时，可以只对当前会话生效（Session）
+-v ：显示SQL语句，在行事件中重构伪SQL语句，将自动生成带注释的SQL语句，这个并非原始SQL语句（Reconstruct pseudo-SQL statements out of row events）
+-vv：显示的SQL语句之后会加上字段属性注释，另外，若配置了参数binlog_rows_query_log_events，则会显示原始SQL语句
+--base64-output=decode-rows：不显示BINLOG内容部分，注意：做恢复操作时不能加该参数，否则不能增量恢复
+```
+
+
+
+
 
 客户端命令工具
 
