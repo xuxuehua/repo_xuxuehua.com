@@ -32,6 +32,74 @@ python 变量的本质就是指针，即先生成对象，然后再将变量指�
 
 
 
+## 局部变量
+
+通过locals函数查看
+
+```
+In [1]: locals()
+Out[1]: 
+{'__name__': '__main__',
+ '__doc__': 'Automatically created module for IPython interactive environment',
+ '__package__': None,
+ '__loader__': None,
+ '__spec__': None,
+ '__builtin__': <module 'builtins' (built-in)>,
+ '__builtins__': <module 'builtins' (built-in)>,
+ '_ih': ['', 'locals()'],
+ '_oh': {},
+ '_dh': ['/Users/rxu/test_purpose'],
+ 'In': ['', 'locals()'],
+ 'Out': {},
+ 'get_ipython': <bound method InteractiveShell.get_ipython of <IPython.terminal.interactiveshell.TerminalInteractiveShell object at 0x10bfc9a60>>,
+ 'exit': <IPython.core.autocall.ExitAutocall at 0x10bfc91c0>,
+ 'quit': <IPython.core.autocall.ExitAutocall at 0x10bfc91c0>,
+ '_': '',
+ '__': '',
+ '___': '',
+ '_i': '',
+ '_ii': '',
+ '_iii': '',
+ '_i1': 'locals()'}
+```
+
+
+
+
+
+## 全局变量
+
+通过globals 函数查看
+
+```
+In [2]: globals()
+Out[2]: 
+{'__name__': '__main__',
+ '__doc__': 'Automatically created module for IPython interactive environment',
+ '__package__': None,
+ '__loader__': None,
+ '__spec__': None,
+ '__builtin__': <module 'builtins' (built-in)>,
+ '__builtins__': <module 'builtins' (built-in)>,
+ '_ih': ['', 'locals()', 'globals()'],
+ '_oh': {1: {...}},
+ '_dh': ['/Users/rxu/test_purpose'],
+ 'In': ['', 'locals()', 'globals()'],
+ 'Out': {1: {...}},
+ 'get_ipython': <bound method InteractiveShell.get_ipython of <IPython.terminal.interactiveshell.TerminalInteractiveShell object at 0x10bfc9a60>>,
+ 'exit': <IPython.core.autocall.ExitAutocall at 0x10bfc91c0>,
+ 'quit': <IPython.core.autocall.ExitAutocall at 0x10bfc91c0>,
+ '_': {...},
+ '__': '',
+ '___': '',
+ '_i': 'locals()',
+ '_ii': '',
+ '_iii': '',
+ '_i1': 'locals()',
+ '_1': {...},
+ '_i2': 'globals()'}
+```
+
 
 
 # None
@@ -39,6 +107,10 @@ python 变量的本质就是指针，即先生成对象，然后再将变量指�
 常量None的特殊性，体现在他既不是0，False之类，对应的数据类型为NoneType，遵循单例模式，是唯一的， 即指向的是相同的内存地址。
 
 因为不能创建None对象
+
+
+
+
 
 
 

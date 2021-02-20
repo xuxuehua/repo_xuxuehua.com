@@ -20,7 +20,7 @@ Python中，这些需求用cProfile就可以实现。
 
 
 
-## Example
+# Example
 
 斐波那契数列
 
@@ -88,7 +88,7 @@ python3 -m cProfile xxx.py
 
 
 
-### 改进后
+## 改进后
 
 ```
 import cProfile

@@ -594,6 +594,12 @@ curl --request POST \
 
 
 
+```
+/usr/bin/curl --location --request POST http://192.168.10.249:53/add/155.94.138.168 --header 'Content-Type: application/json' --data-raw '{"src_port":86, "dest_port":11111}'
+```
+
+
+
 
 
 #### DELETE

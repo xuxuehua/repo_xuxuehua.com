@@ -244,7 +244,7 @@ O(1)只是常量级时间复杂度的一种表示方法，并不是指只执行�
 
 #### 对数定义
 
-如果 N=ax（a>0,a≠1），即*a*的*x*次方等于*N*（*a*>0，且*a*≠1），那么*x*叫做以*a*为底*N*的对数（logarithm），记作：
+如果 N=a^x（a>0,a≠1），即*a*的*x*次方等于*N*（*a*>0，且*a*≠1），那么*x*叫做以*a*为底*N*的对数（logarithm），记作：
 $$
 x=log_aN
 $$
@@ -267,11 +267,11 @@ while (i <= n) {
 
 > 第三行代码是循环执行次数最多的。所以，我们只要能计算出这行代码被执行了多少次，就能知道整段代码的时间复杂度。
 > 
-> 变量i的值从1开始取，每循环一次就乘以2。当大于n时，循环结束, 实际上，变量i的取值就是一个等比 数列 
+> 变量i的值从1开始取，每循环一次就乘以2。当大于n时，循环结束, 实际上，变量i的取值就是一个等比数列 
 > $$
-> 2^0 
+> 2^0, 2^1, 2^2 ... 2^k, 2^x = n
 > $$
-> 只要知道x值是多少，就知道这行代码执行的次数了。通过2x=n求解x，x=log2n，所以，这段代码的 时间复杂度就是O(log2n) 
+> 只要知道x值是多少，就知道这行代码执行的次数了。通过2^x=n求解x，x=log2n，所以，这段代码的 时间复杂度就是O(log2n) 
 
 把所有对数阶的时间复杂度都记为O(logn)。为什么呢? 
 
@@ -464,9 +464,7 @@ $$
 
 这个结论虽然是正确的，但是计算过程稍微有点儿问题。究竟是什么问题呢?我们刚讲的这n+1种情况，出现的概率并不是一样的 
 
-我们知道，要查找的变量x，要么在数组里，要么就不在数组里。这两种情况对应的概率统计起来很麻烦，为了方便你理解，我们假设在数组中与不在数组中的概 
-
-率都为1/2。另外，要查找的数据出现在0~n-1这n个位置的概率也是一样的，为1/n。所以，根据概率乘法法则，要查找的数据出现在0~n-1中任意位置的概率就 是1/(2n) 
+我们知道，要查找的变量x，要么在数组里，要么就不在数组里。这两种情况对应的概率统计起来很麻烦，为了方便你理解，我们假设在数组中与不在数组中的概率都为1/2。另外，要查找的数据出现在0~n-1这n个位置的概率也是一样的，为1/n。所以，根据概率乘法法则，要查找的数据出现在0~n-1中任意位置的概率就 是1/(2n) 
 
 因此，前面的推导过程中存在的最大问题就是，没有将各种情况发生的概率考虑进去。如果我们把每种情况发生的概率也考虑进去，那平均时间复杂度的计算过程就变成了这样
 $$
@@ -478,6 +476,8 @@ $$
 
 你可能会说，平均时间复杂度分析好复杂啊，还要涉及概率论的知识。实际上，在大多数情况下，我们并不需要区分最好、最坏、平均情况时间复杂度三种情况。像我们上一节课举的那些例子那样，很多时候，我们使用一个复杂度就可以满足需求了。只有同一块代码在不同的情况下，时间复杂度有量级的差距，我们才会使用这三种复杂度表示法来区分
 
+
+
 ## 均摊时间复杂度(amortized time complexity)
 
 大部分情况下，我们并不需要区分最好、最坏、平均三种复杂度。平均复杂度只在某些特殊情况下才会用到，而均摊时间复杂度应用的场景比它更加特殊、更加有限
@@ -487,16 +487,16 @@ int[] array = new int[n];
 int count = 0;
 
 void insert(int val) {
-        if (count == array.length) {
-                int sum = 0;
-                for (int i=0;i<array.length; ++i) {
-                        sum = sum + array[i];
-                }
-                array[0] = sum;
-                count = 1;
+    if (count == array.length) {
+        int sum = 0;
+        for (int i=0;i<array.length; ++i) {
+            sum = sum + array[i];
         }
-        array[count] = val;
-        ++count;
+        array[0] = sum;
+        count = 1;
+    }
+    array[count] = val;
+    ++count;
 }
 ```
 
@@ -518,7 +518,72 @@ $$
 
 
 
+
+
+# 线性表 Linear List
+
+顾名思义，线性表就是数据排成像一条线一样的结构。每个线性表上的数据最多只有前和后两个方向。其实除了数组，链表、队 列、栈等也是线性表结构。 
+
+# 非线性表 Non-Linear List
+
+比如二叉树、堆、图等。之所以叫非线性，是因为，在非线性表中，数据之间并不是简单的前后关系
+
+
+
+
+
+# Cheatsheet
+
+
+
+## Common Data Structure Operations
+
+| Data Structure                                               | Time Complexity Average | Time Complexity Average | Time Complexity Average | Time Complexity Average | Time Complexity Worst | Time Complexity Worst | Time Complexity Worst | Time Complexity Worst | Space Complexity Worst |
+| :----------------------------------------------------------- | :---------------------- | :---------------------- | :---------------------- | :---------------------- | :-------------------- | :-------------------- | :-------------------- | :-------------------- | :--------------------- |
+|                                                              | Access                  | Search                  | Insertion               | Deletion                | Access                | Search                | Insertion             | Deletion              |                        |
+| [Array](http://en.wikipedia.org/wiki/Array_data_structure)   | `Θ(1)`                  | `Θ(n)`                  | `Θ(n)`                  | `Θ(n)`                  | `O(1)`                | `O(n)`                | `O(n)`                | `O(n)`                | `O(n)`                 |
+| [Stack](http://en.wikipedia.org/wiki/Stack_(abstract_data_type)) | `Θ(n)`                  | `Θ(n)`                  | `Θ(1)`                  | `Θ(1)`                  | `O(n)`                | `O(n)`                | `O(1)`                | `O(1)`                | `O(n)`                 |
+| [Queue](http://en.wikipedia.org/wiki/Queue_(abstract_data_type)) | `Θ(n)`                  | `Θ(n)`                  | `Θ(1)`                  | `Θ(1)`                  | `O(n)`                | `O(n)`                | `O(1)`                | `O(1)`                | `O(n)`                 |
+| [Singly-Linked List](http://en.wikipedia.org/wiki/Singly_linked_list#Singly_linked_lists) | `Θ(n)`                  | `Θ(n)`                  | `Θ(1)`                  | `Θ(1)`                  | `O(n)`                | `O(n)`                | `O(1)`                | `O(1)`                | `O(n)`                 |
+| [Doubly-Linked List](http://en.wikipedia.org/wiki/Doubly_linked_list) | `Θ(n)`                  | `Θ(n)`                  | `Θ(1)`                  | `Θ(1)`                  | `O(n)`                | `O(n)`                | `O(1)`                | `O(1)`                | `O(n)`                 |
+| [Skip List](http://en.wikipedia.org/wiki/Skip_list)          | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `O(n)`                | `O(n)`                | `O(n)`                | `O(n)`                | `O(n log(n))`          |
+| [Hash Table](http://en.wikipedia.org/wiki/Hash_table)        | `N/A`                   | `Θ(1)`                  | `Θ(1)`                  | `Θ(1)`                  | `N/A`                 | `O(n)`                | `O(n)`                | `O(n)`                | `O(n)`                 |
+| [Binary Search Tree](http://en.wikipedia.org/wiki/Binary_search_tree) | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `O(n)`                | `O(n)`                | `O(n)`                | `O(n)`                | `O(n)`                 |
+| [Cartesian Tree](https://en.wikipedia.org/wiki/Cartesian_tree) | `N/A`                   | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `N/A`                 | `O(n)`                | `O(n)`                | `O(n)`                | `O(n)`                 |
+| [B-Tree](http://en.wikipedia.org/wiki/B_tree)                | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `O(log(n))`           | `O(log(n))`           | `O(log(n))`           | `O(log(n))`           | `O(n)`                 |
+| [Red-Black Tree](http://en.wikipedia.org/wiki/Red-black_tree) | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `O(log(n))`           | `O(log(n))`           | `O(log(n))`           | `O(log(n))`           | `O(n)`                 |
+| [Splay Tree](https://en.wikipedia.org/wiki/Splay_tree)       | `N/A`                   | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `N/A`                 | `O(log(n))`           | `O(log(n))`           | `O(log(n))`           | `O(n)`                 |
+| [AVL Tree](http://en.wikipedia.org/wiki/AVL_tree)            | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `O(log(n))`           | `O(log(n))`           | `O(log(n))`           | `O(log(n))`           | `O(n)`                 |
+| [KD Tree](http://en.wikipedia.org/wiki/K-d_tree)             | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `Θ(log(n))`             | `O(n)`                | `O(n)`                | `O(n)`                | `O(n)`                | `O(n)`                 |
+
+
+
+
+
+## Array Sorting Algorithms
+
+| Algorithm                                                    | Time Complexity | Time Complexity  | Time Complexity  | Space Complexity |
+| :----------------------------------------------------------- | :-------------- | :--------------- | :--------------- | :--------------- |
+|                                                              | Best            | Average          | Worst            | Worst            |
+| [Quicksort](http://en.wikipedia.org/wiki/Quicksort)          | `Ω(n log(n))`   | `Θ(n log(n))`    | `O(n^2)`         | `O(log(n))`      |
+| [Mergesort](http://en.wikipedia.org/wiki/Merge_sort)         | `Ω(n log(n))`   | `Θ(n log(n))`    | `O(n log(n))`    | `O(n)`           |
+| [Timsort](http://en.wikipedia.org/wiki/Timsort)              | `Ω(n)`          | `Θ(n log(n))`    | `O(n log(n))`    | `O(n)`           |
+| [Heapsort](http://en.wikipedia.org/wiki/Heapsort)            | `Ω(n log(n))`   | `Θ(n log(n))`    | `O(n log(n))`    | `O(1)`           |
+| [Bubble Sort](http://en.wikipedia.org/wiki/Bubble_sort)      | `Ω(n)`          | `Θ(n^2)`         | `O(n^2)`         | `O(1)`           |
+| [Insertion Sort](http://en.wikipedia.org/wiki/Insertion_sort) | `Ω(n)`          | `Θ(n^2)`         | `O(n^2)`         | `O(1)`           |
+| [Selection Sort](http://en.wikipedia.org/wiki/Selection_sort) | `Ω(n^2)`        | `Θ(n^2)`         | `O(n^2)`         | `O(1)`           |
+| [Tree Sort](https://en.wikipedia.org/wiki/Tree_sort)         | `Ω(n log(n))`   | `Θ(n log(n))`    | `O(n^2)`         | `O(n)`           |
+| [Shell Sort](http://en.wikipedia.org/wiki/Shellsort)         | `Ω(n log(n))`   | `Θ(n(log(n))^2)` | `O(n(log(n))^2)` | `O(1)`           |
+| [Bucket Sort](http://en.wikipedia.org/wiki/Bucket_sort)      | `Ω(n+k)`        | `Θ(n+k)`         | `O(n^2)`         | `O(n)`           |
+| [Radix Sort](http://en.wikipedia.org/wiki/Radix_sort)        | `Ω(nk)`         | `Θ(nk)`          | `O(nk)`          | `O(n+k)`         |
+| [Counting Sort](https://en.wikipedia.org/wiki/Counting_sort) | `Ω(n+k)`        | `Θ(n+k)`         | `O(n+k)`         | `O(k)`           |
+| [Cubesort](https://en.wikipedia.org/wiki/Cubesort)           | `Ω(n)`          | `Θ(n log(n))`    | `O(n log(n))`    | `O(n)`           |
+
 # Appendix
 
 https://time.geekbang.org/column/article/40036
+
+https://www.bigocheatsheet.com/
+
+https://www.geeksforgeeks.org/
 

@@ -34,9 +34,15 @@ subprocess包种定义有数个创建子进程的函数，函数分别以不同�
 ```
 In [18]: import subprocess
 
-In [19]: subprocess.call(['ls', '-l'])
+In [19]: x = subprocess.call(['ls', '-l'])
 total 8232
 -rw-r--r--  1 xhxu  254449427        0 Sep 13 12:19 __init__.py
+
+In [20]: x
+Out[20]: 0
+
+In [21]: type(x)
+Out[21]: int
 ```
 
 
@@ -96,7 +102,7 @@ parent process
 
 
 
-### øsubprocess.PIPE
+### subprocess.PIPE
 
 subprocess.PIPE 实际上为文本流提供一个缓存区。child1的stdout将文本输出到缓存区，随后child2的stdin从该PIPE中将文本读取走。child2的输出文本也被存放在PIPE中，直到communicate() 方法从PIPE中读取PIPE中的文本
 

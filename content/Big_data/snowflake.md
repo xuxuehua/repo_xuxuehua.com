@@ -311,6 +311,54 @@ allow all major operators (join, group by, sort) to spill to disk and recurse wh
 
 
 
+
+
+# hello world
+
+
+
+## connector
+
+```
+from snowflake import connector
+conn = connector.connect(
+    autocommit=False,
+    user='',
+    password='',
+    account='',
+    role='',
+    warehouse='',
+    database='',
+    schema='',
+    session_parameters={
+        'OPERATION_TAG': "test",
+    }
+)
+cursor = conn.cursor()
+sql = f"""
+COPY INTO 
+@bucket_name/__temp__/{urn.identifier}/{interface['table']}/      # replace with your target s3 path 
+FROM (
+select 
+    a,
+    b,
+    c
+from "A"."B"."C"
+where a = 2
+)
+file_format=(type=parquet)
+include_query_id=true
+HEADER = TRUE
+MAX_FILE_SIZE = 1000;
+"""
+print(sql)
+cursor.execute(sql)
+conn.commit()
+result = cursor.fetchall()
+```
+
+
+
 # FAQ
 
 

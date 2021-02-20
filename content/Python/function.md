@@ -792,7 +792,7 @@ print(solve([1, 2, 3, 4, 5, 6], 40))
 ...
 // put elephant1 into fridge2
 openDoor(fridge2);
-if (elephant1.alive()) {
+if (elephant1.alive()) {
   ...
 } else {
    ...
@@ -806,7 +806,7 @@ closeDoor(fridge2);
 ```
 void put(Elephant elephant, Fridge fridge) {
   openDoor(fridge);
-  if (elephant.alive()) {
+  if (elephant.alive()) {
     ...
   } else {
      ...

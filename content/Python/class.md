@@ -956,7 +956,7 @@ class MyClass:
     data = 1
 ```
 
-Python 真正执行的是下面这段代码：
+Python 真正执行的是下面这段代码
 
 ```
 class = type(classname, superclasses, attributedict)

@@ -250,6 +250,24 @@ Multiple -t options force tty allocation, even if ssh has no local tty
 
 
 
+# banner
+
+```
+* This system is owned by XXX Inc.                 *
+* If you are not authorized to access this system, exit *
+* immediately. Unauthorized access to this system is    *
+* forbidden by company policies, national, and          *
+* international laws. Unauthorized users are subject to *
+* criminal and civil penalties as well as company       *
+* initiated disciplinary proceedings.                   *
+*                                                       *
+* By entry into this system you acknowledge that you    *
+* are authorized access and the level of privilege you  *
+* subsequently execute on this system. You further      *
+* acknowledge that by entry into this system you        *
+* expect no privacy from monitoring.
+```
+
 
 
 
@@ -280,6 +298,14 @@ Host *
 `ServerAliveCountMax 3` #表示最大连续尝试连接次数（这个基本不用设置）
 
 
+
+## authorized_keys
+
+### enable prompt
+
+```
+no-port-forwarding,no-agent-forwarding,no-X11-forwarding,command="echo 'Please login as the user \"ec2-user\" rather than the user \"root\".';echo;sleep 10" ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCPcfG0A9OoLd+UGhLBHB3BwZ2W+a1SGYW0Z5dddm2AvfQ7kbKN7h4NkSO2sMJbNfb7rk0dDt1vqVgHSi4WvLB0A5 rxu_test_key
+```
 
 
 

@@ -1,5 +1,5 @@
 ---
-title: "iptables_usage"
+title: "iptables-cli"
 date: 2018-11-27 18:44
 ---
 
@@ -746,11 +746,9 @@ target指定要对包做的操作，比如DROP和ACCEPT。不同的target有不�
 
 记录日志信息 
 
-​          --log-prefix "STRING" 
+--log-prefix "STRING" 
 
-​            iptables -I INPUT 6 -d 10.76.33.201 -p icmp --icmp-type 8 -j LOG --log-prefix "-- firewall log for icmp --" 
-
-​           
+iptables -I INPUT 6 -d 10.76.33.201 -p icmp --icmp-type 8 -j LOG --log-prefix "-- firewall log for icmp --" 
 
 
 

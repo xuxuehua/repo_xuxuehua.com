@@ -37,7 +37,7 @@ $ deactivate
 target interpreter for which to create a virtual (either absolute path or identifier string)
 
 ```
-virtualenv --python=/usr/bin/python2.6 <path/to/new/virtualenv/>
+virtualenv --python=/usr/bin/python2.6 <path_to_new_virtualenv_directory>
 ```
 
 

@@ -545,5 +545,37 @@ sudo snap install snap-store
 
 
 
+
+
+# Video
+
+
+
+## MPEG-4 AAC decoder, H.264 (Main Profile) decoder 
+
+```
+sudo apt install -y libdvdnav4 libdvd-pkg gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly libdvd-pkg
+sudo apt install -y ubuntu-restricted-extras
+sudo dpkg-reconfigure libdvd-pkg
+```
+
+
+
+check media info
+
+```
+sudo apt install mediainfo -y
+```
+
+or
+
+```
+sudo apt install ffmpeg -y
+
+ffprobe 1.mp4ls /tmp	
+```
+
+
+
 # FAQ
 

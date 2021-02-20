@@ -206,7 +206,174 @@ A DAG is defined in a Python script, which represents the DAGs structure (tasks 
 
 有向无环图。有向无环图用于定义任务的任务依赖关系。任务的定义由算子operator进行，其中，BaseOperator是所有算子的父类。
 
-**Dagrun** 有向无环图任务实例。在调度器的作用下，每个有向无环图都会转成任务实例。不同的任务实例之间用dagid/ 执行时间（execution date）进行区分。
+
+
+## Dagrun
+
+有向无环图任务实例。在调度器的作用下，每个有向无环图都会转成任务实例。不同的任务实例之间用dagid/ 执行时间（execution date）进行区分。
+
+
+
+## SubDAG (不推荐)
+
+subdag可以使用自己的executor类型（默认为SequentialExecutor)，但其复杂，容易出现死锁现象
+
+`dags/subdags/subdag_parallel_dag.py`
+
+```
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+
+def subdag_parallel_dag(parent_dag_id, child_dag_id, default_args):
+    with DAG(dag_id=f'{parent_dag_id}.{child_dag_id}', default_args=default_args) as dag:
+        task_2 = BashOperator(
+            task_id='task_2',
+            bash_command='sleep 3'
+        )
+
+        task_3 = BashOperator(
+            task_id='task_3',
+            bash_command='sleep 3'
+        )
+
+        return dag
+```
+
+
+
+`dags/parallel_dag.py/`
+
+```
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from airflow.operators.subdag import SubDagOperator
+from subdags.subdag_parallel_dag import subdag_parallel_dag
+
+from datetime import datetime
+
+default_args = {
+    'start_date': datetime(2021, 2, 7)
+}
+
+with DAG('parallel_dag', schedule_interval='@daily', default_args=default_args) as dag:
+
+    task_1 = BashOperator(
+        task_id='task_1',
+        bash_command='sleep 3'
+    )
+
+    processing = SubDagOperator(
+        task_id='processing_tasks',
+        subdag=subdag_parallel_dag(
+            parent_dag_id='parallel_dag', 
+            child_dag_id='processing_tasks', 
+            default_args=default_args
+        )
+    )
+
+    task_4 = BashOperator(
+        task_id='task_4',
+        bash_command='sleep 3'
+    )
+
+    task_1 >> processing >> task_4
+```
+
+
+
+## TaskGroup （推荐）
+
+![image-20210207233119639](airflow.assets/image-20210207233119639.png)
+
+```
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from airflow.operators.subdag import SubDagOperator
+from airflow.utils.task_group import TaskGroup
+
+from datetime import datetime
+
+default_args = {
+    'start_date': datetime(2021, 2, 7)
+}
+
+with DAG('parallel_dag', schedule_interval='@daily', default_args=default_args) as dag:
+
+    task_1 = BashOperator(
+        task_id='task_1',
+        bash_command='sleep 3'
+    )
+    with TaskGroup('processing_task') as processing_tasks:
+        task_2 = BashOperator(
+            task_id='task_2',
+            bash_command='sleep 3'
+        )
+
+        task_3 = BashOperator(
+            task_id='task_3',
+            bash_command='sleep 3'
+        )
+
+    task_4 = BashOperator(
+        task_id='task_4',
+        bash_command='sleep 3'
+    )
+
+task_1 >> processing_tasks >> task_4
+
+```
+
+
+
+
+
+![image-20210207233853671](airflow.assets/image-20210207233853671.png)
+
+
+
+```
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from airflow.operators.subdag import SubDagOperator
+from airflow.utils.task_group import TaskGroup
+
+from datetime import datetime
+
+default_args = {
+    'start_date': datetime(2021, 2, 7)
+}
+
+with DAG('parallel_dag', schedule_interval='@daily', default_args=default_args) as dag:
+
+    task_1 = BashOperator(
+        task_id='task_1',
+        bash_command='sleep 3'
+    )
+    with TaskGroup('processing_task') as processing_tasks:
+        task_2 = BashOperator(
+            task_id='task_2',
+            bash_command='sleep 3'
+        )
+
+        with TaskGroup('spark_tasks') as spark_tasks:
+            task_3 = BashOperator(
+                task_id='task_3',
+                bash_command='sleep 3'
+            )
+
+        with TaskGroup('flink_tasks') as flink_tasks:
+            task_3 = BashOperator(
+                task_id='task_3',
+                bash_command='sleep 3'
+            )
+
+    task_4 = BashOperator(
+        task_id='task_4',
+        bash_command='sleep 3'
+    )
+
+task_1 >> processing_tasks >> task_4
+```
 
 
 
@@ -236,9 +403,241 @@ a type of special operator which will only execute if a certain condition is met
 
 
 
+## BranchPythonOperator
+
+![image-20210208133503792](airflow.assets/image-20210208133503792.png)
+
+
+
+```
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator, BranchPythonOperator
+from airflow.operators.subdag import SubDagOperator
+from airflow.utils.task_group import TaskGroup
+from airflow.operators.dummy import DummyOperator
+
+from random import uniform
+from datetime import datetime
+
+default_args = {
+    'start_date': datetime(2020, 1, 1)
+}
+
+def _training_model(ti):
+    accuracy = uniform(0.1, 10.0)
+    print(f'model\'s accuracy: {accuracy}')
+    ti.xcom_push(key='model_accuracy', value=accuracy)
+
+
+def _choose_best_model(ti):
+    print('choose best model')
+    accuracies = ti.xcom_pull(key='model_accuracy', task_ids=[
+        'processing_tasks.training_model_a',
+        'processing_tasks.training_model_b',
+        'processing_tasks.training_model_c'
+    ])
+    print(accuracies)
+
+def _is_accurate():
+    return('accurate')
+
+with DAG('xcom_dag', schedule_interval='@daily', default_args=default_args, catchup=False) as dag:
+
+    downloading_data = BashOperator(
+        task_id='downloading_data',
+        bash_command='sleep 3',
+        do_xcom_push=False
+    )
+
+    with TaskGroup('processing_tasks') as processing_tasks:
+        training_model_a = PythonOperator(
+            task_id='training_model_a',
+            python_callable=_training_model
+        )
+
+        training_model_b = PythonOperator(
+            task_id='training_model_b',
+            python_callable=_training_model
+        )
+
+        training_model_c = PythonOperator(
+            task_id='training_model_c',
+            python_callable=_training_model
+        )
+
+    choose_model = PythonOperator(
+        task_id='task_4',
+        python_callable=_choose_best_model
+    )
+
+    is_accurate = BranchPythonOperator(
+        task_id='is_accurate',
+        python_callable=_is_accurate
+    )
+
+    accurate = DummyOperator(
+        task_id='accurate'
+    )
+
+    inaccurate = DummyOperator(
+        task_id='inaccurate'
+    )
+
+    downloading_data >> processing_tasks >> choose_model
+    choose_model >> is_accurate >> [accurate, inaccurate]
+
+```
+
+
+
+## DockerOperator
+
+
+
 # Task
 
 A parameterized instance of an operator/sensor which represents a unit of actual work to be executed.
+
+
+
+## Xcoms （share data within tasks)
+
+Data limitation within tasks
+
+```
+Sqlite -> 2GB
+Postgresql -> 1GB
+MySQL -> 64KB
+```
+
+
+
+```
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
+from airflow.operators.subdag import SubDagOperator
+from airflow.utils.task_group import TaskGroup
+
+from random import uniform
+from datetime import datetime
+
+default_args = {
+    'start_date': datetime(2020, 1, 1)
+}
+
+def _training_model(ti):
+    accuracy = uniform(0.1, 10.0)
+    print(f'model\'s accuracy: {accuracy}')
+    ti.xcom_push(key='model_accuracy', value=accuracy)
+
+
+def _choose_best_model(ti):
+    print('choose best model')
+    accuracies = ti.xcom_pull(key='model_accuracy', task_ids=[
+        'processing_tasks.training_model_a',
+        'processing_tasks.training_model_b',
+        'processing_tasks.training_model_c'
+    ])
+    print(accuracies)
+
+with DAG('xcom_dag', schedule_interval='@daily', default_args=default_args, catchup=False) as dag:
+
+    downloading_data = BashOperator(
+        task_id='downloading_data',
+        bash_command='sleep 3',
+        do_xcom_push=False
+    )
+
+    with TaskGroup('processing_tasks') as processing_tasks:
+        training_model_a = PythonOperator(
+            task_id='training_model_a',
+            python_callable=_training_model
+        )
+
+        training_model_b = PythonOperator(
+            task_id='training_model_b',
+            python_callable=_training_model
+        )
+
+        training_model_c = PythonOperator(
+            task_id='training_model_c',
+            python_callable=_training_model
+        )
+
+    choose_model = PythonOperator(
+        task_id='task_4',
+        python_callable=_choose_best_model
+    )
+
+    downloading_data >> processing_tasks >> choose_model
+```
+
+
+
+
+
+## Trigger_rule (monitor task)
+
+可选参数
+
+```
+all_success: (default) all parents have succeeded
+
+all_failed: all parents are in a failed or upstream_failed state
+
+all_done: all parents are done with their execution
+
+one_failed: fires as soon as at least one parent has failed, it does not wait for all parents to be done
+
+one_success: fires as soon as at least one parent succeeds, it does not wait for all parents to be done
+
+none_failed: all parents have not failed (failed or upstream_failed) i.e. all parents have succeeded or been skipped
+
+none_failed_or_skipped: all parents have not failed (failed or upstream_failed) and at least one parent has succeeded.
+
+none_skipped: no parent is in a skipped state, i.e. all parents are in a success, failed, or upstream_failed state
+
+dummy: dependencies are just for show, trigger at will
+```
+
+
+
+```
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+
+from datetime import datetime
+
+default_args = {
+    'start_date': datetime(2021, 2, 8)
+}
+
+with DAG('trigger_rule', schedule_interval='@daily', default_args=default_args, catchup=False) as dag:
+    task_1 = BashOperator(
+        task_id='task_1',
+        bash_command='exit 0',
+        do_xcom_push=False
+    )
+
+    task_2 = BashOperator(
+        task_id='task_2',
+        bash_command='exit 1',
+        do_xcom_push=False
+    )
+
+    task_3 = BashOperator(
+        task_id='task_3',
+        bash_command='exit 0',
+        do_xcom_push=False,
+        trigger_rule='one_failed'
+    )
+    
+    [task_1, task_2] >> task_3
+```
+
+
 
 
 
@@ -257,6 +656,150 @@ This means that if you make any changes to plugins and you want the webserver or
 By default, task execution will use forking to avoid the slow down of having to create a whole new python interpreter and re-parse all of the Airflow code and start up routines -- this is a big benefit for shorter running tasks. This does mean that if you use plugins in your tasks, and want them to update you will either need to restart the worker (if using CeleryExecutor) or scheduler (Local or Sequential executors). The other option is you can accept the speed hit at start up set the `core.execute_tasks_new_python_interpreter` config setting to True, resulting in launching a whole new python interpreter for tasks.
 
 (Modules only imported by DAG files on the other hand do not suffer this problem, as DAG files are not loaded/parsed in any long-running Airflow process.)
+
+
+
+## elasticsearch
+
+
+
+### amazon linux installation
+
+```
+rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+```
+
+
+
+```
+cat > /etc/yum.repos.d/es.repo <<EOF
+[elasticsearch]
+name=Elasticsearch repository for 7.x packages
+baseurl=https://artifacts.elastic.co/packages/7.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=0
+autorefresh=1
+type=rpm-md
+EOF
+```
+
+
+
+```
+sudo yum install -y --enablerepo=elasticsearch elasticsearch
+
+systemctl start elasticsearch
+```
+
+
+
+Install in airflow PATH
+
+```
+pip install elasticsearch==7.10.1
+```
+
+
+
+test ES if it works
+
+```
+# curl -X GET 'http://localhost:9200'
+{
+  "name" : "ip-172-31-47-244.ec2.internal",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "Td05yfJyT1qoSj3guK_gCw",
+  "version" : {
+    "number" : "7.10.2",
+    "build_flavor" : "default",
+    "build_type" : "rpm",
+    "build_hash" : "747e1cc71def077253878a59143c1f785afa92b9",
+    "build_date" : "2021-01-13T00:42:12.435326Z",
+    "build_snapshot" : false,
+    "lucene_version" : "8.7.0",
+    "minimum_wire_compatibility_version" : "6.8.0",
+    "minimum_index_compatibility_version" : "6.0.0-beta1"
+  },
+  "tagline" : "You Know, for Search"
+}
+```
+
+
+
+### elasticsearch_plugin
+
+
+
+`airflow/plugins/elasticsearch_plugin/hooks/elastic_hook.py`
+
+```
+from airflow.hooks.base import BaseHook
+
+from elasticsearch import Elasticsearch
+
+class ElasticHook(BaseHook):
+
+    def __init__(self, conn_id='elasticsearch_default', *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        conn = self.get_connection(conn_id)
+
+        conn_config = {}
+        hosts = []
+
+        if conn.host:
+            hosts = conn.host.split(',')
+
+        if conn.port:
+            conn_config['port'] = int(conn.port)
+        
+        if conn.login:
+            conn_config['http_auth'] = (conn.login, conn.password)
+
+        self.es = Elasticsearch(hosts, **conn_config)
+        self.index = conn.schema
+
+    def info(self):
+        return self.es.info()
+
+    def set_index(self, index):
+        self.index = index
+
+    def add_doc(self, index, doc_type, doc):
+        self.set_index(index)
+        res = self.es.index(index=index, doc_type=doc_type, doc=doc)
+        return res
+
+```
+
+
+
+`airflow/dags/elasticsearch_dag.py`
+
+```
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from datetime import datetime
+from elasticsearch_plugin.hooks.elastic_hook import ElasticHook
+
+
+default_args = {
+    'start_date': datetime(2021, 2, 8)
+}
+
+def _print_es_info():
+    hook = ElasticHook()
+    print(hook.info())
+
+
+with DAG('elasticsearch_dag', schedule_interval='@daily', default_args=default_args, catchup=False) as dag:
+
+    print_es_info = PythonOperator(
+        task_id='print_es_info',
+        python_callable=_print_es_info
+    )
+
+```
 
 
 
@@ -291,6 +834,7 @@ airflow db init
 
 airflow users create \
     --username rxu \
+    --password 1234@abcd \
     --firstname Rick \
     --lastname Xu \
     --role Admin \
@@ -309,6 +853,10 @@ airflow scheduler
 
 
 
+
+
+## docker
+
 # airflow.cfg
 
 
@@ -318,7 +866,7 @@ airflow scheduler
 After setting up Postgres
 
 ```
- pip install 'apache-airflow[postgres]'
+pip install 'apache-airflow[postgres]'
 ```
 
 
@@ -445,6 +993,40 @@ airflow celery worker
 Go to web browser with 5555 port, there is a worker at there
 
 
+
+
+
+## parallelism
+
+```
+# The amount of parallelism as a setting to the executor. This defines
+# the max number of task instances that should run simultaneously
+# on this airflow installation
+parallelism = 32
+```
+
+
+
+## dag_concurrency
+
+```
+# The number of task instances allowed to run concurrently by the scheduler
+# in one DAG. Can be overridden by ``concurrency`` on DAG level.
+dag_concurrency = 16
+```
+
+
+
+
+
+## load_examples
+
+```
+# Whether to load the DAG examples that ship with Airflow. It's good to
+# get started, but you probably want to set this to ``False`` in a production
+# environment
+load_examples = True
+```
 
 
 

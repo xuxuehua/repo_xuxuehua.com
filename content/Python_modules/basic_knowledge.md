@@ -84,6 +84,8 @@ Package testing file
 from . import test1
 ```
 
+
+
 ## 搜索路径
 
 Python默认会通过下列路径搜索需要的模块
@@ -91,6 +93,8 @@ Python默认会通过下列路径搜索需要的模块
 1. 程序所在的文件夹
 2. 操作系统环境变量PYTHONPATH所包含的路径
 3. 标准库的安装路径
+
+
 
 ## 导入方法
 

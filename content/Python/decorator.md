@@ -631,11 +631,13 @@ class A:
 
 ## property 属性
 
+用来实现属性可管理性的build-in数据类型
+
 加上property 装饰器，在函数调用的时候，就不需要加上小括号
 
 property调用的时候，只能调用self参数
 
-可以将一个类方法转变成一个静态属性,只读属性。
+可以将一个类方法转变成一个静态属性, 只读属性。
 
 property 属性必须在setter 和 deleter之前
 

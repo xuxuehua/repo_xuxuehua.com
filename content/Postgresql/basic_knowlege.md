@@ -83,6 +83,14 @@ systemctl status postgresql-12
 
 
 
+create soft link
+
+```
+ln -s /usr/pgsql-12/bin/* /usr/bin/
+```
+
+
+
 Set PostgreSQL admin user password that you’ll use to escalate privilege for DB operations.
 
 ```
@@ -95,7 +103,7 @@ postgres=# \password
 Enter new password: 
 Enter it again: 
 
-
+# OR reset to specific password
 postgres=# alter user postgres password 'postgres';
 ALTER ROLE
 postgres=# \q
@@ -126,7 +134,6 @@ create new user if you need
 ```
 -bash-4.2$ createuser --interactive rick
 Shall the new role be a superuser? (y/n) y
-
 ```
 
 

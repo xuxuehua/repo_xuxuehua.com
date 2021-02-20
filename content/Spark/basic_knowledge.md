@@ -10,10 +10,9 @@ date: 2020-05-04 01:09
 
 Spark的开发语言是Scala，这是Scala在并行和并发计算方面优势的体现，此外，Spark在很多宏观设计层面都借鉴了函数式编程思想，如接口、惰性求值和容错等。
 
-* 函数式编程接口。函数式编程思想的一大特点是低阶函数与核心数据结构，在Spark API中，这一点得到了很好的继承。Spark API同样提供了map、reduce、filter等算子（operator）来构建数据处理管道，用户的业务逻辑以高阶函数的形式定义，用户通过高阶函数与算子之间的组合，像搭积木一样，构建了整个作业的执行计划。此外，从根本上来说，Spark最核心的数据结构只有一种：RDD（Resilient Distributed Dataset，弹性分布式数据集），从API上来说，它和普通集合几乎完全相同，但是它却抽象了分布式文件系统中的文件，对于用户来说，这是透明的，从这个角度上来说，RDD是一个分布式的集合。
-
+* 函数式编程接口。纯函数式编程中，是不存在变量的，所有的值都是不可变的。这样函数可以不依赖也不修改外部状态，函数调用的结果不依赖于调用的时间和位置，这样更利于测试和调试。另外，由于多个线程之间不共享状态，因此不需要用锁来保护可变状态，使得函数式编程能够更好的利用多核的计算能力
+* 函数式编程思想的一大特点是低阶函数与核心数据结构，在Spark API中，这一点得到了很好的继承。Spark API同样提供了map、reduce、filter等算子（operator）来构建数据处理管道，用户的业务逻辑以高阶函数的形式定义，用户通过高阶函数与算子之间的组合，像搭积木一样，构建了整个作业的执行计划。此外，从根本上来说，Spark最核心的数据结构只有一种：RDD（Resilient Distributed Dataset，弹性分布式数据集），从API上来说，它和普通集合几乎完全相同，但是它却抽象了分布式文件系统中的文件，对于用户来说，这是透明的，从这个角度上来说，RDD是一个分布式的集合。
 * 惰性求值。Spark的算子分为两类，转换（transform）算子和行动（action）算子，只有行动算子才会真正触发整个作业提交并运行。这样一来，无论用户采用了多少个转换算子来构建一个无比复杂的数据处理管道，只有最后的行动算子才能触发整个作业开始执行。
-
 * 容错。在Spark的抽象中，处理的每一份数据都是不可变的，它们都是由它所依赖的上游数据集生成出来的，依赖关系由算子定义，在一个Spark作业中，这被称为血统。在考虑容错时，与其考虑如何持久化每一份数据，不如保存血统依赖和上游数据集，从而在下游数据集出现可用性问题时，利用血统依赖和上游数据集重算进行恢复。这是利用了函数（血统依赖）在给定参数（上游数据集）情况下，一定能够得到既定输出（下游数据集）的特性。
 
 # Spark
@@ -78,19 +77,19 @@ Spark 支持的 Hadoop 输入格式包括文本文件、SequenceFile、 Avro、P
 
 
 
+## Cluster Manager
 
-
-## Master
-
-
-
-### Application Master
-
-Driver 节点和所有的executor节点一起被 称为一个 Spark 应用(application)
+ClusterManager负责所有Executor的资源管理和调度，根据底层资源管理和调度平台的不同，ClusterManager可以有多种选择，对应了多种资源管理平台，如YARN的ResourceManager与Mesos的ClusterManager，此外Executor也会根据资源管理平台的不同运行在不同的容器中。
 
 
 
-#### Driver
+## Application Master
+
+Driver节点和所有的executor节点一起被称为一个 Spark 应用(application)
+
+
+
+## Driver
 
 和Executor 做关联的，跟踪其运行状况，为执行器节点调度任务
 
@@ -98,17 +97,13 @@ Driver 节点和所有的executor节点一起被 称为一个 Spark 应用(appli
 
 Spark程序的入口是Driver中的SparkContext。与Spark 1.x相比，在Spark 2.0中，有一个变化是用SparkSession统一了与用户交互的接口，曾经熟悉的SparkContext、SqlContext、HiveContext都是SparkSession的成员变量，这样更加简洁。SparkContext的作用是连接用户编写的代码与运行作业调度和任务分发的代码
 
-Driver 程序一旦终止，Spark 应用也就 结束了
+Driver 程序一旦终止，Spark 应用也就结束了
 
 
 
 
 
-## Worker
-
-
-
-### Executor 
+## Executor 
 
 一个工作进程，负责在Spark 作业中运行任务，任务之间相互独立, 并将结果返回给驱动器进程
 
@@ -120,13 +115,47 @@ Spark应用启动时，Executor节点同时被启动，并始终伴随着整个S
 
 
 
-#### 内存分配
+### 内存分配
 
 有一个 20 个物理节点的集群，每个物理节点是一个四核的机器
 
-然后你使用 --executor-memory 1G 和 --total-executor-cores 8 提交应用。这样 Spark 就会在不同机 器上启动 8 个执行器进程，每个 1 GB 内存
+然后你使用 --executor-memory 1G 和 --total-executor-cores 8 提交应用。这样 Spark 就会在不同机器上启动 8 个执行器进程，每个 1GB 内存
 
 通过 --executor-cores 设置每个执行器进程从 YARN 中占用的核心数目
+
+
+
+# Spark 执行过程
+
+
+
+![image-20200717080421468](basic_knowledge.assets/image-20200717080421468.png)
+
+首先Driver根据用户编写的代码生成一个计算任务的有向无环图（Directed Acyclic Graph, DAG）
+
+接着，DAG会根据RDD（弹性分布式数据集）之间的依赖关系被DAGScheduler（Driver组件）切分成由Task组成的Stage（TaskSet）
+
+TaskScheduler（Driver组件）会通过ClusterManager将任务调度到Executor上执行
+
+在DAG中，每个Task的输入就是一个Partition（分区），而一个Executor同时只能执行一个Task，但一个Worker（物理节点）上可以同时运行多个Executor。
+
+
+
+## 集群执行过程
+
+Spark支持Standalone、Yarn、Mesos、Kubernetes等多种部署方案，几种部署方案原理也都一样，只是不同组件角色命名不同，但是核心功能和运行流程都差不多。
+
+![image-20200405111123424](basic_knowledge.assets/image-20200405111123424.png)
+
+
+
+Spark应用程序启动在自己的JVM进程里，即Driver进程，启动后调用SparkContext初始化执行配置和输入数据。SparkContext启动DAGScheduler构造执行的DAG图，切分成最小的执行单位也就是计算任务。
+
+然后Driver向Cluster Manager请求计算资源，用于DAG的分布式计算。Cluster Manager收到请求以后，将Driver的主机地址等信息通知给集群的所有计算节点Worker。
+
+Worker收到信息以后，根据Driver的主机地址，跟Driver通信并注册，然后根据自己的空闲资源向Driver通报自己可以领用的任务数。Driver根据DAG图开始向注册的Worker分配任务。
+
+Worker收到任务后，启动Executor进程开始执行任务。Executor先检查自己是否有Driver的执行代码，如果没有，从Driver下载执行代码，通过Java反射加载后开始执行。
 
 
 
@@ -226,30 +255,6 @@ MLlib 提供 了很多种机器学习算法，包括分类、回归、聚类、�
 ## GraphX
 
 GraphX 是用来操作图(比如社交网络的朋友关系图)的程序库，可以进行并行的图计算。 与 Spark Streaming 和 Spark SQL 类似，GraphX 也扩展了 Spark 的 RDD API，能用来创建 一个顶点和边都包含任意属性的有向图。
-
-# Spark 执行过程
-
-首先Driver根据用户编写的代码生成一个计算任务的有向无环图（Directed Acyclic Graph, DAG），接着，DAG会根据RDD（弹性分布式数据集）之间的依赖关系被DAGScheduler（Driver组件）切分成由Task组成的Stage（TaskSet）, TaskScheduler（Driver组件）会通过ClusterManager将任务调度到Executor上执行。在DAG中，每个Task的输入就是一个Partition（分区），而一个Executor同时只能执行一个Task，但一个Worker（物理节点）上可以同时运行多个Executor。
-
-![image-20200717080421468](basic_knowledge.assets/image-20200717080421468.png)
-
-
-
-Spark支持Standalone、Yarn、Mesos、Kubernetes等多种部署方案，几种部署方案原理也都一样，只是不同组件角色命名不同，但是核心功能和运行流程都差不多。
-
-![image-20200405111123424](basic_knowledge.assets/image-20200405111123424.png)
-
-
-
-Spark应用程序启动在自己的JVM进程里，即Driver进程，启动后调用SparkContext初始化执行配置和输入数据。SparkContext启动DAGScheduler构造执行的DAG图，切分成最小的执行单位也就是计算任务。
-
-然后Driver向Cluster Manager请求计算资源，用于DAG的分布式计算。Cluster Manager收到请求以后，将Driver的主机地址等信息通知给集群的所有计算节点Worker。
-
-Worker收到信息以后，根据Driver的主机地址，跟Driver通信并注册，然后根据自己的空闲资源向Driver通报自己可以领用的任务数。Driver根据DAG图开始向注册的Worker分配任务。
-
-Worker收到任务后，启动Executor进程开始执行任务。Executor先检查自己是否有Driver的执行代码，如果没有，从Driver下载执行代码，通过Java反射加载后开始执行。
-
-
 
 # Spark 生态
 

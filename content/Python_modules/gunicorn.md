@@ -390,6 +390,10 @@ The most of these examples don’t talk about the issues you would face when usi
 
 
 
+```
+gunicorn -w 1 -k gevent flask_app:app -b 0.0.0.0:8888
+```
+
 
 
 # example

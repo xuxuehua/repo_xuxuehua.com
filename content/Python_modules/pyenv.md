@@ -167,7 +167,7 @@ export PATH=~/.pyenv/shims:~/.pyenv/bin:"$PATH"
 #### centos
 
 ```
-yum -y install gcc make patch gdbm-devel openssl-devel sqlite-devel readline-devel zlib-devel bzip2-devel
+yum -y install gcc make patch gdbm-devel openssl-devel sqlite-devel readline-devel zlib-devel bzip2-devel libffi-devel
 ```
 
 
@@ -195,7 +195,7 @@ source ~/.bashrc
 #### amazon linux 
 
 ```
-yum -y install git vim gcc make patch gdbm-devel openssl-devel sqlite-devel readline-devel zlib-devel bzip2-devel
+yum -y install git vim gcc make patch gdbm-devel openssl-devel sqlite-devel readline-devel zlib-devel bzip2-devel libffi-devel
 
 curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
 ```
@@ -205,11 +205,8 @@ curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer 
 #### ubuntu
 
 ```
-apt-get update && sudo apt-get upgrade -y
-apt install build-essential checkinstall zlib1g-dev libssl-dev -y
-
-
-apt-get install -y build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev libgdbm-compat-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev libffi6
+apt-get update && \
+apt install -y build-essential checkinstall zlib1g-dev libssl-dev build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev libgdbm-compat-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev libffi6
 ```
 
 

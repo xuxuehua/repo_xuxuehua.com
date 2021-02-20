@@ -75,8 +75,9 @@ Python**自带的缓存**
 @functools.lru_cache(maxsize=None, typed=False) 
 ```
 
-> - maxsize：最多可以缓存多少个此函数的调用结果，如果为None，则无限制，设置为 2 的幂时，性能最佳
-> - typed：若为 True，则不同参数类型的调用将分别缓存。
+> maxsize：最多可以缓存多少个此函数的调用结果，如果为None，则无限制，设置为 2 的幂时，性能最佳
+>
+> typed：若为 True，则不同参数类型的调用将分别缓存。
 
 
 
