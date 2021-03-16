@@ -28,11 +28,15 @@ Hive内部预置了很多函数，Hive的执行计划就是根据SQL语句生成
 
 ## 优点
 
-1. 操作接口采用类SQL语法，提供快速开发的能力（简单、容易上手）。
-2. 避免了去写MapReduce，减少开发人员的学习成本。
-3. Hive的执行延迟比较高，因此Hive常用于数据分析，对实时性要求不高的场合。
-4. Hive优势在于处理大数据，对于处理小数据没有优势，因为Hive的执行延迟比较高。
-5. Hive支持用户自定义函数，用户可以根据自己的需求来实现自己的函数。
+操作接口采用类SQL语法，提供快速开发的能力（简单、容易上手）
+
+避免了去写MapReduce，减少开发人员的学习成本
+
+Hive的执行延迟比较高，因此Hive常用于数据分析，对实时性要求不高的场合
+
+Hive优势在于处理大数据，对于处理小数据没有优势，因为Hive的执行延迟比较高
+
+Hive支持用户自定义函数，用户可以根据自己的需求来实现自己的函数
 
 
 
@@ -72,13 +76,55 @@ Hive能够直接处理我们输入的SQL语句（Hive的SQL语法和数据库标
 
 这个组件通常用一个关系数据库实现, 记录包括：表名、表所属的数据库（默认是default）、表的拥有者、列/分区字段、表的类型（是否是外部表）、表的数据所在目录等；
 
-
+![img](hive.assets/hive_metastore_database_diagram.png)
 
 
 
 如果我们提交的是查询分析数据的DQL（数据查询语句），Driver就会将该语句提交给自己的编译器Compiler进行语法分析、语法解析、语法优化等一系列操作，最后生成一个MapReduce执行计划。然后根据执行计划生成一个MapReduce的作业，提交给Hadoop MapReduce计算框架处理。
 
 
+
+
+
+### show tables
+
+PostgreSQL to access these upper case objects you have to quote those objects.
+
+So in the example you provided you will have to change the query to look something like below:
+
+```
+olap=> select * from "VERSION";
+ VER_ID | SCHEMA_VERSION |           VERSION_COMMENT
+--------+----------------+--------------------------------------
+      1 | 1.2.0          | Set by MetaStore hadoop@10.23.63.138
+(1 row)
+```
+
+
+
+### Show all Hive databases
+
+```
+SELECT * FROM hive.DBS;
+```
+
+**Output:**
+
+| DB_ID | DESC                  | DB_LOCATION_URI                                              | NAME    | OWNER_NAME | OWNER_TYPE |
+| ----- | --------------------- | ------------------------------------------------------------ | ------- | ---------- | ---------- |
+| 1     | Default Hive database | hdfs://sandbox.hortonworks.com:8020/apps/hive/warehouse      | default | public     | ROLE       |
+| 6     | NULL                  | hdfs://sandbox.hortonworks.com:8020/apps/hive/warehouse/xademo.db | xademo  | hive       | USER       |
+
+
+
+###  List tables in a given database
+
+```
+SELECT t.* FROM hive.TBLS t
+ JOIN hive.DBS d
+ ON t.DB_ID = d.DB_ID
+ WHERE d.NAME = 'default';
+```
 
 
 
@@ -110,7 +156,9 @@ join涉及两张表，来自两个文件（夹），所以需要在map输出的�
 
 # Hive QL
 
-标准SQL和Hive QL的差别主要有两个方面，一个是语法表达方式，Hive QL语法和标准SQL语法略有不同；另一个是Hive QL支持的语法元素比标准SQL要少很多，比如，数据仓库领域主要的测试集[TPC-H](http://www.tpc.org/tpch/)所有的SQL语句Hive都不支持。尤其是是Hive不支持复杂的嵌套子查询，而对于数据仓库分析而言，嵌套子查询几乎是无处不在的。比如下面这样的SQL，在where查询条件existes里面包含了另一条SQL语句。
+标准SQL和Hive QL的差别主要有两个方面，一个是语法表达方式，Hive QL语法和标准SQL语法略有不同；
+
+另一个是Hive QL支持的语法元素比标准SQL要少很多. 比如，数据仓库领域主要的测试集[TPC-H](http://www.tpc.org/tpch/)所有的SQL语句Hive都不支持。尤其是是Hive不支持复杂的嵌套子查询，而对于数据仓库分析而言，嵌套子查询几乎是无处不在的。比如下面这样的SQL，在where查询条件existes里面包含了另一条SQL语句。
 
 ```
 select o_orderpriority, count(*) as order_count 
@@ -146,4 +194,24 @@ select panthera_10.panthera_1 as s_grade from (select panthera_1, panthera_4, pa
 
 
 
+
+## alter column type
+
+This is operate at hive cli 
+
+```
+ALTER TABLE tableA CHANGE column_name column_name BIGINT;
+```
+
+See this for complete details: https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL#LanguageManualDDL-AlterColumn
+
+
+
+
+
+# Appendix
+
+https://stackoverflow.com/questions/17497560/is-there-a-way-to-alter-column-type-in-hive-table
+
+https://analyticsanvil.wordpress.com/2016/08/21/useful-queries-for-the-hive-metastore/
 

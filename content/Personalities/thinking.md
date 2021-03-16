@@ -18,9 +18,19 @@ date: 2020-03-15 12:15
 
 
 
+
+
+# 道德谴责
+
+当我们在进行道德谴责的时候，一定不要把自己排除在道德判断之外。
+
+如果总是盯着别人的黑暗而无视自己内心的幽暗，有一天，你的影子是会吞掉你的。
+
+
+
 # Coronavirus 
 
-降低真实负载
+降低真实负债
 
 努力工作，强者恒强，弱者恒弱
 
@@ -176,4 +186,54 @@ Because you’re not. You are a combination of all those things, and then a bunc
 There are 2 mistakes along the way to mastery - Not starting it and Not going all the way
 
 Start your personal training with guided online instructions and slowly work your way towards your own destiny.
+
+
+
+
+
+# Debt 
+
+年轻人不要借钱消费，信用卡等的利率都在17%-20%
+
+房子和车子也算是消费品
+
+
+
+# Coaching 
+
+中年人不要在孩子的教育上乱花钱
+
+需要培养其经济独立的能力， 也要培养自己生产能力
+
+
+
+
+
+
+
+
+
+# Future
+
+科技进步对全球的政治和经济的影响，如原本被保护的小厂商，被头部企业碾压，消灭掉小的竞争者
+
+社会政治后果，贫富差距加大，大企业和政府的谈判地位加强，小国和数字巨头的谈判地位下降 
+
+原本稳定的社会稳定形态，会被数字时代冲击， 金融分析师，教师等
+
+中心操控外围，政治，经济，社会，文化，舆论会更容易
+
+税收体制改革
+
+养老和育儿等工作
+
+
+
+
+
+
+
+
+
+
 

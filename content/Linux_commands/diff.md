@@ -18,11 +18,11 @@ You can use the `diff` command for that:
 diff -bur folder1/ folder2/
 ```
 
-This will output a recursive diff that ignore spaces, with a unified context:
-
-- **b** flag means ignoring whitespace
-- **u** flag means a unified context (3 lines before and after)
-- **r** flag means recursive
+> **b** flag means ignoring whitespace
+>
+> **u** flag means a unified context (3 lines before and after)
+>
+> **r** flag means recursive
 
 
 

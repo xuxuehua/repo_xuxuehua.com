@@ -577,5 +577,195 @@ ffprobe 1.mp4ls /tmp
 
 
 
-# FAQ
 
+
+# 截图
+
+```text
+sudo apt install flameshot
+```
+
+如果你在安装过程中遇到问题，可以按照[官方的安装说明](https://link.zhihu.com/?target=https%3A//github.com/lupoDharkael/flameshot%23installation)进行操作。安装完成后，你还需要进行配置。尽管可以通过搜索来随时启动 Flameshot，但如果想使用 ctrl+shirt+p 键触发启动，则需要指定对应的键盘快捷键。以下是相关配置步骤：
+
+- 进入系统设置中的“键盘设置”
+
+- 页面中会列出所有现有的键盘快捷键，拉到底部就会看见一个 “+” 按钮
+
+- 点击 “+” 按钮添加自定义快捷键并输入以下两个字段：
+
+- - “名称”： flameshot
+    - “命令”： `/usr/bin/flameshot gui`
+
+
+
+
+
+
+
+# Google Drive
+
+
+
+## go installation
+
+Extract the archive you downloaded into /usr/local, creating a Go tree in /usr/local/go.
+Important: This step will remove a previous installation at /usr/local/go, if any, prior to extracting. Please back up any data before proceeding.
+
+For example, run the following as root or through sudo:
+
+```
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.linux-amd64.tar.gz
+```
+
+
+Add /usr/local/go/bin to the PATH environment variable.
+You can do this by adding the following line to your $HOME/.profile or /etc/profile (for a system-wide installation):
+
+```
+export PATH=$PATH:/usr/local/go/bin
+
+Note: Changes made to a profile file may not apply until the next time you log into your computer. To apply the changes immediately, just run the shell commands directly or execute them from the profile using a command such as source $HOME/.profile.
+```
+
+Verify that you've installed Go by opening a command prompt and typing the following command:
+
+```
+$ go version
+```
+
+Confirm that the command prints the installed version of Go.
+
+Confirm that the command prints the installed version of Go.
+
+
+
+## Drive sync
+
+
+
+```
+vim ~/.bashrc
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$HOME/gopath
+export PATH=$GOPATH:$GOPATH/bin:$PATH
+```
+
+
+
+From sources
+To install from the latest source, run:
+
+```
+go get -u github.com/odeke-em/drive/cmd/drive
+```
+
+
+Otherwise:
+
+In order to address issue #138, where debug information should be bundled with the binary, you'll need to run:
+
+```
+go get github.com/odeke-em/drive/drive-gen && drive-gen
+```
+
+In case you need a specific binary e.g for Debian folks issue #271 and issue 277
+
+In case you need a specific binary e.g for Debian folks issue #271 and issue 277
+
+```
+go get -u github.com/odeke-em/drive/drive-google
+```
+
+
+That should produce a binary drive-google
+
+OR
+
+To bundle debug information with the binary, you can run:
+
+```
+go get -u github.com/odeke-em/drive/drive-gen && drive-gen drive-google
+```
+
+
+
+start by below	
+
+```
+drive init
+```
+
+
+
+
+
+
+
+# dropbox
+
+## dbxcli
+
+```
+wget https://github.com/dropbox/dbxcli/releases/download/v3.0.0/dbxcli-linux-amd64
+
+sudo mv dbxcli-linux-amd64 /usr/bin/dbxcli
+sudo chmod +x /usr/bin/dbxcli
+```
+
+
+
+```
+dbxcli put myfile /myfolder/myfile
+```
+
+
+
+# Libreoffice
+
+
+
+## save and quit
+
+```
+xdotool search --name FILENAME key ctrl+s
+xdotool search --name FILENAME key ctrl+q
+```
+
+
+
+
+
+# Qv2ray
+
+```
+sudo apt install curl -y
+curl -sS https://qv2ray.github.io/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://qv2ray.github.io/debian/ stable main" | sudo tee /etc/apt/sources.list.d/qv2ray.list
+sudo apt update
+```
+
+
+
+core files
+
+```
+sudo apt update
+sudo apt install wget unzip -y
+mv ~/.config ~/config
+cd ~/config/qv2ray/
+wget https://github.com/v2ray/v2ray-core/releases/download/v4.28.2/v2ray-linux-64.zip
+unzip v2ray-linux-64.zip -d vcore
+rm -rf v2ray-linux-64.zip
+```
+
+
+
+# Appendix
+
+https://zhuanlan.zhihu.com/p/45919661
+
+https://golang.org/doc/install
+
+https://github.com/odeke-em/drive#requirements
+
+https://superuser.com/questions/1102630/how-can-i-make-an-open-libreoffice-save-a-file-without-using-the-gui/1102670

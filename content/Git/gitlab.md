@@ -112,7 +112,7 @@ server {
         server_name _;
 
         location / {
-                                proxy_pass http://localhost:4000;
+                proxy_pass http://localhost:4000;
 
                 proxy_read_timeout 3600s;
                 proxy_http_version 1.1;
@@ -375,6 +375,8 @@ stg_v1_5.21.0:
 
 
 # example
+
+
 
 ## gitlab ci/cd 
 

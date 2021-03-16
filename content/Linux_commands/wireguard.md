@@ -9,9 +9,11 @@ date: 2018-11-30 21:31
 
 # wireguard
 
-## 安装 
+# Installation 
 
-### Ubuntu
+
+
+## Ubuntu
 
 ```
 sudo add-apt-repository ppa:wireguard/wireguard && 
@@ -31,13 +33,13 @@ sudo yum -y install wireguard-dkms wireguard-tools
 
 
 
-## 部署
+# 部署
 
-### Ubuntu
+## Ubuntu
 
 
 
-#### server 
+### server 
 
 需要配置Ip转发，默认ubuntu是关闭的
 
@@ -131,7 +133,7 @@ for net in `cat delegated-apnic-latest | ./cnips`do         route add -net $net 
 
 
 
-#### client 
+### client 
 
 生成密钥
 
@@ -285,9 +287,9 @@ sysctl -p
 
 
 
-## example
+# example
 
-### traffic forwarding
+## traffic forwarding
 
 要转发所有流量，只需将客户端上的AllowedIPs行更改为：
 
@@ -326,7 +328,7 @@ $ sudo systemctl stop wg-quick@wg0.service
 
 
 
-### server
+## server
 
 ```
 [Interface]
@@ -350,7 +352,7 @@ GCE mtu 1420
 
 
 
-### client
+## client
 
 ```
 [Interface]

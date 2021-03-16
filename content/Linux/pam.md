@@ -14,6 +14,10 @@ Pluggable Authentication Modules
 
 
 
+
+
+
+
 ## 配置文件
 
 ```
@@ -31,11 +35,11 @@ include    由其他文件决定
 
 
 
-## 模块
+# 模块
 
 
 
-### pam_unix     
+## pam_unix     
 
 traditional password authentication 
 
@@ -49,13 +53,13 @@ traditional password authentication
 
 
 
-### pam_permit  
+## pam_permit  
 
 允许访问 
 
 
 
-### pam_deny  
+## pam_deny  
 
 拒绝访问 
 
@@ -63,7 +67,7 @@ traditional password authentication
 
 
 
-### pam_cracklib  
+## pam_cracklib  
 
 ​     依据字典检查密码 
 
@@ -73,25 +77,25 @@ traditional password authentication
 
 
 
-### pam_shells 
+## pam_shells 
 
 ​     必须使用/etc/shells 下面存在的shell 
 
 
 
-### pam_securetty 
+## pam_securetty 
 
 ​     限定root只能登陆的/etc/securetty的 
 
 
 
-### pam_listfile  
+## pam_listfile  
 
 ​     根据某个文本文件进行验证 
 
 
 
-### pam_limits 
+## pam_limits 
 
 即使是管理员也会受到限制
 
@@ -109,13 +113,13 @@ vim  /etc/security/limits.conf
 
 
 
-### pam_wheel.so     
+## pam_wheel.so     
 
 限定哪些组的用户可以su到root用户 
 
 
 
-### pam_time.so 
+## pam_time.so 
 
 限定用户的登录时间 
 
@@ -123,7 +127,7 @@ vim  /etc/security/limits.conf
 
 
 
-## example
+# example
 
 ```
 仅允许allowgrp组的用户登录实现方法

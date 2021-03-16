@@ -83,6 +83,8 @@ ClusterManager负责所有Executor的资源管理和调度，根据底层资源�
 
 
 
+
+
 ## Application Master
 
 Driver节点和所有的executor节点一起被称为一个 Spark 应用(application)
@@ -308,17 +310,19 @@ Tungsten的目的就是摆脱JVM的垃圾回收器，自己管理内存
 
 
 
-# Example
+# Installation
 
-## Installation
 
-### 目录结构
+
+## Linux
 
 ```
 wget https://mirror.bit.edu.cn/apache/spark/spark-2.4.5/spark-2.4.5-bin-hadoop2.7.tgz
 ```
 
 
+
+目录结构
 
 ```
 root@ubuntu:/mnt/spark-2.4.5-bin-hadoop2.7# tree -L 1
@@ -344,9 +348,105 @@ root@ubuntu:/mnt/spark-2.4.5-bin-hadoop2.7# tree -L 1
 
 
 
+## mac os
+
+```
+brew upgrade && brew update
+```
 
 
 
+```
+java -version
+```
+
+For Latest Java use
+
+```
+brew cask install java
+```
+
+**Install xcode-select**
+
+```
+xcode-select --install
+```
+
+**Install Scala**
+
+```
+brew install scala
+```
+
+
+
+
+
+```
+scala -version
+```
+
+
+
+**Install Apache Spark**
+
+```
+brew install apache-spark
+```
+
+
+
+To start spark shell execute below command
+
+```
+Spark-shell
+
+val s = "hello world"
+```
+
+
+
+**Add Spark path to bash profile**
+
+Run below command and then add the path to the profile
+
+```
+vim ~/.profile
+
+export SPARK_HOME=/usr/local/Cellar/apache-spark/3.1.1/libexec
+export PYTHONPATH=/usr/local/Cellar/apache-spark/3.1.1/libexec/python/:$PYTHONP$
+source ~/.bash_profile
+```
+
+```
+cd /usr/local/Cellar/apache-spark/3.1.1/libexec/sbin
+```
+
+And execute below command to start all services
+
+```
+sbin/start-all.sh
+```
+
+
+
+**Spark Master UI** 
+
+http://localhost:8080/
+
+
+
+
+
+**Spark Application UI**
+
+ http://localhost:4040/
+
+
+
+
+
+# Example
 
 
 
@@ -416,4 +516,12 @@ def tier(spark, **kwargs):
 
 
 
+
+
+
+
+
+# Appendix
+
+https://medium.com/beeranddiapers/installing-apache-spark-on-mac-os-ce416007d79f
 

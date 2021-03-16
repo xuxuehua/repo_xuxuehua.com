@@ -176,5 +176,15 @@ To short(write/wrote) a put  去卖一个看跌期权
 
 # ARR
 
+ARR is an acronym for Annual Recurring Revenue, a key metric used by SaaS or subscription businesses that have term subscription agreements, meaning there is a defined contract length. 
 
+It is defined as the value of the contracted recurring revenue components of your term subscriptions normalized to a one-year period. ARR is the less frequently used alternative normalization method of the two common ones, ARR and MRR. It is used almost exclusively in B2B subscription businesses.
+
+
+
+
+
+
+
+# Appendix
 

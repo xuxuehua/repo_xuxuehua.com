@@ -21,17 +21,6 @@ python 变量的本质就是指针，即先生成对象，然后再将变量指�
 
 
 
-## 命名规则
-
-变量名只能是 字母、数字或下划线的任意组合
-
-变量名的第一个字符不能是数字
-
-以下关键字不能声明为变量名
-['and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'exec', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'not', 'or', 'pass', 'print', 'raise', 'return', 'try', 'while', 'with', 'yield']
-
-
-
 ## 局部变量
 
 通过locals函数查看
@@ -99,6 +88,343 @@ Out[2]:
  '_1': {...},
  '_i2': 'globals()'}
 ```
+
+
+
+
+
+# 变量命名规则
+
+变量名只能是 字母、数字或下划线的任意组合
+
+变量名的第一个字符不能是数字
+
+以下关键字不能声明为变量名
+['and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'exec', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'not', 'or', 'pass', 'print', 'raise', 'return', 'try', 'while', 'with', 'yield']
+
+
+
+## 命名风格
+
+选择一种命名的风格，并且严格遵守，可以是camelCase，或者snake_case，或者是其他任何的风格，最重要的是要保持一致，不管是个人开发者还是团队，保持一致的命名风格很重要，不要混合使用。
+
+```
+/* Bad */
+const page_count = 5
+const shouldUpdate = true
+
+/* Good */
+const pageCount = 5
+const shouldUpdate = true
+
+/* Good as well */
+const page_count = 5
+const should_update = true
+```
+
+
+
+## 遵守SID原则
+
+命名应该简短、直观并且具有描述性，遵循SID原则。
+
+- Short - 简短，避免输入太长，但是也应该注意不能简写到失去其原本的意义。
+- Intuitive - 直观，并且尽可能接近自然语言。
+- Descriptive - 以最有效的方式反映其作用或目的。
+
+```
+/* Bad */
+const a = 5 // "a" could mean anything
+const isPaginatable = a > 10 // "Paginatable" sounds extremely unnatural
+const shouldPaginatize = a > 10 // Made up verbs are so much fun!
+
+/* Good */
+const postCount = 5
+const hasPagination = postCount > 10
+const shouldPaginate = postCount > 10 // alternatively
+```
+
+
+
+## 避免上下文重复
+
+有时候在一段代码中可能会出现类似意义的变量定义，这个时候要避免命名的重复
+
+```
+class MenuItem {
+  /* Method name duplicates the context (which is "MenuItem") */
+  handleMenuItemClick = (event) => { ... }
+
+  /* Reads nicely as `MenuItem.handleClick()` */
+  handleClick = (event) => { ... }
+}
+```
+
+
+
+## 尽量反映预期结果
+
+变量或函数的命名应该能反映预期的结果
+
+```
+/* Bad */
+const isEnabled = itemCount > 3
+return <Button disabled={!isEnabled} />
+
+/* Good */
+const isDisabled = itemCount <= 3
+return <Button disabled={isDisabled} />
+```
+
+
+
+
+
+
+
+# A/HC/LC命名模式
+
+可以遵循A/HC/LC，即
+
+```
+prefix? + action (A) + high context (HC) + low context? (LC)
+```
+
+|         name         | prefix |    A    |   HC    |    LC    |
+| :------------------: | :----: | :-----: | :-----: | :------: |
+|       getUser        |        |   get   |  User   |          |
+|   getUserMessages    |        |   get   |  User   | Messages |
+|  handleClickOutside  |        | handle  |  Click  | Outside  |
+| shouldDisplayMessage | should | Display | Message |          |
+
+
+上下文的顺序可能会影响变量的含义，例如shouldUpdateComponent意味着将要更新一个组件，换一下顺序变成shouldComponentUpdate，意味着组件将做自我更新。
+
+
+
+## Prefix前缀
+
+前缀用来增强变量的含义
+
+
+
+### is
+
+描述特征或状态，通常是boolean类型
+
+```
+const color = 'blue'
+const isBlue = color === 'blue' // characteristic
+const isPresent = true // state
+
+if (isBlue && isPresent) {
+  console.log('Blue is present!')
+}
+```
+
+
+
+### has
+
+描述是否具有某个状态或值，通常是boolean类型
+
+```
+/* Bad */
+const isProductsExist = productsCount > 0
+const areProductsPresent = productsCount > 0
+
+/* Good */
+const hasProducts = productsCount > 0
+```
+
+
+
+### should
+
+反映肯定的条件，加上特定的执行动作
+
+```
+function shouldUpdateUrl(url, expectedUrl) {
+  return url !== expectedUrl
+}
+```
+
+
+
+### min/max
+
+描述边界或界限时使用
+
+```
+/**
+ * Renders a random amount of posts within
+ * the given min/max boundaries.
+ */
+function renderPosts(posts, minPosts, maxPosts) {
+  return posts.slice(0, randomBetween(minPosts, maxPosts))
+}
+```
+
+
+
+### prev/next
+
+指示前一个或下一个状态
+
+```
+function fetchPosts() {
+  const prevPosts = this.state.posts
+
+  const fetchedPosts = fetch('...')
+  const nextPosts = concat(prevPosts, fetchedPosts)
+
+  this.setState({ posts: nextPosts })
+}
+```
+
+
+
+
+
+## Action动作
+
+函数名称的动词部分，是描述函数作用的最终要的部分，如：
+
+### getXXX，表示获取数据
+
+```
+function getFruitCount() {
+  return this.fruits.length
+}
+```
+
+
+
+### setXXX，表示设值
+
+```
+let fruits = 0
+
+function setFruits(nextFruits) {
+  fruits = nextFruits
+}
+
+setFruits(5)
+console.log(fruits) // 5
+```
+
+
+
+### resetXXX，重置数据
+
+```
+const initialFruits = 5
+let fruits = initialFruits
+setFruits(10)
+console.log(fruits) // 10
+
+function resetFruits() {
+  fruits = initialFruits
+}
+
+resetFruits()
+console.log(fruits) // 5
+```
+
+
+
+### fetchXXX，请求数据
+
+```
+function fetchPosts(postCount) {
+  return fetch('https://api.dev/posts', {...})
+}
+```
+
+
+
+### removeXXX，移除数据，表示从某处删除某物
+
+```
+function removeFilter(filterName, filters) {
+  return filters.filter((name) => name !== filterName)
+}
+
+const selectedFilters = ['price', 'availability', 'size']
+removeFilter('price', selectedFilters)
+```
+
+
+
+### deleteXXX，删除数据，表示完全清楚某些事物
+
+```
+function deletePost(id) {
+  return database.find({ id }).delete()
+}
+```
+
+
+
+### composeXXX，从现有数据创建新数据
+
+```
+function composePageUrl(pageName, pageId) {
+  return (pageName.toLowerCase() + '-' + pageId)
+}
+```
+
+
+
+### handleXXX，处理某个动作
+
+```
+function handleLinkClick() {
+  console.log('Clicked a link!')
+}
+
+link.addEventListener('click', handleLinkClick)
+```
+
+
+
+## Context上下文
+
+函数或方法通常是某些事物的动作，结合上下文，能够明确其操作的对象，或者要能反映出函数预期的数据类型。
+
+一些特定的情况下允许省略上下文，例如在JavaScript中，filter对Array进行操作很常见，就没必要命名为filterArray了。
+
+```
+/* A pure function operating with primitives */
+function filter(predicate, list) {
+  return list.filter(predicate)
+}
+
+/* Function operating exactly on posts */
+function getRecentPosts(posts) {
+  return filter(posts, (post) => post.date === Date.now())
+}
+```
+
+
+
+
+
+## Singular&Plurals 单复数
+
+变量名称是单数还是复数，取决于值的单数还是复数。
+
+```
+/* Bad */
+const friends = 'Bob'
+const friend = ['Bob', 'Tony', 'Tanya']
+
+/* Good */
+const friend = 'Bob'
+const friends = ['Bob', 'Tony', 'Tanya']
+```
+
+
 
 
 
@@ -508,3 +834,10 @@ text.decode('unicode_escape')
 text.encode('latin-1').decode('unicode_escape')
 ```
 
+
+
+
+
+# Appendix
+
+https://github.com/kettanaito/naming-cheatsheet

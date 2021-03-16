@@ -244,6 +244,43 @@ Out[40]: '0xff'
 
 将一个数值或字符串转换成整数，可以指定进制
 
+
+
+
+
+## input
+
+input() 函数暂停程序运行，同时等待键盘输入;直到回车被按下，函数的参数即为提示语，输入的类型永远是字符串型(str)
+
+
+
+多行输入
+
+ ```
+sentinel = 'end' # 遇到这个就结束
+lines = []
+for line in iter(input, sentinel):
+    lines.append(line)
+ ```
+
+
+
+带提示的多行输入
+
+```
+from functools import partial
+
+inputNew = partial(input,'Input something pls:\n')
+sentinel = 'end' # 遇到这个就结束
+lines = []
+for line in iter(inputNew, sentinel):
+    lines.append(line)
+```
+
+
+
+
+
 ## isinstance 判断类型
 
 判断对象是否数据某种类型或者元组中列出的某个类型

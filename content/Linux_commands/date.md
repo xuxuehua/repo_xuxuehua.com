@@ -34,7 +34,7 @@ $ date +%N | cut -c 1-8
 It works for amazon linux1 
 
 ```
-# date -Isecond
+# date -Iseconds
 2020-03-17T14:09:46+0000
 ```
 

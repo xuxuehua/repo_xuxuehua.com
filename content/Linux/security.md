@@ -33,6 +33,12 @@ root
 
 
 
+```
+grep "0" /etc/passwd
+```
+
+
+
 ## 空口令用户
 
 ```
@@ -170,5 +176,14 @@ find / -type f -perm 4000
 
 ```
 chkconfig --list
+```
+
+
+
+# 异常系统日志
+
+```
+检查系统错误登陆日志，统计IP重试次数
+lastb root | awk '{print $3}' | sort | uniq -c | sort -nr| more
 ```
 

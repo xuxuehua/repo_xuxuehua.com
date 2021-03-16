@@ -14,18 +14,26 @@ http://nfs.sourceforge.net/nfs-howto/index.html
 
 
 
-## installation
+# installation
 
 
+
+## Centos 
 
 ```
 yum -y install nfs-utils rpcbind
 ```
 
-nfs 的配置文件 /etc/expots
-共享目录赋予权限：chmod 755 /home/data
+nfs 的配置文件 /etc/exports
+共享目录赋予权限：
+
+```
+chmod 755 /home/data
 vim /etc/exports
 /home/data 192.168.0.0/24(rw,async,insecure,anonuid=1000,anongid=1000,no_root_squash)
+```
+
+
 
 * 使配置生效
 
@@ -56,9 +64,46 @@ cat /var/lib/nfs/etab
 
 
 
-## 客户端挂载
+## Ubuntu 1804
 
-### linux
+```
+sudo apt install nfs-kernel-server
+```
+
+
+
+```
+ vim /etc/exports
+ /mnt/nfs_share  192.168.43.0/24(rw,sync,no_subtree_check)
+
+```
+
+
+
+```
+sudo exportfs -ra  # 保存文件并导出分享
+sudo exportfs -v   # 查看导出当前状态
+```
+
+
+
+```
+# showmount -e 1.1.1.1
+Export list for 1.1.1.1:
+/mnt/nfs_share NFS_SERVER_IP/32
+```
+
+
+
+```
+mount -t nfs 1.1.1.1:/mnt/nfs_share /local_directory
+```
+
+
+
+# 客户端挂载
+
+## linux
 
 在从机上安装NFS 客户端
 
@@ -94,7 +139,7 @@ mount -t nfs 192.168.0.63:/home/data /home/data -o proto=tcp -o nolock
 
 
 
-### Windows 
+## Windows 
 
 - Win7自带的NFS客户端可以在“控制面板”->“程序”->“
 
@@ -344,3 +389,8 @@ If **no_root_squash** is selected, then root on the client machine will have the
 
 传输默认使用udp,可能出现不稳定，使用proto=tcp更改传输协议。客户端参考mountproto=netid
 
+
+
+## no_subtree_check
+
+This option prevents subtree checking, which is a process where the **host** must check whether the file is actually still available in the exported tree for every request. This can cause many problems when a file is renamed while the **client** has it opened. In almost all cases, it is better to disable subtree checking.

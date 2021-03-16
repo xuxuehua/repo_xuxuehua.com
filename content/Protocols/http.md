@@ -1025,7 +1025,7 @@ Entity Too Large.
 
 ### 414
 
-URI Too Long.
+URI Too Long
 
 
 
@@ -1039,7 +1039,7 @@ Unsupported Media Type.
 
 ### 417
 
-Expectation Failed.
+Expectation Failed
 
 
 

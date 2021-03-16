@@ -102,6 +102,23 @@ print(json.dumps(person))
 
 
 
+### separators
+
+```
+In [63]: d                                                                                                                                                                                                      
+Out[63]: {'a': 1, 'b': 2, 'c': 'rxu'}
+
+In [64]: print([json.dumps(d, separators=(",", ":"))])                                                                                                                                                          
+['{"a":1,"b":2,"c":"rxu"}']
+
+In [65]: print(json.dumps(d))                                                                                                                                                                                   
+{"a": 1, "b": 2, "c": "rxu"}
+```
+
+
+
+
+
 ## load 解码从文件读取
 
 ```

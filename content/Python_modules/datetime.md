@@ -429,6 +429,15 @@ Out[50]: 86400.0
 
 
 
+### range of dates
+
+```py
+import datetime
+numdays=43
+base = datetime.datetime.today()
+[base - datetime.timedelta(days=x) for x in range(numdays)]
+```
+
 
 
 
@@ -436,3 +445,11 @@ Out[50]: 86400.0
 ## .tzinfo 时区的相关信息
 
 
+
+
+
+
+
+# Appendix
+
+https://stackoverflow.com/questions/993358/creating-a-range-of-dates-in-python

@@ -17,17 +17,21 @@ GPG除了可用于信息加密和解密外，还是一个很好的签名算法�
 
 
 
-## 安装
+# 安装
 
 
 
-### Linux 
+## Ubuntu
 
 在 Debian、Ubuntu 和其他 Debian 衍生版上：
 
 ```
-sudo apt install gnupg 
+sudo apt install gnupg pbuilder ubuntu-dev-tools apt-file
 ```
+
+
+
+## CentOS
 
 在 Fedora、CentOS 或者 RHEL 上:
 
@@ -39,9 +43,9 @@ sudo yum install gnupg
 
 
 
-## 使用
+# 使用
 
-### 生成一个键对
+## 生成一个键对
 
 ```
 $ gpg --gen-key
@@ -73,7 +77,7 @@ drwx------  6 xhxu  254449427   192 Sep  9 00:05 private-keys-v1.d
 
 
 
-### 验证公钥的拥有者
+## 验证公钥的拥有者
 
 记住key ID
 
@@ -105,7 +109,7 @@ gpg --list-keys
 
 
 
-### 验证文件的可靠性/完整性
+## 验证文件的可靠性/完整性
 
 ```
 gpg --verify FILE_KEY FILE_NAME
@@ -125,7 +129,7 @@ gpg --verify file.ext.asc file.ext
 
 
 
-### 导入本地密钥
+## 导入本地密钥
 
 ```
 gpg --sign-key KEY_ID

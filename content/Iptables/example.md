@@ -311,9 +311,11 @@ iptables -A INPUT -i eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j
 iptables -A OUTPUT -o eth0 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
 ```
 
+
+
+
+
 ### 允许从本地发起HTTPS连接
-
-
 
 本规则可以允许用户从本地主机发起HTTPS连接，从而访问Internet。
 
@@ -628,5 +630,15 @@ iptables -A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables denied: "
  
 iptables -A INPUT -j REJECT
 iptables -A FORWARD -j REJECT
+```
+
+
+
+
+
+## 定义计时器
+
+```
+iptables -A ... && sleep 10 && iptables -F
 ```
 

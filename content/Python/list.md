@@ -577,29 +577,3 @@ In [62]: results                                                                
 ```
 
 
-
-## 冒泡排序
-
-冒泡排序（英语：Bubble Sort）是一种简单的排序算法。它重复地遍历要排序的数列，一次比较两个元素，如果他们的顺序错误就把他们交换过来。遍历数列的工作是重复地进行直到没有再需要交换，也就是说该数列已经排序完成。这个算法的名字由来是因为越小的元素会经由交换慢慢“浮”到数列的顶端
-
-
-
-```
-In [17]: li = [10, 8, 4, 7, 5]
-
-In [18]: for index in range(len(li)): # 列表中一个5个数，比较为两两比较，因此实际次数为4次
-    ...:     flag = True
-    ...:     for j in range(len(li) - index -1):
-    ...:         if li[j] > li[j+1]: # 判断前面的数是否大于后面的数
-    ...:             li[j], li[j+1] = li[j+1], li[j] #大于则交换位置
-    ...:             flag = False
-    ...:     if flag:
-    ...:         print("No changes in list")
-    ...:
-No changes in list
-No changes in list
-
-In [19]: li
-Out[19]: [4, 5, 7, 8, 10]
-```
-

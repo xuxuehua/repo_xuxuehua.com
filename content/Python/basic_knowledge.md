@@ -331,41 +331,6 @@ $ which -a python3.5
 
  
 
-# 用户输入 input 方法
-
-input() 函数暂停程序运行，同时等待键盘输入;直到回车被按下，函数的参数即为提示语，输入的类型永远是字符串型(str)
-
-
-
-
-
-## 多行输入
-
- ```
-sentinel = 'end' # 遇到这个就结束
-lines = []
-for line in iter(input, sentinel):
-    lines.append(line)
- ```
-
-
-
-### 带提示的多行输入
-
-```
-from functools import partial
-
-inputNew = partial(input,'Input something pls:\n')
-sentinel = 'end' # 遇到这个就结束
-lines = []
-for line in iter(inputNew, sentinel):
-    lines.append(line)
-```
-
-
-
-
-
 # 软件目录结构规范
 
 设计一个层次清晰的目录结构，就是为了达到以下两点:
@@ -568,17 +533,6 @@ $ python -i script.py
 
 
 
-# 资料
-
-- 值得学习的内建包 https://pymotw.com/3/
-- 值得了解的第三方包 https://github.com/vinta/awesome-python
-
-
-
-## unofficial windows binaries
-
-https://www.lfd.uci.edu/~gohlke/pythonlibs/
-
 
 
 # 编码规范
@@ -729,24 +683,26 @@ if __name__ == "__main__":
     doctest.testmod()
 ```
 
+> ```
+> >>>
+> $ python template.py 
+> **********************************************************************
+> File "template.py", line 106, in __main__.MainClass1.function1
+> Failed example:
+>     a.function1(1,1,1)
+> Expected:
+>     2
+> Got:
+>     2.0
+> **********************************************************************
+> 1 items had failures:
+>    1 of   3 in __main__.MainClass1.function1
+> ***Test Failed*** 1 failures.
+> ```
+>
+> 
 
 
-```
->>>
-$ python template.py 
-**********************************************************************
-File "template.py", line 106, in __main__.MainClass1.function1
-Failed example:
-    a.function1(1,1,1)
-Expected:
-    2
-Got:
-    2.0
-**********************************************************************
-1 items had failures:
-   1 of   3 in __main__.MainClass1.function1
-***Test Failed*** 1 failures.
-```
 
 
 
@@ -775,3 +731,28 @@ Google Python Style Guide, 比PEP8 更严格的编程规范
 [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
 
 [Google: Python语言规范](http://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_language_rules/#lexical-scoping)
+
+
+
+
+
+# Appendix
+
+值得学习的内建包 https://pymotw.com/3/
+
+值得了解的第三方包 https://github.com/vinta/awesome-python
+
+
+
+https://github.com/gto76/python-cheatsheet#introspection
+
+
+
+## unofficial windows binaries
+
+https://www.lfd.uci.edu/~gohlke/pythonlibs/
+
+
+
+# 
+

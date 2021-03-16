@@ -253,3 +253,52 @@ handlers：
  - name: copy file
    copy: content="{{ ansible_all_ipv4_addresses }} " dest=/tmp/vars.ans
 ```
+
+
+
+
+
+## 
+
+## node_exporter
+
+使用的Ansible Playbook，用于批量部署node_exporter到多个目标主机。
+
+```
+- hosts: yourservers
+  user: root
+  gather_facts: false
+  vars:
+    - user: "prometheus"
+    - group: "prometheus"
+    - node_exporter_package: "node_exporter-0.16.0.linux-amd64"
+
+  tasks:
+  - group: name={{ group}} state=present
+
+  - name: Add user prometheus
+    user: name={{ user }} shell=/sbin/nologin
+
+  - file: path=/usr/local/prometheus owner={{ user}} group={{ group }} mode=750 state=directory
+
+  - name: Sync files
+    copy: src={{ item.src }} dest={{ item.dest }} owner={{ user}} group={{ group }}
+    with_items:
+      - {src: "node_exporter.service", dest: "/usr/lib/systemd/system"}
+
+  - name: Unpack package
+    unarchive: src={{ node_exporter_package }}.tar.gz dest=/usr/local/prometheus owner={{ user }} group={{ group }} creates=/usr/local/prometheus/node_exporter
+
+  - name: Rename the path
+    command: mv /usr/local/prometheus/{{ node_exporter_package }} /usr/local/prometheus/node_exporter creates=/usr/local/prometheus/node_exporter
+
+  - file: path=/usr/local/prometheus/node_exporter owner={{ user}} group={{ group }} mode=750
+
+  - name: Start service prometheus, if not running
+    service:
+      name: node_exporter.service
+      state: started
+```
+
+> 注意：软件采用的是提前下载至本地然后同步到目标主机的方式，也是线上部署最为稳妥的方式。
+

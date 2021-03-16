@@ -313,10 +313,110 @@ int add(int x, int y) {
 * Python
 
 ```
+from typing import Optional
 
+
+class Node:
+    def __init__(self, data: int, next_point_addr=None):
+        self.data = data
+        self.next_point_addr = next_point_addr
+
+
+class LinkedListStack:
+
+    def __init__(self):
+        self._top = None
+
+    def push(self, value: int):
+        new_top = Node(value)
+        new_top.next_point_addr = self._top
+        self._top = new_top
+
+    def pop(self) -> Optional[int]:
+        if self._top:
+            value = self._top.data
+            self._top = self._top.next_point_addr
+            return value
+        else:
+            return
+
+    def __repr__(self) -> str:
+        current_point_addr = self._top
+        nums = []
+        while current_point_addr:
+            nums.append(current_point_addr.data)
+            current_point_addr = current_point_addr.next_point_addr
+        return "\n|__|\n".join(f"| {num}|" for num in nums)
+
+
+class NewLinkedListStack(LinkedListStack):
+    def is_empty(self):
+        return not self._top
+
+
+class Browser:
+
+    def __init__(self):
+        self.forward = NewLinkedListStack()
+        self.back = NewLinkedListStack()
+
+    def can_be_forward(self):
+        if self.back.is_empty():
+            return False
+        return True
+
+    def can_be_back(self):
+        if self.forward.is_empty():
+            return False
+        return True
+
+    def handle_open(self, url):
+        print(f"Open new url={url}")
+        self.forward.push(url)
+
+    def handle_back(self):
+        if self.forward.is_empty():
+            return False
+        get_top_value = self.forward.pop()
+        self.back.push(get_top_value)
+        print(f"back to url={get_top_value}")
+
+    def handle_forward(self):
+        if self.back.is_empty():
+            return False
+
+        get_top_value = self.back.pop()
+        self.forward.push(get_top_value)
+        print(f"forward to url={get_top_value}")
+
+
+if __name__ == '__main__':
+    browser = Browser()
+    browser.handle_open('a')
+    browser.handle_open('b')
+    browser.handle_open('c')
+    if browser.can_be_back():
+        browser.handle_back()
+
+    if browser.can_be_forward():
+        browser.handle_forward()
+
+    browser.handle_back()
+    browser.handle_back()
+    browser.handle_back()
 ```
 
-
+> ```
+> >>>
+> Open new url=a
+> Open new url=b
+> Open new url=c
+> back to url=c
+> forward to url=c
+> back to url=c
+> back to url=b
+> back to url=a
+> ```
 
 
 

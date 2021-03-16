@@ -7,7 +7,7 @@ date: 2018-07-02 18:05
 
 
 
-# sys 模块
+# sys
 
 
 
@@ -153,4 +153,18 @@ RecursionError: maximum recursion depth exceeded in comparison
 ```
 
 >  mac内存是16G，如果把递归层数设定到1百万，大概跑到35000层左右，服务就挂了
+
+
+
+## getsizeof
+
+```
+In [3]: from sys import getsizeof
+
+In [4]: getsizeof("merged.csv")
+Out[4]: 59
+
+In [5]: ls -lah merged.csv
+-rw-r--r--  1 rxu  staff   994B Feb 27 18:54 merged.csv
+```
 

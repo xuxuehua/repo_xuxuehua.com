@@ -6,6 +6,28 @@ date: 2020-09-16 14:45
 
 
 
+
+
+# Copy
+
+
+
+## export to csv
+
+without header
+
+```
+\copy (SELECT * FROM persons) to '/tmp/persons_client.csv' with csv
+```
+
+with header
+
+```
+\copy table_name to 'filename.csv' csv header
+```
+
+
+
 # insert 
 
 ## into
@@ -19,7 +41,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS app4_id ON app4(original_code);
 
 
 ```
-insert into app4 (original_code) values  ('c56d05bbc061697c2de9e0cea2fe4569c56d05bbc061697c2d1'), ('3bb48267ca4a47d8de97ad3f45919e883bb48267ca4a47d8de97ad3f45919e883bb48267ca4a47d8de97ad3f45919e883bb2')  on conflict (original_code) do nothing returning id, original_code;
+insert into app4 (original_code) values  ('c56d05bbc06fe4569c56d05bbc061697c2d1'), ('3bb48267ca4a47d8de97ad3f45919e883bb48267ca4a47d8e883bb48267ca4a47d8de97ad3f45919e883bb2')  on conflict (original_code) do nothing returning id, original_code;
 ```
 
 
@@ -71,6 +93,26 @@ insert into app (class, status) select class, 3 as status from (
 
 
 
+### current timestamp
+
+To insert the current time use `current_timestamp` [as documented in the manual](https://www.postgresql.org/docs/current/static/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT):
+
+```sql
+INSERT into "Group" (name,createddate) 
+VALUES ('Test', current_timestamp);
+```
+
+To *display* that value in a different format change the configuration of your SQL client or format the value when SELECTing the data:
+
+```sql
+select name, to_char(createddate, ''yyyymmdd hh:mi:ss tt') as created_date
+from "Group"
+```
+
+------
+
+For `psql` (the default command line client) you can configure the display format through the configuration parameter `DateStyle`: https://www.postgresql.org/docs/current/static/runtime-config-client.html#GUC-DATESTYLE
+
 # select
 
 
@@ -98,6 +140,74 @@ from INFORMATION_SCHEMA.COLUMNS where table_name = '<name of table>';
 
 ```
 SELECT task_id, attempt, COUNT(attempt) FROM  prod_usage.task_attempts GROUP BY task_id, attempt HAVING COUNT(attempt) > 1;
+```
+
+
+
+
+
+## specific date
+
+```sql
+select * from audit_logs where date(created_date) = '2018-11-28'
+```
+
+
+
+## group by column
+
+```
+user_data=> SELECT task_id, attempt, COUNT(attempt) FROM  marketing_bigdata.task_attempts GROUP BY task_id, attempt HAVING COUNT(attempt) > 1;
+ task_id | attempt | count
+---------+---------+-------
+      15 |       0 |     2
+     619 |       0 |     2
+     621 |       0 |     2
+    1113 |       0 |     2
+     727 |       0 |     2
+     733 |       0 |     2
+     707 |       0 |     2
+```
+
+
+
+
+
+考慮表公司有如下記錄：
+
+```
+# select * from COMPANY;
+ id | name  | age | address   | salary
+----+-------+-----+-----------+--------
+  1 | Paul  |  32 | California|  20000
+  2 | Allen |  25 | Texas     |  15000
+  3 | Teddy |  23 | Norway    |  20000
+  4 | Mark  |  25 | Rich-Mond |  65000
+  5 | David |  27 | Texas     |  85000
+  6 | Kim   |  22 | South-Hall|  45000
+  7 | James |  24 | Houston   |  10000
+(7 rows)
+```
+
+如果想了解每個客戶的工資總額，然後GROUP BY查詢將如下：
+
+```
+testdb=# SELECT NAME, SUM(SALARY) FROM COMPANY GROUP BY NAME;
+```
+
+這將產生以下結果：
+
+```
+  name  |  sum
+ -------+-------
+  Teddy | 20000
+  Paul  | 20000
+  Mark  | 65000
+  David | 85000
+  Allen | 15000
+  Kim   | 45000
+  James | 10000
+(7 rows)
 ```
 
 
@@ -138,3 +248,14 @@ SELECT  sum(count_a) FROM plproxy.execute_select(\$proxy\$
     SELECT count(*) as count_a FROM mw.domain_x_domain_m WHERE date = '2020-09-30' 
 \$proxy\$) t (count_a bigint) ;
 ```
+
+
+
+
+
+# Appendix
+
+https://www.postgresqltutorial.com/export-postgresql-table-to-csv-file/
+
+http://tw.gitbook.net/postgresql/2013080564.html
+

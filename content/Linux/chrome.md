@@ -187,6 +187,24 @@ sudo usermod -a -G chrome-remote-desktop $USER
 
 
 
+install browsh
+
+```
+wget https://github.com/browsh-org/browsh/releases/download/v1.6.4/browsh_1.6.4_linux_amd64.deb
+```
+
+
+
+
+
+goto 
+
+```
+remotedesktop.google.com/headless
+```
+
+
+
 You need to allow Chrome Remote Desktop to access your account. If you approve, the page displays a command line for Debian Linux that looks like the following:
 
 ```

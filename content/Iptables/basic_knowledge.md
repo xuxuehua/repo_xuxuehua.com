@@ -74,7 +74,7 @@ FIN: 断开连接
 
 
 
-## iptables 处理流程及结构
+# iptables 处理流程及结构
 
 iptables -> Tables -> Chains -> Rules
 
@@ -92,12 +92,27 @@ iptables -> Tables -> Chains -> Rules
 
 当数据包进入系统时，系统首先根据路由表决定将数据包发给哪一条链，则可能有以下3种情况：
 
-​    1、数据包的目的地址是本机，则系统将数据包送往INPUT链，如果通过规则检查，则该包被发给相应的本地进程处理；如果没有通过规则检查，系统将丢弃该包。
-​    2、数据包的上的地址不是本机，也就是说这个包将被转发，则系统将数据包送往FORWARD链，如果通过规则检查，该包被发给相应的本地进程处理；如果没有通过规则检查，系统将丢弃该包。
+1. 数据包的目的地址是本机，则系统将数据包送往INPUT链，如果通过规则检查，则该包被发给相应的本地进程处理；如果没有通过规则检查，系统将丢弃该包。
+2. 数据包的上的地址不是本机，也就是说这个包将被转发，则系统将数据包送往FORWARD链，如果通过规则检查，该包被发给相应的本地进程处理；如果没有通过规则检查，系统将丢弃该包。
+3. 数据包是由本地系统进程产生的，则系统将其送往OUTPUT链，如果通过规则检查，则该包被发给相应的本地进程处理；如果没有通过规则检查，系统将丢弃该包。
 
-​    3、数据包是由本地系统进程产生的，则系统将其送往OUTPUT链，如果通过规则检查，则该包被发给相应的本地进程处理；如果没有通过规则检查，系统将丢弃该包。
 
-​    用户可以给各链定义规则，当数据包到达其中的每一条链，iptables就会根据链中定义的规则来处理这个包。iptables将数据包的头信息与它所传 递到的链中的每条规则进行比较，看它是否和每条规则完全匹配。如果数据包与某条规则匹配，iptables就对该数据包执行由该规则指定的操作。例如某条 链中的规则决定要丢弃(DROP)数据包，数据包就会在该链处丢弃；如果链中规则接受(ACCEPT)数据包，数据包就可以继续前进；但是，如果数据包与 这条规则不匹配，那么它将与链中的下一条规则进行比较。如果该数据包不符合该链中的任何一条规则，那么iptables将根据该链预先定义的默认策略来决 定如何处理该数据包，理想的默认策略应该告诉iptables丢弃(DROP)该数据包。
+
+用户可以给各链定义规则，当数据包到达其中的每一条链，iptables就会根据链中定义的规则来处理这个包。
+
+iptables将数据包的头信息与它所传递到的链中的每条规则进行比较，看它是否和每条规则完全匹配。
+
+如果数据包与某条规则匹配，iptables就对该数据包执行由该规则指定的操作。
+
+例如某条链中的规则决定要丢弃(DROP)数据包，数据包就会在该链处丢弃；
+
+如果链中规则接受(ACCEPT)数据包，数据包就可以继续前进；
+
+但是，如果数据包与这条规则不匹配，那么它将与链中的下一条规则进行比较。
+
+如果该数据包不符合该链中的任何一条规则，那么iptables将根据该链预先定义的默认策略来决 定如何处理该数据包
+
+理想的默认策略应该告诉iptables丢弃(DROP)该数据包。
 
 
 
@@ -107,21 +122,31 @@ iptables -> Tables -> Chains -> Rules
 
 iptables具有Filter, NAT, Mangle, Raw四种内建表
 
-### Filter表 (内建)
 
-Filter表示iptables的默认表，因此如果你没有自定义表，那么就默认使用filter表
 
-主要用于数据报文过滤。该表根据系统管理员预定义的一组规则过滤符合条件的数据包
-
-在filter表中只能允许对数据包进行接受，丢弃的操作，而无法对数据包进行更改
+优先级
 
 ```
-INPUT链 – 处理来自外部的数据。 
-
-OUTPUT链 – 处理向外发送的数据。 
-
-FORWARD链 – 将数据转发到本机的其他网卡设备上。 
+raw > mangle > nat > filter
 ```
+
+
+
+![Linux](basic_knowledge.assets/zmvYZ5HM8gDWIILAYwm5uNXcsz7SsbAVm0roS_mlPtdt-pia8bAR-I7EodwLTfcHifjZbqEpgLRU2gx6pgcu9Yrqxj4rBO-5F1tNy1qJuen5Y0aHXLAHzb7TOiOgXu-Xsfo.png)
+
+
+
+### Raw表
+
+只使用在PREROUTING链和OUTPUT链上，优先级最高，可以对收到的数据包在连接跟踪前进行处理。
+
+一但用户使用了RAW表，在某个链上RAW表处理完后，将跳过NAT表和 ip_conntrack处理，即不再做地址转换和数据包的链接跟踪处理了。
+
+
+
+### Mangle表 (内建)
+
+Mangle主要用作功能修改数据报文的属性。它能改变TCP头中的QoS位。
 
 
 
@@ -133,53 +158,21 @@ FORWARD链 – 将数据转发到本机的其他网卡设备上。
 
 在防火墙运作时，每个封包只会经过这个规则表一次。如果我们把数据包过滤的规则定义在这个数据表里，将会造成无法对同一包进行多次比对，因此这个规则表除了作网址转换外，请不要做其它用途。
 
-```
-PREROUTING链 – 处理刚到达本机并在路由转发前的数据包。它会转换数据包中的目标IP地址（destination ip address），通常用于DNAT(destination NAT)。 
-
-POSTROUTING链 – 处理即将离开本机的数据包。它会转换数据包中的源IP地址（source ip address），通常用于SNAT（source NAT）。 
-
-OUTPUT链 – 处理本机产生的数据包。 
-```
-
-
-
-### Mangle表 (内建)
-
-Mangle主要用作功能修改数据报文的属性。它能改变TCP头中的QoS位。
-
-```
-PREROUTING链
-
-OUTPUT链
-
-FORWARD链
-
-INPUT链
-
-POSTROUTING链
-```
 
 
 
 
+### Filter表 (内建)
 
-### Raw表
+Filter表示iptables的默认表，因此如果你没有自定义表，那么就默认使用filter表
 
-只使用在PREROUTING链和OUTPUT链上，优先级最高，可以对收到的数据包在连接跟踪前进行处理。一但用户使用了RAW表，在某个链上RAW表处理完后，将跳过NAT表和 ip_conntrack处理，即不再做地址转换和数据包的链接跟踪处理了。
+主要用于数据报文过滤。该表根据系统管理员预定义的一组规则过滤符合条件的数据包
 
-```
-PREROUTING chain
-
-OUTPUT chain
-```
+在filter表中只能允许对数据包进行接受，丢弃的操作，而无法对数据包进行更改
 
 
 
-### 规则表之间的优先顺序
 
-raw > mangle > nat > filter
-
-![Linux](basic_knowledge.assets/zmvYZ5HM8gDWIILAYwm5uNXcsz7SsbAVm0roS_mlPtdt-pia8bAR-I7EodwLTfcHifjZbqEpgLRU2gx6pgcu9Yrqxj4rBO-5F1tNy1qJuen5Y0aHXLAHzb7TOiOgXu-Xsfo.png)
 
 
 
@@ -193,21 +186,25 @@ raw > mangle > nat > filter
 
 ### PREROUTING
 
-需要转送处理的封包由此函式负责处理，此函式用来做目的地IP 的转译动作（DNAT）
+处理刚到达本机并在路由转发前的数据包。它会转换数据包中的目标IP地址（destination ip address），通常用于DNAT(destination NAT)。 
 
 
 
 ### INPUT
 
-只有要到达本机的封包才会由INPUT 函式处理，所以会让来自内部网路的封包无条件放行，来自外部网路的封包则过滤是否为回应封包，若是则放行。
+只有要到达本机的封包才会由INPUT函式处理，所以会让来自内部网路的封包无条件放行
+
+来自外部网路的封包则过滤是否为回应封包，若是则放行。
 
 
 
 ### FORWARD
 
-所有转送封包都在这里处理，这部分的过滤规则最复杂。
+所有转送封包都在这里处理，这部分的过滤规则最复杂
 
-#### 核心转发
+
+
+需要开启核心转发参数
 
 ```
 /proc/sys/net/ipv4/ip_forward
@@ -219,19 +216,17 @@ net.ipv4.ip_forward=1
 
 
 
-
-
 ### OUTPUT
 
 从本机送出去的封包由这个函式处理，通常会放行所有封包
 
 
 
+
+
 ### POSTROUTIONG
 
-通过路由表后，转送封包送出之前，发送到网卡接口之前。可以用于转发数据（SNAT，MASQUERADE）
-
-
+处理即将离开本机的数据包。它会转换数据包中的源IP地址（source ip address），通常用于SNAT（source NAT）MASQUERADE
 
 
 
@@ -258,29 +253,4 @@ QUEUE – 防火墙将数据包移交到用户空间
 RETURN – 防火墙停止执行当前链中的后续Rules，并返回到调用链(the calling chain)中。
 ```
 
-
-
-
-
-## 规则和链计数器
-
-### pkgs
-
-有规则或链所匹配的报文的个数
-
-
-
-### bytes  
-
-有规则或链匹配到所有报文大小之和
-
-
-
-
-
-## 定义计时器
-
-```
-iptables -A ... && sleep 10 && iptables -F
-```
 

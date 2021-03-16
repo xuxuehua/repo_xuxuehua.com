@@ -35,22 +35,33 @@ vncserver
 
 ## Ubuntu 
 
+
+
+### 18.04
+
 ```
-sudo apt update
-
-sudo apt install -y tightvncserver ubuntu-gnome-desktop lxde
-
-
-sudo apt install -y gnome-session gdm3
-sudo apt install -y tasksel
-sudo tasksel install ubuntu-desktop
-
-sudo apt install -y gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal
+sudo apt update  && apt upgrade -y && \
+sudo apt install -y gnome-session gdm3 && \
+sudo apt install -y tightvncserver ubuntu-gnome-desktop lxde && \
+sudo apt install -y gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal && \
+sudo apt install -y tasksel && \
+sudo tasksel install kubuntu-desktop
 ```
+
+
+
+fixing when facing errors, using `aptitude `
+
+```
+sudo apt-get install aptitude   # press Enter to execute the command.
+sudo aptitude install PACKAGENAME  # where PACKAGENAME is the package you’re installing, and press Enter to 																		execute it. This will try to install the package via aptitude instead of 																		apt-get, which should potentially fix the unmet dependencies issue.
+```
+
+
+
 
 ```
 adduser vnc
-passwd vnc
 
 echo "%vnc     ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers
 
@@ -67,6 +78,8 @@ unset DBUS_SESSION_BUS_ADDRESS
 [ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
 xsetroot -solid grey
 vncconfig -iconic &
+x-terminal-emulator -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &
+x-window-manager &
 
 gnome-panel &
 gnome-settings-daemon &
@@ -86,7 +99,7 @@ vncserver -kill :1
 * VNC Service File
 
 ```
-/etc/systemd/system/vncserver@.service 
+tee > /etc/systemd/system/vncserver@.service  <<EOF
 [Unit]
 Description=Start TightVNC server at startup
 After=syslog.target network.target
@@ -102,6 +115,7 @@ ExecStop=/usr/bin/vncserver -kill :%i
 
 [Install]
 WantedBy=multi-user.target
+EOF
 ```
 
 ```
@@ -109,6 +123,32 @@ sudo systemctl daemon-reload
 sudo systemctl enable vncserver@1.service
 sudo systemctl start vncserver@1.service
 ```
+
+
+
+
+
+## novnc
+
+**Installation from Snap Package**
+
+Running the command below will install the latest release of noVNC from Snap:
+
+```
+sudo snap install novnc
+```
+
+
+
+**Running noVNC**
+
+You can run the Snap-package installed novnc directly with, for example:
+
+```
+novnc --listen 6081 --vnc localhost:5901
+```
+
+
 
 
 
@@ -292,4 +332,10 @@ Authenticate as normal for the **vnc** user for SSH. Then, in the Screen Sharing
 
 
 
+
+
+
+# Appendix
+
+https://github.com/novnc/noVNC/tree/89f9ac00166f1106e03d46562ffeaa3d8032f399
 
