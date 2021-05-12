@@ -43,7 +43,7 @@ sudo yum install gnupg
 
 
 
-# 使用
+# Usage
 
 ## 生成一个键对
 

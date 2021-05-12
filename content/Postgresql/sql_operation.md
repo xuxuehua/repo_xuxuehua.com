@@ -109,9 +109,39 @@ select name, to_char(createddate, ''yyyymmdd hh:mi:ss tt') as created_date
 from "Group"
 ```
 
-------
+
 
 For `psql` (the default command line client) you can configure the display format through the configuration parameter `DateStyle`: https://www.postgresql.org/docs/current/static/runtime-config-client.html#GUC-DATESTYLE
+
+
+
+### 字段含单引号
+
+```
+insert into feature_path (id, text_value) values
+(11779156, $$featured10+40415+1+top banners #0/45$$),                                                                 
+(11779157, $$featured10+40415+1+top banners #0/45 > app top banner #0/45 ##1/9$$),                                    
+(11779158, $$featured10+40415+1+top banners #0/45 > app top banner #0/45 ##2/9$$),                                    
+(11779159, $$featured10+40415+1+top banners #0/45 > app top banner #0/45 ##3/9$$),                                    
+(11779160, $$featured10+40415+1+top banners #0/45 > app top banner #0/45 ##4/9$$),                                    
+(11779161, $$featured10+40415+1+top banners #0/45 > app top banner #0/45 ##5/9$$),                                    
+(11779162, $$featured10+40415+1+top banners #0/45 > app top banner #0/45 ##7/9$$),                                    
+(11779163, $$featured10+40415+1+top banners #0/45 > app top banner #0/45 ##8/9$$),                                    
+(11779164, $$featured10+40415+1+One-Click-Love$$),                                                                    
+(11779165, $$featured10+40415+1+This Week's Top Picks$$),                                                                                                 
+(11779222, $$featured10+33811+1+Jeux grand public > Plus$$),                                                          
+(11779223, $$featured10+33811+1+Jeux amusants > Plus$$),                                                              
+(11779224, $$featured10+33811+1+Jeux multijoueurs > Plus$$),                                                          
+(11779225, $$featured10+33811+1+Jeux hors connexion > Plus$$),                                                        
+(11779226, $$featured10+33811+1+top banners #0/30 > L'amour en un clic – Applications Android sur Google Play$$),     
+(11779227, $$featured10+33903+1+Palmarès gratuit dans la catégorie Jeux de réflexion$$),                              
+(11779228, $$featured10+33876+1+Palmarès gratuit dans la catégorie Jeux grand public$$),                              
+(11779229, $$featured10+33903+1+Palmarès gratuit dans la catégorie Jeux de réflexion > En voir plus$$)
+
+on conflict (text_value) do nothing returning id, text_value;
+```
+
+
 
 # select
 
@@ -150,6 +180,12 @@ SELECT task_id, attempt, COUNT(attempt) FROM  prod_usage.task_attempts GROUP BY 
 
 ```sql
 select * from audit_logs where date(created_date) = '2018-11-28'
+```
+
+
+
+```
+\copy (select application_name, count(application_name) from datapipeline.workflow_instance where DATE_TRUNC('day', create_time) = CURRENT_DATE - interval '27 day'  group by application_name ) To '/tmp/27.csv' With CSV DELIMITER ',' HEADER ;
 ```
 
 
@@ -258,4 +294,6 @@ SELECT  sum(count_a) FROM plproxy.execute_select(\$proxy\$
 https://www.postgresqltutorial.com/export-postgresql-table-to-csv-file/
 
 http://tw.gitbook.net/postgresql/2013080564.html
+
+https://popsql.com/learn-sql/postgresql/how-to-query-date-and-time-in-postgresql
 

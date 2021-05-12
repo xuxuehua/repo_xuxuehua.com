@@ -208,7 +208,7 @@ myapp-deployment-67b6dfcd8-59wxt
 
 将外部LoadBalancer(aliyun LBS)的请求分散到NodePort上，再由NodePort转发到Service上，Service再转发到Pod之上
 
-### 
+ 
 
 
 

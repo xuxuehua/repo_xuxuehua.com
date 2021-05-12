@@ -27,7 +27,7 @@ $ openssl no-XXX [ arbitrary options ]
 
 
 
-## commands
+# commands
 
 ### s_client  
 
@@ -64,6 +64,37 @@ This implements a generic SSL/TLS server which accepts connections from remote c
 
 
 
+
+
+## speed  测速
+
+```
+$ openssl speed -evp aes-256-gcm
+Doing aes-256-gcm for 3s on 16 size blocks: 107897710 aes-256-gcm's in 3.00s
+Doing aes-256-gcm for 3s on 64 size blocks: 68627661 aes-256-gcm's in 3.00s
+Doing aes-256-gcm for 3s on 256 size blocks: 24038659 aes-256-gcm's in 3.00s
+Doing aes-256-gcm for 3s on 1024 size blocks: 6093305 aes-256-gcm's in 2.99s
+Doing aes-256-gcm for 3s on 8192 size blocks: 774747 aes-256-gcm's in 2.99s
+LibreSSL 2.8.3
+built on: date not available
+options:bn(64,64) rc4(16x,int) des(idx,cisc,16,int) aes(partial) blowfish(idx)
+compiler: information not available
+The 'numbers' are in 1000s of bytes per second processed.
+type             16 bytes     64 bytes    256 bytes   1024 bytes   8192 bytes
+aes-256-gcm     575878.68k  1464113.38k  2052296.32k  2084521.60k  2122290.74k
+```
+
+
+
+```
+$ openssl speed -evp chacha20-poly1305
+chacha20-poly1305 is an unknown cipher or digest
+```
+
+
+
+
+
 ## rand 随机数
 
 随机字符串
@@ -79,6 +110,8 @@ GsOFIA==
 openssl rand -base64 4 | cksum | cut -c 1-8
 15404016
 ```
+
+
 
 
 

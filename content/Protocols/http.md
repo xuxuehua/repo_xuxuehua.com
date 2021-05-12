@@ -848,13 +848,13 @@ module.exports = {
 
 
 
-## 1XX 信息相关
+## 1XX Informational 信息相关
 
 API 不需要`1xx`状态码
 
 
 
-## 2XX 成功类
+## 2XX Success 成功类
 
 ### 200 
 
@@ -892,7 +892,7 @@ partial content 客户发送了一个带有Range头的GET请求，服务器完�
 
 
 
-## 3XX 重定向类
+## 3XX Redirection 重定向类
 
 ### 301
 
@@ -949,7 +949,7 @@ Not modified 未按预期修改文档。客户端有缓冲的文档并发出了�
 
 
 
-## 4XX 客户端错误类
+## 4XX Client Error 客户端错误类
 
 
 
@@ -1049,6 +1049,14 @@ Unprocessable Entity， 客户端上传的附件无法处理，导致请求失�
 
 
 
+### 424
+
+ (Failed Dependency) status code means that the method could not be performed on the resource because the requested action depended on another action and that action failed. For example, if a command in a PROPPATCH method fails, then, at minimum, the rest of the commands will also fail with 424 (Failed Dependency).
+
+
+
+
+
 ### 429
 
 Too Many Requests， 客户端的请求次数超过限额。
@@ -1057,7 +1065,7 @@ Too Many Requests， 客户端的请求次数超过限额。
 
 
 
-## 5XX 服务器端错误类
+## 5XX Server Error 服务器端错误类
 
 
 
@@ -1137,3 +1145,10 @@ Possible causes:
 - The target returns a content-length header that is larger than the entity body. The load balancer timed out waiting for the missing bytes.
 - The target is a Lambda function and the Lambda service did not respond before the connection timeout expired.
 
+
+
+
+
+# Appendix
+
+https://www.restapitutorial.com/httpstatuscodes.html#:~:text=The%20424%20(Failed%20Dependency)%20status,action%20and%20that%20action%20failed.

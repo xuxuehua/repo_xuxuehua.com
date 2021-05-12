@@ -9,8 +9,6 @@ date: 2018-10-10 11:44
 
 # find
 
-## Usage
-
 ```
 find [-H] [-L] [-P] [-Olevel] [-D help|tree|search|stat|rates|opt|exec] [path...] [expression]
 ```
@@ -61,7 +59,7 @@ find /home ! -name "*.txt"
 
 
 
-### -amin
+## -amin
 
 查找在指定时间曾被存取过的文件或目录，单位以分钟计算
 
@@ -73,12 +71,12 @@ find . -type f -amin +10
 
 
 
-### -anewer<参考文件或目录>
+## -anewer<参考文件或目录>
 
 查找其存取时间较指定文件或目录的存取时间更接近现在的文件或目录
 
 
-### -atime 
+## -atime 
 
 查找在指定时间曾被存取过的文件或目录，单位以24小时计算
 
@@ -102,30 +100,34 @@ find . -type f -atime +7
 
 
 
-### -cmin<分钟>
+## -cmin<分钟>
 
 查找在指定时间之时被更改过的文件或目录
 
-### -cnewer<参考文件或目录>
+
+
+## -cnewer<参考文件或目录>
 
 查找其更改时间较指定文件或目录的更改时间更接近现在的文件或目录；
 
 
 
-### -ctime<24小时数>
+
+
+## -ctime<24小时数>
 
 查找在指定时间之时被更改的文件或目录，单位以24小时计算
 
 
 
 
-### -daystart
+## -daystart
 
 从本日开始计算时间
 
 
 
-### -delete 删除
+## -delete 删除
 
 删除当前目录下所有.txt文件
 
@@ -136,12 +138,13 @@ find . -type f -name "*.txt" -delete
 
 
 
-### -depth
+## -depth
 
 从指定目录下最深层的子目录开始查找
 
 
-### -empty
+
+## -empty
 
 寻找文件大小为0 Byte的文件，或目录下没有任何子目录或文件的空目录
 
@@ -156,7 +159,7 @@ find . -empty
 
 
 
-### -exec 执行指令
+## -exec 执行指令
 
 假设find指令的回传值为True，就执行该指令
 
@@ -198,43 +201,49 @@ find . -type f -name "*.txt" -exec printf "File: %s\n" {} \;
 
 
 
-### -false
+## -false
 
 将find指令的回传值皆设为False
 
 
-### -fls<列表文件>
+
+## -fls<列表文件>
 
 此参数的效果和指定“-ls”参数类似，但会把结果保存为指定的列表文件
 
 
-### -follow
+
+## -follow
 
 排除符号连接
 
 
-### -fprint<列表文件>
+
+## -fprint<列表文件>
 
 此参数的效果和指定“-print”参数类似，但会把结果保存成指定的列表文件
 
 
-### -fprint0<列表文件>
+
+## -fprint0<列表文件>
 
 此参数的效果和指定“-print0”参数类似，但会把结果保存成指定的列表文件
 
 
-### -fprintf<列表文件><输出格式>
+
+## -fprintf<列表文件><输出格式>
 
 此参数的效果和指定“-printf”参数类似，但会把结果保存成指定的列表文件
 
 
-### -fstype<文件系统类型>
+
+## -fstype<文件系统类型>
 
 只寻找该文件系统类型下的文件或目录
 
 
 
-### -prune 跳出指定目录
+## -prune 跳出指定目录
 
 查找当前目录或者子目录下所有.txt文件，但是跳过子目录sk
 
@@ -245,41 +254,49 @@ find . -path "./sk" -prune -o -name "*.txt" -print
 
 
 
-### -gid<群组识别码>
+## -gid<群组识别码>
 
 查找符合指定之群组识别码的文件或目录
 
 
-### -group<群组名称>
+
+## -group<群组名称>
 
 查找符合指定之群组名称的文件或目录
 
 
-### -help或--help
+
+## -help或--help
 
 在线帮助
 
 
-### -ilname<范本样式>
+
+## -ilname<范本样式>
 
 此参数的效果和指定“-lname”参数类似，但忽略字符大小写的差别
 
 
-### -iname<范本样式>
+
+## -iname<范本样式>
 
 此参数的效果和指定“-name”参数类似，但忽略字符大小写的差别
 
 
-### -inum<inode编号>
+
+## -inum<inode编号>
 
 查找符合指定的inode编号的文件或目录
 
 
-### -ipath<范本样式>
+
+## -ipath<范本样式>
 
 此参数的效果和指定“-path”参数类似，但忽略字符大小写的差别
 
-### -iregex
+
+
+## -iregex
 
 此参数的效果和指定“-regexe”参数类似，但忽略字符大小写的差别
 
@@ -293,12 +310,13 @@ find . -iregex ".*\(\.txt\|\.pdf\)$"
 
 
 
-### -links<连接数目>
+## -links<连接数目>
 
 查找符合指定的硬连接数目的文件或目录
 
 
-### -iname 
+
+## -iname 
 
 指定字符串作为寻找符号连接的范本样式
 
@@ -311,12 +329,14 @@ find /home -iname "*.txt"
 ```
 
 
-### -ls
+
+## -ls
 
 假设find指令的回传值为Ture，就将文件或目录名称列出到标准输出
 
 
-### -maxdepth 
+
+## -maxdepth 
 
 设置最大目录层级
 
@@ -327,7 +347,8 @@ find . -maxdepth 3 -type f
 ```
 
 
-### -mindepth 
+
+## -mindepth 
 
 设置最小目录层级
 
@@ -340,17 +361,19 @@ find . -mindepth 2 -type f
 
 
 
-### -mmin<分钟>
+## -mmin<分钟>
 
 查找在指定时间曾被更改过的文件或目录，单位以分钟计算
 
 
-### -mount
+
+## -mount
 
 此参数的效果和指定“-xdev”相同
 
 
-### -mtime<24小时数>
+
+## -mtime<24小时数>
 
 查找在指定时间曾被更改过的文件或目录，单位以24小时计算
 
@@ -365,7 +388,7 @@ find /directory_path -mtime -1 -ls
 
 
 
-### -name 指定字符串
+## -name 指定字符串
 
 指定字符串作为寻找文件或目录的范本样式
 
@@ -380,7 +403,7 @@ find /home -name "*.txt"
 
 
 
-### -newer 
+## -newer 
 
 查找其更改时间较指定文件或目录的更改时间更接近现在的文件或目录
 
@@ -395,24 +418,27 @@ find . -type f -newer file.log
 
 
 
-### -nogroup
+## -nogroup
 
 找出不属于本地主机群组识别码的文件或目录
 
 
-### -noleaf
+
+## -noleaf
 
 不去考虑目录至少需拥有两个硬连接存在
 
 
-### -nouser
+
+## -nouser
 
 找出不属于本地主机用户识别码的文件或目录
 
 
 
 
-### -ok 执行指令
+
+## -ok 执行指令
 
 此参数的效果和指定“-exec”类似，但在执行指令之前会先询问用户，若回答“y”或“Y”，则放弃执行命令
 
@@ -429,7 +455,7 @@ find $HOME/. -name "*.txt" -ok rm {} \;
 
 
 
-### -path 路径
+## -path 路径
 
 匹配文件路径或者文件
 
@@ -440,7 +466,7 @@ find /usr/ -path "*local*"
 
 
 
-### -perm 权限
+## -perm 权限
 
 查找符合指定的权限数值的文件或目录
 
@@ -458,25 +484,25 @@ find . -type f -name "*.php" ! -perm 644
 
 
 
-### -print
+## -print
 
 假设find指令的回传值为Ture，就将文件或目录名称列出到标准输出。格式为每列一个名称，每个名称前皆有“./”字符串
 
 
 
-### -print0
+## -print
 
 假设find指令的回传值为Ture，就将文件或目录名称列出到标准输出。格式为全部的名称皆在同一行
 
 
 
-### -printf<输出格式>
+## -printf<输出格式>
 
 假设find指令的回传值为Ture，就将文件或目录名称列出到标准输出。格式可以自行指定
 
 
 
-### -prune 排除
+## -prune 排除
 
 不寻找字符串作为寻找文件或目录的范本样式
 
@@ -498,7 +524,7 @@ Here we exclude dir1, dir2 and dir3, since in `find` expressions it is an action
 
 
 
-### -regex 正则表达式
+## -regex 正则表达式
 
 基于正则表达式匹配文件路径
 
@@ -530,11 +556,9 @@ find . -regextype posix-extended -regex ".*file-($a|$b)\.txt"
 
 
 
-### -size 文件大小
+## -size 文件大小
 
 查找符合指定的文件大小的文件
-
-
 
 文件大小单元：
 
@@ -566,12 +590,13 @@ find . -type f -size 10k
 
 
 
-### -true
+## -true
 
 将find指令的回传值皆设为True
 
 
-### -type 文件类型
+
+## -type 文件类型
 
 只寻找符合指定的文件类型的文件
 
@@ -599,17 +624,19 @@ find . -type f -name '*.txt' -exec sed -i '' s/this/that/g {} +
 
 
 
-### -uid<用户识别码>
+## -uid<用户识别码>
 
 查找符合指定的用户识别码的文件或目录
 
 
-### -used<日数>
+
+## -used<日数>
 
 查找文件或目录被更改之后在指定时间曾被存取过的文件或目录，单位以日计算
 
 
-### -user 拥有者名称
+
+## -user 拥有者名称
 
 查找符和指定的拥有者名称的文件或目录
 
@@ -626,17 +653,20 @@ find . -type f -group sunk
 ```
 
 
-### -version或——version
+
+## -version或——version
 
 显示版本信息
 
 
-### -xdev
+
+## -xdev
 
 将范围局限在先行的文件系统中
 
 
-### -xtype<文件类型>
+
+## -xtype<文件类型>
 
 此参数的效果和指定“-type”参数类似，差别在于它针对符号连接检查
 

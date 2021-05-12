@@ -125,3 +125,11 @@ date: 2020-12-01 11:21
 
 ![image-20201201113821573](basic_knowledge.assets/image-20201201113821573.png)
 
+
+
+
+
+# Optimize Databricks Costs
+
+https://tech.scribd.com/blog/2020/optimize-databricks-cluster-configuration.html
+

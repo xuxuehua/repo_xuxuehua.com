@@ -13,9 +13,9 @@ date: 2018-11-16 08:26
 
 
 
-## Installation
+# Installation
 
-### Linux 
+## Linux 
 
 ```
 wget https://www.aescrypt.com/download/v3/linux/aescrypt-3.14.tgz
@@ -23,7 +23,7 @@ wget https://www.aescrypt.com/download/v3/linux/aescrypt-3.14.tgz
 
 
 
-### Mac
+## Mac
 
 ```
 https://www.aescrypt.com/download/v3/mac/aescrypt_mac_v314_x64.zip
@@ -31,7 +31,7 @@ https://www.aescrypt.com/download/v3/mac/aescrypt_mac_v314_x64.zip
 
 
 
-## Usage
+# Usage
 
 ```
 aescrypt {-e|-d} [ { -p <password> | -k <keyfile> } ] { [-o <output filename>] <file> | <file> [<file> ...] }
@@ -39,7 +39,7 @@ aescrypt {-e|-d} [ { -p <password> | -k <keyfile> } ] { [-o <output filename>] <
 
 
 
-### -e encrypt
+## -e encrypt
 
 ```
 aescrypt -e apples picture.jpg
@@ -51,7 +51,7 @@ tar -zcvf - /home | aescrypt -e -p apples - >backup_files.tar.gz.aes
 
 
 
-### -d decrypt
+## -d decrypt
 
 ```
 aescrypt -d apples picture.jpg.aes
@@ -59,7 +59,7 @@ aescrypt -d apples picture.jpg.aes
 
 
 
-### -o decrypt on screen instead of file
+## -o decrypt on screen instead of file
 
 ```
 aescrypt -d -o - 1.txt.aes

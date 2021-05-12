@@ -169,7 +169,7 @@ Out[72]: 1
 
 
 
-## List vs Tuple
+# List vs Tuple
 
 相同的元素，但是元组的存储空间，却比列表要少16字节
 
@@ -237,7 +237,7 @@ Python每次分配空间时都会额外多分配一些，这样的机制(over-al
 
 
 
-### 空列表创建
+## 空列表创建
 
 区别主要在于list()是一个function call，Python的function call会创建stack，并且进行一系列参数检查的
 操作，比较expensive，反观[]是一个内置的C函数，可以直接被调用，因此效率高。
@@ -263,7 +263,7 @@ python -m timeit 'empty_list = ()'
 
 
 
-### 使用场景
+## 使用场景
 
 如果存储的数据和数量不变，比如你有一个函数，需要返回的是一个地点的经纬度，然后直接传给前端
 渲染，那么肯定选用元组更合适
@@ -285,6 +285,23 @@ def get_location():
 viewer_owner_id_list = [] # 里面的每个元素记录了这个viewer一周内看过的所有owner的id
 records = queryDB(viewer_id) # 索引数据库，拿到某个viewer一周内的日志 for record in records:
       viewer_owner_id_list.append(record.id)
+```
+
+
+
+
+
+# tuple to dict
+
+```
+In [53]: data = [(u'030944', u'20091123', 10, 30, 0), (u'030944', u'20100226', 10, 15, 0)]
+
+In [54]: fields = ['id', 'date', 'hour', 'minute', 'interval']
+
+In [55]: [dict(zip(fields, d)) for d in data]
+Out[55]: 
+[{'id': '030944', 'date': '20091123', 'hour': 10, 'minute': 30, 'interval': 0},
+ {'id': '030944', 'date': '20100226', 'hour': 10, 'minute': 15, 'interval': 0}]
 ```
 
 

@@ -680,7 +680,7 @@ Application health (and metrics)
 
 
 
-# 术语
+# Terminology
 
 ## HPA
 

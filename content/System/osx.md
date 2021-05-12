@@ -54,6 +54,10 @@ release info
 
 https://xcodereleases.com/
 
+```
+https://download.developer.apple.com/Developer_Tools/Xcode_12.4/Xcode_12.4.xip
+```
+
 
 
 

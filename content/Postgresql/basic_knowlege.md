@@ -8,7 +8,7 @@ date: 2019-08-04 23:04
 
 
 
-# 安装
+# Installation
 
 ## linux
 

@@ -492,6 +492,16 @@ Priyanka 18
 
 
 
+## to_dict
+
+从dataframe 获取为字典输出
+
+```
+dict(df_ondemand.to_dict('split')['data'])
+```
+
+
+
 # 数据清洗
 
 数据处理中的清洗工作主要包括对空值、重复值和异常值的处理：
@@ -626,7 +636,7 @@ fillna并不会更新原有的DataFrame
 
 
 
-## apply
+## apply (逐行/列追加)
 
 **既适用于series对象也适用于dataframe对象**，但对二者处理的粒度是不一样的
 
@@ -688,6 +698,15 @@ pandas中又一个重量级数据处理功能是对多个dataframe进行合并�
 这里需要使用outer
 
 ![image-20210316005928939](pandas.assets/image-20210316005928939.png)
+
+
+
+或者
+
+```
+dfs = [df_advanced, df_pipeline, df_stargate, df_store, df_usage, df_others]
+    df_role_info = reduce(lambda left, right: pd.merge(left, right, how='outer'), dfs)
+```
 
 
 

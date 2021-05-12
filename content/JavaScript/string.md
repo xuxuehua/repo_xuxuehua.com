@@ -224,6 +224,16 @@ str.toString()
 
 
 
+### split 
+
+```
+var s = 'hello/world'
+s.split('/')[0]
+"hello"
+```
+
+
+
 
 
 ### tri 去除空格

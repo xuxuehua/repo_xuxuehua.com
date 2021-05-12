@@ -464,7 +464,7 @@ i server        Basic Ubuntu server
 
 
 
-### pkexec 命令
+### pkexec  修复sudoer 
 
 修复破坏的sudoer 文件
 
@@ -579,7 +579,7 @@ ffprobe 1.mp4ls /tmp
 
 
 
-# 截图
+# flameshot 截图 
 
 ```text
 sudo apt install flameshot
@@ -587,7 +587,7 @@ sudo apt install flameshot
 
 如果你在安装过程中遇到问题，可以按照[官方的安装说明](https://link.zhihu.com/?target=https%3A//github.com/lupoDharkael/flameshot%23installation)进行操作。安装完成后，你还需要进行配置。尽管可以通过搜索来随时启动 Flameshot，但如果想使用 ctrl+shirt+p 键触发启动，则需要指定对应的键盘快捷键。以下是相关配置步骤：
 
-- 进入系统设置中的“键盘设置”
+- 进入系统设置中的“键盘设置” (KDE 是 Shortcuts)
 
 - 页面中会列出所有现有的键盘快捷键，拉到底部就会看见一个 “+” 按钮
 
@@ -599,6 +599,12 @@ sudo apt install flameshot
 
 
 
+
+# promote user as administrator
+
+```
+sudo usermod -aG sudo USERNAME
+```
 
 
 
@@ -614,9 +620,10 @@ Important: This step will remove a previous installation at /usr/local/go, if an
 For example, run the following as root or through sudo:
 
 ```
+wget https://dl.google.com/go/go1.16.linux-amd64.tar.gz
+
 rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.linux-amd64.tar.gz
 ```
-
 
 Add /usr/local/go/bin to the PATH environment variable.
 You can do this by adding the following line to your $HOME/.profile or /etc/profile (for a system-wide installation):
@@ -653,9 +660,11 @@ export PATH=$GOPATH:$GOPATH/bin:$PATH
 
 
 From sources
-To install from the latest source, run:
+To install from the latest source, run with root privilege:
 
 ```
+sudo apt -y install build-essential
+
 go get -u github.com/odeke-em/drive/cmd/drive
 ```
 
@@ -668,7 +677,7 @@ In order to address issue #138, where debug information should be bundled with t
 go get github.com/odeke-em/drive/drive-gen && drive-gen
 ```
 
-In case you need a specific binary e.g for Debian folks issue #271 and issue 277
+
 
 In case you need a specific binary e.g for Debian folks issue #271 and issue 277
 
@@ -744,6 +753,12 @@ echo "deb https://qv2ray.github.io/debian/ stable main" | sudo tee /etc/apt/sour
 sudo apt update
 ```
 
+Or
+
+```
+sudo snap install qv2ray
+```
+
 
 
 core files
@@ -751,11 +766,246 @@ core files
 ```
 sudo apt update
 sudo apt install wget unzip -y
-mv ~/.config ~/config
-cd ~/config/qv2ray/
+mkdir -p /home/vnc/qv2ray/
+cd /home/vnc/qv2ray/
 wget https://github.com/v2ray/v2ray-core/releases/download/v4.28.2/v2ray-linux-64.zip
 unzip v2ray-linux-64.zip -d vcore
 rm -rf v2ray-linux-64.zip
+```
+
+
+
+## v2ray client
+
+edit config.json
+
+```
+{
+    "inbounds":[
+        {
+            "port":1089,
+            "listen":"127.0.0.1",
+            "protocol":"socks",
+            "settings":{
+                "udp":true
+            }
+        }
+    ],
+    "outbounds":[
+        {
+            "mux":{
+
+            },
+            "protocol":"vmess",
+            "sendThrough":"0.0.0.0",
+            "settings":{
+                "vnext":[
+                    {
+                        "address":"",
+                        "port":26706,
+                        "users":[
+                            {
+                                "alterId":8,
+                                "id":"1886c538-3a62-49f2-864c-dee66841f9d3",
+                                "level":0,
+                                "security":"auto",
+                                "testsEnabled":"none"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "streamSettings":{
+                "dsSettings":{
+                    "path":"/"
+                },
+                "httpSettings":{
+                    "host":[
+
+                    ],
+                    "path":"/"
+                },
+                "kcpSettings":{
+                    "congestion":false,
+                    "downlinkCapacity":20,
+                    "header":{
+                        "type":"none"
+                    },
+                    "mtu":1350,
+                    "readBufferSize":1,
+                    "seed":"",
+                    "tti":20,
+                    "uplinkCapacity":5,
+                    "writeBufferSize":1
+                },
+                "network":"tcp",
+                "quicSettings":{
+                    "header":{
+                        "type":"none"
+                    },
+                    "key":"",
+                    "security":""
+                },
+                "security":"none",
+                "sockopt":{
+                    "mark":0,
+                    "tcpFastOpen":false,
+                    "tproxy":"off"
+                },
+                "tcpSettings":{
+                    "header":{
+                        "request":{
+                            "headers":{
+
+                            },
+                            "method":"GET",
+                            "path":[
+
+                            ],
+                            "version":"1.1"
+                        },
+                        "response":{
+                            "headers":{
+
+                            },
+                            "reason":"OK",
+                            "status":"200",
+                            "version":"1.1"
+                        },
+                        "type":"none"
+                    }
+                },
+                "tlsSettings":{
+                    "allowInsecure":false,
+                    "allowInsecureCiphers":false,
+                    "alpn":[
+
+                    ],
+                    "certificates":[
+
+                    ],
+                    "disableSessionResumption":true,
+                    "disableSystemRoot":false,
+                    "serverName":""
+                },
+                "wsSettings":{
+                    "headers":{
+
+                    },
+                    "path":"/"
+                }
+            },
+            "tag":"outBound_PROXY"
+        }
+    ],
+    "routing":{
+        "domainStrategy":"IPOnDemand",
+        "rules":[
+            {
+                "type":"field",
+                "ip":[
+                    "geoip:private"
+                ],
+                "outboundTag":"direct"
+            }
+        ]
+    }
+}
+```
+
+
+
+```
+./v2ray -config=config.json
+```
+
+
+
+and finally connect to 1089
+
+
+
+
+
+# xrdp
+
+Copy the code below into your Terminal console and let it execute. This will create a file called .xsessionrc. This file is kind of login script will load your desktop configuration into the remote session. After the file is created, login back to xRDP session and see if the desktop look like the one you have when logged on locally.
+
+```
+cat <<EOF > ~/.xsessionrc
+echo export GNOME_SHELL_SESSION_MODE=ubuntu
+export XDG_CURRENT_DESKTOP=ubuntu:GNOME
+export XDG_CONFIG_DIRS=/etc/xdg/xdg-ubuntu:/etc/xdg
+EOF 
+```
+
+
+
+
+
+# Apache Guacamole
+
+https://www.linuxbabe.com/ubuntu/apache-guacamole-remote-desktop-ubuntu-20-04
+
+https://github.com/neutrinolabs/pulseaudio-module-xrdp
+
+
+
+# teamviewer
+
+```
+wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
+```
+
+
+
+# System load in taskbar
+
+```
+sudo apt install indicator-multiload
+```
+
+Search for System Load Indicator in dash and launch it
+
+
+
+# Wifi Scan authentication
+
+System Policy prevents WiFi Scans
+
+
+
+To avoid such dialog box while trying to connect to a WiFi network, you will need to create your own pkla file.  In our scenario, we will create a file called **47-allow-wifi-scans.pkla** which will be created under /etc/polkit-1/localauthority/50-local.d/.  You need administrative privileges in order to write in this location !
+
+The initial pkla file would contains the following information 
+
+```
+vim /etc/polkit-1/localauthority/50-local.d/47-allow-wifi-scans.pkla
+[Allow Wifi Scan]
+Identity=unix-user:*
+Action=org.freedesktop.NetworkManager.wifi.scan
+ResultAny=yes
+ResultInactive=yes
+ResultActive=yes
+```
+
+
+
+
+
+
+
+
+
+# aptitude (fix dependencies)
+
+```
+sudo apt-get install aptitude
+
+
+apt clean
+apt autoclean 
+aptitude install PACKAGE_NAME
 ```
 
 
@@ -769,3 +1019,10 @@ https://golang.org/doc/install
 https://github.com/odeke-em/drive#requirements
 
 https://superuser.com/questions/1102630/how-can-i-make-an-open-libreoffice-save-a-file-without-using-the-gui/1102670
+
+https://askubuntu.com/questions/1233088/xrdp-desktop-looks-different-when-connecting-remotely
+
+https://www.v2ray.com/en/welcome/install.html
+
+https://c-nergy.be/blog/?p=16310
+

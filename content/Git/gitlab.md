@@ -12,9 +12,35 @@ date: 2020-03-04 23:07
 
 
 
-## installation 
+# installation 
 
-### Ubuntu
+
+
+## Amazon linux
+
+* CE
+
+```
+curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+
+yum install gitlab-ce
+```
+
+
+
+
+
+* EE
+
+```
+curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.rpm.sh | sudo bash
+```
+
+
+
+
+
+## Ubuntu
 
 * 12.8.1
 
@@ -66,7 +92,7 @@ gitlab-ctl reconfigure
 
 
 
-### docker
+## docker
 
 ```bash
 sudo docker run --detach \
@@ -130,7 +156,87 @@ Go to web UI to complete Gitlab initilization
 
 
 
-### Gitlab-runner
+## https (failed)
+
+```
+sudo apt-get install software-properties-common
+sudo add-apt-repository universe
+sudo add-apt-repository ppa:certbot/certbotsudo 
+apt-get update && apt install certbot -y && sudo apt install python-certbot-nginx -y 
+```
+
+Setup certification
+
+```
+certbot --nginx
+```
+
+set up your server inside the Nginx configuration. Certbot has already created a configuration for you inside `/etc/nginx/sites-enabled`. Alter the configuration for the host and the port that it points to like this
+
+```
+# make sure this map append into the config
+map $http_upgrade $connection_upgrade {
+        default upgrade;
+        '' close;
+}
+
+server {
+	server_name git.domain.com;
+	client_max_body_size 256M;
+
+	location / {
+		proxy_pass http://localhost:4000;
+
+		proxy_read_timeout 3600s;
+		proxy_http_version 1.1;
+		# Websocket connection
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection $connection_upgrade;
+	}
+
+	listen [::]:443;
+
+	listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/git.domain.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/git.domain.com/privkey.pem; # managed by Certbot
+	include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+# Gitlab-runner
+
+
+
+## installation in centos
+
+```
+arch=amd64
+curl -LJO "https://gitlab-runner-downloads.s3.amazonaws.com/latest/rpm/gitlab-runner_${arch}.rpm"
+```
+
+
+
+```
+gitlab-runner register
+```
+
+
+
+
+
+## installation by docker
 
 ```
 docker run -d --name gitlab-runner --restart always \
@@ -159,7 +265,7 @@ Running in system-mode.
 Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com/):
 http://public_ip
 Please enter the gitlab-ci token for this runner:
-ukcmybsDQxxzsom3RB6CN
+ukcmybsDQxxzsomxxx6CN
 Please enter the gitlab-ci description for this runner:
 [55d9aff26c4d]: sample-docker-runner
 Please enter the gitlab-ci tags for this runner (comma separated):
@@ -223,7 +329,7 @@ check_interval = 0
 
 
 
-#### gitlab-ci.yml
+## gitlab-ci.yml
 
 ```
 image: docker:latest
@@ -251,55 +357,6 @@ to do after completing the steps in this post.
 - Use an image/container management tool like https://www.portainer.io/ to manage your containers/images on your host machine. That includes your GitLab installation and GitLab runners.
 
 
-
-#### https (failed)
-
-```
-sudo apt-get install software-properties-common
-sudo add-apt-repository universe
-sudo add-apt-repository ppa:certbot/certbotsudo 
-apt-get update && apt install certbot -y && sudo apt install python-certbot-nginx -y 
-```
-
-Setup certification
-
-```
-certbot --nginx
-```
-
-set up your server inside the Nginx configuration. Certbot has already created a configuration for you inside `/etc/nginx/sites-enabled`. Alter the configuration for the host and the port that it points to like this
-
-```
-# make sure this map append into the config
-map $http_upgrade $connection_upgrade {
-        default upgrade;
-        '' close;
-}
-
-server {
-	server_name git.domain.com;
-	client_max_body_size 256M;
-
-	location / {
-		proxy_pass http://localhost:4000;
-
-		proxy_read_timeout 3600s;
-		proxy_http_version 1.1;
-		# Websocket connection
-		proxy_set_header Upgrade $http_upgrade;
-		proxy_set_header Connection $connection_upgrade;
-	}
-
-	listen [::]:443;
-
-	listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/git.domain.com/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/git.domain.com/privkey.pem; # managed by Certbot
-	include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
-}
-```
 
 
 
@@ -385,3 +442,14 @@ https://gitlab.com/kargo-ci/kubernetes-sigs-kubespray
 
 
 ![image-20201115100046158](gitlab.assets/image-20201115100046158.png)
+
+
+
+
+
+
+
+# Appendix
+
+https://docs.gitlab.com/runner/install/linux-manually.html
+

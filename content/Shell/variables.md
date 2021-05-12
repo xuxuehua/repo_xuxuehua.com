@@ -16,11 +16,71 @@ date: 2020-03-22 19:48
 
 变量定义中“=”前后不能有空格，命名规则就和其它语言一样了
 
+对shell而言，默认所有的变量值都是字符串，所以默认时不能进行算数计算
+
+
+
+## 环境变量
+
+作用域为当前shell进程及其子进程
+
+```
+export VARNAME=VALUE
+or
+VARNAME=VALUE   export VARNAME
+```
+
+
+
+查看当前shell中的环境变量
+
+```
+printenv
+env
+
+\0     means a null character
+\n     换行
+export
+```
+
+
+
+## 本地变量
+
+```
+VARNAME=VALUE        # 整个bash进程有效
+```
+
 
 
 ## 局部变量
 
 默认变量是全局的，在函数中变量local指定为局部变量，避免污染其他作用域。
+
+```
+local   VARNAME＝VALUE         # 只对当前代码段有效
+```
+
+
+
+## 位置变量
+
+```
+$1     第一个位置变量
+$2     第二个位置变量
+```
+
+
+
+```
+./filetest.sh  /etc/fstab /etc/inittab
+
+$1     脚本中引用此变量，表示参数 /etc/fstab
+$2     对应/etc/inittab
+……依次类推
+```
+
+
 
 
 
@@ -66,6 +126,45 @@ $ unset x
 ```
 
 
+
+## 引用变量
+
+```
+${ }   大括号可以省略，但是有时可以，下面的不可以
+```
+
+
+
+```
+ANIMAL＝pig
+
+echo "The are some ${ANIMAL}s" 
+```
+
+>  这里使用弱引用双引号，完成变量替换
+
+
+
+## 撤销变量
+
+```
+unset  VARNAME
+```
+
+
+
+## 查看变量
+
+```
+set
+```
+
+查看当前shell中所有变量，包括本地变量
+
+```
+-x     turn on the shell tracing and verbosity
+-v     turn off the shell tracing and verbosity
+```
 
 
 
@@ -161,7 +260,7 @@ n为数字
 
 
 
-## `$#` 
+## `$#`  参数的个数
 
 获取所有参数个数，常用于循环
 
@@ -176,7 +275,7 @@ public static void main() {
 
 
 
-## `$*` 
+## `$*` 参数列表
 
 获取所有参数，会把其看成一个整体
 
@@ -184,7 +283,7 @@ public static void main() {
 
 
 
-## `$@`
+## `$@` 参数列表
 
 获取所有参数，但是区分对待每一个参数
 
@@ -192,8 +291,12 @@ public static void main() {
 
 
 
-## `$?`
+## `$?` 状态返回值
 
 上一次命令执行的返回状态
 
 0表示执行正确，非0表示错误
+
+1-255   错误执行     1，2，127 已经被系统预留
+
+通过echo $? 来测试结果的准确性

@@ -165,6 +165,8 @@ Sam
 Login time: 2016-09-10 16:20:45
 ```
 
+
+
 ### 继承与可见性
 
 私有的方法，变量，包括类和实例是不可继承的
@@ -246,6 +248,8 @@ instance public var
 class private var
 class public var
 ```
+
+
 
 #### 自定义特殊方法 (继承list类)
 
@@ -492,6 +496,8 @@ c.method_from_b()
 Method of A
 Method of B
 ```
+
+
 
 ### 继承方法
 

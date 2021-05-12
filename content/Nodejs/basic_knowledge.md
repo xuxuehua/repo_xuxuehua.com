@@ -27,7 +27,7 @@ MVC：为了解决直接用脚本语言嵌入HTML导致的可维护性差的问�
 
 
 
-### Node.js开发优势
+## Node.js开发优势
 
 一是后端语言也是JavaScript，以前掌握了前端JavaScript的开发人员，现在可以同时编写后端代码；
 
@@ -51,7 +51,7 @@ MVC：为了解决直接用脚本语言嵌入HTML导致的可维护性差的问�
 
 
 
-## 安装
+# Installation 安装
 
 偶数为稳定版本
 
@@ -59,41 +59,39 @@ https://nodejs.org/en/
 
 
 
-### NVM
+## NVM
 
-#### Linux
+### Linux
 
 Node Version Manager
 
 ```
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-```
-
-
-
-#### OSX
-
-
-
-```
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-```
-
-
-
-append them into `~/.bash_profile`
-
-```
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 ```
 
 
 
 
 
-### npm 包管理工具
+Running either of the above commands downloads a script and runs it. The script clones the nvm repository to `~/.nvm`, and attempts to add the source lines from the snippet below to the correct profile file (`~/.bash_profile`, `~/.zshrc`, `~/.profile`, or `~/.bashrc`).
+
+```
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+```
+
+
+
+```
+nvm install 12.18.3
+nvm use 12.18.3
+```
+
+
+
+
+
+## npm 包管理工具
 
 Node Package Management
 
@@ -116,7 +114,7 @@ When executables are installed via NPM packages, NPM links to them:
 
 
 
-### npx
+## npx
 
 A tool for *executing* Node packages
 
@@ -169,7 +167,7 @@ $ npm install -g cnpm --registry=https://registry.npm.taobao.org
 
 
 
-## hello world
+# hello world
 
 ```
 'use strict';
@@ -178,7 +176,7 @@ console.log('Hello, World!');
 
 
 
-## 全局对象
+# 全局对象
 
 JavaScript有且仅有一个全局对象，在浏览器中，叫`window`对象。而在Node.js环境中，也有唯一的全局对象，叫`global`，
 
@@ -201,7 +199,7 @@ Console {
 
 
 
-### process 对象
+## process 对象
 
 `process`也是Node.js提供的一个对象，它代表当前Node.js进程。通过`process`对象可以拿到许多有用信息：
 
@@ -224,7 +222,7 @@ undefined
 
  
 
-#### process 响应
+## process 响应
 
 在下一次事件响应中执行代码，可以调用`process.nextTick()`：
 
@@ -260,7 +258,7 @@ process.on('exit', function (code) {
 
 
 
-## 全局strict 模式
+# 全局strict 模式
 
 省去每个js文件都加上'use strict'; 
 

@@ -12,6 +12,10 @@ Java 没有内置的字符串类型，在类库中提供了预定义类
 
 `String`是一个引用类型，它本身也是一个`class`。但是，Java编译器对`String`有特殊处理，即可以直接用`"..."`来表示一个字符串
 
+String is immutable whereas StringBuffer and StringBuilder are mutable classes.
+
+声明之后无法改变，即引用的地址不可变
+
 
 
 ## 定义
@@ -393,7 +397,9 @@ String s2 = new String(b, StandardCharsets.UTF_8); // 按UTF-8转换
 
 
 
-# StringBuilder （可变z）
+# StringBuilder （线程不安全）
+
+
 
 Java标准库提供了`StringBuilder`，它是一个可变对象，可以预分配缓冲区，这样，往`StringBuilder`中新增字符时，不会创建新的临时对象
 
@@ -413,6 +419,14 @@ public class Main {
 >>>
 ,0,1,2,3,4,5,6,7,8,9
 ```
+
+
+
+
+
+# StringBuffer （线程安全）
+
+StringBuffer is thread-safe and synchronized whereas StringBuilder is not. That’s why StringBuilder is faster than StringBuffer.
 
 
 

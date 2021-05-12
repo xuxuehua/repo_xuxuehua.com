@@ -34,69 +34,9 @@ The [SecureDrop](https://en.wikipedia.org/wiki/SecureDrop) platform for securely
 
 
 
+## Setup 
 
-
-## Electrum (maybe outdate, follow official website)
-
-Linux	Install dependencies:	
-
-```
-sudo apt-get install python3-pyqt5 libsecp256k1-0 python3-cryptography -y
-```
-
-Download package:	
-
-```
-wget https://download.electrum.org/4.0.9/Electrum-4.0.9.tar.gz
-```
-
-Verify signature:	
-
-```
-wget https://download.electrum.org/4.0.9/Electrum-4.0.9.tar.gz.asc
-gpg --keyserver keys.gnupg.net --recv-keys 6694D8DE7BE8EE5631BED9502BD5824B7F9470E6
-gpg --verify Electrum-4.0.9.tar.gz.asc
-```
-
-```
-$ gpg --verify Electrum-4.0.9.tar.gz.asc Electrum-4.0.9.tar.gz
-gpg: Signature made Sat 19 Dec 2020 04:07:21 AM JST
-gpg:                using RSA key 6694D8DE7BE8EE5631BED9502BD5824B7F9470E6
-gpg: Good signature from "Thomas Voegtlin (https://electrum.org) <thomasv@electrum.org>" [unknown]
-gpg:                 aka "ThomasV <thomasv1@gmx.de>" [unknown]
-gpg:                 aka "Thomas Voegtlin <thomasv1@gmx.de>" [unknown]
-gpg: WARNING: This key is not certified with a trusted signature!
-gpg:          There is no indication that the signature belongs to the owner.
-Primary key fingerprint: 6694 D8DE 7BE8 EE56 31BE  D950 2BD5 824B 7F94 70E6
-```
-
-> You can ignore this:
->
-> WARNING: This key is not certified with a trusted signature!
-> gpg:          There is no indication that the signature belongs to the owner.
-> as it simply means you have not established a web of trust with other GPG users
-
-
-
-Run without installing:	
-
-```
-tar -xvf Electrum-4.0.9.tar.gz
-python3 Electrum-4.0.9/run_electrum
-```
-
-Install with PIP:	
-
-```
-sudo apt-get install python3-setuptools python3-pip
-python3 -m pip install --user Electrum-4.0.9.tar.gz
-```
-
-
-
-
-
-
+go to check eletrum installation
 
 
 

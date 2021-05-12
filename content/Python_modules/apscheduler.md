@@ -289,7 +289,7 @@ executor 的选择基于你是否选择了任意一个 Python 框架。如果都
 为了选到合适的 job store ，你需要明确你是否需要将你的 job 持久化
 
 ```
-BlockingScheduler: 导入调度器模块 BlockingScheduler，这是最简单的调度器，调用 start 方阻塞当前进程，如果你的程序只用于调度，除了调度进程外没有其他后台进程，那么请用 BlockingScheduler 非常有用，此时调度进程相当于守护进程。
+BlockingScheduler: 导入调度器模块 BlockingScheduler，这是最简单的调度器，调用 start 方法阻塞当前进程，如果你的程序只用于调度，除了调度进程外没有其他后台进程，那么请用 BlockingScheduler 非常有用，此时调度进程相当于守护进程。
 BackgroundScheduler: 如果你想你的调度器可以在你的应用程序后台静默运行，同时也不打算使用以下任何 Python 框架，请选择它
 AsyncIOScheduler: 如果你的程序使用了 asyncio 库，请使用这个调度器
 GeventScheduler: 如果你的程序使用了 gevent 库，请使用这个调度器
@@ -342,6 +342,8 @@ scheduler.start(paused=True)
 
 # example
 
+实例化一个 BlockingScheduler 类，不带参数表明使用默认的作业存储器-内存，默认的执行器是线程池执行器，最大并发线程数默认为 10 个（另一个是进程池执行器）
+
 ```
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime
@@ -355,7 +357,7 @@ sched.add_job(my_job, 'interval', seconds=5) #给定时器添加任务，触发�
 sched.start()                                 #开启定时器
 ```
 
-> 实例化一个 BlockingScheduler 类，不带参数表明使用默认的作业存储器-内存，默认的执行器是线程池执行器，最大并发线程数默认为 10 个（另一个是进程池执行器）
+
 
 
 

@@ -77,66 +77,6 @@ bitcointalk.org
 
 
 
-# Bitcoin-core (please go to website for latest version)
-
-
-
-## Ubuntu GUI
-
-```
-wget https://bitcoin.org/bin/bitcoin-core-0.21.0/bitcoin-0.21.0-x86_64-linux-gnu.tar.gz
-wget https://bitcoin.org/bin/bitcoin-core-0.21.0/SHA256SUMS.asc
-```
-
-
-
-If you use sudo to run commands as root, use the following command line:
-
-```
-sudo install -m 0755 -o root -g root -t /usr/local/bin bitcoin-0.21.0/bin/*
-```
-
-
-If you use su to run commands as root, use the following command line:
-
-```
-su -c 'install -m 0755 -o root -g root -t /usr/local/bin bitcoin-0.21.0/bin/*'
-```
-
-
-
- to start Bitcoin Core GUI
-
-```
-/usr/local/bin/bitcoin-qt
-```
-
-
-
-# 地址
-
-**比特币地址**的样子是一串长度为30左右的字母和数字组成的字符串，以“1” 或“3”开头的地址最为常见，最新的地址格式以“bc1”开头，例如：
-
-
-
-17CZJCqnTXoEkXgE19XeY1mSE1t8aLnShu
-
-3Lhub8aeQtQDBvNbNEyth8Tu7CiGNg2GSQ
-
-bc1q2svykmvk06dutkxdw96rl0z28l4qa7u9yjaq6s
-
-
-
-比特币的地址有多种格式，最新的是Bech32格式，以“bc1”开头，但一些比较古老的交易所对这个地址不支持。
-
-
-
-另外是我们常用的以“3”开头的地址，这个也被称为隔离见证地址，有更多的优点。在软件中不要勾选“生成原生隔离见证Bech32地址”那个选项，就可以生成这样的地址，
-
-以前的“1”开头的地址称为旧地址格式了，已经较少使用了，在新的Bitcoin Core钱包软件里，需要高级命令才能生成这样的地址。
-
-
-
 
 
 
@@ -251,6 +191,22 @@ ahr999指数小于0.45，这就是抄底区间；
 查看网站1：https://digitalik.net/btc/查看网站2：http://gbi.news/zh/market-data/
 
 
+
+
+
+# Block brower
+
+https://www.blockchain.com 
+
+https://btc.com
+
+https://oklink.com 
+
+https://blockchair.com 
+
+https://explorer.bitcoin.com/btc 
+
+https://live.blockcypher.com/btc/ 
 
 
 

@@ -12,10 +12,10 @@ date: 2019-01-26 12:19
 
 
 
-## Installation
+# Installation
 
 
-### mac
+## mac
 
 ```
 ruby -e "$(curl -fsSL <https://raw.githubusercontent.com/Homebrew/install/master/install>)" 
@@ -89,7 +89,7 @@ Alternatively, simply rm -rf the directory of the version you want to remove. Yo
 
 
 
-#### virtualenv
+### virtualenv
 
 **Installing with Homebrew (for OS X users)**
 
@@ -115,7 +115,7 @@ eval "$(pyenv virtualenv-init -)"
 
 
 
-### Linux
+## centos
 
 安装 安装 git：
 
@@ -156,15 +156,7 @@ source ~/.bash_profile
 
 
 
-#### 非root用户
-
-```
-export PATH=~/.pyenv/shims:~/.pyenv/bin:"$PATH"
-```
-
-
-
-#### centos
+OR
 
 ```
 yum -y install gcc make patch gdbm-devel openssl-devel sqlite-devel readline-devel zlib-devel bzip2-devel libffi-devel
@@ -192,7 +184,7 @@ source ~/.bashrc
 
 
 
-#### amazon linux 
+## amazon linux 
 
 ```
 yum -y install git vim gcc make patch gdbm-devel openssl-devel sqlite-devel readline-devel zlib-devel bzip2-devel libffi-devel
@@ -202,18 +194,16 @@ curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer 
 
 
 
-#### ubuntu
+## ubuntu
 
 ```
-apt-get update && \
-apt install -y build-essential checkinstall zlib1g-dev libssl-dev build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev libgdbm-compat-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev libffi6
+sudo apt-get update && \
+sudo apt install -y build-essential checkinstall zlib1g-dev libssl-dev build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev libgdbm-compat-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev libffi6
 ```
 
 
 
 ```
-useradd python
-
 curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
 ```
 
@@ -230,6 +220,14 @@ source ~/.bashrc
 
 
 
+
+
+## non-root 用户 配置
+
+```
+export PATH=~/.pyenv/shims:~/.pyenv/bin:"$PATH"
+```
+
  
 
 
@@ -239,9 +237,9 @@ source ~/.bashrc
 
 
 
-## args
+# args 命令行参数 
 
-### Install --list 所有版本
+## Install --list 所有版本
 
 查看可安装的 python 版本列表
 
@@ -251,7 +249,7 @@ source ~/.bashrc
 
 
 
-### verions 查看安装版本
+## verions 查看安装版本
 
 查看已安装的版本：
 
@@ -262,19 +260,19 @@ source ~/.bashrc
 
 
 
-### global 全局设置
+## global 全局设置
 
 查看所有受到pyenv 控制的窗口，不建议在root用户下使用，会影响本地Python版本
 
 
 
-### shell 会话设置
+## shell 会话设置
 
 只作用于当前会话
 
 
 
-### local 本地设置
+## local 本地设置
 
 使用pyenv local 设置从当前工作目录开始向下递归都继承这个设置
 
@@ -282,7 +280,7 @@ source ~/.bashrc
 
 
 
-### rehash 更新清单
+## rehash 更新清单
 
 每次安装新的版本后，建议使用 rehash 命令重新 hash 其可用的 python 清单
 
@@ -292,13 +290,19 @@ source ~/.bashrc
 
 
 
-### uninstall 卸载
+## uninstall 卸载
 
 ```
 pyenv uninstall my-virtual-env
 ```
 
 
+
+
+
+
+
+# Example
 
 
 

@@ -363,3 +363,23 @@ response=requests.request(method,url=endpoint,headers=headers,data=request_param
 print(response.text)
 ```
 
+
+
+## for testing vpce
+
+```
+import requests
+url = "https://vpce-VPCE_ID.execute-api.us-east-1.vpce.amazonaws.com/prod/text-to-id"
+headers = {
+  'Content-Type': 'text/plain',
+  'Host': 'API_GATEWAY_ID.execute-api.us-east-1.amazonaws.com'
+}
+payload='{"type":"typeinfo","text":["test1", "test2", "test3"]}'
+
+response = requests.request("POST", url, headers=headers, data=payload)
+
+print(response.text)
+```
+
+
+

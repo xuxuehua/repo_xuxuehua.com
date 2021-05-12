@@ -66,6 +66,9 @@ adduser vnc
 echo "%vnc     ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers
 
 sudo su - vnc
+
+
+
 mkdir .vnc
 tee  ~/.vnc/xstartup <<-'EOF'
 #!/bin/sh
@@ -86,13 +89,44 @@ gnome-settings-daemon &
 metacity &
 nautilus &
 gnome-terminal &
+gnome-shell &
 EOF
 
 sudo chmod +x  ~/.vnc/xstartup
 
 vncserver
+
+sudo chown vnc.vnc .vnc #if you need
 vncserver -kill :1
 ```
+
+
+
+Latest vnc xstartup and works
+
+```
+#!/bin/sh
+
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+export XKL_XMODMAP_DISABLE=1
+export XDG_CURRENT_DESKTOP="GNOME-Flashback:GNOME"
+export XDG_MENU_PREFIX="gnome-flashback-"
+
+
+[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+xsetroot -solid grey
+vncconfig -iconic &
+
+gnome-session --builtin --session=gnome-flashback-metacity --disable-acceleration-check --debug &
+nautilus &
+gnome-terminal &              
+
+```
+
+
 
 
 
@@ -128,7 +162,7 @@ sudo systemctl start vncserver@1.service
 
 
 
-## novnc
+## novnc (vnc client)
 
 **Installation from Snap Package**
 
@@ -338,4 +372,6 @@ Authenticate as normal for the **vnc** user for SSH. Then, in the Screen Sharing
 # Appendix
 
 https://github.com/novnc/noVNC/tree/89f9ac00166f1106e03d46562ffeaa3d8032f399
+
+https://askubuntu.com/questions/1285420/how-to-properly-configure-xstartup-file-for-tightvnc-with-ubuntu-20-04-lts-gnome
 

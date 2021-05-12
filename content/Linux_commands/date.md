@@ -40,6 +40,18 @@ It works for amazon linux1
 
 ## 
 
+for recording time in  shell scripts
+
+```
+echo "$(date -Iseconds) begin processing scripts" 
+### your scripts
+echo "$(date -Iseconds) end processing scripts" 
+```
+
+
+
+
+
 ## 显示当前时间
 
 ```
