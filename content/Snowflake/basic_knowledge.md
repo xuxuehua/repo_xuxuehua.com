@@ -271,6 +271,12 @@ conn.commit()
 result = cursor.fetchall()
 ```
 
+> role is Snowflake role like ACCOUNTADMIN or ADMIN
+>
+> account is Snowflake account name, prefix of snowflake url
+
+
+
 
 
 # FAQ

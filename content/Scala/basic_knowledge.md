@@ -245,7 +245,6 @@ object pint_string {
 > ```
 > name=Rick, age=18
 > ```
->
 
 
 
@@ -288,6 +287,19 @@ object pint_string {
 
 
 
+
+# Input 键盘输入
+
+```
+import scala.io.StdIn
+
+object scala_input {
+    def main(args: Array[String]): Unit = {
+        val line: String = StdIn.readLine()
+        print("line=" + line)
+    }
+}
+```
 
 
 

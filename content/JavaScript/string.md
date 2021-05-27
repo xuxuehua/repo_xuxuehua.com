@@ -154,6 +154,24 @@ s.substring(0, 5); // 从索引0开始到5（不包括5），返回'hello'
 s.substring(7); // 从索引7开始到结束，返回'world'
 ```
 
+
+
+切掉结尾字符
+
+```
+var str = 'Java8';
+ 
+str = str.substring(0, str.length - 1);
+console.log(str);
+
+>>> 
+Java
+```
+
+
+
+
+
 ### length
 
 ```

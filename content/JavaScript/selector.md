@@ -68,6 +68,8 @@ var ps = $('p'); // 返回所有<p>节点
 ps.length; // 数一数页面有多少个<p>节点
 ```
 
+
+
 ## 按class查找
 
 按class查找注意在class名称前加一个`.`：
@@ -87,6 +89,17 @@ var a = $('.red.green'); // 注意没有空格！
 // <div class="red green">...</div>
 // <div class="blue green red">...</div>
 ```
+
+
+
+### 获取对应value
+
+```
+var tmp = $('.navbar-coins.bg-1>a');
+tmp.text()
+```
+
+
 
 ## 按属性查找
 

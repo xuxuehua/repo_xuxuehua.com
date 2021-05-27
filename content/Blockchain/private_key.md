@@ -138,6 +138,16 @@ Do not write your own code to create a random number or use a “simple” rando
 
 
 
+# private key format
+
+```
+Private Key HEX: 101cc368f0bfb12d175e1772320cbc1a55d2a2be2ffb42d9df1f9cd570634c15              
+Private Key WIF: 5HwP9eyb8TtubbcXwREgVHgyBnZrNpHw7PpGeitGeSkmk8MQ8RT           
+Private Key WIF compressed: Kwm2mCcmdwi79hmqZByPHrfQzc7zwHjjqDhe5VsJ4GgCV4BgSzZT           
+```
+
+
+
 # Private key / Public key / Address
 
 ![image-20210423220731322](private_key.assets/image-20210423220731322.png)

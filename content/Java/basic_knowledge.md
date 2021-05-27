@@ -17,9 +17,9 @@ Java是将代码编译成一种“字节码”，它类似于抽象的CPU指令�
 
 
 
-## Installation
+# Installation
 
-### mac
+## mac
 
 download jdk 13
 
@@ -31,7 +31,7 @@ export PATH=$JAVA_HOME/bin:$PATH
 
 
 
-### linux
+## linux
 
 ```
 wget https://mirrors.huaweicloud.com/java/jdk/8u201-b09/jdk-8u201-linux-x64.tar.gz

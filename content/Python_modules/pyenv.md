@@ -194,11 +194,11 @@ curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer 
 
 
 
-## ubuntu
+## ubuntu 18.04
 
 ```
 sudo apt-get update && \
-sudo apt install -y build-essential checkinstall zlib1g-dev libssl-dev build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev libgdbm-compat-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev libffi6
+sudo apt install -y build-essential checkinstall zlib1g-dev libssl-dev build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev libgdbm-compat-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev 
 ```
 
 
@@ -211,8 +211,10 @@ curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer 
 
 ```
 vim ~/.bashrc
-export PATH="/root/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
 eval "$(pyenv virtualenv-init -)"
 
 source ~/.bashrc

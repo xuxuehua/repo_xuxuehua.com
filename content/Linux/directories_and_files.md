@@ -114,12 +114,49 @@ example
 * hard nproc 131072
 ```
 
+> A low "soft" `ulimit` can cause `can't create new thread, closing connection` errors if the number of connections grows too high. For this reason, it is extremely important to set *both* `ulimit` values to the recommended values.
+
+
+
+
+
 重启服务器之后生效，用ulimit -n 或者ulimit -a查看设置结果
 
 ```
 # ulimit -n
 65536
 ```
+
+
+
+
+
+
+
+```
+-a     All current limits are reported
+-c     The maximum size of core files created
+-d     The maximum size of a process's data segment
+-e     The maximum scheduling priority ("nice")
+-f     The  maximum  size  of files written by the shell and its
+       children
+-i     The maximum number of pending signals
+-l     The maximum size that may be locked into memory
+-m     The maximum resident set size (has no effect on Linux)
+-n     The maximum number of open file descriptors (most systems
+       do not allow this value to be set)
+-p     The pipe size in 512-byte blocks (this may not be set)
+-q     The maximum number of bytes in POSIX message queues
+-r     The maximum real-time scheduling priority
+-s     The maximum stack size
+-t     The maximum amount of cpu time in seconds
+-u     The  maximum  number  of  processes available to a single
+       user
+-v     The maximum amount of virtual  memory  available  to  the
+       shell
+```
+
+
 
 
 

@@ -174,17 +174,41 @@ To short(write/wrote) a put  去卖一个看跌期权
 
 
 
-# ARR
+# ARR 年度经常性收入
 
 ARR is an acronym for Annual Recurring Revenue, a key metric used by SaaS or subscription businesses that have term subscription agreements, meaning there is a defined contract length. 
 
-It is defined as the value of the contracted recurring revenue components of your term subscriptions normalized to a one-year period. ARR is the less frequently used alternative normalization method of the two common ones, ARR and MRR. It is used almost exclusively in B2B subscription businesses.
+It is defined as the value of the contracted recurring revenue components of your term subscriptions normalized to a one-year period. 
+
+ARR is the less frequently used alternative normalization method of the two common ones, ARR and MRR. It is used almost exclusively in B2B subscription businesses.
 
 
 
+对ARR的不理解其实是来源于对订阅经济的不熟悉。在过去，分析师们习惯了用传统财务模型去理解一家公司，如通过对企业售出货物的计量来统计销售额，再通过计算成本与费用得到利润。在订阅模式兴起后，大家发现传统的财务记账是不适用的。Zuora（ZUO.US）创始人在其《订阅经济》一书中是这么总结传统模型失效的原因的：**在传统模型中，客户一次性贡献一块钱的收入和连续十年每年都贡献一块钱的收入是没有区别的，而在订阅模型中，ARR的重要程度则远高于Revenue。**因此，当一种收入能持续产生的时候就可以被称为RR（Recurring Revenue，经常性收入）。ARR就是按年统计的经常性收入，MRR则就是按月统计（一家公司的MRR乘以12应当是等于它的ARR）
 
+现在美国SaaS公司比较普遍的是用P/ARR来进行估值，比如2021年1月，提供基于Spark的开源数据服务公司Databricks以280亿美元的投后估值融资10亿美元，此时它已拥有4.25亿美元的ARR，P/ARR（投后）就是66x（实在是太高了!）。很可惜的是，**因为ARR属于Non-GAAP的指标，上市公司是并无义务披露它的，这也是为什么从大部分SaaS公司的年报中找不到这个参数的原因。**
+
+
+
+## 计算ARR
+
+先铺垫一下SaaS公司的收入确认方式：**1. 签合同（Bookings）2. 开发票（Invoice/Billings）3. 确认收入（Revenue）。**很简单，就是乙方与客户先签合同、乙方财务开具发票并寄出、乙方提供服务并逐步确认收入，值得注意的是，这个过程中存在着**时间滞后性**。
+
+ 
+
+根据Cloudera（CLDR.US）在财报中对ARR的定义，“ARR是管理层用来监控客户留存和增长，并做出与业务相关的运营决策的主要指标。ARR等于报告期内所有经常性订购合同的年化价值，包括老客户留存（流失）、增（减）购以及新客户的订单增加。”
+
+ 
+
+**结合SaaS公司的收入确认方式以及上述对ARR的定义，个人认为ARR是与签单额强关联的指标，与开票金额及收入无直接关联。**归纳出来ARR的计算公式是：
+
+ 
+
+**本期末ARR = 上一期ARR +（新增RR + 增购RR） – （流失RR + 减值RR）**
 
 
 
 # Appendix
+
+https://mp.weixin.qq.com/s/6uRKGRbwnpGY7m5qnUTtsQ
 

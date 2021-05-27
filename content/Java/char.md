@@ -33,8 +33,6 @@ char c4 = '\u4e2d'; // '中'，因为十六进制4e2d = 十进制20013
 
 
 
-
-
 ```
 public class mychar {
     public static void main(String[] args) {

@@ -553,6 +553,47 @@ ORDER BY "created_on";
 
 
 
+
+
+# LOCK
+
+
+
+## LOCK_TIMEOUT
+
+Explore the transaction-related parameter, LOCK_TIMEOUT, which controls the number of seconds to wait while trying to lock a resource, before timing out and aborting the waiting statement:
+
+
+
+```
+SHOW PARAMETERS LIKE '%lock%';
+```
+
+> ```
+> key	value	default	level	description	type
+> LOCK_TIMEOUT	43200	43200		Number of seconds to wait while trying to lock a resource, before timing out   and aborting the statement. A value of 0 turns off lock waiting i.e. the   statement must acquire the lock immediately or abort. If multiple resources   need to be locked by the statement, the timeout applies separately to each   lock attempt.	NUMBER
+> ```
+>
+> 
+
+
+
+## Release transaction
+
+An account administrator can use the system function SYSTEM$ABORT_TRANSACTION to release any lock on any user’s transactions by executing the function using the transaction ID from the SHOW LOCKS output.
+
+```
+SELECT SYSTEM$ABORT_TRANSACTION(<transaction_id>);
+```
+
+
+
+
+
+
+
+
+
 # Table storage & retention
 
 ```
@@ -825,6 +866,70 @@ CURRENT_TIMESTAMP()::TIMESTAMP_TZ AS TZ
 , CURRENT_TIMESTAMP()::TIMESTAMP_NTZ AS NTZ
 , CURRENT_TIMESTAMP()::TIMESTAMP_LTZ AS LTZ;
 ```
+
+
+
+
+
+# time travel
+
+The activities of taking a physical backup can now be replaced by making a clone, which is significantly faster, requires less storage cost ($0 at best). Combined with Snowflake’s Time Travel feature, daily backups are no longer needed as Snowflake makes the normally hard task of doing Point In Time Recovery (PITR) a simple matter.
+
+Time Travel can restore tables that are accidentally dropped. In other database platforms, dropping a database, schema or table is disastrous and requires the database be restored from backup (if one exists). But, in Snowflake, since dropping objects is only a metadata-based operation, restoring from a DROP statement can be completed in seconds by using the UNDROP command.
+
+
+
+## UNDROP
+
+The UNDROP command must be executed with the data retention time (DATA_RETENTION_TIME_IN_DAYS) parameter value for the table. For Standard/Premier Editions this can be 0 or 1 day (default 1). For Enterprise Edition and above this can be 0 to 90 days for permanent table and 0 or 1 day for temporary and transient tables (default 1 unless a different default value was specified at the schema, database, or account level).
+
+
+
+```
+SHOW TABLES;
+SHOW PARAMETERS LIKE '%DATA_RETENTION_TIME_IN_DAYS%' IN ACCOUNT;
+```
+
+> ```
+> key	value	default	level	description	type
+> DATA_RETENTION_TIME_IN_DAYS	1	1		number of days to retain the old version of deleted/updated data	NUMBER
+> ```
+>
+> Retention time is one day
+
+
+
+```
+UNDROP TABLE schema.table;
+show tables history;
+```
+
+
+
+undrop also support for schema and db
+
+```
+SHOW SCHEMAS;
+DROP SCHEMA HR;
+SHOW SCHEMAS;
+SHOW SCHEMAS HISTORY; 
+UNDROP SCHEMA HR; 
+SHOW SCHEMAS;
+
+SHOW DATABASES STARTS WITH 'RXU';
+DROP DATABASE RXU_LAB9_DB;
+SHOW DATABASES HISTORY STARTS WITH 'RXU'; 
+UNDROP DATABASE RXU_LAB9_DB;
+SHOW DATABASES HISTORY STARTS WITH 'RXU';
+```
+
+
+
+
+
+## Zero Copy Clone
+
+Use the CLONE option to restore a table to the point in time immediately prior to an errant update.
 
 
 

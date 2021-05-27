@@ -313,6 +313,43 @@ $ which -a python3.5
 
 
 
+## Amazon Linux 2 (python3.8)
+
+```
+$ which amazon-linux-extras
+/usr/bin/amazon-linux-extras
+```
+
+If the command doesn’t return any output, then install the package that will configure the repository:
+
+```
+sudo yum install -y amazon-linux-extras
+```
+
+
+
+```
+$ amazon-linux-extras | grep -i python
+44  python3.8                available    [ =stable ]
+```
+
+
+
+```
+sudo amazon-linux-extras enable python3.8
+
+# Now you can install:
+yum clean metadata
+yum install python38 -y
+```
+
+
+
+```
+# python3.8 -V
+Python 3.8.5
+```
+
 
 
 
