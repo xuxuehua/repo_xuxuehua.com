@@ -113,3 +113,21 @@ setproxy	# 开启代理
 unsetproxy	# 关闭代理
 ```
 
+
+
+
+
+
+
+# zsh to bash
+
+To change a user account’s default shell on macOS, simply run the `chsh -s` (change shell) command in a Terminal window.
+
+Change the default shell to Bash by running the following command:
+
+```
+chsh -s /bin/bash
+```
+
+You’ll have to enter your user account’s password. Finally, close the Terminal window and reopen it. You’ll be using Bash instead of Zsh.
+

@@ -1,0 +1,114 @@
+---
+title: "class"
+date: 2021-05-30 21:29
+---
+
+
+
+
+
+[toc]
+
+
+
+
+
+# class
+
+
+
+```
+object scala_object {
+    def main(args: Array[String]): Unit = {
+        val user: User = new User()
+        user.username = "Rick"
+        println(user.username)
+    }
+}
+
+class User {
+    // 使用下划线进行默认初始化
+    var username: String = _
+    var age: Int = _
+    def login(): Boolean = {
+        true
+    }
+}
+
+>>>
+Rick
+```
+
+
+
+## attribute
+
+scala中给类声明属性，默认为私有的，但是底层提供了公共的setter和getter方法
+
+
+
+```
+object scala_object {
+    def main(args: Array[String]): Unit = {
+        val user: User = new User()
+        // using default setter
+        user.username = "Rick"
+        
+        // using default getter
+        println(user.username)
+    }
+}
+
+class User {
+    // 使用下划线进行默认初始化
+    var username: String = _
+}
+
+>>>
+Rick 
+Sam
+```
+
+
+
+
+
+### private 修饰符
+
+设置private修饰符，属性无法在外部访问，因为底层生成的setter和getter方法都是私有的
+
+
+
+
+
+### final 修饰符
+
+如果声明的属性使用val，那么那么属性是私有的，并且使用final修饰符，底层只提供getter方法，没有setter方法
+
+```
+object scala_object {
+    def main(args: Array[String]): Unit = {
+        val user: User = new User()
+        // using default setter
+        user.username = "Rick"
+
+        // using default getter
+        println(user.username)
+    }
+}
+
+class User {
+    // 使用下划线进行默认初始化
+    var username: String = _
+    private var age: Int = _
+    final val gender: String = "Male"
+}
+
+>>>
+Rick
+```
+
+
+
+
+

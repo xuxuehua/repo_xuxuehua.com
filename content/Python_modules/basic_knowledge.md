@@ -155,5 +155,15 @@ __name__: __main__
 
 
 
+# 标准库教程
+
+https://pymotw.com/3/
+
+https://learnku.com/docs/pymotw/introduce/3357
+
+
+
+
+
 
 

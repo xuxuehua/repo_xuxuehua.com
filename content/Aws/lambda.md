@@ -288,6 +288,18 @@ docker run -v "$PWD":/var/task "lambci/lambda:build-python3.6" /bin/sh -c "pip i
 
 
 
+
+
+## sharing lambda layers
+
+https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#configuration-layers-path
+
+
+
+
+
+
+
 # example
 
 
@@ -295,6 +307,74 @@ docker run -v "$PWD":/var/task "lambci/lambda:build-python3.6" /bin/sh -c "pip i
 ## lambda to rds
 
 https://aws.amazon.com/blogs/database/query-your-aws-database-from-your-serverless-application/
+
+
+
+## Get public ip (python3.8 without requests)
+
+
+
+```
+import json
+import http.client
+import ssl
+
+def lambda_handler(event, context):
+    # TODO implement
+    conn = http.client.HTTPSConnection("xurick.com", context = ssl._create_unverified_context())
+    payload = ''
+    headers = {}
+    conn.request("GET", "/ip", payload, headers)
+    res = conn.getresponse()
+    data = res.read()
+    print(data.decode("utf-8"))
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Hello from Lambda!')
+    }
+
+```
+
+> `context = ssl._create_unverified_context() ` can remove if you need ssl
+
+
+
+
+
+
+
+## update python lambda file
+
+**更新没有运行时依赖项的 Python 函数**
+
+1. 将函数代码文件添加到部署程序包的根目录中。
+
+    ```
+    ~/python_virtual_env$ cd site-packages && zip -r ~/my-deployment-package.zip . 
+    ~/my-function$ zip my-deployment-package.zip lambda_function.py
+    ```
+
+2. 使用 [fileb://](https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-parameters-file.html#cli-usage-parameters-file-binary) 前缀将二进制 .zip 文件上传到 Lambda 并更新函数代码。
+
+    ```
+    ~/my-function$ aws lambda update-function-code --function-name MyLambdaFunction --zip-file fileb://my-deployment-package.zip
+    {
+        "FunctionName": "mylambdafunction",
+        "FunctionArn": "arn:aws:lambda:us-west-2:123456789012:function:mylambdafunction",
+        "Runtime": "python3.8",
+        "Role": "arn:aws:iam::123456789012:role/lambda-role",
+        "Handler": "lambda_function.lambda_handler",
+        "CodeSize": 815,
+        "CodeSha256": "GcZ05oeHoJi61VpQj7vCLPs8DwCXmX5sE/fE2IHsizc=",
+        "Version": "$LATEST",
+        "RevisionId": "d1e983e3-ca8e-434b-8dc1-7add83d72ebd",
+        ...
+    }
+    ```
+
+
+
+https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/python-package-update.html#python-package-update-codeonly
 
 
 

@@ -54,3 +54,11 @@ lambda: Json-encoded message to an AWS Lambda function
 
 
 
+
+
+
+
+# Appendix
+
+https://aws.amazon.com/cn/premiumsupport/knowledge-center/sns-lambda-webhooks-chime-slack-teams/?nc1=h_ls
+

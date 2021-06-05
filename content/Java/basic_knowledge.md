@@ -21,6 +21,45 @@ Java是将代码编译成一种“字节码”，它类似于抽象的CPU指令�
 
 ## mac
 
+
+
+### JDK 8u291
+
+without oracle login
+
+```
+https://gist.github.com/wavezhang/ba8425f24a968ec9b2a8619d7c2d86a6
+```
+
+```
+https://javadl.oracle.com/webapps/download/AutoDL?BundleId=244564_d7fc238d0cbf4b0dac67be84580cfb4b
+```
+
+
+
+
+
+
+
+### adoptopenjdk8
+
+Oracle has a poor record for making it easy to install and configure Java, but using [Homebrew](http://brew.sh/), the latest OpenJDK (Java 14) can be installed with:
+
+```java
+brew install --cask adoptopenjdk8
+```
+
+For the many use cases depending on an older version (commonly Java 8), the [AdoptOpenJDK](https://adoptopenjdk.net/) project makes it possible with an extra step.
+
+```java
+brew tap adoptopenjdk/openjdk
+brew install --cask adoptopenjdk8
+```
+
+Existing users of Homebrew may encounter `Error: Cask adoptopenjdk8 exists in multiple taps` due to prior workarounds with different instructions. This can be solved by fully specifying the location with `brew install --cask adoptopenjdk/openjdk/adoptopenjdk8`.
+
+
+
 download jdk 13
 
 ```
@@ -522,8 +561,7 @@ Java SE 8u31表示 Java SE 8 的第31次更新，内部版本号为1.8.0_31， �
 
 
 
+# Appendix
 
+https://gist.github.com/wavezhang/ba8425f24a968ec9b2a8619d7c2d86a6
 
-
-
-# 

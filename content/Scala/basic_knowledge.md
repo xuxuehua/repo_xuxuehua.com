@@ -42,7 +42,7 @@ java -version  (Make sure you have version 1.8 or 11.)
 2. On the left panel, select Scala. On the right panel, select IDEA.
 3. Name the project **HelloWorld**
 4. Assuming this is your first time creating a Scala project with IntelliJ, you’ll need to install a Scala SDK. To the right of the Scala SDK field, click the **Create** button.
-5. Select the highest version number (e.g. 2.13.5) and click **Download**. This might take a few minutes but subsequent projects can use the same SDK.
+5. Select the highest version number (e.g. 2.13.6) and click **Download**. This might take a few minutes but subsequent projects can use the same SDK.
 6. Once the SDK is created and you’re back to the “New Project” window click **Finish**.
 
 

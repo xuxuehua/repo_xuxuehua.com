@@ -98,7 +98,7 @@ Mac OS X users can install pyenv-virtualenv with the [Homebrew](http://brew.sh/)
 
 
 ```
-$ brew install pyenv-virtualenv
+$ brew install pyenv-virtualenv pyenv-virtualenvwrapper
 ```
 
 ```
@@ -107,11 +107,19 @@ $ brew install --HEAD pyenv-virtualenv
 
 ```
 cat ~/.bash_profile 
-eval "$(pyenv init -)" 
-eval "$(pyenv virtualenv-init -)" 
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv virtualenv-init -)"
 ```
 
 > to your profile (as stated in the caveats). You'll only ever have to do this once.
+
+
+
+
+
+
 
 
 

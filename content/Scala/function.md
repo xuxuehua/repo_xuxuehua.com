@@ -315,6 +315,8 @@ object scala_function {
 
 
 
+
+
 # 匿名函数
 
 
@@ -373,6 +375,8 @@ object scala_function {
 
 通过匿名函数实现，函数作为参数传递给另外一个函数
 
+如果变量只在`=>` 后面出现一次，可以用`_` 代替
+
 ```
 object scala_function {
     def main(args: Array[String]): Unit = {
@@ -414,6 +418,136 @@ object scala_function {
 
 
 
+
+
+
+# 递归函数
+
+函数应该有跳出递归的逻辑，否则会出现死循环
+
+函数的局部变量是独立的，不会相互影响
+
+Scala中，递归函数无法推断出函数的返回值类型，所以必须要声明
+
+```
+object scala_function {
+    def main(args: Array[String]): Unit = {
+        def !!(i: Int): Int = {
+            if (i == 1) {
+                1
+            } else {
+                i * !!(i-1)
+            }
+        }
+
+        println(!!(5))
+    }
+}
+
+>>>
+120ˆ
+```
+
+
+
+
+
+
+
+# 高阶函数 higher order functions
+
+将其他函数作为参数或者返回值，作为参数传递给另一个函数 
+
+
+
+```
+object scala_function {
+    def main(args: Array[String]): Unit = {
+        def test1(x: Double)= {
+            (y: Double) => x*x*y
+        }
+        val response = test1(2.0)(3.0)
+        println(response)
+    }
+}
+
+>>>
+12.0
+```
+
+
+
+
+
+# 惰性函数
+
+即惰性计算，是许多函数式编程语言的特性
+
+惰性集合在需要时提供其元素，无需预算计算，可以将耗时的计算推迟到需要的时候
+
+Java并没有对惰性计算提供原生支持，但Scala提供了
+
+
+
+## Java
+
+Java 实现懒加载
+
+```
+public class lazy_loading {
+    private String property;
+    public String getProperty() {
+        if (property == null) {
+            property = initProperty();
+        }
+        return property;
+    }
+    private String initProperty() {
+        return "property";
+    }
+}
+
+```
+
+
+
+
+
+## Scala
+
+函数返回值被lazy是，函数的执行将被推迟，直到我们首次对其调用取值。变量被声明了lazy，也会被推迟
+
+lazy不能修饰var类型变量
+
+```
+object scala_function {
+    def main(args: Array[String]): Unit = {
+        def sum(n1: Int, n2: Int): Int = {
+            println(s"processing sum n1=${n1}, n2=${n2}")
+            return n1 + n2
+        }
+
+        lazy val response1 = sum(10, 20)
+        println("1"*10)
+        println(s"response1=${response1}")
+
+        println("-"*20)
+
+        val response2 = sum(20, 30)
+        println("2"*10)
+        println(s"response2=${response2}")
+    }
+}
+
+>>>
+1111111111
+processing sum n1=10, n2=20
+response1=30
+--------------------
+processing sum n1=20, n2=30
+2222222222
+response2=50
+```
 
 
 

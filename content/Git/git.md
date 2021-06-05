@@ -719,7 +719,7 @@ git reset HEAD
 
 
 
-### -- filename 取消部分文件全部的修改
+### -- filename 取消部分文件全部的修改 (指定到单个文件)
 
 ```
 git reset HEAD -- FILENAME
