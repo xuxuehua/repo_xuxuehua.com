@@ -28,7 +28,27 @@ yum -y install sysstat
 
 
 
-## Usage
+Open `/etc/default/sysstat` using your favorite file editor and change `ENABLED="false"` to `ENABLED="true"`
+
+```
+vi /etc/default/sysstat
+----
+# Should sadc collect system activity informations? Valid values
+# are "true" and "false". Please do not put other values, they
+# will be overwritten by debconf!
+ENABLED="true"
+----
+```
+
+Restart sysstat: `sudo service sysstat restart`
+
+
+
+
+
+
+
+# Usage
 
 ```
 sar [ options ] [ <interval> [ <count> ] ]
@@ -36,21 +56,19 @@ sar [ options ] [ <interval> [ <count> ] ]
 
 
 
-## option
-
-### -b I/O 数据	
+## -b I/O 数据	
 
 I/O and transfer rate statistics
 
 
 
-### -B Paging 数据
+## -B Paging 数据
 
 Paging statistics
 
 
 
-### -d 块设备状态	
+## -d 块设备状态	
 
 Block device statistics
 
@@ -96,7 +114,7 @@ Average:     dev253-1      0.00      0.00      0.00      0.00      0.00      0.0
 
 
 
-### -H 配置使用状态
+## -H 配置使用状态
 
 Hugepages utilization statistics
 
@@ -104,7 +122,7 @@ Hugepages utilization statistics
 
 
 
-### -I 中断信息
+## -I 中断信息
 
 Interrupts statistics
 
@@ -113,7 +131,7 @@ Interrupts statistics
 
 
 
-### -n 网络统计
+## -n 网络统计
 
 ```
 -n { <keyword> [,...] | ALL }
@@ -171,7 +189,7 @@ sar -n DEV | more
 
 
 
-#### IFACE 参数
+### IFACE 参数
 
 ```
 rxpck/s		 每秒钟接收的数据包 
@@ -187,7 +205,7 @@ rxmcst/s	 每秒钟接收的多播数据包
 
 
 
-### -m 硬件信息
+## -m 硬件信息
 
 ```
 -m { <keyword> [,...] | ALL }
@@ -208,14 +226,14 @@ rxmcst/s	 每秒钟接收的多播数据包
 
 
 
-### -q 队列
+## -q 队列
 
 Queue length and load average statistics
 	
 
 
 
-### -r 内存使用率	
+## -r 内存使用率	
 
 Memory utilization statistics
 
@@ -241,19 +259,19 @@ Average:      1424088    616796     30.22     58696    401203    301860     11.8
 
 
 
-### -R 内存状态	
+## -R 内存状态	
 
 Memory statistics
 	
 
 
 
-### -S swap空间
+## -S swap空间
 
 Swap space utilization statistics
 	
 
-### -u [ ALL ] CPU使用率		
+## -u [ ALL ] CPU使用率		
 
 CPU utilization statistics
 
@@ -284,7 +302,7 @@ sar -u -f test
 
 
 
-### -v 内核信息
+## -v 内核信息
 
 Kernel table statistics
 
@@ -308,21 +326,21 @@ Average:       129226      1429     26619         1
 
 ​	
 
-### -w 任务信息
+## -w 任务信息
 
 Task creation and system switching statistics
 	
 
 
 
-### -W swapping 状态
+## -W swapping 状态
 
 Swapping statistics
 	
 
 
 
-### -y tty设备
+## -y tty设备
 
 TTY device statistics
 

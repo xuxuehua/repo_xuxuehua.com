@@ -96,5 +96,26 @@ Add all identities stored in your keychain.
 
 Store passphrases in your keychain.
 
-
 With -d, remove passphrases from your keychain.
+
+
+
+
+
+
+
+# FAQ
+
+## Could not open a connection to your authentication agent
+
+
+
+#### ssh-agent
+
+```bash
+eval `ssh-agent -s` 
+or
+eval $(ssh-agent -s)
+
+ssh-add
+```

@@ -550,6 +550,23 @@ git checkout --ours some_file.py
 
 
 
+### --allow-unrelated-histories
+
+fatal: refusing to merge unrelated histories    
+
+Here is how I fixed it:
+
+```
+git pull origin master --allow-unrelated-histories
+git merge origin origin/master
+... add and commit here...
+git push origin master
+```
+
+
+
+
+
 ## push 推送到远端
 
 ```

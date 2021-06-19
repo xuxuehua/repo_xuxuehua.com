@@ -59,30 +59,7 @@ Handler --> Formatter
 
 
 
-# example
-
-默认情况下，logging模块将日志打印到屏幕上(stdout)，日志级别为WARNING(即只有日志级别高于WARNING的日志信息才会输出
-
-```
-#!/usr/local/bin/python
-# -*- coding:utf-8 -*-
-import logging
-
-logging.debug('debug message')
-logging.info('info message')
-logging.warning('warn message')
-logging.error('error message')
-logging.critical('critical message')
-
->>>
-WARNING:root:warn message
-ERROR:root:error message
-CRITICAL:root:critical message
-```
-
-
-
-## 自定义logger
+# 自定义logger
 
 上面的基本使用可以让我们快速上手 logging 模块，但一般并不能满足实际使用，我们还需要自定义 Logger。
 
@@ -108,7 +85,30 @@ CRITICAL:root:critical message
 
 
 
-### get_logger
+# example
+
+默认情况下，logging模块将日志打印到屏幕上(stdout)，日志级别为WARNING(即只有日志级别高于WARNING的日志信息才会输出
+
+```
+#!/usr/local/bin/python
+# -*- coding:utf-8 -*-
+import logging
+
+logging.debug('debug message')
+logging.info('info message')
+logging.warning('warn message')
+logging.error('error message')
+logging.critical('critical message')
+
+>>>
+WARNING:root:warn message
+ERROR:root:error message
+CRITICAL:root:critical message
+```
+
+
+
+## get_logger
 
 ```
 import logging

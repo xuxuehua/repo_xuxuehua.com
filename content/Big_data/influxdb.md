@@ -60,7 +60,16 @@ Kapacitor是从零构建的原生数据处理引擎，支持流式处理和批�
 
 # Hello World
 
-**一条CPU利率的时序数据**
+
+
+```
+influx -username "my_username" -password "my_password" \
+        -execute "CREATE USER rick WITH PASSWORD 'timeseries4days'
+```
+
+
+
+## 一条CPU利率的时序数据
 
 ```
 > insert cpu_usage,host=server01,location=cn-sz user=23.0,system=57.0

@@ -39,7 +39,9 @@ docker container prune
 
 
 
-## cp 复制文件
+## cp 复制文件 （依赖container）
+
+需要从container中复制，即使container已经stop了
 
 The `cp` command can be used to copy files.
 
@@ -153,7 +155,9 @@ docker run -v /home:/test
 
 ### --rm 容器退出后删除
 
-这个参数是说容器退出后随之将其删除。默认情况下，为了排障需求，退出的容器并不会立即删除，除非手动 docker rm。我们这里只是随便执行个命令，看看结果，不需要排障和保留结果，因此使用 --rm 可以避免浪费空间。
+这个参数是说容器退出后随之将其删除。默认情况下，为了排障需求，退出的容器并不会立即删除，除非手动 docker rm
+
+使用 --rm 可以避免浪费空间。
 
 
 
@@ -305,12 +309,16 @@ docker kill
 
 ## 进入容器
 
-* 使用 docker attach 命令或 nsenter 工具等。
+使用 docker attach 命令或 nsenter 工具等。
+
+
 
 ### attach 命令
 
-* docker attach 是 Docker 自带的命令
-> 但是使用 attach 命令有时候并不方便。当多个窗口同时 attach 到同一个容器的时候，所有窗口都会同步显示。当某个窗口因命令阻塞时,其他窗口也无法执行操作了。
+docker attach 是 Docker 自带的命令
+
+但是使用 attach 命令有时候并不方便。当多个窗口同时 attach 到同一个容器的时候，所有窗口都会同步显示。当某个窗口因命令阻塞时,其他窗口也无法执行操作了。
+
 ```
 $ docker run -idt ubuntu
 243c32535da7d142fb0e6df616a3c3ada0b8ab417937c853a9e1c251f499f550

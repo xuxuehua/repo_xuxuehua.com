@@ -1058,6 +1058,18 @@ SELECT DATEDIFF(DAY, CURRENT_DATE(),TO_DATE('2019-07-04'));
 
 
 
+# Credits Monitoring
+
+
+
+https://www.analytics.today/blog/monitoring-snowflake-usage-and-costs
+
+
+
+
+
+
+
 
 
 

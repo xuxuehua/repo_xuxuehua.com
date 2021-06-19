@@ -47,7 +47,7 @@ mount -o loop /home/hadoop01/CentOS-7-x86_64-DVD-1611.iso /var/iso
 Local.repo
 
 ```
-[base]
+[local]
 name=CentOS-Local
 baseurl=file:///var/iso
 gpgcheck=1
@@ -57,10 +57,10 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 
 
-Remote.repo
+# Remote.repo
 
 ```
-[base]
+[remote]
 name=CentOS-Local
 baseurl=http://192.168.81.61/CentOS-7
 gpgcheck=1
@@ -77,13 +77,12 @@ yum install -y httpd
 
 
 
-## createrepo 管理配置repo
+# createrepo 管理配置repo
 
 This software bundles several **.rpm** files together into a **repomd** repository.
 
 ```
-sudo yum install createrepo
-sudo yum install yum-utils
+sudo yum install createrepo yum-utils -y 
 ```
 
 
@@ -137,6 +136,43 @@ To create the repository for HTTP use the command:
 ```output
 sudo createrepo /var/www/html
 ```
+
+
+
+OR
+
+a **repository** is different from a **rpm package**. A repository is a directory containing multiple rpms. So if you just want to install your rpm; you can just
+
+```
+yum install /path/to/package.rpm
+```
+
+if you want to start hosting your own **repository**; then you need to look into `createrepo`. For example a local directory can be turned into a repository like this:
+
+```
+mkdir /myrepo
+cp package.rpm /myrepo
+cd /myrepo
+createrepo .
+```
+
+now you can add this directory to `yum`:
+
+```
+yum-config-manager --add-repo file:///myrepo
+```
+
+now you can also keep adding rpms to this directory (don't forget to run `createrepo` each time).
+
+
+
+## reposync
+
+```
+reposync --gpgcheck -l --repoid=rhel-6-server-rpms --download_path=/var/www/html
+```
+
+> 将repo id为rhel-6-server-rpms 下载到本地/var/www/html
 
 
 

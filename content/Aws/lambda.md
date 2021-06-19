@@ -44,6 +44,38 @@ Gateway API
 
 
 
+## parameters
+
+```
+def lambda_handler(event, context):
+    message = 'Hello {} {}!'.format(event['first_name'], event['last_name'])  
+    return { 
+        'message' : message
+    }
+```
+
+
+
+
+
+### event object
+
+An event is a JSON-formatted document that contains data for a Lambda function to process. The [Lambda runtime](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html) converts the event to an object and passes it to your function code. It is usually of the Python `dict` type. It can also be `list`, `str`, `int`, `float`, or the `NoneType` type.
+
+The event object contains information from the invoking service. When you invoke a function, you determine the structure and contents of the event. When an AWS service invokes your function, the service defines the event structure. 
+
+
+
+
+
+### context object
+
+A context object is passed to your function by Lambda at runtime. This object provides methods and properties that provide information about the invocation, function, and runtime environment.
+
+
+
+
+
 
 
 ## Lambda限制
@@ -244,9 +276,25 @@ Gateway API
 
 
 
+Lambda 的layer层可以上传大于10MB大小的zip包
+
+lambda的Python3.8是基于Amazon Linux 2的操作系统上
+
+Layer 除了内建版本控管的功能外，还可以让您透过 Lambda Console 线上编辑您的 python 代码，就不用每次更新代码都需要重新打包再整个压缩包上传，以增进开发效率。
+
+
+
+打包时需注意压缩档案的目录结构 https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/configuration-layers.html#configuration-layers-path，
+
+所有 dependencies package 必须放置在 python的档案夹中，套件才能正常汇入使用，（上传可以也透过 AWS CLI 的方式直接从 EC2实例上传到 Lambda https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/python-package-update.html#python-package-update-codeonly）。
+
+
+
+
+
 ## layer打包
 
-基于ec2
+### 基于ec2
 
 https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
 
@@ -254,7 +302,41 @@ https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
 
 
 
-基于docker
+### 基于Dockerfile (contained aws python env)
+
+Dockerfile
+
+```
+FROM public.ecr.aws/lambda/python:3.8
+RUN pip install -U pip --target /tmp/my_packages snowflake-connector-python==2.4.3
+RUN cd /tmp/my_packages && touch /tmp/my_packages/__init__.py
+COPY lambda_function.py   /tmp/my_packages/
+CMD [ "app.handler" ]
+```
+
+
+
+
+
+```
+docker build -t my_lambda . && id=$(docker create my_lambda) && docker cp $id:/tmp/my_packages . && docker rm -v $id -f && docker rmi my_lambda -f && zip -r ./my_lambda_dependencies.zip ./my_packages/
+```
+
+
+
+appendix
+
+https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/images-create.html
+
+
+
+
+
+
+
+
+
+### 基于docker lambci
 
 ```
 docker run -v "$PWD":/var/task "lambci/lambda:build-python3.7" /bin/sh -c "pip install psycopg2-binary -t python/lib/python3.7/site-packages/; exit"

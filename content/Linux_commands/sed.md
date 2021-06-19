@@ -61,6 +61,22 @@ EOF
 
 
 
+### s 替换
+
+```
+sed -i 'columns/.*/replacement-word/' file.txt
+```
+
+```
+sed -i 's/some_a/some_b/g' file.txt
+```
+
+
+
+
+
+
+
 ## -f 
 
 ```
@@ -87,16 +103,6 @@ history | see 's/^[[:space:]]*//g' | cut -d' ' -f1     截取history前面的编
 
 
 
-
-### 替换
-
-```
-sed -i 'columns/.*/replacement-word/' file.txt
-```
-
-```
-sed -i 's/some_a/some_b/g' file.txt
-```
 
 
 

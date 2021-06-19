@@ -97,7 +97,7 @@ gitlab-ctl reconfigure
 ```bash
 sudo docker run --detach \
   --hostname gitlab.xurick.com \
-  --publish 127.0.0.1:4443:443 --publish 127.0.0.1:4000:80 \
+  --publish 127.0.0.1:4443:443 --publish 127.0.0.1:4000:80 --publish 22:22\
   --name gitlab \
   --restart always \
   --volume /srv/gitlab/config:/etc/gitlab \
@@ -106,15 +106,14 @@ sudo docker run --detach \
   gitlab/gitlab-ce:latest
 ```
 
-
-
-- /srv/gitlab/config will hold GitLab's configuration
-- /srv/gitlab/logs will hold the GitLab's logs
-- /srv/gitlab/data will hold the actual git repo's data.
+> /srv/gitlab/config will hold GitLab's configuration
+>
+> /srv/gitlab/logs will hold the GitLab's logs
+>
+> /srv/gitlab/data will hold the actual git repo's data.
 
 ```
-apt update
-apt install nginx -y 
+sudo apt update && sudo apt install nginx -y
 ```
 
 
@@ -152,24 +151,86 @@ server {
 
 
 
-Go to web UI to complete Gitlab initilization
+Go to web UI to complete Gitlab initilization by using root user
 
 
 
-## https (failed)
+
+
+appendix
+
+https://docs.gitlab.com/omnibus/docker/
+
+
+
+
+
+### https 
+
+Do not enable cloudflare DNS proxy
+
+Go to https://certbot.eff.org/instructions to select certbot info
+
+
 
 ```
-sudo apt-get install software-properties-common
-sudo add-apt-repository universe
-sudo add-apt-repository ppa:certbot/certbotsudo 
-apt-get update && apt install certbot -y && sudo apt install python-certbot-nginx -y 
+sudo snap install core; sudo snap refresh core
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+sudo snap set certbot trust-plugin-with-root=ok
+sudo apt -y install python3-certbot-dns-cloudflare
 ```
 
-Setup certification
+Setup dns plugins with cloudflare, details please go to https://certbot.eff.org/docs/using.html#dns-plugins
 
 ```
-certbot --nginx
+sudo snap install certbot-dns-cloudflare
 ```
+
+
+
+go to cloudflare to get api token 
+
+https://dash.cloudflare.com/?to=/:account/profile/api-tokens
+
+The Token needed by Certbot requires `Zone:DNS:Edit` permissions for only the zones you need certificates for
+
+
+
+
+
+```
+vim ~/.secrets/certbot/cloudflare.ini
+dns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567
+dns_cloudflare_email = cloudflare@example.com
+dns_cloudflare_api_key = 0123456789abcdef0123456789abcdef01234 
+
+chmod 600 ~/.secrets/certbot/cloudflare.ini
+```
+
+> Api_key is global api key
+
+
+
+
+
+```
+certbot certonly \
+  --dns-cloudflare \
+  --dns-cloudflare-credentials ~/.secrets/certbot/cloudflare.ini \
+  -d gitlab.xurick.com \
+  -i nginx 
+```
+
+
+
+Test auto renewal
+
+```
+sudo certbot renew --dry-run
+```
+
+
 
 set up your server inside the Nginx configuration. Certbot has already created a configuration for you inside `/etc/nginx/sites-enabled`. Alter the configuration for the host and the port that it points to like this
 
@@ -197,8 +258,8 @@ server {
 	listen [::]:443;
 
 	listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/git.domain.com/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/git.domain.com/privkey.pem; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/git.xurick.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/git.xurick.com/privkey.pem; # managed by Certbot
 	include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
 	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
@@ -208,6 +269,12 @@ server {
 
 
 
+
+auto renew cronjob
+
+```
+43 6 * * * certbot renew --post-hook "systemctl reload nginx"
+```
 
 
 
@@ -359,6 +426,112 @@ to do after completing the steps in this post.
 
 
 
+
+# secure gitlab
+
+
+
+## two factor
+
+root user settings -> account
+
+
+
+## change root username
+
+change from root to your personal admin user
+
+
+
+## Admin area
+
+### disable sign_up
+
+go to https://gitlab.xurick.com/admin  and then Sign-up restrictions
+
+
+
+### All user two factor
+
+Require all users to set up two-factor authentication
+
+
+
+### unknown notification
+
+Notify users by email when sign-in location is not recognized
+
+
+
+### Spam and Anti-bot Protection
+
+Enable reCAPTCHA, Invisible Captcha, Akismet and set IP limits
+
+
+
+### Visibility and access controls
+
+Restricted visibility levels == Private
+
+disable all import sources
+
+disable project export 
+
+
+
+# smtp setup
+
+
+
+## mailgun
+
+vim gitlab.rb
+
+```
+gitlab_rails['smtp_enable'] = true
+gitlab_rails['smtp_address'] = "smtp.mailgun.org"
+gitlab_rails['smtp_port'] = 587
+gitlab_rails['smtp_authentication'] = "plain"
+gitlab_rails['smtp_enable_starttls_auto'] = true
+gitlab_rails['smtp_user_name'] = "postmaster@mg.gitlab.com"
+gitlab_rails['smtp_password'] = "password"
+gitlab_rails['smtp_domain'] = "mg.gitlab.com"
+```
+
+
+
+You can verify that GitLab can send emails properly using the Rails console. On the GitLab server, execute `gitlab-rails console` to enter the console. Then, you can enter the following command at the console prompt to cause GitLab to send a test email:
+
+```
+Notify.test_email('rickxu1989@gmail.com', 'Message Subject', 'Message Body').deliver_now
+```
+
+
+
+
+
+## aws ses
+
+vim gitlab.rb
+
+```
+gitlab_rails['smtp_enable'] = true
+gitlab_rails['smtp_address'] = "email-smtp.region-1.amazonaws.com"
+gitlab_rails['smtp_port'] = 587
+gitlab_rails['smtp_user_name'] = "IAMmailerKey"
+gitlab_rails['smtp_password'] = "IAMmailerSecret"
+gitlab_rails['smtp_domain'] = "yourdomain.com"
+gitlab_rails['smtp_authentication'] = "login"
+gitlab_rails['smtp_enable_starttls_auto'] = true
+```
+
+
+
+
+
+```
+Notify.test_email('destination_email@address.com', 'Message Subject', 'Message Body').deliver_now
+```
 
 
 

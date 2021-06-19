@@ -58,6 +58,16 @@ lambda: Json-encoded message to an AWS Lambda function
 
 
 
+
+
+# Sns trigger lambda
+
+
+
+https://aws.amazon.com/premiumsupport/knowledge-center/sns-lambda-webhooks-chime-slack-teams/
+
+
+
 # Appendix
 
 https://aws.amazon.com/cn/premiumsupport/knowledge-center/sns-lambda-webhooks-chime-slack-teams/?nc1=h_ls
