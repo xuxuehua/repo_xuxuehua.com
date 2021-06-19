@@ -197,3 +197,45 @@ cp above to /var/www/html/centos7
 createrepo --database /var/www/html/centos7
 ```
 
+
+
+
+
+## yumdownloader
+
+
+
+### --resolve
+
+```
+yumdownloader --resovle --destdir=/root/ httpd
+```
+
+> default is current directory
+
+
+
+
+
+## repotrack & repoquery
+
+```
+repoquery -R --resolve --recursive glibc | xargs -r yumdownloader
+```
+
+repoquery can get package name
+
+```
+repoquery mysql-comm*
+```
+
+
+
+
+
+using repotrack to download rpm package and all dependencies
+
+```
+repotarck mysql-community-devel-0:5.7.34-1.el7.x86_64
+```
+
