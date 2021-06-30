@@ -296,7 +296,7 @@ GRANT OPTION
 ```
 mysql> update user set host='%' where user='root';
 
-mysql> grant all privileges on  *.*  to root@'%'  identifies  by ' xxxx';
+mysql> grant all privileges on  *.*  to root@'%'  identified  by 'xxxx';
 ```
 
 > 第一个`*`表示数据库名；第二个`*`表示该数据库的表名

@@ -12,11 +12,7 @@ date: 2019-02-19 14:55
 
 ## 流程
 
-![image-20190219145636828](/Users/xhxu/Library/Application Support/typora-user-images/image-20190219145636828.png)
 
-
-
-![image-20190219145704712](/Users/xhxu/Library/Application Support/typora-user-images/image-20190219145704712.png)
 
 
 

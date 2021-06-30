@@ -242,6 +242,14 @@ git checkout daves_branch
 
 
 
+### --branch (可指定tag)
+
+```
+git clone --depth 1 --branch <tag_name> <repo_url>
+```
+
+
+
 
 
 ## commit 提交更改

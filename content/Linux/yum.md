@@ -239,3 +239,11 @@ using repotrack to download rpm package and all dependencies
 repotarck mysql-community-devel-0:5.7.34-1.el7.x86_64
 ```
 
+
+
+```
+repotrack -p /repos/Packages [packages]
+```
+
+
+

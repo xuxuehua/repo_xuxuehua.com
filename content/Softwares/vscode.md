@@ -41,7 +41,7 @@ sudo apt -y install code
 
 
 
-## Auto Save自动保存
+## Auto Save 自动保存
 
 The easiest way to turn on `Auto Save` is with the **File** > **Auto Save** toggle which turns on and off save after a delay
 
@@ -62,3 +62,26 @@ To re-enable, run this command in a terminal:
 ```
 defaults write com.microsoft.VSCode ApplePressAndHoldEnabled -bool true
 ```
+
+
+
+
+
+
+
+# settings sync 同步配置
+
+Install the corresponding plugin and then sync below gist by Download Public Gist
+
+Gist id:   f4ca2c87b7b959071171179c3abe9b92
+
+
+
+
+
+# code command line
+
+Open the Command Palette (⌘ + ⇧ + P on Mac) OR **View** ❯ **Command Palette**
+
+![image-20210630114634591](/Users/rxu/coding/github/repo_xuxuehua.com/content/Softwares/vscode.assets/image-20210630114634591.png)
+

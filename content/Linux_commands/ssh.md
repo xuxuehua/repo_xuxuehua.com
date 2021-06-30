@@ -248,6 +248,10 @@ This can be used to execute arbitrary screen-based programs on a remote machine,
 
 Multiple -t options force tty allocation, even if ssh has no local tty
 
+```
+ssh -t ip74 'ssh ip68'
+```
+
 
 
 # banner

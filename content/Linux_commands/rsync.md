@@ -55,6 +55,8 @@ rsync -av --exclude=ONE_DIRECTORY ./* ONE_DIRECTORY
 
 ## 本地到远程  PUSH
 
+Make sure rsync command has been installed on both side
+
 ```
 rsync -avH [ssh] /path/to/source user@des:/path/to/local  
 ```
@@ -68,6 +70,8 @@ rsync -av /opt/software/ hadoop102:/opt/software
 
 
 ## 远程到本地  PULL
+
+Make sure rsync command has been installed on both side
 
 ```
 rsync -avH [ssh] user@des:/path/to/source /path/to/local  

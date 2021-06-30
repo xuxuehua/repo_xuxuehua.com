@@ -34,8 +34,6 @@ bucket size 需要考虑CPU对齐问题
 
 O1的复杂度，非常快
 
-![image-20190219101337598](/Users/xhxu/Library/Application Support/typora-user-images/image-20190219101337598.png)
-
 
 
 

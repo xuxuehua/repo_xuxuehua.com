@@ -176,3 +176,42 @@ private[包名称]
 ## private
 
 私有访问权限，只能访问当前类
+
+
+
+
+
+
+
+# 伴生对象
+
+伴生对象可以访问伴生类的私有属性
+
+
+
+## apply
+
+创建伴生类对象，需要提供特殊的方法，实现其功能
+
+```
+class Student {
+    private val name = "Rick"
+
+}
+
+object Student {
+    def apply: Student = new Student()
+
+    def test(): Unit = {
+    }
+}
+
+
+object ScalaMethod {
+    def main(args: Array[String]): Unit = {
+        // 采用伴生对象来创建伴生类
+        val student = Student
+    }
+}
+```
+

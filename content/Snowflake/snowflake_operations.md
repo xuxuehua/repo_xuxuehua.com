@@ -1068,6 +1068,20 @@ https://www.analytics.today/blog/monitoring-snowflake-usage-and-costs
 
 
 
+## Two days credit costs
+
+
+
+```
+select date(dateadd(hour,15,start_time)),sum(credits_used) 
+    from "SNOWFLAKE"."ACCOUNT_USAGE"."WAREHOUSE_METERING_HISTORY" 
+    where start_time >= dateadd(day, -8, current_date())
+    group by date(dateadd(hour,15,start_time))
+    order by date(dateadd(hour,15,start_time))
+```
+
+> get your credits that start from the end of list items
+
 
 
 

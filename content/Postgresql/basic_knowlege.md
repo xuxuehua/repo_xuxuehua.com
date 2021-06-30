@@ -8,6 +8,18 @@ date: 2019-08-04 23:04
 
 
 
+
+
+
+
+# Ecosystem
+
+![image-20210623154304166](/Users/rxu/coding/github/repo_xuxuehua.com/content/Postgresql/basic_knowlege.assets/image-20210623154304166.png)
+
+
+
+
+
 # Installation
 
 ## linux
@@ -556,3 +568,28 @@ SELECT task_id, attempt, COUNT(attempt) FROM  schema_name.task_attempts GROUP BY
 ## cannot use column reference in DEFAULT expression 
 
 注意默认值如何用双引号和单引号引起来
+
+
+
+
+
+
+
+# Postgres protocol
+
+pg 消息流:
+http://www.postgres.cn/docs/13/protocol-flow.html#id-1.10.5.7.3
+pg 消息格式
+http://www.postgres.cn/docs/13/protocol-message-formats.html
+https://developer.aliyun.com/article/751984
+https://zhuanlan.zhihu.com/p/24661559
+https://developer.aliyun.com/article/405149
+https://segmentfault.com/a/1190000017136059
+
+
+
+go版pg协议实现: https://github.com/jackc/pgproto3
+pg mock proxy: https://github.com/jackc/pgmock#pgmockproxy
+
+
+

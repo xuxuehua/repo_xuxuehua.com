@@ -280,6 +280,17 @@ auto renew cronjob
 
 
 
+### specified image
+
+```
+root@host1595041234:~# docker pull gitlab/gitlab-ce:13.12.2-ce.0
+13.12.2-ce.0: Pulling from gitlab/gitlab-ce
+Digest: sha256:cf35a173a11eda176abb0759b1be5314e1e3391ce7fe088376f72135edd72b22
+Status: Downloaded newer image for gitlab/gitlab-ce:13.12.2-ce.0
+docker.io/gitlab/gitlab-ce:13.12.2-ce.0
+root@host1595041234:~# docker save  gitlab/gitlab-ce:13.12.2-ce.0 | gzip > gitlab-ce:13.12.2-ce.0.tar.gz
+```
+
 
 
 # Gitlab-runner
@@ -500,7 +511,13 @@ gitlab_rails['smtp_domain'] = "mg.gitlab.com"
 
 
 
-You can verify that GitLab can send emails properly using the Rails console. On the GitLab server, execute `gitlab-rails console` to enter the console. Then, you can enter the following command at the console prompt to cause GitLab to send a test email:
+You can verify that GitLab can send emails properly using the Rails console. On the GitLab server, execute 
+
+```
+gitlab-rails console
+```
+
+ to enter the console. Then, you can enter the following command at the console prompt to cause GitLab to send a test email:
 
 ```
 Notify.test_email('rickxu1989@gmail.com', 'Message Subject', 'Message Body').deliver_now
@@ -555,9 +572,29 @@ tar zcvf gitlab.tar.gz gitlab
 
 
 
+
+
+Warning: Your gitlab.rb and gitlab-secrets.json files contain sensitive data                                                                                                            
+
+and are not included in this backup. You will need these files to restore a backup.                                                                                                     
+
+Please back them up manually. 
+
+
+
+
+
 ## restore backup
 
+Make sure the gitlab docker image version are same
+
 ```
+cp gitlab.rb /srv/gitlab/config/
+cp gitlab-secrets.json /srv/gitlab/config/
+
+# run it at inside container
+chown git:git /srv/gitlab/data/backups/BACKUP_FILE.tar
+
 docker exec -it gitlab gitlab-rake gitlab:backup:restore --trace
 ```
 

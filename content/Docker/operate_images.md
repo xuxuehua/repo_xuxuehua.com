@@ -282,13 +282,15 @@ docker import http://example.com/exampleimage.tgz example/imagerepo
 
 以将镜像保存为一个 tar 文件，然后传输到另一个位置上，再加载进来。这是在没有 Docker Registry 时的做法，现在已经不推荐，镜像迁移应该直接使用 Docker Registry，无论是直接使用 Docker Hub 还是使用内网私有 Registry 都可以。
 
-
-
-`$ docker save alpine | gzip > alpine-latest.tar.gz`
+```
+$ docker save alpine | gzip > alpine-latest.tar.gz
 
 从一个机器将镜像迁移到另一个机器,并且带进度条的功能
 
-`docker save <镜像名> | bzip2 | pv | ssh <用户名>@<主机名> 'cat | docker load'`
+
+$ docker save <镜像名> | bzip2 | pv | ssh <用户名>@<主机名> 'cat | docker load'
+
+```
 
 
 

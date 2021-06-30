@@ -103,7 +103,103 @@ Group 之间也有数据交互传输，Google 定义了最小传输复制单元 
 
 
 
-## Multi-master
+
+
+## Road map
+
+![image-20210623103416582](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623103416582.png)
+
+![image-20210623103433938](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623103433938.png)
+
+
+
+![image-20210623103643151](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623103643151.png)
+
+![image-20210623103943560](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623103943560.png)
+
+
+
+![image-20210623104049651](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623104049651.png)
+
+
+
+**6 regions can support as global database**
+
+![image-20210623104753482](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623104753482.png)
+
+
+
+
+
+![image-20210623104919312](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623104919312.png)
+
+
+
+![image-20210623105101956](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623105101956.png)
+
+
+
+![image-20210623105156832](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623105156832.png)
+
+
+
+![image-20210623105209917](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623105209917.png)
+
+![image-20210623105319339](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623105319339.png)
+
+
+
+![image-20210623105630998](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623105630998.png)
+
+
+
+**Long time investigation and developement**
+
+![image-20210623105911045](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623105911045.png)
+
+
+
+![image-20210623111057972](/Users/rxu/coding/github/repo_xuxuehua.com/content/Aws/rds.assets/image-20210623111057972.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
