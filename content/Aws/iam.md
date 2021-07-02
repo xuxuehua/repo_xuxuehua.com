@@ -66,6 +66,12 @@ https://awspolicygen.s3.amazonaws.com/policygen.html
 
 
 
+# Service Authorization Reference
+
+https://docs.aws.amazon.com/iam/index.html
+
+
+
 # example
 
 ## Non-office ip

@@ -37,3 +37,14 @@ $ which 2to3-3.7
 
 * Pycharm -> Tools -> External Tools -> 2to3-3.7
 
+
+
+
+
+## command line launcher
+
+1. Open Application Pycharm
+2. Find tools in menu bar
+3. Click `Create Command-line Launcher`
+4. Checking the launcher executable file which has been created in `/usr/local/bin/charm`
+5. Open project or file just type `$ charm YOUR_FOLDER_OR_FILE`

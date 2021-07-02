@@ -247,3 +247,17 @@ repotrack -p /repos/Packages [packages]
 
 
 
+
+
+# public rpm website
+
+http://rpm.pbone.net
+
+https://centos.pkgs.org
+
+https://rpmfind.net
+
+https://cbs.centos.org
+
+
+

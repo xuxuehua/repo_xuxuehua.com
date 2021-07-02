@@ -150,6 +150,12 @@ RENAME USER old_user_new TO new_user_name
 
 
 
+## 查看用户
+
+```
+SELECT user FROM mysql.user;
+```
+
 
 
 ## 删除用户
@@ -178,6 +184,10 @@ or
 mysqladmin [OPTIONS] command, command ...
 $ mysqladmin password
 ```
+
+
+
+
 
 
 
@@ -213,6 +223,10 @@ after accessing then execute below
 ```
 mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass';
 ```
+
+
+
+### 查看修改密码规则
 
 
 

@@ -1339,6 +1339,63 @@ Outputs:
 
 
 
+## launch via Lambda
+
+```
+import boto3
+
+client = boto3.client('mwaa')
+
+def lambda_handler(event, context):
+    response = client.create_environment(
+		    AirflowVersion='2.0.2',
+        DagS3Path='s3://rxu-test-airflow-by-lambda/dags',
+        ExecutionRoleArn='arn:aws:iam::111:role/service-role/AmazonMWAA-aa-poc-mwaa-airflow-xx1X81',
+        LoggingConfiguration={
+            'DagProcessingLogs': {
+                'Enabled': True,
+                'LogLevel': 'DEBUG'
+            },
+            'SchedulerLogs': {
+                'Enabled': True,
+                'LogLevel': 'DEBUG'
+            },
+            'TaskLogs': {
+                'Enabled': True,
+                'LogLevel': 'DEBUG'
+            },
+            'WebserverLogs': {
+                'Enabled': True,
+                'LogLevel': 'DEBUG'
+            },
+            'WorkerLogs': {
+                'Enabled': True,
+                'LogLevel': 'DEBUG'
+            }
+        },
+        Name='rxu_test_airflow_env_by_lambda',
+        NetworkConfiguration={
+            'SecurityGroupIds': [
+                'sg-11',
+            ],
+            'SubnetIds': [
+                'subnet-11',
+                'subnet-11'
+            ]
+        },
+        SourceBucketArn='arn:aws:s3:::rxu-test-airflow-by-lambda'
+    )
+    print('success', response)
+```
+
+
+
+## MWAA local runner
+
+https://github.com/aws/aws-mwaa-local-runner
+
+
+
 
 
 # Appendix
