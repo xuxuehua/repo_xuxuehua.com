@@ -40,7 +40,7 @@ sudo apt-get install postgresql-client
 
 
 
-### Postgresql 12
+### amazonlinux Postgresql 12
 
 Next we need to add the PostgreSQL repository to our Amazon Linux 2 machine for us to be able to install packages. Also note that PostgreSQL 11 and PostgreSQL 10 packages are available in Amazon Linux extras repository.
 
@@ -49,6 +49,8 @@ $ sudo  amazon-linux-extras | grep postgre
   5  postgresql9.6            available    \
   6  postgresql10             available    [ =10  =stable ]
  41  postgresql11             available    [ =11  =stable ]
+ 58  postgresql12             available    [ =stable ]
+ 59  postgresql13             available    [ =stable ]
 ```
 
 To add official PostgreSQL repository to Amazon Linux 2 server, run the following commands as root or user account with sudo privileges.
@@ -69,6 +71,17 @@ Update your packages index file.
 sudo yum makecache
 
 yum -y install postgresql12.x86_64 postgresql12-server.x86_64 
+```
+
+
+
+Preparing the environment
+
+```
+sudo su - postgres
+echo "export PATH=/usr/pgsql-12/bin:$PATH PAGER=less" >> ~/.pgsql_profile
+source ~/.pgsql_profile
+exit
 ```
 
 
@@ -152,6 +165,56 @@ Shall the new role be a superuser? (y/n) y
 
 
 
+Modify the parameter listen_addresses to allow a specific IP interface or all (using *). Modifying this parameter requires a restart of the PostgreSQL instance to get the change into effect.
+
+```
+# as postgres user
+$ psql -c "ALTER SYSTEM SET listen_addresses TO '*'";
+ALTER SYSTEM
+```
+
+
+
+allow remote access
+
+```
+vim /var/lib/pgsql/12/data/postgresql.conf
+listen_addresses = '*'   
+
+OR
+postgres=# ALTER SYSTEM SET listen_addresses TO '*';
+
+postgres=# show listen_addresses;
+ listen_addresses 
+------------------
+ *
+(1 row)
+```
+
+
+
+check version
+
+```
+[root@ip-172-31-9-108 ~]# sudo su - postgres
+Last login: Thu Jul  8 07:10:41 UTC 2021 on pts/0
+-bash-4.2$ psql
+shpsql (9.2.24, server 12.7)
+WARNING: psql version 9.2, server version 12.0.
+         Some psql features might not work.
+Type "help" for help.
+
+postgres=# show server_version;
+ server_version 
+----------------
+ 12.7
+(1 row)
+```
+
+
+
+
+
 ### psql
 
 ```
@@ -178,9 +241,53 @@ psql -h 127.0.0.1 -p 55433 -U postgres
 
 
 
+
+
+## macos
+
+```
+brew search postgresql
+```
+
+It will list all the available postgresql packages.
+
+```
+brew install postgresql@12
+```
+
+
+
+### psql
+
+
+
+```sh
+brew install libpq
+```
+
+update PATH
+
+if use zsh:
+
+```sh
+echo 'export PATH="/usr/local/opt/libpq/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+if use bash:
+
+```sh
+echo 'export PATH="/usr/local/opt/libpq/bin:$PATH"' >> ~/.bash_profile
+source ~/.bash_profile
+```
+
+
+
+
+
 # 初始化
 
-## 新用户
+## 创建用户
 
 ```
 sudo adduser dbuser

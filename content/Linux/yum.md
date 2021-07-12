@@ -79,7 +79,7 @@ yum install -y httpd
 
 # createrepo 管理配置repo
 
-This software bundles several **.rpm** files together into a **repomd** repository.
+This software bundles seve`l **.rpm** files together into a **repomd** repository.
 
 ```
 sudo yum install createrepo yum-utils -y 
@@ -249,6 +249,20 @@ repotrack -p /repos/Packages [packages]
 
 
 
+# Package management
+
+https://packagecloud.io
+
+example
+
+https://xiaoheidiannao.com/28356.html
+
+
+
+
+
+
+
 # public rpm website
 
 http://rpm.pbone.net
@@ -258,6 +272,10 @@ https://centos.pkgs.org
 https://rpmfind.net
 
 https://cbs.centos.org
+
+
+
+
 
 
 

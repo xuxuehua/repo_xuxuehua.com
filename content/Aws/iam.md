@@ -72,6 +72,12 @@ https://docs.aws.amazon.com/iam/index.html
 
 
 
+## cloudwatch condition
+
+https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatch.html
+
+
+
 # example
 
 ## Non-office ip

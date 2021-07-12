@@ -58,6 +58,12 @@ If you create a VPC or subnet using a command line tool or the Amazon EC2 API, t
 
 
 
+# CIDR limitation
+
+You must specify an IPv4 address range for your VPC. Specify the IPv4 address range as a Classless Inter-Domain Routing (CIDR) block; for example, 10.0.0.0/16. A CIDR block size must be between a /16 netmask and /28 netmask.
+
+
+
 # VPC Endpoint
 
 

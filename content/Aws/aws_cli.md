@@ -12,7 +12,7 @@ date: 2020-06-06 18:00
 
 
 
-## Linux
+## Linux aws v1
 
 ```
 curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
@@ -42,6 +42,24 @@ Optionally, you can set an environment variable pointing to the config file. Thi
 ```
 export AWS_CONFIG_FILE=$HOME/.aws/config
 ```
+
+
+
+
+
+## Linux aws v2
+
+```
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+```
+
+
+
+
+
+
 
 
 
