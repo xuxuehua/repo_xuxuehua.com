@@ -95,7 +95,7 @@ $ tar cvzf - example-dir/ | split --bytes=5MB - myfiles.tar.gz.
 To join back all the blocks or tar files, we issue the command below:
 
 ```
-# cat home.tar.bz2.parta* >backup.tar.gz.joined
+# cat home.tar.bz2.parta* > backup.tar.gz.joined
 ```
 
 

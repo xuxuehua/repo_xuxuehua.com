@@ -721,6 +721,92 @@ check the status at any nodes
 
 
 
+sudoers
+
+With the cluster and the witness running, we add the following lines in the sudoers file In each node of the cluster and the witness node
+
+```
+Defaults:postgres !requiretty
+postgres ALL = NOPASSWD: /usr/bin/systemctl stop postgresql-12.service, /usr/bin/systemctl start postgresql-12.service, /usr/bin/systemctl restart postgresql-12.service, /usr/bin/systemctl reload postgresql-12.service, /usr/bin/systemctl start repmgr12.service, /usr/bin/systemctl stop repmgr12.service
+```
+
+
+
+
+
+## repmgr failover
+
+The priority parameter adds weight to a node’s eligibility to become a primary. Setting this parameter to a higher value gives a node greater eligibility to become the primary node. Also, setting this value to zero for a node will ensure the node is never promoted as primary
+
+
+
+| **Node Name** | **Parameter Setting** |
+| ------------- | --------------------- |
+| PG-Node2      | **priority**=60       |
+| PG-Node3      | **priority**=40       |
+
+
+
+```
+vim /etc/repmgr/12/repmgr.conf
+priority=60
+
+
+
+priority=40
+```
+
+
+
+set this to automatic in each node
+
+```
+vim /etc/repmgr/12/repmgr.conf
+
+failover='automatic'
+promote_command='/usr/pgsql-12/bin/repmgr standby promote -f /etc/repmgr/12/repmgr.conf --log-to-file'
+follow_command='/usr/pgsql-12/bin/repmgr standby follow -f /etc/repmgr/12/repmgr.conf --log-to-file --upstream-node-id=%n'
+monitor_interval_secs=2
+connection_check_type='ping'
+reconnect_attempts=4
+reconnect_interval=8
+primary_visibility_consensus=true
+standby_disconnect_on_failover=true
+repmgrd_service_start_command='sudo /usr/bin/systemctl start repmgr12.service'
+repmgrd_service_stop_command='sudo /usr/bin/systemctl stop repmgr12.service'
+service_start_command='sudo /usr/bin/systemctl start postgresql-12.service'
+service_stop_command='sudo /usr/bin/systemctl stop postgresql-12.service'
+service_restart_command='sudo /usr/bin/systemctl restart postgresql-12.service'
+service_reload_command='sudo /usr/bin/systemctl reload postgresql-12.service'
+monitoring_history=yes
+log_status_interval=60
+```
+
+
+
+
+
+### start repmgr
+
+test this in the primary node first, and then the two standby nodes, followed by the witness node. The command has to be executed as the postgres user
+
+```
+-bash-4.2$ /usr/pgsql-12/bin/repmgr -f /etc/repmgr/12/repmgr.conf daemon start --dry-run
+INFO: prerequisites for starting repmgrd met
+DETAIL: following command would be executed:
+  sudo /usr/bin/systemctl start repmgr12.service
+```
+
+
+
+discontinue
+
+
+
+
+
+
+
 # 同步流程
 
 postgresql主从流复制的流程
